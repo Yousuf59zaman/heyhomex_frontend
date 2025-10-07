@@ -4,7 +4,10 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   modules: [
-    '@nuxtjs/tailwindcss',
-    '@primevue/nuxt-module'
+    '@primevue/nuxt-module',
+    '@nuxt/icon',
+    '@primevue/nuxt-module',
+    '@nuxtjs/sitemap',
+    '@nuxtjs/tailwindcss'
   ]
 })
