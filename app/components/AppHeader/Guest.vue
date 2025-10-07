@@ -8,6 +8,7 @@
 
     const toggleMobileMenu = () => {
         isMobileMenuOpen.value = !isMobileMenuOpen.value;
+        
     };
 
     onMounted(() => {
