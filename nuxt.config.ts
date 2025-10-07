@@ -10,4 +10,9 @@ export default defineNuxtConfig({
         "@nuxtjs/sitemap",
         "@nuxtjs/tailwindcss",
     ],
+
+    devServer: {
+        host: "0.0.0.0",
+        port: 3001,
+    },
 });

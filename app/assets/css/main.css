@@ -1,2 +1,74 @@
 
+@font-face {
+  font-family: 'sf-pro-Regular';
+  src: url('/fonts/sf-pro-display/SFPRODISPLAYREGULAR.otf');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'sf-pro-Medium';
+  src: url('/fonts/sf-pro-display/SFPRODISPLAYMEDIUM.otf');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'sf-pro-Bold';
+  src: url('/fonts/sf-pro-display/SFPRODISPLAYBOLD.otf');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'sf-pro-Regular', sans-serif;
+}
+.custom-container {
+  @apply py-20 my-0 mx-44 sm:mx-7 md:mx-24 lg:mx-44;
+}
+
+body {
+  @apply bg-gray-100 dark:bg-gray-900;
+}
+
+.p-menubar {
+  @apply border-t-0 border-l-0  bg-gray-100 !important;
+}
+
+/* scrollbar design */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ebebeb;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ebebeb;
+}
+
+/* Start Horizontal Schroll */
+
+::-webkit-scrollbar-track:horizontal {
+  background: #ebebeb;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  background: #ebebeb;
+}
+
+::-webkit-scrollbar-thumb:horizontal:hover {
+  background: #ebebeb;
+}
+
+::-webkit-scrollbar-track {
+  background: none;
+}
 

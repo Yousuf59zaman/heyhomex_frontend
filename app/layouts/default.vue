@@ -2,7 +2,7 @@
 </script>
 
 <template>
-	<div >
+	<div class="min-h-screen">
 		<AppHeaderGuest />
 		<div :class="[' transition-all duration-100 ']">
 			<slot />
