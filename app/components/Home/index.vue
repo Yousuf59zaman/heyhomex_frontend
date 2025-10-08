@@ -2,6 +2,13 @@
     const backgroundStyle = {
         backgroundImage: "url(/images/home/background.png)",
     };
+
+    // Auth Modal composable
+    const { openModal } = useCitizenAuth();
+
+    const handleLetsBegin = () => {
+        openModal("register");
+    };
 </script>
 
 <template>
@@ -23,7 +30,8 @@
                     Home Starts Here
                 </h1>
 
-                <div class="max-w-2xl sm:max-w-xl h-[1px] mb-4 bg-gray-600"></div>
+                <div
+                    class="max-w-2xl sm:max-w-xl h-[1px] mb-4 bg-gray-600"></div>
 
                 <!-- Subtitle -->
                 <p
@@ -49,8 +57,6 @@
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
 
-
-
                         <input
                             type="text"
                             placeholder="Enter an address, neighborhood, city or zip code"
@@ -61,6 +67,7 @@
                     <div class="bg-[#FFFFFF33] w-[1px] h-[1.25rem]"></div>
 
                     <button
+                        @click="handleLetsBegin"
                         class="px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-xl transition-colors duration-200 whitespace-nowrap"
                         aria-label="Begin search">
                         Let's Begin
@@ -90,6 +97,7 @@
                     </div>
 
                     <button
+                        @click="handleLetsBegin"
                         class="w-full py-4 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-xl shadow-lg transition-colors duration-200"
                         aria-label="Begin search">
                         Let's Begin

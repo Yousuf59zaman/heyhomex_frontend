@@ -2,12 +2,21 @@
     const isScroll = ref(false);
     const isMobileMenuOpen = ref(false);
 
+    // Auth Modal composable
+    const { openModal } = useCitizenAuth();
+
     const handleScroll = () => {
         isScroll.value = window.scrollY > 0;
     };
 
     const toggleMobileMenu = () => {
         isMobileMenuOpen.value = !isMobileMenuOpen.value;
+    };
+
+    const handleGetStarted = () => {
+        openModal("register");
+        // Close mobile menu if open
+        isMobileMenuOpen.value = false;
     };
 
     onMounted(() => {
@@ -28,8 +37,11 @@
         <div
             class="relative flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12">
             <!-- Left Spacer (hidden on mobile) -->
-            <div class=" md:w-[200px]">
-                <img class="sm:block lg:hidden" src="/images/home/home_logo.png" alt="">
+            <div class="md:w-[200px]">
+                <img
+                    class="hidden sm:block lg:hidden"
+                    src="/images/home/home_logo.png"
+                    alt="" />
             </div>
 
             <!-- Logo Section (Centered) -->
@@ -58,11 +70,11 @@
                         Sign In
                     </NuxtLink>
                     <div class="bg-white w-[1px] h-[1.25rem]"></div>
-                    <NuxtLink
-                        to="/#"
-                        class="py-[0.5rem] px-[1.5rem] text-[0.875rem] bg-white border rounded-lg">
+                    <button
+                        @click="handleGetStarted"
+                        class="py-[0.5rem] px-[1.5rem] text-black text-[0.875rem] bg-white border rounded-lg hover:bg-gray-50 transition-colors duration-200">
                         Get Started
-                    </NuxtLink>
+                    </button>
                 </div>
 
                 <!-- Mobile Hamburger Button -->
@@ -116,12 +128,12 @@
                         class="block text-white text-base py-2 hover:text-gray-300 transition-colors">
                         Sign In
                     </NuxtLink>
-                    <NuxtLink
-                        to="/#"
-                        @click="toggleMobileMenu"
+                    <button
+                        @click="handleGetStarted"
+                        style="color: black"
                         class="block w-full text-center py-[0.625rem] px-[1.5rem] text-base bg-white border rounded-lg hover:bg-gray-100 transition-colors">
                         Get Started
-                    </NuxtLink>
+                    </button>
                 </div>
             </div>
         </transition>

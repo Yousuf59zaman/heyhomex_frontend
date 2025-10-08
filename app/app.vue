@@ -1,11 +1,39 @@
 <script setup>
+    
+    useHead({
+        title: "HeyHome - Your Home Starts Here",
+        meta: [
+            {
+                name: "description",
+                content:
+                    "Where your next chapter begins — Kama'aina, Military, or Investor, your path starts with purpose",
+            },
+        ],
+    });
 </script>
 
 <template>
-    <NuxtLayout>
-        <NuxtPage />
-    </NuxtLayout>
+    <ClientOnly fallbackTag="div">
+        <NuxtLayout>
+            <NuxtPage />
+        </NuxtLayout>
+
+        <!-- Global Auth Modal -->
+        <AuthCitizenAuthModal />
+
+        <template #fallback>
+            <div class="flex items-center justify-center w-screen h-screen">
+                <div class="flex justify-center card">
+                    <ProgressSpinner
+                        style="width: 50px; height: 50px"
+                        strokeWidth="8"
+                        fill="transparent"
+                        animationDuration=".5s"
+                        aria-label="Custom ProgressSpinner" />
+                </div>
+            </div>
+        </template>
+    </ClientOnly>
 </template>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
