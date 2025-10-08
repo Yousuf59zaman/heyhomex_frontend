@@ -1,6 +1,6 @@
 <template>
     <div>
-        This is Homepage Footers
+        <!-- This is Homepage Footers -->
     </div>
 </template>
 

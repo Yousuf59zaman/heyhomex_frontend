@@ -24,7 +24,7 @@
     <nav
         :class="[
             'sticky top-0 bg-[#121A22] w-full transition-all duration-300 z-50',
-            isScroll ? 'py-2 shadow-md' : 'py-4',
+            isScroll ? 'py-1 shadow-md' : 'py-1',
         ]"
     >
         <div
@@ -44,7 +44,7 @@
                     <NuxtLink to="/#">
                         <ApplicationLogo
                             :width="'100%'"
-                            :height="'100%'"
+                            :height="'1.625rem'"
                             class="filter brightness-0 invert"
                         />
                     </NuxtLink>
@@ -54,14 +54,14 @@
             <!-- Right Section -->
             <div class="ml-auto flex items-center">
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-4">
-                    <NuxtLink to="/#" class="text-white text-base">
+                <div class="hidden md:flex  items-center space-x-4">
+                    <NuxtLink to="/#" class="text-white text-[0.875rem]">
                         Sign In
                     </NuxtLink>
                     <div class="bg-white w-[1px] h-[1.25rem]"></div>
                     <NuxtLink
                         to="/#"
-                        class="py-[0.625rem] px-[1.5rem] text-base bg-white border rounded-lg"
+                        class="py-[0.625rem] px-[1.5rem] text-[0.875rem] bg-white border rounded-lg"
                     >
                         Get Started
                     </NuxtLink>
