@@ -1,3 +1,108 @@
+<script setup lang="ts">
+    // Composables
+    const {
+        isOpen,
+        currentStep,
+        userData,
+        loading,
+        errors,
+        currentStepConfig,
+        currentStepOptions,
+        closeModal,
+        nextStep,
+        prevStep,
+        updateUserData,
+        clearErrors,
+    } = useCitizenModal();
+
+    // Local reactive form data
+    const formData = reactive<Partial<UserFormData>>({
+        fullName: "",
+        email: "",
+        priceRange: "",
+        preferredLocation: "",
+        motivation: "",
+        budget: "",
+        locationType: "",
+    });
+
+    // Watch for step changes and update form data from stored userData
+    watch(currentStep, () => {
+        Object.assign(formData, userData.value);
+    });
+
+    // Watch for form data changes and update stored data
+    watch(
+        formData,
+        (newData) => {
+            updateUserData(newData);
+        },
+        { deep: true }
+    );
+
+    // Progress bar logic
+    const progressSteps = ["motivation", "budget", "location"];
+    const showProgressBar = computed(() =>
+        progressSteps.includes(currentStep.value)
+    );
+    const currentProgressIndex = computed(() =>
+        progressSteps.indexOf(currentStep.value)
+    );
+
+    // Methods
+    const handleNext = async () => {
+        clearErrors();
+        const success = await nextStep(formData);
+
+        if (!success) {
+            // Scroll to top to show errors
+            const modal = document.querySelector("[data-modal-content]");
+            if (modal) {
+                modal.scrollTop = 0;
+            }
+        }
+    };
+
+    const handleComplete = () => {
+        closeModal();
+        // Navigate to matches page or dashboard
+        navigateTo("/matches");
+    };
+
+    // Keyboard event handling
+    onMounted(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === "Escape" && isOpen.value) {
+                closeModal();
+            }
+        };
+
+        document.addEventListener("keydown", handleEscape);
+
+        onUnmounted(() => {
+            document.removeEventListener("keydown", handleEscape);
+        });
+    });
+
+    // Prevent body scroll when modal is open
+    watch(isOpen, (newValue) => {
+        if (import.meta.client) {
+            if (newValue) {
+                document.body.style.overflow = "hidden";
+            } else {
+                document.body.style.overflow = "";
+            }
+        }
+    });
+
+    // Cleanup on unmount
+    onUnmounted(() => {
+        if (import.meta.client) {
+            document.body.style.overflow = "";
+        }
+    });
+</script>
+
 <template>
     <Teleport to="body">
         <Transition
@@ -13,7 +118,7 @@
                 @click.self="closeModal">
                 <!-- Backdrop -->
                 <div
-                    class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+                    class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
 
                 <!-- Modal Content -->
                 <Transition
@@ -25,191 +130,323 @@
                     leave-to-class="opacity-0 scale-95 translate-y-4">
                     <div
                         v-if="isOpen"
-                        class="relative w-full max-w-md mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
+                        class="relative w-full max-w-md mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden"
+                        data-modal-content>
                         <!-- Header -->
-                        <div
-                            class="flex items-center justify-between p-6 border-b border-gray-100">
-                            <h2 class="text-xl font-semibold text-gray-900">
-                                {{ getStepTitle() }}
-                            </h2>
+                        <div class="relative px-6 pt-8 pb-6 text-center">
                             <button
                                 @click="closeModal"
-                                class="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                                class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
                                 aria-label="Close modal">
                                 <Icon
                                     name="lucide:x"
                                     class="w-5 h-5 text-gray-500" />
                             </button>
+
+                            <h1
+                                class="text-xl font-semibold text-gray-900 mb-2 leading-tight">
+                                {{ currentStepConfig.title }}
+                            </h1>
+
+                            <p
+                                v-if="currentStepConfig.subtitle"
+                                class="text-sm text-gray-600 whitespace-pre-line">
+                                {{ currentStepConfig.subtitle }}
+                            </p>
+
+                            <div
+                                v-if="currentStepConfig.stepLabel"
+                                class="mt-4 text-xs text-gray-500 uppercase tracking-wide">
+                                {{ currentStepConfig.stepLabel }}
+                            </div>
                         </div>
 
-                        <!-- Progress Bar -->
-                        <div class="px-6 py-4 bg-gray-50">
+                        <!-- Progress Bar (for steps 2-4) -->
+                        <div
+                            v-if="showProgressBar"
+                            class="px-6 mb-6">
                             <div
                                 class="flex items-center justify-center space-x-2">
                                 <div
-                                    v-for="(step, index) in steps"
+                                    v-for="(step, index) in progressSteps"
                                     :key="step"
                                     :class="[
-                                        'w-3 h-3 rounded-full transition-all duration-300',
-                                        getStepIndex() >= index
-                                            ? 'bg-blue-600'
-                                            : 'bg-gray-300',
+                                        'h-2 rounded-full transition-all duration-300',
+                                        index <= currentProgressIndex
+                                            ? 'bg-gray-900 flex-1'
+                                            : 'bg-gray-200 flex-1',
                                     ]"></div>
                             </div>
                         </div>
 
-                        <!-- Content -->
-                        <div class="p-6">
-                            <!-- Register Step -->
+                        <!-- Error Message -->
+                        <div
+                            v-if="errors.general"
+                            class="px-6 mb-4">
                             <div
-                                v-if="currentStep === 'register'"
+                                class="bg-red-50 border border-red-200 rounded-lg p-3">
+                                <p class="text-sm text-red-600">
+                                    {{ errors.general }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="px-6 pb-6">
+                            <!-- Step 1: Initial Form -->
+                            <form
+                                v-if="currentStep === 'initial'"
+                                @submit.prevent="handleNext"
                                 class="space-y-4">
-                                <div class="text-center mb-6">
-                                    <p class="text-gray-600">
-                                        Join thousands of homeowners and
-                                        investors
+                                <div>
+                                    <input
+                                        v-model="formData.fullName"
+                                        type="text"
+                                        placeholder="Enter your full name"
+                                        :class="[
+                                            'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                                            errors.fullName
+                                                ? 'border-red-300 bg-red-50'
+                                                : 'border-gray-300',
+                                        ]" />
+                                    <p
+                                        v-if="errors.fullName"
+                                        class="text-xs text-red-600 mt-1">
+                                        {{ errors.fullName }}
                                     </p>
                                 </div>
 
-                                <form
-                                    @submit.prevent="handleRegister"
-                                    class="space-y-4">
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label
-                                                class="block text-sm font-medium text-gray-700 mb-1">
-                                                First Name
-                                            </label>
-                                            <input
-                                                v-model="form.firstName"
-                                                type="text"
-                                                required
-                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                                placeholder="John" />
-                                        </div>
-                                        <div>
-                                            <label
-                                                class="block text-sm font-medium text-gray-700 mb-1">
-                                                Last Name
-                                            </label>
-                                            <input
-                                                v-model="form.lastName"
-                                                type="text"
-                                                required
-                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                                placeholder="Doe" />
-                                        </div>
+                                <div>
+                                    <input
+                                        v-model="formData.email"
+                                        type="email"
+                                        placeholder="Enter your email address"
+                                        :class="[
+                                            'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                                            errors.email
+                                                ? 'border-red-300 bg-red-50'
+                                                : 'border-gray-300',
+                                        ]" />
+                                    <p
+                                        v-if="errors.email"
+                                        class="text-xs text-red-600 mt-1">
+                                        {{ errors.email }}
+                                    </p>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <select
+                                            v-model="formData.priceRange"
+                                            :class="[
+                                                'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none bg-white custom-select',
+                                                errors.priceRange
+                                                    ? 'border-red-300 bg-red-50'
+                                                    : 'border-gray-300',
+                                            ]">
+                                            <option
+                                                v-for="option in currentStepOptions.priceRange"
+                                                :key="option.value"
+                                                :value="option.value"
+                                                :disabled="option.disabled">
+                                                {{ option.label }}
+                                            </option>
+                                        </select>
+                                        <p
+                                            v-if="errors.priceRange"
+                                            class="text-xs text-red-600 mt-1">
+                                            {{ errors.priceRange }}
+                                        </p>
                                     </div>
 
                                     <div>
-                                        <label
-                                            class="block text-sm font-medium text-gray-700 mb-1">
-                                            Email Address
-                                        </label>
-                                        <input
-                                            v-model="form.email"
-                                            type="email"
-                                            required
-                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                            placeholder="john@example.com" />
+                                        <select
+                                            v-model="formData.preferredLocation"
+                                            :class="[
+                                                'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none bg-white custom-select',
+                                                errors.preferredLocation
+                                                    ? 'border-red-300 bg-red-50'
+                                                    : 'border-gray-300',
+                                            ]">
+                                            <option
+                                                v-for="option in currentStepOptions.preferredLocation"
+                                                :key="option.value"
+                                                :value="option.value"
+                                                :disabled="option.disabled">
+                                                {{ option.label }}
+                                            </option>
+                                        </select>
+                                        <p
+                                            v-if="errors.preferredLocation"
+                                            class="text-xs text-red-600 mt-1">
+                                            {{ errors.preferredLocation }}
+                                        </p>
                                     </div>
+                                </div>
 
-                                    <div>
-                                        <label
-                                            class="block text-sm font-medium text-gray-700 mb-1">
-                                            Phone Number
-                                        </label>
-                                        <input
-                                            v-model="form.phone"
-                                            type="tel"
-                                            required
-                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                            placeholder="(555) 123-4567" />
+                                <button
+                                    type="submit"
+                                    :disabled="loading"
+                                    class="w-full mt-6 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
+                                    <Icon
+                                        v-if="loading"
+                                        name="lucide:loader-2"
+                                        class="w-5 h-5 mr-2 animate-spin" />
+                                    {{ loading ? "Saving..." : "Save Search" }}
+                                </button>
+                            </form>
+
+                            <!-- Step 2: Motivation -->
+                            <div
+                                v-else-if="currentStep === 'motivation'"
+                                class="space-y-6">
+                                <div class="space-y-3">
+                                    <div
+                                        v-for="option in currentStepOptions.motivation"
+                                        :key="option.value"
+                                        @click="
+                                            formData.motivation = option.value
+                                        "
+                                        :class="[
+                                            'p-4 border-2 rounded-lg cursor-pointer transition-all duration-200',
+                                            formData.motivation === option.value
+                                                ? 'border-gray-900 bg-gray-50'
+                                                : 'border-gray-200 hover:border-gray-300',
+                                        ]">
+                                        <p
+                                            class="text-sm font-medium text-gray-900">
+                                            {{ option.label }}
+                                        </p>
                                     </div>
+                                    <p
+                                        v-if="errors.motivation"
+                                        class="text-xs text-red-600">
+                                        {{ errors.motivation }}
+                                    </p>
+                                </div>
+
+                                <div class="flex gap-3">
+                                    <button
+                                        @click="prevStep"
+                                        class="flex-1 px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200">
+                                        Start Over
+                                    </button>
 
                                     <button
-                                        type="submit"
-                                        :disabled="loading"
-                                        class="w-full mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
+                                        @click="handleNext"
+                                        :disabled="
+                                            loading || !formData.motivation
+                                        "
+                                        class="flex-1 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
                                         <Icon
                                             v-if="loading"
                                             name="lucide:loader-2"
                                             class="w-5 h-5 mr-2 animate-spin" />
-                                        {{
-                                            loading
-                                                ? "Creating Account..."
-                                                : "Create Account"
-                                        }}
+                                        {{ loading ? "Saving..." : "Next" }}
                                     </button>
-                                </form>
-
-                                <div class="text-center pt-4">
-                                    <p class="text-sm text-gray-600">
-                                        Already have an account?
-                                        <button
-                                            @click="switchToSignIn"
-                                            class="text-blue-600 hover:text-blue-700 font-medium">
-                                            Sign In
-                                        </button>
-                                    </p>
                                 </div>
                             </div>
 
-                            <!-- Verify Step -->
+                            <!-- Step 3: Budget -->
                             <div
-                                v-else-if="currentStep === 'verify'"
-                                class="text-center space-y-6">
-                                <div
-                                    class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
-                                    <Icon
-                                        name="lucide:mail"
-                                        class="w-8 h-8 text-blue-600" />
-                                </div>
-
-                                <div>
-                                    <h3
-                                        class="text-lg font-semibold text-gray-900 mb-2">
-                                        Check your email
-                                    </h3>
-                                    <p class="text-gray-600">
-                                        We've sent a verification link to<br />
-                                        <span class="font-medium">{{
-                                            userData.email
-                                        }}</span>
+                                v-else-if="currentStep === 'budget'"
+                                class="space-y-6">
+                                <div class="space-y-3">
+                                    <div
+                                        v-for="option in currentStepOptions.budget"
+                                        :key="option.value"
+                                        @click="formData.budget = option.value"
+                                        :class="[
+                                            'p-4 border-2 rounded-lg cursor-pointer transition-all duration-200',
+                                            formData.budget === option.value
+                                                ? 'border-gray-900 bg-gray-50'
+                                                : 'border-gray-200 hover:border-gray-300',
+                                        ]">
+                                        <p
+                                            class="text-sm font-medium text-gray-900">
+                                            {{ option.label }}
+                                        </p>
+                                    </div>
+                                    <p
+                                        v-if="errors.budget"
+                                        class="text-xs text-red-600">
+                                        {{ errors.budget }}
                                     </p>
                                 </div>
 
-                                <div class="space-y-3">
+                                <div class="flex gap-3">
                                     <button
-                                        @click="handleResendEmail"
-                                        :disabled="resendLoading"
-                                        class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
+                                        @click="prevStep"
+                                        class="flex-1 px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200">
+                                        Back
+                                    </button>
+
+                                    <button
+                                        @click="handleNext"
+                                        :disabled="loading || !formData.budget"
+                                        class="flex-1 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
                                         <Icon
-                                            v-if="resendLoading"
+                                            v-if="loading"
                                             name="lucide:loader-2"
                                             class="w-5 h-5 mr-2 animate-spin" />
-                                        {{
-                                            resendLoading
-                                                ? "Sending..."
-                                                : "Resend Email"
-                                        }}
+                                        {{ loading ? "Saving..." : "Next" }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Step 4: Location -->
+                            <div
+                                v-else-if="currentStep === 'location'"
+                                class="space-y-6">
+                                <div class="space-y-3">
+                                    <div
+                                        v-for="option in currentStepOptions.locationType"
+                                        :key="option.value"
+                                        @click="
+                                            formData.locationType = option.value
+                                        "
+                                        :class="[
+                                            'p-4 border-2 rounded-lg cursor-pointer transition-all duration-200',
+                                            formData.locationType ===
+                                            option.value
+                                                ? 'border-gray-900 bg-gray-50'
+                                                : 'border-gray-200 hover:border-gray-300',
+                                        ]">
+                                        <p
+                                            class="text-sm font-medium text-gray-900">
+                                            {{ option.label }}
+                                        </p>
+                                    </div>
+                                    <p
+                                        v-if="errors.locationType"
+                                        class="text-xs text-red-600">
+                                        {{ errors.locationType }}
+                                    </p>
+                                </div>
+
+                                <div class="flex gap-3">
+                                    <button
+                                        @click="prevStep"
+                                        class="flex-1 px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200">
+                                        Back
                                     </button>
 
                                     <button
-                                        @click="nextStep"
-                                        class="w-full px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200">
-                                        I've verified my email
+                                        @click="handleNext"
+                                        :disabled="
+                                            loading || !formData.locationType
+                                        "
+                                        class="flex-1 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
+                                        <Icon
+                                            v-if="loading"
+                                            name="lucide:loader-2"
+                                            class="w-5 h-5 mr-2 animate-spin" />
+                                        {{ loading ? "Saving..." : "Next" }}
                                     </button>
                                 </div>
-
-                                <button
-                                    @click="setStep('register')"
-                                    class="text-sm text-gray-500 hover:text-gray-700 underline">
-                                    Use a different email
-                                </button>
                             </div>
 
-                            <!-- Success Step -->
+                            <!-- Step 5: Success -->
                             <div
                                 v-else-if="currentStep === 'success'"
                                 class="text-center space-y-6">
@@ -223,21 +460,19 @@
                                 <div>
                                     <h3
                                         class="text-lg font-semibold text-gray-900 mb-2">
-                                        Welcome to HeyHome!
+                                        Perfect! Your search is saved.
                                     </h3>
-                                    <p class="text-gray-600">
-                                        Your account has been successfully
-                                        created.<br />
-                                        You're now ready to start your home
-                                        journey.
+                                    <p class="text-gray-600 text-sm">
+                                        We'll use your preferences to find the
+                                        perfect homes for you.
                                     </p>
                                 </div>
 
                                 <div class="space-y-3">
                                     <button
-                                        @click="handleGetStarted"
+                                        @click="handleComplete"
                                         class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
-                                        Get Started
+                                        View My Matches
                                     </button>
 
                                     <button
@@ -255,122 +490,12 @@
     </Teleport>
 </template>
 
-<script setup lang="ts">
-    interface RegisterForm {
-        firstName: string;
-        lastName: string;
-        email: string;
-        phone: string;
-    }
-
-    // Composables
-    const {
-        isOpen,
-        currentStep,
-        userData,
-        closeModal,
-        nextStep,
-        setStep,
-        updateUserData,
-    } = useCitizenAuth();
-
-    // Local state
-    const loading = ref(false);
-    const resendLoading = ref(false);
-
-    const form = ref<RegisterForm>({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-    });
-
-    // Constants
-    const steps = ["register", "verify", "success"] as const;
-
-    // Methods
-    const getStepTitle = () => {
-        switch (currentStep.value) {
-            case "register":
-                return "Create Account";
-            case "verify":
-                return "Verify Email";
-            case "success":
-                return "Welcome!";
-            default:
-                return "Get Started";
-        }
-    };
-
-    const getStepIndex = () => {
-        return steps.indexOf(currentStep.value);
-    };
-
-    const handleRegister = async () => {
-        loading.value = true;
-
-        try {
-            // Update user data
-            updateUserData(form.value);
-
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-
-            // Move to verification step
-            nextStep();
-        } catch (error) {
-            console.error("Registration error:", error);
-            // Handle error (show toast, etc.)
-        } finally {
-            loading.value = false;
-        }
-    };
-
-    const handleResendEmail = async () => {
-        resendLoading.value = true;
-
-        try {
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-
-            // Show success message (could use toast)
-            console.log("Email resent successfully");
-        } catch (error) {
-            console.error("Resend email error:", error);
-        } finally {
-            resendLoading.value = false;
-        }
-    };
-
-    const handleGetStarted = () => {
-        closeModal();
-        // Navigate to dashboard or next step
-        navigateTo("/dashboard"); // Assuming you have a dashboard route
-    };
-
-    const switchToSignIn = () => {
-        closeModal();
-        // You could open a sign-in modal or navigate to sign-in page
-        // For now, just log the action
-        console.log("Switch to sign in");
-    };
-
-    // Keyboard event handling
-    onMounted(() => {
-        const handleEscape = (e: KeyboardEvent) => {
-            if (e.key === "Escape" && isOpen.value) {
-                closeModal();
-            }
-        };
-
-        document.addEventListener("keydown", handleEscape);
-
-        onUnmounted(() => {
-            document.removeEventListener("keydown", handleEscape);
-        });
-    });
-</script>
-
 <style scoped>
-    /* Additional custom styles if needed */
+    /* Custom select arrow */
+    .custom-select {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px;
+    }
 </style>

@@ -3,7 +3,7 @@
     const isMobileMenuOpen = ref(false);
 
     // Auth Modal composable
-    const { openModal } = useCitizenAuth();
+    const { openModal } = useCitizenModal();
 
     const handleScroll = () => {
         isScroll.value = window.scrollY > 0;
@@ -14,7 +14,7 @@
     };
 
     const handleGetStarted = () => {
-        openModal("register");
+        openModal("initial");
         // Close mobile menu if open
         isMobileMenuOpen.value = false;
     };

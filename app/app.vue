@@ -18,7 +18,7 @@
             <NuxtPage />
         </NuxtLayout>
 
-        <!-- Global Auth Modal -->
+                <!-- Global Auth Modal -->
         <AuthCitizenAuthModal />
 
         <template #fallback>

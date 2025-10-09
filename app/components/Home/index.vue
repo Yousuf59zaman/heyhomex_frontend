@@ -4,10 +4,10 @@
     };
 
     // Auth Modal composable
-    const { openModal } = useCitizenAuth();
+    const { openModal } = useCitizenModal();
 
     const handleLetsBegin = () => {
-        openModal("register");
+        openModal("initial");
     };
 </script>
 
