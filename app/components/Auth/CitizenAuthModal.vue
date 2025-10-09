@@ -26,7 +26,7 @@
         locationType: "",
     });
 
-    // Watch for step changes and update form data from stored userData
+   
     watch(currentStep, () => {
         Object.assign(formData, userData.value);
     });
@@ -65,7 +65,6 @@
 
     const handleComplete = () => {
         closeModal();
-        // Navigate to matches page or dashboard
         navigateTo("/matches");
     };
 
@@ -104,398 +103,398 @@
 </script>
 
 <template>
-    <Teleport to="body">
-        <Transition
-            enter-active-class="transition-opacity duration-300 ease-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition-opacity duration-200 ease-in"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0">
-            <div
-                v-if="isOpen"
-                class="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-                @click.self="closeModal">
-                <!-- Backdrop -->
+    <Dialog
+        v-model:visible="isOpen"
+        modal
+        :closable="true"
+        :draggable="false"
+        :resizable="false"
+        class="citizen-auth-modal"
+        :style="{ width: '45rem' }"
+        @update:visible="closeModal"
+        :pt="{
+            root: 'border-0 rounded-2xl shadow-2xl',
+            header: 'border-0 pb-0',
+            content: 'border-0 pt-0 pb-6',
+            closeButton:
+                'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-sm transition-colors duration-200',
+        }">
+        <template #header>
+            <div class="w-full text-center px-6 pt-8 pb-6">
+                <h1
+                    class="text-3xl max-w-sm mx-auto font-semibold text-[#121A22] mb-2 leading-tight">
+                    {{ currentStepConfig.title }}
+                </h1>
+
+                <p
+                    v-if="currentStepConfig.subtitle"
+                    class="text-sm text-[#121A22] whitespace-pre-line">
+                    {{ currentStepConfig.subtitle }}
+                </p>
+
                 <div
-                    class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+                    v-if="currentStepConfig.stepLabel"
+                    class="mt-4 text-xs text-[#121A22] uppercase tracking-wide">
+                    {{ currentStepConfig.stepLabel }}
+                </div>
+            </div>
+        </template>
 
-                <!-- Modal Content -->
-                <Transition
-                    enter-active-class="transition-all duration-300 ease-out"
-                    enter-from-class="opacity-0 scale-95 translate-y-4"
-                    enter-to-class="opacity-100 scale-100 translate-y-0"
-                    leave-active-class="transition-all duration-200 ease-in"
-                    leave-from-class="opacity-100 scale-100 translate-y-0"
-                    leave-to-class="opacity-0 scale-95 translate-y-4">
-                    <div
-                        v-if="isOpen"
-                        class="relative w-full max-w-md mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden"
-                        data-modal-content>
-                        <!-- Header -->
-                        <div class="relative px-6 pt-8 pb-6 text-center">
-                            <button
-                                @click="closeModal"
-                                class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
-                                aria-label="Close modal">
-                                <Icon
-                                    name="lucide:x"
-                                    class="w-5 h-5 text-gray-500" />
-                            </button>
+        <!-- Progress Bar (for steps 2-4) -->
+        <div v-if="showProgressBar" class="px-6 mb-6">
+            <ProgressBar
+                :value="
+                    ((currentProgressIndex + 1) / progressSteps.length) * 100
+                "
+                :showValue="false"
+                class="h-2"
+                :pt="{
+                    root: 'bg-gray-200 rounded-full',
+                    value: 'bg-gray-900 rounded-full transition-all duration-300',
+                }" />
+        </div>
 
-                            <h1
-                                class="text-xl font-semibold text-gray-900 mb-2 leading-tight">
-                                {{ currentStepConfig.title }}
-                            </h1>
+        <!-- Error Message -->
+        <Message
+            v-if="errors.general"
+            severity="error"
+            :closable="false"
+            class="mx-6 mb-4"
+            :pt="{
+                root: 'bg-red-50 border border-red-200 rounded-lg',
+                text: 'text-sm text-red-600',
+            }">
+            {{ errors.general }}
+        </Message>
 
-                            <p
-                                v-if="currentStepConfig.subtitle"
-                                class="text-sm text-gray-600 whitespace-pre-line">
-                                {{ currentStepConfig.subtitle }}
-                            </p>
+        <!-- Content -->
+        <div class="px-6 pb-6">
+            <!-- Step 1: Initial Form -->
+            <div v-if="currentStep === 'initial'" class="space-y-4">
+                <form @submit.prevent="handleNext" class="space-y-4">
+                    <div class="flex flex-col gap-2">
+                        <label for="">Full Name</label>
+                        <InputText
+                            v-model="formData.fullName"
+                            placeholder="Enter your full name"
+                            :invalid="!!errors.fullName"
+                            :pt="{
+                                root: [
+                                    'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                                    errors.fullName
+                                        ? 'border-red-300 bg-red-50'
+                                        : 'border-gray-300',
+                                ],
+                            }" />
+                        <small v-if="errors.fullName" class="text-red-600">
+                            {{ errors.fullName }}
+                        </small>
+                    </div>
 
-                            <div
-                                v-if="currentStepConfig.stepLabel"
-                                class="mt-4 text-xs text-gray-500 uppercase tracking-wide">
-                                {{ currentStepConfig.stepLabel }}
-                            </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="">Email Address</label>
+                        <InputText
+                            v-model="formData.email"
+                            type="email"
+                            placeholder="Enter your email address"
+                            :invalid="!!errors.email"
+                            :pt="{
+                                root: [
+                                    'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                                    errors.email
+                                        ? 'border-red-300 bg-red-50'
+                                        : 'border-gray-300',
+                                ],
+                            }" />
+                        <small v-if="errors.email" class="text-red-600">
+                            {{ errors.email }}
+                        </small>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex flex-col gap-2">
+                            <label for="">Price Range</label>
+                            <Dropdown
+                                v-model="formData.priceRange"
+                                :options="currentStepOptions.priceRange"
+                                optionLabel="label"
+                                optionValue="value"
+                                optionDisabled="disabled"
+                                placeholder="Price Range"
+                                :invalid="!!errors.priceRange"
+                                :pt="{
+                                    root: [
+                                        'w-full border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                                        errors.priceRange
+                                            ? 'border-red-300 bg-red-50'
+                                            : 'border-gray-300',
+                                    ],
+                                    input: 'px-4 py-3',
+                                }" />
+                            <small
+                                v-if="errors.priceRange"
+                                class="text-red-600">
+                                {{ errors.priceRange }}
+                            </small>
                         </div>
 
-                        <!-- Progress Bar (for steps 2-4) -->
-                        <div
-                            v-if="showProgressBar"
-                            class="px-6 mb-6">
-                            <div
-                                class="flex items-center justify-center space-x-2">
-                                <div
-                                    v-for="(step, index) in progressSteps"
-                                    :key="step"
-                                    :class="[
-                                        'h-2 rounded-full transition-all duration-300',
-                                        index <= currentProgressIndex
-                                            ? 'bg-gray-900 flex-1'
-                                            : 'bg-gray-200 flex-1',
-                                    ]"></div>
-                            </div>
-                        </div>
-
-                        <!-- Error Message -->
-                        <div
-                            v-if="errors.general"
-                            class="px-6 mb-4">
-                            <div
-                                class="bg-red-50 border border-red-200 rounded-lg p-3">
-                                <p class="text-sm text-red-600">
-                                    {{ errors.general }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Content -->
-                        <div class="px-6 pb-6">
-                            <!-- Step 1: Initial Form -->
-                            <form
-                                v-if="currentStep === 'initial'"
-                                @submit.prevent="handleNext"
-                                class="space-y-4">
-                                <div>
-                                    <input
-                                        v-model="formData.fullName"
-                                        type="text"
-                                        placeholder="Enter your full name"
-                                        :class="[
-                                            'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
-                                            errors.fullName
-                                                ? 'border-red-300 bg-red-50'
-                                                : 'border-gray-300',
-                                        ]" />
-                                    <p
-                                        v-if="errors.fullName"
-                                        class="text-xs text-red-600 mt-1">
-                                        {{ errors.fullName }}
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <input
-                                        v-model="formData.email"
-                                        type="email"
-                                        placeholder="Enter your email address"
-                                        :class="[
-                                            'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
-                                            errors.email
-                                                ? 'border-red-300 bg-red-50'
-                                                : 'border-gray-300',
-                                        ]" />
-                                    <p
-                                        v-if="errors.email"
-                                        class="text-xs text-red-600 mt-1">
-                                        {{ errors.email }}
-                                    </p>
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <select
-                                            v-model="formData.priceRange"
-                                            :class="[
-                                                'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none bg-white custom-select',
-                                                errors.priceRange
-                                                    ? 'border-red-300 bg-red-50'
-                                                    : 'border-gray-300',
-                                            ]">
-                                            <option
-                                                v-for="option in currentStepOptions.priceRange"
-                                                :key="option.value"
-                                                :value="option.value"
-                                                :disabled="option.disabled">
-                                                {{ option.label }}
-                                            </option>
-                                        </select>
-                                        <p
-                                            v-if="errors.priceRange"
-                                            class="text-xs text-red-600 mt-1">
-                                            {{ errors.priceRange }}
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <select
-                                            v-model="formData.preferredLocation"
-                                            :class="[
-                                                'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none bg-white custom-select',
-                                                errors.preferredLocation
-                                                    ? 'border-red-300 bg-red-50'
-                                                    : 'border-gray-300',
-                                            ]">
-                                            <option
-                                                v-for="option in currentStepOptions.preferredLocation"
-                                                :key="option.value"
-                                                :value="option.value"
-                                                :disabled="option.disabled">
-                                                {{ option.label }}
-                                            </option>
-                                        </select>
-                                        <p
-                                            v-if="errors.preferredLocation"
-                                            class="text-xs text-red-600 mt-1">
-                                            {{ errors.preferredLocation }}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    :disabled="loading"
-                                    class="w-full mt-6 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
-                                    <Icon
-                                        v-if="loading"
-                                        name="lucide:loader-2"
-                                        class="w-5 h-5 mr-2 animate-spin" />
-                                    {{ loading ? "Saving..." : "Save Search" }}
-                                </button>
-                            </form>
-
-                            <!-- Step 2: Motivation -->
-                            <div
-                                v-else-if="currentStep === 'motivation'"
-                                class="space-y-6">
-                                <div class="space-y-3">
-                                    <div
-                                        v-for="option in currentStepOptions.motivation"
-                                        :key="option.value"
-                                        @click="
-                                            formData.motivation = option.value
-                                        "
-                                        :class="[
-                                            'p-4 border-2 rounded-lg cursor-pointer transition-all duration-200',
-                                            formData.motivation === option.value
-                                                ? 'border-gray-900 bg-gray-50'
-                                                : 'border-gray-200 hover:border-gray-300',
-                                        ]">
-                                        <p
-                                            class="text-sm font-medium text-gray-900">
-                                            {{ option.label }}
-                                        </p>
-                                    </div>
-                                    <p
-                                        v-if="errors.motivation"
-                                        class="text-xs text-red-600">
-                                        {{ errors.motivation }}
-                                    </p>
-                                </div>
-
-                                <div class="flex gap-3">
-                                    <button
-                                        @click="prevStep"
-                                        class="flex-1 px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200">
-                                        Start Over
-                                    </button>
-
-                                    <button
-                                        @click="handleNext"
-                                        :disabled="
-                                            loading || !formData.motivation
-                                        "
-                                        class="flex-1 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
-                                        <Icon
-                                            v-if="loading"
-                                            name="lucide:loader-2"
-                                            class="w-5 h-5 mr-2 animate-spin" />
-                                        {{ loading ? "Saving..." : "Next" }}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Step 3: Budget -->
-                            <div
-                                v-else-if="currentStep === 'budget'"
-                                class="space-y-6">
-                                <div class="space-y-3">
-                                    <div
-                                        v-for="option in currentStepOptions.budget"
-                                        :key="option.value"
-                                        @click="formData.budget = option.value"
-                                        :class="[
-                                            'p-4 border-2 rounded-lg cursor-pointer transition-all duration-200',
-                                            formData.budget === option.value
-                                                ? 'border-gray-900 bg-gray-50'
-                                                : 'border-gray-200 hover:border-gray-300',
-                                        ]">
-                                        <p
-                                            class="text-sm font-medium text-gray-900">
-                                            {{ option.label }}
-                                        </p>
-                                    </div>
-                                    <p
-                                        v-if="errors.budget"
-                                        class="text-xs text-red-600">
-                                        {{ errors.budget }}
-                                    </p>
-                                </div>
-
-                                <div class="flex gap-3">
-                                    <button
-                                        @click="prevStep"
-                                        class="flex-1 px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200">
-                                        Back
-                                    </button>
-
-                                    <button
-                                        @click="handleNext"
-                                        :disabled="loading || !formData.budget"
-                                        class="flex-1 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
-                                        <Icon
-                                            v-if="loading"
-                                            name="lucide:loader-2"
-                                            class="w-5 h-5 mr-2 animate-spin" />
-                                        {{ loading ? "Saving..." : "Next" }}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Step 4: Location -->
-                            <div
-                                v-else-if="currentStep === 'location'"
-                                class="space-y-6">
-                                <div class="space-y-3">
-                                    <div
-                                        v-for="option in currentStepOptions.locationType"
-                                        :key="option.value"
-                                        @click="
-                                            formData.locationType = option.value
-                                        "
-                                        :class="[
-                                            'p-4 border-2 rounded-lg cursor-pointer transition-all duration-200',
-                                            formData.locationType ===
-                                            option.value
-                                                ? 'border-gray-900 bg-gray-50'
-                                                : 'border-gray-200 hover:border-gray-300',
-                                        ]">
-                                        <p
-                                            class="text-sm font-medium text-gray-900">
-                                            {{ option.label }}
-                                        </p>
-                                    </div>
-                                    <p
-                                        v-if="errors.locationType"
-                                        class="text-xs text-red-600">
-                                        {{ errors.locationType }}
-                                    </p>
-                                </div>
-
-                                <div class="flex gap-3">
-                                    <button
-                                        @click="prevStep"
-                                        class="flex-1 px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200">
-                                        Back
-                                    </button>
-
-                                    <button
-                                        @click="handleNext"
-                                        :disabled="
-                                            loading || !formData.locationType
-                                        "
-                                        class="flex-1 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
-                                        <Icon
-                                            v-if="loading"
-                                            name="lucide:loader-2"
-                                            class="w-5 h-5 mr-2 animate-spin" />
-                                        {{ loading ? "Saving..." : "Next" }}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Step 5: Success -->
-                            <div
-                                v-else-if="currentStep === 'success'"
-                                class="text-center space-y-6">
-                                <div
-                                    class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                                    <Icon
-                                        name="lucide:check"
-                                        class="w-8 h-8 text-green-600" />
-                                </div>
-
-                                <div>
-                                    <h3
-                                        class="text-lg font-semibold text-gray-900 mb-2">
-                                        Perfect! Your search is saved.
-                                    </h3>
-                                    <p class="text-gray-600 text-sm">
-                                        We'll use your preferences to find the
-                                        perfect homes for you.
-                                    </p>
-                                </div>
-
-                                <div class="space-y-3">
-                                    <button
-                                        @click="handleComplete"
-                                        class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
-                                        View My Matches
-                                    </button>
-
-                                    <button
-                                        @click="closeModal"
-                                        class="w-full px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200">
-                                        Continue Browsing
-                                    </button>
-                                </div>
-                            </div>
+                        <div class="flex flex-col gap-2">
+                            <label for="">Preferred Location</label>
+                            <Dropdown
+                                v-model="formData.preferredLocation"
+                                :options="currentStepOptions.preferredLocation"
+                                optionLabel="label"
+                                optionValue="value"
+                                optionDisabled="disabled"
+                                placeholder="Location"
+                                :invalid="!!errors.preferredLocation"
+                                :pt="{
+                                    root: [
+                                        'w-full border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                                        errors.preferredLocation
+                                            ? 'border-red-300 bg-red-50'
+                                            : 'border-gray-300',
+                                    ],
+                                    input: 'px-4 py-3',
+                                }" />
+                            <small
+                                v-if="errors.preferredLocation"
+                                class="text-red-600">
+                                {{ errors.preferredLocation }}
+                            </small>
                         </div>
                     </div>
-                </Transition>
+
+                    <Button
+                        type="submit"
+                        :disabled="loading"
+                        :loading="loading"
+                        loadingIcon="pi pi-spin pi-spinner"
+                        class="w-full mt-6"
+                        :pt="{
+                            root: 'w-full mb-3 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
+                        }">
+                        {{ loading ? "Saving..." : "Save Search" }}
+                    </Button>
+                </form>
             </div>
-        </Transition>
-    </Teleport>
+            <div v-else-if="currentStep === 'motivation'" class="space-y-6">
+                <!-- Step 2: Motivation -->
+                <div class="space-y-3">
+                    <div
+                        v-for="option in currentStepOptions.motivation"
+                        :key="option.value"
+                        @click="formData.motivation = option.value"
+                        :class="[
+                            'p-4 border-2 rounded-lg cursor-pointer transition-all duration-200',
+                            formData.motivation === option.value
+                                ? 'border-gray-900 bg-gray-50'
+                                : 'border-gray-200 hover:border-gray-300',
+                        ]">
+                        <p class="text-sm font-medium text-gray-900">
+                            {{ option.label }}
+                        </p>
+                    </div>
+                    <small v-if="errors.motivation" class="text-red-600">
+                        {{ errors.motivation }}
+                    </small>
+                </div>
+
+                <div class="flex gap-3">
+                    <Button
+                        @click="prevStep"
+                        outlined
+                        class="flex-1"
+                        :pt="{
+                            root: 'flex-1 px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
+                        }">
+                        Start Over
+                    </Button>
+
+                    <Button
+                        @click="handleNext"
+                        :disabled="loading || !formData.motivation"
+                        :loading="loading"
+                        loadingIcon="pi pi-spin pi-spinner"
+                        class="flex-1"
+                        :pt="{
+                            root: 'flex-1 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
+                        }">
+                        {{ loading ? "Saving..." : "Next" }}
+                    </Button>
+                </div>
+            </div>
+            <div v-else-if="currentStep === 'budget'" class="space-y-6">
+                <!-- Step 3: Budget -->
+                <div class="space-y-3">
+                    <div
+                        v-for="option in currentStepOptions.budget"
+                        :key="option.value"
+                        @click="formData.budget = option.value"
+                        :class="[
+                            'p-4 border-2 rounded-lg cursor-pointer transition-all duration-200',
+                            formData.budget === option.value
+                                ? 'border-gray-900 bg-gray-50'
+                                : 'border-gray-200 hover:border-gray-300',
+                        ]">
+                        <p class="text-sm font-medium text-gray-900">
+                            {{ option.label }}
+                        </p>
+                    </div>
+                    <small v-if="errors.budget" class="text-red-600">
+                        {{ errors.budget }}
+                    </small>
+                </div>
+
+                <div class="flex gap-3">
+                    <Button
+                        @click="prevStep"
+                        outlined
+                        class="flex-1"
+                        :pt="{
+                            root: 'flex-1 px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
+                        }">
+                        Back
+                    </Button>
+
+                    <Button
+                        @click="handleNext"
+                        :disabled="loading || !formData.budget"
+                        :loading="loading"
+                        loadingIcon="pi pi-spin pi-spinner"
+                        class="flex-1"
+                        :pt="{
+                            root: 'flex-1 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
+                        }">
+                        {{ loading ? "Saving..." : "Next" }}
+                    </Button>
+                </div>
+            </div>
+            <div v-else-if="currentStep === 'location'" class="space-y-6">
+                <!-- Step 4: Location -->
+                <div class="space-y-3">
+                    <div
+                        v-for="option in currentStepOptions.locationType"
+                        :key="option.value"
+                        @click="formData.locationType = option.value"
+                        :class="[
+                            'p-4 border-2 rounded-lg cursor-pointer transition-all duration-200',
+                            formData.locationType === option.value
+                                ? 'border-gray-900 bg-gray-50'
+                                : 'border-gray-200 hover:border-gray-300',
+                        ]">
+                        <p class="text-sm font-medium text-gray-900">
+                            {{ option.label }}
+                        </p>
+                    </div>
+                    <small v-if="errors.locationType" class="text-red-600">
+                        {{ errors.locationType }}
+                    </small>
+                </div>
+
+                <div class="flex gap-3">
+                    <Button
+                        @click="prevStep"
+                        outlined
+                        class="flex-1"
+                        :pt="{
+                            root: 'flex-1 px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
+                        }">
+                        Back
+                    </Button>
+
+                    <Button
+                        @click="handleNext"
+                        :disabled="loading || !formData.locationType"
+                        :loading="loading"
+                        loadingIcon="pi pi-spin pi-spinner"
+                        class="flex-1"
+                        :pt="{
+                            root: 'flex-1 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
+                        }">
+                        {{ loading ? "Saving..." : "Next" }}
+                    </Button>
+                </div>
+            </div>
+            <div
+                v-else-if="currentStep === 'success'"
+                class="text-center space-y-6">
+                <!-- Step 5: Success -->
+                <div
+                    class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                    <Icon name="lucide:check" class="w-8 h-8 text-green-600" />
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                        Perfect! Your search is saved.
+                    </h3>
+                    <p class="text-gray-600 text-sm">
+                        We'll use your preferences to find the perfect homes for
+                        you.
+                    </p>
+                </div>
+
+                <div class="space-y-3">
+                    <Button
+                        @click="handleComplete"
+                        class="w-full"
+                        :pt="{
+                            root: 'w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200',
+                        }">
+                        View My Matches
+                    </Button>
+
+                    <Button
+                        @click="closeModal"
+                        outlined
+                        class="w-full"
+                        :pt="{
+                            root: 'w-full px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
+                        }">
+                        Continue Browsing
+                    </Button>
+                </div>
+            </div>
+        </div>
+    </Dialog>
 </template>
 
 <style scoped>
-    /* Custom select arrow */
-    .custom-select {
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 12px center;
-        background-size: 16px;
+    .citizen-auth-modal .p-dialog {
+        border-radius: 1rem;
     }
+
+    .citizen-auth-modal .p-dialog-header {
+        border: none;
+        padding-bottom: 0;
+    }
+
+    .citizen-auth-modal .p-dialog-content {
+        border: none;
+        padding-top: 0;
+        padding-bottom: 1.5rem;
+    }
+
+    .citizen-auth-modal .p-dialog-header-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        transition: background-color 0.2s;
+    }
+
+    .citizen-auth-modal .p-dialog-header-close:hover {
+        background-color: rgb(243, 244, 246);
+    }
+
+    :deep(.p-dialog-close-button){
+        display: hidden !important;
+    }
+
+    :deep(.p-button-icon){
+        display:hidden !important;
+    }
+
 </style>
