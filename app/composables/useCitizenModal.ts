@@ -1,9 +1,9 @@
 export type AuthStep =
-    | "initial"
-    | "motivation"
-    | "budget"
-    | "location"
-    | "success";
+    | 'initial'
+    | 'motivation'
+    | 'budget'
+    | 'location'
+    | 'success';
 
 export interface UserFormData {
     // Step 1: Initial Info
@@ -35,10 +35,10 @@ interface AuthModalState {
 export const STEP_CONFIG = {
     initial: {
         title: "You bring the dream. We'll map the way. ✨",
-        subtitle: "",
-        stepLabel: "",
-        fields: ["fullName", "email", "priceRange", "preferredLocation"],
-        apiEndpoint: "/api/user/initial-info",
+        subtitle: '',
+        stepLabel: '',
+        fields: ['fullName', 'email', 'priceRange', 'preferredLocation'],
+        apiEndpoint: '/api/user/initial-info',
         validation: {
             fullName: { required: true, minLength: 2 },
             email: { required: true, email: true },
@@ -49,9 +49,9 @@ export const STEP_CONFIG = {
     motivation: {
         title: "You bring the dream. We'll map the way. ✨",
         subtitle: "What's the heart behind your home search?",
-        stepLabel: "Step: 1/3",
-        fields: ["motivation"],
-        apiEndpoint: "/api/user/motivation",
+        stepLabel: 'Step: 1/3',
+        fields: ['motivation'],
+        apiEndpoint: '/api/user/motivation',
         validation: {
             motivation: { required: true },
         },
@@ -60,9 +60,9 @@ export const STEP_CONFIG = {
         title: "You bring the dream. We'll map the way. ✨",
         subtitle:
             "What's your sweet spot, budget-wise?\nNo judgment — just vibes and homes that fit",
-        stepLabel: "Step: 2/3",
-        fields: ["budget"],
-        apiEndpoint: "/api/user/budget",
+        stepLabel: 'Step: 2/3',
+        fields: ['budget'],
+        apiEndpoint: '/api/user/budget',
         validation: {
             budget: { required: true },
         },
@@ -70,18 +70,18 @@ export const STEP_CONFIG = {
     location: {
         title: "You bring the dream. We'll map the way. ✨",
         subtitle: "Where's your dream home hiding? We'll find it together.",
-        stepLabel: "Step: 3/3",
-        fields: ["locationType"],
-        apiEndpoint: "/api/user/location",
+        stepLabel: 'Step: 3/3',
+        fields: ['locationType'],
+        apiEndpoint: '/api/user/location',
         validation: {
             locationType: { required: true },
         },
     },
     success: {
-        title: "Welcome to your home journey!",
+        title: 'Welcome to your home journey!',
         subtitle:
             "We've saved your preferences and we're ready to help you find your perfect home.",
-        stepLabel: "",
+        stepLabel: '',
         fields: [],
         apiEndpoint: null,
         validation: {},
@@ -91,46 +91,46 @@ export const STEP_CONFIG = {
 // Choice options for each step
 export const STEP_OPTIONS = {
     priceRange: [
-        { label: "Select price range", value: "", disabled: true },
-        { label: "$0 - $300K", value: "0-300k" },
-        { label: "$300K - $600K", value: "300k-600k" },
-        { label: "$600K - $1M", value: "600k-1m" },
-        { label: "$1M+", value: "1m+" },
+        { label: 'Select price range', value: '', disabled: true },
+        { label: '$0 - $300K', value: '0-300k' },
+        { label: '$300K - $600K', value: '300k-600k' },
+        { label: '$600K - $1M', value: '600k-1m' },
+        { label: '$1M+', value: '1m+' },
     ],
     preferredLocation: [
-        { label: "Select Preferred location", value: "", disabled: true },
-        { label: "Urban", value: "urban" },
-        { label: "Suburban", value: "suburban" },
-        { label: "Rural", value: "rural" },
-        { label: "Coastal", value: "coastal" },
+        { label: 'Select Preferred location', value: '', disabled: true },
+        { label: 'Urban', value: 'urban' },
+        { label: 'Suburban', value: 'suburban' },
+        { label: 'Rural', value: 'rural' },
+        { label: 'Coastal', value: 'coastal' },
     ],
     motivation: [
-        { label: "I'm planting roots — this is home", value: "planting_roots" },
+        { label: "I'm planting roots — this is home", value: 'planting_roots' },
         {
-            label: "Here on orders — base life meets island life",
-            value: "military_orders",
+            label: 'Here on orders — base life meets island life',
+            value: 'military_orders',
         },
         {
             label: "I'm scouting the next big opportunity",
-            value: "investment_opportunity",
+            value: 'investment_opportunity',
         },
     ],
     budget: [
-        { label: "$400k - $600k", value: "400k-600k" },
-        { label: "$600k - 1.2m", value: "600k-1.2m" },
-        { label: "1.2+", value: "1.2m+" },
+        { label: '$400k - $600k', value: '400k-600k' },
+        { label: '$600k - 1.2m', value: '600k-1.2m' },
+        { label: '1.2+', value: '1.2m+' },
     ],
     locationType: [
-        { label: "City", value: "city" },
-        { label: "Suburbs", value: "suburbs" },
-        { label: "All of it", value: "all" },
+        { label: 'City', value: 'city' },
+        { label: 'Suburbs', value: 'suburbs' },
+        { label: 'All of it', value: 'all' },
     ],
 };
 
 // Global reactive state
 const modalState = reactive<AuthModalState>({
     isOpen: false,
-    step: "initial",
+    step: 'initial',
     userData: {},
     completedSteps: [],
     loading: false,
@@ -157,7 +157,7 @@ const apiService = {
                     } else {
                         resolve({
                             success: false,
-                            error: "Failed to save data. Please try again.",
+                            error: 'Failed to save data. Please try again.',
                         });
                     }
                 }, 1500);
@@ -169,12 +169,12 @@ const apiService = {
 // Validation service
 const validationService = {
     validateField(field: string, value: any, rules: any): string | null {
-        if (rules.required && (!value || value.toString().trim() === "")) {
+        if (rules.required && (!value || value.toString().trim() === '')) {
             return `${field} is required`;
         }
 
         if (rules.email && value && !this.isValidEmail(value)) {
-            return "Please enter a valid email address";
+            return 'Please enter a valid email address';
         }
 
         if (rules.minLength && value && value.length < rules.minLength) {
@@ -216,7 +216,7 @@ const validationService = {
 
 export const useCitizenModal = () => {
     // Actions
-    const openModal = (initialStep: AuthStep = "initial") => {
+    const openModal = (initialStep: AuthStep = 'initial') => {
         modalState.isOpen = true;
         modalState.step = initialStep;
         modalState.errors = {};
@@ -226,7 +226,7 @@ export const useCitizenModal = () => {
         modalState.isOpen = false;
         // Reset after animation completes
         setTimeout(() => {
-            modalState.step = "initial";
+            modalState.step = 'initial';
             modalState.userData = {};
             modalState.completedSteps = [];
             modalState.errors = {};
@@ -261,7 +261,7 @@ export const useCitizenModal = () => {
 
             if (!result.success) {
                 modalState.errors = {
-                    general: result.error || "Failed to save data",
+                    general: result.error || 'Failed to save data',
                 };
                 modalState.loading = false;
                 return false;
@@ -274,11 +274,11 @@ export const useCitizenModal = () => {
 
             // Move to next step
             const steps: AuthStep[] = [
-                "initial",
-                "motivation",
-                "budget",
-                "location",
-                "success",
+                'initial',
+                'motivation',
+                'budget',
+                'location',
+                'success',
             ];
             const currentIndex = steps.indexOf(modalState.step);
             if (currentIndex < steps.length - 1) {
@@ -291,7 +291,7 @@ export const useCitizenModal = () => {
             modalState.loading = false;
             return true;
         } catch (error) {
-            modalState.errors = { general: "Network error. Please try again." };
+            modalState.errors = { general: 'Network error. Please try again.' };
             modalState.loading = false;
             return false;
         }
@@ -299,11 +299,11 @@ export const useCitizenModal = () => {
 
     const prevStep = () => {
         const steps: AuthStep[] = [
-            "initial",
-            "motivation",
-            "budget",
-            "location",
-            "success",
+            'initial',
+            'motivation',
+            'budget',
+            'location',
+            'success',
         ];
         const currentIndex = steps.indexOf(modalState.step);
         if (currentIndex > 0) {
@@ -329,7 +329,7 @@ export const useCitizenModal = () => {
     };
 
     const startOver = () => {
-        modalState.step = "initial";
+        modalState.step = 'initial';
         modalState.userData = {};
         modalState.completedSteps = [];
         modalState.errors = {};
@@ -346,12 +346,12 @@ export const useCitizenModal = () => {
     const currentStepOptions = computed(() => {
         const step = modalState.step;
         return {
-            priceRange: step === "initial" ? STEP_OPTIONS.priceRange : [],
+            priceRange: step === 'initial' ? STEP_OPTIONS.priceRange : [],
             preferredLocation:
-                step === "initial" ? STEP_OPTIONS.preferredLocation : [],
-            motivation: step === "motivation" ? STEP_OPTIONS.motivation : [],
-            budget: step === "budget" ? STEP_OPTIONS.budget : [],
-            locationType: step === "location" ? STEP_OPTIONS.locationType : [],
+                step === 'initial' ? STEP_OPTIONS.preferredLocation : [],
+            motivation: step === 'motivation' ? STEP_OPTIONS.motivation : [],
+            budget: step === 'budget' ? STEP_OPTIONS.budget : [],
+            locationType: step === 'location' ? STEP_OPTIONS.locationType : [],
         };
     });
 
@@ -378,6 +378,6 @@ export const useCitizenModal = () => {
     };
 };
 
-const updateUserData = (data: Partial<AuthModalState["userData"]>) => {
+const updateUserData = (data: Partial<AuthModalState['userData']>) => {
     modalState.userData = { ...modalState.userData, ...data };
 };

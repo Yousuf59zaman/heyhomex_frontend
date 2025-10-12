@@ -17,16 +17,15 @@
 
     // Local reactive form data
     const formData = reactive<Partial<UserFormData>>({
-        fullName: "",
-        email: "",
-        priceRange: "",
-        preferredLocation: "",
-        motivation: "",
-        budget: "",
-        locationType: "",
+        fullName: '',
+        email: '',
+        priceRange: '',
+        preferredLocation: '',
+        motivation: '',
+        budget: '',
+        locationType: '',
     });
 
-   
     watch(currentStep, () => {
         Object.assign(formData, userData.value);
     });
@@ -41,7 +40,7 @@
     );
 
     // Progress bar logic
-    const progressSteps = ["motivation", "budget", "location"];
+    const progressSteps = ['motivation', 'budget', 'location'];
     const showProgressBar = computed(() =>
         progressSteps.includes(currentStep.value)
     );
@@ -56,7 +55,7 @@
 
         if (!success) {
             // Scroll to top to show errors
-            const modal = document.querySelector("[data-modal-content]");
+            const modal = document.querySelector('[data-modal-content]');
             if (modal) {
                 modal.scrollTop = 0;
             }
@@ -65,21 +64,21 @@
 
     const handleComplete = () => {
         closeModal();
-        navigateTo("/matches");
+        navigateTo('/matches');
     };
 
     // Keyboard event handling
     onMounted(() => {
         const handleEscape = (e: KeyboardEvent) => {
-            if (e.key === "Escape" && isOpen.value) {
+            if (e.key === 'Escape' && isOpen.value) {
                 closeModal();
             }
         };
 
-        document.addEventListener("keydown", handleEscape);
+        document.addEventListener('keydown', handleEscape);
 
         onUnmounted(() => {
-            document.removeEventListener("keydown", handleEscape);
+            document.removeEventListener('keydown', handleEscape);
         });
     });
 
@@ -87,9 +86,9 @@
     watch(isOpen, (newValue) => {
         if (import.meta.client) {
             if (newValue) {
-                document.body.style.overflow = "hidden";
+                document.body.style.overflow = 'hidden';
             } else {
-                document.body.style.overflow = "";
+                document.body.style.overflow = '';
             }
         }
     });
@@ -97,7 +96,7 @@
     // Cleanup on unmount
     onUnmounted(() => {
         if (import.meta.client) {
-            document.body.style.overflow = "";
+            document.body.style.overflow = '';
         }
     });
 </script>
@@ -110,19 +109,20 @@
         :draggable="false"
         :resizable="false"
         class="citizen-auth-modal"
-        :style="{ width: '45rem' }"
+        :style="{ width: 'min(45rem, 95vw)', maxWidth: '95vw' }"
         @update:visible="closeModal"
         :pt="{
-            root: 'border-0 rounded-2xl shadow-2xl',
+            root: 'border-0 rounded-2xl shadow-2xl m-4',
             header: 'border-0 pb-0',
             content: 'border-0 pt-0 pb-6',
             closeButton:
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-sm transition-colors duration-200',
         }">
         <template #header>
-            <div class="w-full text-center px-6 pt-8 pb-6">
+            <div
+                class="w-full text-center px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
                 <h1
-                    class="text-3xl max-w-sm mx-auto font-semibold text-[#121A22] mb-2 leading-tight">
+                    class="text-2xl sm:text-3xl max-w-sm mx-auto font-semibold text-[#121A22] mb-2 leading-tight">
                     {{ currentStepConfig.title }}
                 </h1>
 
@@ -131,28 +131,8 @@
                     class="text-sm text-[#121A22] whitespace-pre-line">
                     {{ currentStepConfig.subtitle }}
                 </p>
-
-                <div
-                    v-if="currentStepConfig.stepLabel"
-                    class="mt-4 text-xs text-[#121A22] uppercase tracking-wide">
-                    {{ currentStepConfig.stepLabel }}
-                </div>
             </div>
         </template>
-
-        <!-- Progress Bar (for steps 2-4) -->
-        <div v-if="showProgressBar" class="px-6 mb-6">
-            <ProgressBar
-                :value="
-                    ((currentProgressIndex + 1) / progressSteps.length) * 100
-                "
-                :showValue="false"
-                class="h-2"
-                :pt="{
-                    root: 'bg-gray-200 rounded-full',
-                    value: 'bg-gray-900 rounded-full transition-all duration-300',
-                }" />
-        </div>
 
         <!-- Error Message -->
         <Message
@@ -168,10 +148,41 @@
         </Message>
 
         <!-- Content -->
-        <div class="px-6 pb-6">
+        <div class="px-4 sm:px-6 pb-6">
+            <!-- Step Label and Progress Bar Row -->
+            <div
+                class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-3 sm:space-y-0">
+                <!-- Step Label -->
+                <div
+                    v-if="currentStepConfig.stepLabel"
+                    class="text-xs text-[#121A22] uppercase tracking-wide">
+                    {{ currentStepConfig.stepLabel }}
+                </div>
+
+                <!-- Progress Bar (for steps 2-4) -->
+                <div
+                    v-if="showProgressBar"
+                    class="flex-1 max-w-full sm:max-w-xs sm:ml-4">
+                    <div class="flex items-center space-x-2">
+                        <div
+                            v-for="(step, index) in progressSteps"
+                            :key="step"
+                            :class="[
+                                'h-2 rounded-full transition-all duration-300 flex-1',
+                                index <= currentProgressIndex
+                                    ? 'bg-gray-900'
+                                    : 'bg-gray-200',
+                            ]"></div>
+                    </div>
+                </div>
+            </div>
             <!-- Step 1: Initial Form -->
-            <div v-if="currentStep === 'initial'" class="space-y-4">
-                <form @submit.prevent="handleNext" class="space-y-4">
+            <div
+                v-if="currentStep === 'initial'"
+                class="space-y-4">
+                <form
+                    @submit.prevent="handleNext"
+                    class="space-y-4">
                     <div class="flex flex-col gap-2">
                         <label for="">Full Name</label>
                         <InputText
@@ -186,7 +197,9 @@
                                         : 'border-gray-300',
                                 ],
                             }" />
-                        <small v-if="errors.fullName" class="text-red-600">
+                        <small
+                            v-if="errors.fullName"
+                            class="text-red-600">
                             {{ errors.fullName }}
                         </small>
                     </div>
@@ -206,12 +219,14 @@
                                         : 'border-gray-300',
                                 ],
                             }" />
-                        <small v-if="errors.email" class="text-red-600">
+                        <small
+                            v-if="errors.email"
+                            class="text-red-600">
                             {{ errors.email }}
                         </small>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="flex flex-col gap-2">
                             <label for="">Price Range</label>
                             <Dropdown
@@ -270,15 +285,17 @@
                         :disabled="loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="w-full mt-6"
+                        class="w-full"
                         :pt="{
                             root: 'w-full mb-3 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
                         }">
-                        {{ loading ? "Saving..." : "Save Search" }}
+                        {{ loading ? 'Saving...' : 'Save Search' }}
                     </Button>
                 </form>
             </div>
-            <div v-else-if="currentStep === 'motivation'" class="space-y-6">
+            <div
+                v-else-if="currentStep === 'motivation'"
+                class="space-y-6">
                 <!-- Step 2: Motivation -->
                 <div class="space-y-3">
                     <div
@@ -286,27 +303,29 @@
                         :key="option.value"
                         @click="formData.motivation = option.value"
                         :class="[
-                            'p-4 border-2 rounded-lg cursor-pointer transition-all duration-200',
+                            'p-4 border-2 rounded-full cursor-pointer transition-all duration-200',
                             formData.motivation === option.value
-                                ? 'border-gray-900 bg-gray-50'
+                                ? ' bg-black text-white'
                                 : 'border-gray-200 hover:border-gray-300',
                         ]">
-                        <p class="text-sm font-medium text-gray-900">
+                        <p class="text-sm font-medium">
                             {{ option.label }}
                         </p>
                     </div>
-                    <small v-if="errors.motivation" class="text-red-600">
+                    <small
+                        v-if="errors.motivation"
+                        class="text-red-600">
                         {{ errors.motivation }}
                     </small>
                 </div>
 
-                <div class="flex gap-3">
+                <div class="flex flex-col sm:flex-row gap-3">
                     <Button
                         @click="prevStep"
                         outlined
-                        class="flex-1"
+                        class="flex-1 order-2 sm:order-1"
                         :pt="{
-                            root: 'flex-1 px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
+                            root: 'flex-1 px-4 sm:px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
                         }">
                         Start Over
                     </Button>
@@ -316,15 +335,17 @@
                         :disabled="loading || !formData.motivation"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1"
+                        class="flex-1 order-1 sm:order-2"
                         :pt="{
-                            root: 'flex-1 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
+                            root: 'flex-1 px-4 sm:px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
                         }">
-                        {{ loading ? "Saving..." : "Next" }}
+                        {{ loading ? 'Saving...' : 'Next' }}
                     </Button>
                 </div>
             </div>
-            <div v-else-if="currentStep === 'budget'" class="space-y-6">
+            <div
+                v-else-if="currentStep === 'budget'"
+                class="space-y-6">
                 <!-- Step 3: Budget -->
                 <div class="space-y-3">
                     <div
@@ -332,27 +353,29 @@
                         :key="option.value"
                         @click="formData.budget = option.value"
                         :class="[
-                            'p-4 border-2 rounded-lg cursor-pointer transition-all duration-200',
+                            'p-4 border-2 rounded-full cursor-pointer transition-all duration-200',
                             formData.budget === option.value
-                                ? 'border-gray-900 bg-gray-50'
+                                ? 'bg-black text-white'
                                 : 'border-gray-200 hover:border-gray-300',
                         ]">
-                        <p class="text-sm font-medium text-gray-900">
+                        <p class="text-sm font-medium">
                             {{ option.label }}
                         </p>
                     </div>
-                    <small v-if="errors.budget" class="text-red-600">
+                    <small
+                        v-if="errors.budget"
+                        class="text-red-600">
                         {{ errors.budget }}
                     </small>
                 </div>
 
-                <div class="flex gap-3">
+                <div class="flex flex-col sm:flex-row gap-3">
                     <Button
                         @click="prevStep"
                         outlined
-                        class="flex-1"
+                        class="flex-1 order-2 sm:order-1"
                         :pt="{
-                            root: 'flex-1 px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
+                            root: 'flex-1 px-4 sm:px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
                         }">
                         Back
                     </Button>
@@ -362,15 +385,17 @@
                         :disabled="loading || !formData.budget"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1"
+                        class="flex-1 order-1 sm:order-2"
                         :pt="{
-                            root: 'flex-1 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
+                            root: 'flex-1 px-4 sm:px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
                         }">
-                        {{ loading ? "Saving..." : "Next" }}
+                        {{ loading ? 'Saving...' : 'Next' }}
                     </Button>
                 </div>
             </div>
-            <div v-else-if="currentStep === 'location'" class="space-y-6">
+            <div
+                v-else-if="currentStep === 'location'"
+                class="space-y-6">
                 <!-- Step 4: Location -->
                 <div class="space-y-3">
                     <div
@@ -378,27 +403,29 @@
                         :key="option.value"
                         @click="formData.locationType = option.value"
                         :class="[
-                            'p-4 border-2 rounded-lg cursor-pointer transition-all duration-200',
+                            'p-4 border-2 rounded-full cursor-pointer transition-all duration-200',
                             formData.locationType === option.value
-                                ? 'border-gray-900 bg-gray-50'
+                                ? 'bg-black text-white'
                                 : 'border-gray-200 hover:border-gray-300',
                         ]">
-                        <p class="text-sm font-medium text-gray-900">
+                        <p class="text-sm font-medium">
                             {{ option.label }}
                         </p>
                     </div>
-                    <small v-if="errors.locationType" class="text-red-600">
+                    <small
+                        v-if="errors.locationType"
+                        class="text-red-600">
                         {{ errors.locationType }}
                     </small>
                 </div>
 
-                <div class="flex gap-3">
+                <div class="flex flex-col sm:flex-row gap-3">
                     <Button
                         @click="prevStep"
                         outlined
-                        class="flex-1"
+                        class="flex-1 order-2 sm:order-1"
                         :pt="{
-                            root: 'flex-1 px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
+                            root: 'flex-1 px-4 sm:px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
                         }">
                         Back
                     </Button>
@@ -408,11 +435,11 @@
                         :disabled="loading || !formData.locationType"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1"
+                        class="flex-1 order-1 sm:order-2"
                         :pt="{
-                            root: 'flex-1 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
+                            root: 'flex-1 px-4 sm:px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
                         }">
-                        {{ loading ? "Saving..." : "Next" }}
+                        {{ loading ? 'Saving...' : 'Next' }}
                     </Button>
                 </div>
             </div>
@@ -422,7 +449,9 @@
                 <!-- Step 5: Success -->
                 <div
                     class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                    <Icon name="lucide:check" class="w-8 h-8 text-green-600" />
+                    <Icon
+                        name="lucide:check"
+                        class="w-8 h-8 text-green-600" />
                 </div>
 
                 <div>
@@ -489,12 +518,11 @@
         background-color: rgb(243, 244, 246);
     }
 
-    :deep(.p-dialog-close-button){
+    :deep(.p-dialog-close-button) {
         display: hidden !important;
     }
 
-    :deep(.p-button-icon){
-        display:hidden !important;
+    :deep(.p-button-icon) {
+        display: hidden !important;
     }
-
 </style>

@@ -62,9 +62,10 @@ export default defineNuxtConfig({
                 preset: MyPreset,
                 options: {
                     prefix: 'p',
-                    darkModeSelector: false || 'html.dark',
+                    darkModeSelector: 'html.dark', 
                     cssLayer: false
                 }
+                
             }
         }
     },
