@@ -469,20 +469,12 @@
                         @click="handleComplete"
                         class="w-full"
                         :pt="{
-                            root: 'w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200',
+                            root: 'flex-1 px-4 sm:px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
                         }">
-                        View My Matches
+                        Continue to Dashboard
                     </Button>
 
-                    <Button
-                        @click="closeModal"
-                        outlined
-                        class="w-full"
-                        :pt="{
-                            root: 'w-full px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
-                        }">
-                        Continue Browsing
-                    </Button>
+                    
                 </div>
             </div>
         </div>

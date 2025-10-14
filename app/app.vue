@@ -13,12 +13,11 @@
 </script>
 
 <template>
-    <ClientOnly fallbackTag="div">
+    <!-- <ClientOnly fallbackTag="div">
         <NuxtLayout>
             <NuxtPage />
         </NuxtLayout>
 
-                <!-- Global Auth Modal -->
         <AuthCitizenAuthModal />
 
         <template #fallback>
@@ -33,7 +32,14 @@
                 </div>
             </div>
         </template>
-    </ClientOnly>
+    </ClientOnly> -->
+
+     <NuxtLayout>
+            <NuxtPage />
+        </NuxtLayout>
+
+                <!-- Global Auth Modal -->
+        <AuthCitizenAuthModal />
 </template>
 
 <style lang="scss" scoped></style>

@@ -35,7 +35,7 @@
 
             <!-- Desktop Layout -->
             <div
-                class="hidden lg:flex lg:items-center lg:justify-between gap-4">
+                class="hidden lg:flex lg:items-center lg:justify-between mb-10 gap-4">
                 <!-- Left side - Search Input -->
                 <div class="flex items-center gap-3 flex-1">
                     <div class="relative flex-1 max-w-sm">

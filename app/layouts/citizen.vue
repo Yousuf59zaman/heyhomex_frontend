@@ -29,7 +29,7 @@
             />
 
             <!-- Page Content -->
-            <main class="px-4 lg:px-6">
+            <main class="px-4 lg:px-6 py-3">
                 <slot />
             </main>
         </div>
