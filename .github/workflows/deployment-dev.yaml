@@ -11,6 +11,7 @@ jobs:
         name: Install and Build the application
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/checkout@v3
             - name: Build App artifacts using pnpm
               uses: pnpm/action-setup@v4
               with:
