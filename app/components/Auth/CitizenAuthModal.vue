@@ -64,7 +64,7 @@
 
     const handleComplete = () => {
         closeModal();
-        navigateTo('/matches');
+        navigateTo('/kamaina/');
     };
 
     // Keyboard event handling

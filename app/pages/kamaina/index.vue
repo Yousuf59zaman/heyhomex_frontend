@@ -340,6 +340,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <!-- Property Card 1 -->
                 <div
+                    @click="navigateToProperty('1')"
                     class="bg-white p-2 rounded-xl border border-gray-300 shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden group cursor-pointer">
                     <div class="relative">
                         <img
@@ -347,6 +348,7 @@
                             alt="Hawaii Home Movers Property"
                             class="w-full rounded-lg h-40 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
                         <button
+                            @click.stop
                             class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors">
                             <Icon
                                 name="lucide:heart"
@@ -400,6 +402,7 @@
 
                 <!-- Property Card 2 -->
                 <div
+                    @click="navigateToProperty('2')"
                     class="bg-white p-2 rounded-xl border border-gray-300 shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden group cursor-pointer">
                     <div class="relative">
                         <img
@@ -407,6 +410,7 @@
                             alt="Hawaii Home Movers Property"
                             class="w-full rounded-lg h-40 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
                         <button
+                            @click.stop
                             class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors">
                             <Icon
                                 name="lucide:heart"
@@ -460,6 +464,7 @@
 
                 <!-- Property Card 3 -->
                 <div
+                    @click="navigateToProperty('3')"
                     class="bg-white p-2 rounded-xl border border-gray-300 shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden group cursor-pointer">
                     <div class="relative">
                         <img
@@ -467,6 +472,7 @@
                             alt="Hawaii Home Movers Property"
                             class="w-full rounded-lg h-40 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
                         <button
+                            @click.stop
                             class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors">
                             <Icon
                                 name="lucide:heart"
@@ -805,6 +811,11 @@
     // Function to switch between Home and Videos
     const switchTab = (tab) => {
         activeTab.value = tab;
+    };
+
+    // Function to navigate to property details
+    const navigateToProperty = (propertyId) => {
+        navigateTo(`/kamaina/property/${propertyId}`);
     };
 
     // Watch for period changes

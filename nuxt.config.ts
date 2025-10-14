@@ -65,8 +65,10 @@ export default defineNuxtConfig({
                     darkModeSelector: 'html.dark', 
                     cssLayer: false
                 }
-                
             }
+        },
+        components: {
+            include: '*'
         }
     },
 

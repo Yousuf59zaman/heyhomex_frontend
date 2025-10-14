@@ -16,11 +16,16 @@
                 <li v-for="item in navigationItems" :key="item.id">
                     <NuxtLink 
                         :to="item.path" 
-                        class="flex items-center justify-center w-10 h-10 text-gray-600 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-colors"
-                        active-class="bg-blue-50 text-blue-700"
+                        class="sidebar-link flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200"
+                        active-class="sidebar-link-active"
                     >
                         <Icon v-if="item.iconType === 'lucide'" :name="item.icon" class="w-5 h-5" />
-                        <img v-else-if="item.iconType === 'svg'" :src="item.icon" :alt="item.label" class="w-5 h-5" />
+                        <img 
+                            v-else-if="item.iconType === 'svg'" 
+                            :src="item.icon" 
+                            :alt="item.label" 
+                            class="sidebar-icon w-5 h-5"
+                        />
                     </NuxtLink>
                 </li>
             </ul>
@@ -53,12 +58,17 @@
                 <li v-for="item in navigationItems" :key="item.id">
                     <NuxtLink 
                         :to="item.path" 
-                        class="flex items-center space-x-3 w-full px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-colors"
-                        active-class="bg-blue-50 text-blue-700"
+                        class="mobile-sidebar-link flex items-center space-x-3 w-full px-3 py-2 rounded-lg transition-all duration-200"
+                        active-class="mobile-sidebar-link-active"
                         @click="$emit('close-menu')"
                     >
                         <Icon v-if="item.iconType === 'lucide'" :name="item.icon" class="w-5 h-5" />
-                        <img v-else-if="item.iconType === 'svg'" :src="item.icon" :alt="item.label" class="w-5 h-5" />
+                        <img 
+                            v-else-if="item.iconType === 'svg'" 
+                            :src="item.icon" 
+                            :alt="item.label" 
+                            class="mobile-sidebar-icon w-5 h-5"
+                        />
                         <span class="font-medium">{{ item.label }}</span>
                     </NuxtLink>
                 </li>
@@ -96,47 +106,115 @@ const navigationItems = ref([
         id: 'dashboard',
         label: 'Dashboard',
         icon: '/svg/menubar/dashboard.svg',
-        iconType: 'svg', // 'lucide' or 'svg'
-        path: '/svg/menubar/dashboard.svg'
+        iconType: 'svg',
+        path: '/kamaina'
     },
     {
         id: 'properties',
         label: 'Properties',
-        icon: '/svg/menubar/favourite.svg',
-        iconType: 'svg',
-        path: '/svg/menubar/dashboard.svg'
-    },
-    {
-        id: 'search',
-        label: 'Analytics',
         icon: '/svg/menubar/search.svg',
         iconType: 'svg',
-        path: '/svg/menubar/favourite.svg'
+        path: '/kamaina/search'
+    },
+    {
+        id: 'analytics',
+        label: 'Analytics',
+        icon: '/svg/menubar/video.svg',
+        iconType: 'svg',
+        path: '/kamaina/seatchvideo'
     },
     {
         id: 'users',
         label: 'Users',
-        icon: '/svg/menubar/video.svg',
+        icon: '/svg/menubar/favourite.svg',
         iconType: 'svg',
-        path: '/svg/menubar/favourite.svg'
+        path: '/users'
     },
     {
-        id: 'search',
-        label: 'Analytics',
+        id: 'reports',
+        label: 'Reports',
         icon: '/svg/menubar/search.svg',
         iconType: 'svg',
-        path: '/svg/menubar/favourite.svg'
+        path: '/reports'
     },
     {
         id: 'settings',
         label: 'Settings',
         icon: '/svg/menubar/setting.svg',
         iconType: 'svg',
-        path: '/svg/menubar/setting.svg'
+        path: '/settings'
     }
 ]);
 </script>
 
 <style scoped>
-/* Sidebar styles */
+/* Desktop Sidebar Styles */
+.sidebar-link {
+    position: relative;
+}
+
+/* Default state - semi-transparent white icons */
+.sidebar-link .sidebar-icon {
+    filter: brightness(0) invert(1) opacity(0.6);
+    transition: all 0.2s ease;
+}
+
+/* Hover state - fully opaque white icons with background */
+.sidebar-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.sidebar-link:hover .sidebar-icon {
+    filter: brightness(0) invert(1) opacity(1);
+    transform: scale(1.05);
+}
+
+/* Active state - white background with black icons */
+.sidebar-link-active {
+    background-color: white !important;
+}
+
+.sidebar-link-active .sidebar-icon {
+    filter: brightness(0) !important;
+    opacity: 1 !important;
+    -webkit-filter: brightness(0) !important;
+}
+
+/* Ensure hover doesn't override active state */
+.sidebar-link-active:hover .sidebar-icon {
+    filter: brightness(0) !important;
+    -webkit-filter: brightness(0) !important;
+    transform: scale(1);
+}
+
+/* Mobile Sidebar Styles */
+.mobile-sidebar-link {
+    color: #4B5563;
+}
+
+/* Default state - gray icons */
+.mobile-sidebar-link .mobile-sidebar-icon {
+    filter: brightness(0) saturate(100%) invert(38%) sepia(8%) saturate(645%) hue-rotate(182deg) brightness(93%) contrast(88%);
+    transition: all 0.2s ease;
+}
+
+/* Hover state */
+.mobile-sidebar-link:hover {
+    background-color: #F3F4F6;
+    color: #111827;
+}
+
+.mobile-sidebar-link:hover .mobile-sidebar-icon {
+    filter: brightness(0) saturate(100%) invert(7%) sepia(7%) saturate(2353%) hue-rotate(183deg) brightness(96%) contrast(92%);
+}
+
+/* Active state - blue background with blue icons */
+.mobile-sidebar-link-active {
+    background-color: #EFF6FF !important;
+    color: #2563EB !important;
+}
+
+.mobile-sidebar-link-active .mobile-sidebar-icon {
+    filter: brightness(0) saturate(100%) invert(36%) sepia(88%) saturate(2527%) hue-rotate(213deg) brightness(95%) contrast(91%) !important;
+}
 </style>
