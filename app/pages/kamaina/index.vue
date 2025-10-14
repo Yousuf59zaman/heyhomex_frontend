@@ -1,3 +1,205 @@
+<script setup>
+    definePageMeta({
+        layout: 'citizen',
+    });
+
+    // Reactive state for the saved list toggle
+    const activeTab = ref('Home');
+
+    // Chart related state
+    const selectedPeriod = ref('weekly');
+    const showTooltip = ref(false);
+    const tooltipStyle = ref({
+        left: '0px',
+        top: '0px',
+        transform: 'translateX(-50%)',
+    });
+
+    // Chart data
+    const chartData = ref({
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [
+            {
+                label: 'Current Market',
+                backgroundColor: '#E2E8F0', 
+                borderColor: '#E2E8F0',
+                borderWidth: 0,
+                data: [40, 32, 22, 21, 20, 22, 32],
+                borderRadius: 14,
+                borderSkipped: false,
+                categoryPercentage: 0.5, 
+                barPercentage: 0.9,
+                barThickness: 12,
+            },
+            {
+                label: 'Best FHA Loans',
+                backgroundColor: '#334155', 
+                borderColor: '#334155',
+                borderWidth: 0,
+                data: [50, 40, 35, 29, 30, 26, 40],
+                borderRadius: 14,
+                borderSkipped: false,
+                categoryPercentage: 0.5, 
+                barPercentage: 0.9,
+                barThickness: 12,
+            },
+        ],
+    });
+
+    // Chart options
+    const chartOptions = ref({
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+            padding: {
+                top: 20,
+                bottom: 10,
+                left: 10,
+                right: 10,
+            },
+        },
+        plugins: {
+            legend: {
+                display: false,
+            },
+            tooltip: {
+                enabled: false, 
+            },
+        },
+        scales: {
+            x: {
+                display: true,
+                categoryPercentage: 0.7,
+                barPercentage: 0.8, 
+                grid: {
+                    display: false,
+                },
+                ticks: {
+                    color: '#9CA3AF',
+                    font: {
+                        size: 11,
+                        family: 'Inter, sans-serif',
+                    },
+                    padding: 8,
+                },
+                border: {
+                    display: false,
+                },
+            },
+            y: {
+                display: true,
+                beginAtZero: true,
+                max: 50,
+                grid: {
+                    color: '#F3F4F6',
+                    lineWidth: 1,
+                    drawBorder: false,
+                },
+                ticks: {
+                    color: '#9CA3AF',
+                    font: {
+                        size: 11,
+                        family: 'Inter, sans-serif',
+                    },
+                    callback: function (value) {
+                        return value + '%';
+                    },
+                    stepSize: 10,
+                    padding: 12,
+                },
+                border: {
+                    display: false,
+                },
+            },
+        },
+        interaction: {
+            intersect: false,
+            mode: 'point',
+        },
+        onHover: (event, elements, chart) => {
+            if (elements.length > 0) {
+                const element = elements[0];
+                const datasetIndex = element.datasetIndex;
+                const index = element.index;
+
+                // Only show tooltip for the dark bars (dataset index 1) and specific bar (index 3 for Thu with 29%)
+                if (datasetIndex === 1 && index === 3) {
+                    showTooltip.value = true;
+
+                    // Calculate tooltip position relative to chart
+                    const x = element.element.x;
+                    const y = element.element.y;
+
+                    tooltipStyle.value.left = `${x}px`;
+                    tooltipStyle.value.top = `${y - 70}px`;
+                    tooltipStyle.value.transform = 'translateX(-50%)';
+                } else {
+                    showTooltip.value = false;
+                }
+            } else {
+                showTooltip.value = false;
+            }
+        },
+        animation: {
+            duration: 0, 
+        },
+    });
+
+    // Function to switch between Home and Videos
+    const switchTab = (tab) => {
+        activeTab.value = tab;
+    };
+
+    // Function to navigate to property details
+    const navigateToProperty = (propertyId) => {
+        navigateTo(`/kamaina/property/${propertyId}`);
+    };
+
+    // Watch for period changes
+    watch(selectedPeriod, (newPeriod) => {
+        // Update chart data based on selected period
+        if (newPeriod === 'monthly') {
+            chartData.value.labels = [
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'Jun',
+                'Jul',
+            ];
+            chartData.value.datasets[0].data = [35, 38, 25, 28, 32, 29, 35];
+            chartData.value.datasets[1].data = [45, 42, 38, 35, 40, 38, 42];
+        } else if (newPeriod === 'yearly') {
+            chartData.value.labels = [
+                '2019',
+                '2020',
+                '2021',
+                '2022',
+                '2023',
+                '2024',
+                '2025',
+            ];
+            chartData.value.datasets[0].data = [30, 35, 28, 32, 38, 35, 40];
+            chartData.value.datasets[1].data = [40, 45, 38, 42, 48, 45, 50];
+        } else {
+            // weekly (default)
+            chartData.value.labels = [
+                'Mon',
+                'Tue',
+                'Wed',
+                'Thu',
+                'Fri',
+                'Sat',
+                'Sun',
+            ];
+            chartData.value.datasets[0].data = [40, 32, 22, 21, 20, 22, 32];
+            chartData.value.datasets[1].data = [50, 40, 35, 29, 30, 26, 40];
+        }
+    });
+</script>
+
+
 <template>
     <div class="space-y-6">
         <!-- Search and Filter Section -->
@@ -17,10 +219,10 @@
                     </div>
                     <!-- Filter Button -->
                     <button
-                        class="px-2 py-2  border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors">
+                        class="px-2 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors">
                         <Icon
                             name="lucide:sliders-horizontal"
-                            class=" h-4 text-gray-600" />
+                            class="h-4 text-gray-600" />
                     </button>
                 </div>
 
@@ -35,7 +237,7 @@
 
             <!-- Desktop Layout -->
             <div
-                class="hidden lg:flex lg:items-center lg:justify-between mb-10 gap-4">
+                class="hidden lg:flex lg:items-center lg:justify-between gap-4">
                 <!-- Left side - Search Input -->
                 <div class="flex items-center gap-3 flex-1">
                     <div class="relative flex-1 max-w-sm">
@@ -661,207 +863,8 @@
     </div>
 </template>
 
-<script setup>
-    definePageMeta({
-        layout: 'citizen',
-    });
 
-    // Reactive state for the saved list toggle
-    const activeTab = ref('Home');
-
-    // Chart related state
-    const selectedPeriod = ref('weekly');
-    const showTooltip = ref(false);
-    const tooltipStyle = ref({
-        left: '0px',
-        top: '0px',
-        transform: 'translateX(-50%)',
-    });
-
-    // Chart data
-    const chartData = ref({
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        datasets: [
-            {
-                label: 'Current Market',
-                backgroundColor: '#E2E8F0', // Light gray for background bars
-                borderColor: '#E2E8F0',
-                borderWidth: 0,
-                data: [40, 32, 22, 21, 20, 22, 32],
-                borderRadius: 14,
-                borderSkipped: false,
-                categoryPercentage: 0.5, // Controls space between categories (reduced for more gap)
-                barPercentage: 0.9,
-                barThickness: 12,
-            },
-            {
-                label: 'Best FHA Loans',
-                backgroundColor: '#334155', // Dark color for foreground bars
-                borderColor: '#334155',
-                borderWidth: 0,
-                data: [50, 40, 35, 29, 30, 26, 40],
-                borderRadius: 14,
-                borderSkipped: false,
-                categoryPercentage: 0.5, // Controls space between categories (reduced for more gap)
-                barPercentage: 0.9,
-                barThickness: 12,
-            },
-        ],
-    });
-
-    // Chart options
-    const chartOptions = ref({
-        responsive: true,
-        maintainAspectRatio: false,
-        layout: {
-            padding: {
-                top: 20,
-                bottom: 10,
-                left: 10,
-                right: 10,
-            },
-        },
-        plugins: {
-            legend: {
-                display: false,
-            },
-            tooltip: {
-                enabled: false, // Disable default tooltip
-            },
-        },
-        scales: {
-            x: {
-                display: true,
-                categoryPercentage: 0.7, // Controls space between categories
-                barPercentage: 0.8, // Controls space between bars in same category
-                grid: {
-                    display: false,
-                },
-                ticks: {
-                    color: '#9CA3AF',
-                    font: {
-                        size: 11,
-                        family: 'Inter, sans-serif',
-                    },
-                    padding: 8,
-                },
-                border: {
-                    display: false,
-                },
-            },
-            y: {
-                display: true,
-                beginAtZero: true,
-                max: 50,
-                grid: {
-                    color: '#F3F4F6',
-                    lineWidth: 1,
-                    drawBorder: false,
-                },
-                ticks: {
-                    color: '#9CA3AF',
-                    font: {
-                        size: 11,
-                        family: 'Inter, sans-serif',
-                    },
-                    callback: function (value) {
-                        return value + '%';
-                    },
-                    stepSize: 10,
-                    padding: 12,
-                },
-                border: {
-                    display: false,
-                },
-            },
-        },
-        interaction: {
-            intersect: false,
-            mode: 'point',
-        },
-        onHover: (event, elements, chart) => {
-            if (elements.length > 0) {
-                const element = elements[0];
-                const datasetIndex = element.datasetIndex;
-                const index = element.index;
-
-                // Only show tooltip for the dark bars (dataset index 1) and specific bar (index 3 for Thu with 29%)
-                if (datasetIndex === 1 && index === 3) {
-                    showTooltip.value = true;
-
-                    // Calculate tooltip position relative to chart
-                    const x = element.element.x;
-                    const y = element.element.y;
-
-                    tooltipStyle.value.left = `${x}px`;
-                    tooltipStyle.value.top = `${y - 70}px`;
-                    tooltipStyle.value.transform = 'translateX(-50%)';
-                } else {
-                    showTooltip.value = false;
-                }
-            } else {
-                showTooltip.value = false;
-            }
-        },
-        animation: {
-            duration: 0, // Disable animation for smoother tooltip
-        },
-    });
-
-    // Function to switch between Home and Videos
-    const switchTab = (tab) => {
-        activeTab.value = tab;
-    };
-
-    // Function to navigate to property details
-    const navigateToProperty = (propertyId) => {
-        navigateTo(`/kamaina/property/${propertyId}`);
-    };
-
-    // Watch for period changes
-    watch(selectedPeriod, (newPeriod) => {
-        // Update chart data based on selected period
-        if (newPeriod === 'monthly') {
-            chartData.value.labels = [
-                'Jan',
-                'Feb',
-                'Mar',
-                'Apr',
-                'May',
-                'Jun',
-                'Jul',
-            ];
-            chartData.value.datasets[0].data = [35, 38, 25, 28, 32, 29, 35];
-            chartData.value.datasets[1].data = [45, 42, 38, 35, 40, 38, 42];
-        } else if (newPeriod === 'yearly') {
-            chartData.value.labels = [
-                '2019',
-                '2020',
-                '2021',
-                '2022',
-                '2023',
-                '2024',
-                '2025',
-            ];
-            chartData.value.datasets[0].data = [30, 35, 28, 32, 38, 35, 40];
-            chartData.value.datasets[1].data = [40, 45, 38, 42, 48, 45, 50];
-        } else {
-            // weekly (default)
-            chartData.value.labels = [
-                'Mon',
-                'Tue',
-                'Wed',
-                'Thu',
-                'Fri',
-                'Sat',
-                'Sun',
-            ];
-            chartData.value.datasets[0].data = [40, 32, 22, 21, 20, 22, 32];
-            chartData.value.datasets[1].data = [50, 40, 35, 29, 30, 26, 40];
-        }
-    });
-</script>
 
 <style scoped>
-    /* Dashboard styles */
+   
 </style>

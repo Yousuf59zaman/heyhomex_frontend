@@ -129,7 +129,7 @@
                     class="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium">
                     Home
                 </button>
-                <NuxtLink to="/kamaina/seatchvideo"
+                <NuxtLink to="/kamaina/searchvideo"
                     class="px-4 py-2 text-gray-600 hover:text-gray-900 text-sm font-medium">
                     Videos
                 </NuxtLink>

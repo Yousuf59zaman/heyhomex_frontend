@@ -7,11 +7,20 @@ const backgroundStyle = {
 	backgroundImage: "url(/images/home/background.png)",
 }
 
-// Auth Modal composable
-const { openModal } = useCitizenModal()
+// Modal state
+const showAuthModal = ref(false)
 
 const handleLetsBegin = () => {
-	openModal("initial")
+	showAuthModal.value = true
+}
+
+const handleModalComplete = (userData) => {
+	console.log('User completed auth:', userData)
+	// Handle user data here
+}
+
+const handleModalClose = () => {
+	showAuthModal.value = false
 }
 
 onMounted(() => {
@@ -141,4 +150,10 @@ onMounted(() => {
 			</div>
 		</div>
 	</div>
+
+	<!-- Auth Modal -->
+	<AuthCitizenAuthModal 
+		v-model="showAuthModal"
+		@complete="handleModalComplete"
+		@close="handleModalClose" />
 </template>

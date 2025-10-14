@@ -1,22 +1,41 @@
 <script setup lang="ts">
-    // Composables
-    const {
-        isOpen,
-        currentStep,
-        userData,
-        loading,
-        errors,
-        currentStepConfig,
-        currentStepOptions,
-        closeModal,
-        nextStep,
-        prevStep,
-        updateUserData,
-        clearErrors,
-    } = useCitizenModal();
+    // Types
+    type AuthStep =
+        | 'initial'
+        | 'motivation'
+        | 'budget'
+        | 'location'
+        | 'success';
 
-    // Local reactive form data
-    const formData = reactive<Partial<UserFormData>>({
+    interface UserFormData {
+        fullName: string;
+        email: string;
+        priceRange: string;
+        preferredLocation: string;
+        motivation: string;
+        budget: string;
+        locationType: string;
+    }
+
+    // Props
+    const props = defineProps<{
+        modelValue: boolean;
+        initialStep?: AuthStep;
+    }>();
+
+    // Emits
+    const emit = defineEmits<{
+        'update:modelValue': [value: boolean];
+        complete: [userData: UserFormData];
+        close: [];
+    }>();
+
+    // State
+    const currentStep = ref<AuthStep>(props.initialStep || 'initial');
+    const loading = ref(false);
+
+    // Form data
+    const formData = reactive<UserFormData>({
         fullName: '',
         email: '',
         priceRange: '',
@@ -26,20 +45,80 @@
         locationType: '',
     });
 
-    watch(currentStep, () => {
-        Object.assign(formData, userData.value);
-    });
-
-    // Watch for form data changes and update stored data
-    watch(
-        formData,
-        (newData) => {
-            updateUserData(newData);
+    // Static step configurations - completely static objects
+    const stepConfigs = {
+        initial: {
+            title: "You bring the dream. We'll map the way. ✨",
+            subtitle: '',
+            stepLabel: '',
         },
-        { deep: true }
-    );
+        motivation: {
+            title: "You bring the dream. We'll map the way. ✨",
+            subtitle: "What's the heart behind your home search?",
+            stepLabel: 'Step: 1/3',
+        },
+        budget: {
+            title: "You bring the dream. We'll map the way. ✨",
+            subtitle:
+                "What's your sweet spot, budget-wise?\nNo judgment — just vibes and homes that fit",
+            stepLabel: 'Step: 2/3',
+        },
+        location: {
+            title: "You bring the dream. We'll map the way. ✨",
+            subtitle: "Where's your dream home hiding? We'll find it together.",
+            stepLabel: 'Step: 3/3',
+        },
+        success: {
+            title: 'Welcome to your home journey!',
+            subtitle:
+                "We've saved your preferences and we're ready to help you find your perfect home.",
+            stepLabel: '',
+        },
+    };
 
-    // Progress bar logic
+    const getCurrentStepConfig = () => stepConfigs[currentStep.value];
+
+    // Static options - completely static arrays
+    const priceRangeOptions = [
+        { label: 'Select price range', value: '', disabled: true },
+        { label: '$0 - $300K', value: '0-300k' },
+        { label: '$300K - $600K', value: '300k-600k' },
+        { label: '$600K - $1M', value: '600k-1m' },
+        { label: '$1M+', value: '1m+' },
+    ];
+
+    const preferredLocationOptions = [
+        { label: 'Select Preferred location', value: '', disabled: true },
+        { label: 'Urban', value: 'urban' },
+        { label: 'Suburban', value: 'suburban' },
+        { label: 'Rural', value: 'rural' },
+        { label: 'Coastal', value: 'coastal' },
+    ];
+
+    const motivationOptions = [
+        { label: "I'm planting roots — this is home", value: 'planting_roots' },
+        {
+            label: 'Here on orders — base life meets island life',
+            value: 'military_orders',
+        },
+        {
+            label: "I'm scouting the next big opportunity",
+            value: 'investment_opportunity',
+        },
+    ];
+
+    const budgetOptions = [
+        { label: '$400k - $600k', value: '400k-600k' },
+        { label: '$600k - 1.2m', value: '600k-1.2m' },
+        { label: '1.2+', value: '1.2m+' },
+    ];
+
+    const locationTypeOptions = [
+        { label: 'City', value: 'city' },
+        { label: 'Suburbs', value: 'suburbs' },
+        { label: 'All of it', value: 'all' },
+    ];
+
     const progressSteps = ['motivation', 'budget', 'location'];
     const showProgressBar = computed(() =>
         progressSteps.includes(currentStep.value)
@@ -49,49 +128,79 @@
     );
 
     // Methods
-    const handleNext = async () => {
-        clearErrors();
-        const success = await nextStep(formData);
+    const closeModal = () => {
+        emit('update:modelValue', false);
+        emit('close');
+        // Reset after closing
+        setTimeout(() => {
+            currentStep.value = props.initialStep || 'initial';
+        }, 300);
+    };
 
-        if (!success) {
-            // Scroll to top to show errors
-            const modal = document.querySelector('[data-modal-content]');
-            if (modal) {
-                modal.scrollTop = 0;
+    const handleNext = () => {
+        const steps: AuthStep[] = [
+            'initial',
+            'motivation',
+            'budget',
+            'location',
+            'success',
+        ];
+        const currentIndex = steps.indexOf(currentStep.value);
+
+        if (currentIndex < steps.length - 1) {
+            const nextStep = steps[currentIndex + 1];
+            if (nextStep) {
+                currentStep.value = nextStep;
+            }
+        }
+    };
+
+    const handlePrev = () => {
+        const steps: AuthStep[] = [
+            'initial',
+            'motivation',
+            'budget',
+            'location',
+            'success',
+        ];
+        const currentIndex = steps.indexOf(currentStep.value);
+
+        if (currentIndex > 0) {
+            const prevStep = steps[currentIndex - 1];
+            if (prevStep) {
+                currentStep.value = prevStep;
             }
         }
     };
 
     const handleComplete = () => {
-        closeModal();
+        emit('complete', { ...formData });
         navigateTo('/kamaina/');
+        closeModal();
     };
 
     // Keyboard event handling
     onMounted(() => {
         const handleEscape = (e: KeyboardEvent) => {
-            if (e.key === 'Escape' && isOpen.value) {
+            if (e.key === 'Escape' && props.modelValue) {
                 closeModal();
             }
         };
-
         document.addEventListener('keydown', handleEscape);
-
         onUnmounted(() => {
             document.removeEventListener('keydown', handleEscape);
         });
     });
 
     // Prevent body scroll when modal is open
-    watch(isOpen, (newValue) => {
-        if (import.meta.client) {
-            if (newValue) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
+    watch(
+        () => props.modelValue,
+        (newValue) => {
+            if (import.meta.client) {
+                document.body.style.overflow = newValue ? 'hidden' : '';
             }
         }
-    });
+    );
 
     // Cleanup on unmount
     onUnmounted(() => {
@@ -103,7 +212,7 @@
 
 <template>
     <Dialog
-        v-model:visible="isOpen"
+        v-model:visible="props.modelValue"
         modal
         :closable="true"
         :draggable="false"
@@ -123,29 +232,16 @@
                 class="w-full text-center px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
                 <h1
                     class="text-2xl sm:text-3xl max-w-sm mx-auto font-semibold text-[#121A22] mb-2 leading-tight">
-                    {{ currentStepConfig.title }}
+                    {{ getCurrentStepConfig().title }}
                 </h1>
 
                 <p
-                    v-if="currentStepConfig.subtitle"
+                    v-if="getCurrentStepConfig().subtitle"
                     class="text-sm text-[#121A22] whitespace-pre-line">
-                    {{ currentStepConfig.subtitle }}
+                    {{ getCurrentStepConfig().subtitle }}
                 </p>
             </div>
         </template>
-
-        <!-- Error Message -->
-        <Message
-            v-if="errors.general"
-            severity="error"
-            :closable="false"
-            class="mx-6 mb-4"
-            :pt="{
-                root: 'bg-red-50 border border-red-200 rounded-lg',
-                text: 'text-sm text-red-600',
-            }">
-            {{ errors.general }}
-        </Message>
 
         <!-- Content -->
         <div class="px-4 sm:px-6 pb-6">
@@ -154,9 +250,9 @@
                 class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-3 sm:space-y-0">
                 <!-- Step Label -->
                 <div
-                    v-if="currentStepConfig.stepLabel"
+                    v-if="getCurrentStepConfig().stepLabel"
                     class="text-xs text-[#121A22] uppercase tracking-wide">
-                    {{ currentStepConfig.stepLabel }}
+                    {{ getCurrentStepConfig().stepLabel }}
                 </div>
 
                 <!-- Progress Bar (for steps 2-4) -->
@@ -188,20 +284,9 @@
                         <InputText
                             v-model="formData.fullName"
                             placeholder="Enter your full name"
-                            :invalid="!!errors.fullName"
                             :pt="{
-                                root: [
-                                    'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
-                                    errors.fullName
-                                        ? 'border-red-300 bg-red-50'
-                                        : 'border-gray-300',
-                                ],
+                                root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                             }" />
-                        <small
-                            v-if="errors.fullName"
-                            class="text-red-600">
-                            {{ errors.fullName }}
-                        </small>
                     </div>
 
                     <div class="flex flex-col gap-2">
@@ -210,20 +295,9 @@
                             v-model="formData.email"
                             type="email"
                             placeholder="Enter your email address"
-                            :invalid="!!errors.email"
                             :pt="{
-                                root: [
-                                    'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
-                                    errors.email
-                                        ? 'border-red-300 bg-red-50'
-                                        : 'border-gray-300',
-                                ],
+                                root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                             }" />
-                        <small
-                            v-if="errors.email"
-                            class="text-red-600">
-                            {{ errors.email }}
-                        </small>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -231,52 +305,30 @@
                             <label for="">Price Range</label>
                             <Dropdown
                                 v-model="formData.priceRange"
-                                :options="currentStepOptions.priceRange"
+                                :options="priceRangeOptions"
                                 optionLabel="label"
                                 optionValue="value"
                                 optionDisabled="disabled"
                                 placeholder="Price Range"
-                                :invalid="!!errors.priceRange"
                                 :pt="{
-                                    root: [
-                                        'w-full border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
-                                        errors.priceRange
-                                            ? 'border-red-300 bg-red-50'
-                                            : 'border-gray-300',
-                                    ],
+                                    root: 'w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                                     input: 'px-4 py-3',
                                 }" />
-                            <small
-                                v-if="errors.priceRange"
-                                class="text-red-600">
-                                {{ errors.priceRange }}
-                            </small>
                         </div>
 
                         <div class="flex flex-col gap-2">
                             <label for="">Preferred Location</label>
                             <Dropdown
                                 v-model="formData.preferredLocation"
-                                :options="currentStepOptions.preferredLocation"
+                                :options="preferredLocationOptions"
                                 optionLabel="label"
                                 optionValue="value"
                                 optionDisabled="disabled"
                                 placeholder="Location"
-                                :invalid="!!errors.preferredLocation"
                                 :pt="{
-                                    root: [
-                                        'w-full border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
-                                        errors.preferredLocation
-                                            ? 'border-red-300 bg-red-50'
-                                            : 'border-gray-300',
-                                    ],
+                                    root: 'w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                                     input: 'px-4 py-3',
                                 }" />
-                            <small
-                                v-if="errors.preferredLocation"
-                                class="text-red-600">
-                                {{ errors.preferredLocation }}
-                            </small>
                         </div>
                     </div>
 
@@ -299,7 +351,7 @@
                 <!-- Step 2: Motivation -->
                 <div class="space-y-3">
                     <div
-                        v-for="option in currentStepOptions.motivation"
+                        v-for="option in motivationOptions"
                         :key="option.value"
                         @click="formData.motivation = option.value"
                         :class="[
@@ -312,16 +364,11 @@
                             {{ option.label }}
                         </p>
                     </div>
-                    <small
-                        v-if="errors.motivation"
-                        class="text-red-600">
-                        {{ errors.motivation }}
-                    </small>
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-3">
                     <Button
-                        @click="prevStep"
+                        @click="handlePrev"
                         outlined
                         class="flex-1 order-2 sm:order-1"
                         :pt="{
@@ -332,7 +379,7 @@
 
                     <Button
                         @click="handleNext"
-                        :disabled="loading || !formData.motivation"
+                        :disabled="loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
                         class="flex-1 order-1 sm:order-2"
@@ -349,7 +396,7 @@
                 <!-- Step 3: Budget -->
                 <div class="space-y-3">
                     <div
-                        v-for="option in currentStepOptions.budget"
+                        v-for="option in budgetOptions"
                         :key="option.value"
                         @click="formData.budget = option.value"
                         :class="[
@@ -362,16 +409,11 @@
                             {{ option.label }}
                         </p>
                     </div>
-                    <small
-                        v-if="errors.budget"
-                        class="text-red-600">
-                        {{ errors.budget }}
-                    </small>
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-3">
                     <Button
-                        @click="prevStep"
+                        @click="handlePrev"
                         outlined
                         class="flex-1 order-2 sm:order-1"
                         :pt="{
@@ -382,7 +424,7 @@
 
                     <Button
                         @click="handleNext"
-                        :disabled="loading || !formData.budget"
+                        :disabled="loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
                         class="flex-1 order-1 sm:order-2"
@@ -399,7 +441,7 @@
                 <!-- Step 4: Location -->
                 <div class="space-y-3">
                     <div
-                        v-for="option in currentStepOptions.locationType"
+                        v-for="option in locationTypeOptions"
                         :key="option.value"
                         @click="formData.locationType = option.value"
                         :class="[
@@ -412,16 +454,11 @@
                             {{ option.label }}
                         </p>
                     </div>
-                    <small
-                        v-if="errors.locationType"
-                        class="text-red-600">
-                        {{ errors.locationType }}
-                    </small>
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-3">
                     <Button
-                        @click="prevStep"
+                        @click="handlePrev"
                         outlined
                         class="flex-1 order-2 sm:order-1"
                         :pt="{
@@ -432,7 +469,7 @@
 
                     <Button
                         @click="handleNext"
-                        :disabled="loading || !formData.locationType"
+                        :disabled="loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
                         class="flex-1 order-1 sm:order-2"
@@ -473,8 +510,6 @@
                         }">
                         Continue to Dashboard
                     </Button>
-
-                    
                 </div>
             </div>
         </div>

@@ -5,6 +5,8 @@
 <template>
     <div>
         <Home/>
+        <!-- Auth Modal -->
+        
     </div>
 </template>
 
