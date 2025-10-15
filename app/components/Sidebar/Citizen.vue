@@ -110,39 +110,39 @@ const navigationItems = ref([
         path: '/kamaina'
     },
     {
-        id: 'properties',
-        label: 'Properties',
+        id: 'Search',
+        label: 'Search',
         icon: '/svg/menubar/search.svg',
         iconType: 'svg',
         path: '/kamaina/search'
     },
     {
-        id: 'analytics',
-        label: 'Analytics',
+        id: 'videos',
+        label: 'Videos',
         icon: '/svg/menubar/video.svg',
         iconType: 'svg',
-        path: '/kamaina/seatchvideo'
+        path: '/#'
     },
     {
-        id: 'users',
-        label: 'Users',
+        id: 'favourites',
+        label: 'Favourites',
         icon: '/svg/menubar/favourite.svg',
         iconType: 'svg',
-        path: '/users'
+        path: '/#'
     },
     {
         id: 'reports',
         label: 'Reports',
         icon: '/svg/menubar/search.svg',
         iconType: 'svg',
-        path: '/reports'
+        path: '/#'
     },
     {
         id: 'settings',
         label: 'Settings',
         icon: '/svg/menubar/setting.svg',
         iconType: 'svg',
-        path: '/settings'
+        path: '/#'
     }
 ]);
 </script>
