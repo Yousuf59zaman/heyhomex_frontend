@@ -18,10 +18,12 @@
             <!-- Left Side - Hamburger and Logo -->
             <div class="flex items-center space-x-3">
                 <!-- Logo -->
-                <img
-                    class="w-8 h-8"
-                    src="/svg/dashboard/home_logo.svg"
-                    alt="HeyHome Logo" />
+                <NuxtLink to="/kamaina">
+                    <img
+                        class="w-8 h-8"
+                        src="/svg/dashboard/home_logo.svg"
+                        alt="HeyHome Logo" />
+                </NuxtLink>
             </div>
 
             <!-- Right Side - Notification and Profile -->
@@ -51,10 +53,12 @@
             <div class="flex flex-col">
                 <div class="flex items-center space-x-2">
                     <!-- User Avatar -->
-                    <img
-                        class="w-10"
-                        src="/svg/dashboard/home_logo.svg"
-                        alt="" />
+                    <NuxtLink to="/kamaina">
+                        <img
+                            class="w-8 h-8"
+                            src="/svg/dashboard/home_logo.svg"
+                            alt="HeyHome Logo" />
+                    </NuxtLink>
 
                     <!-- Welcome Text -->
                     <div>

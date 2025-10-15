@@ -1,11 +1,7 @@
 <script setup>
-    definePageMeta({
-        layout: 'citizen',
-    });
-
     // Reactive state
     const searchQuery = ref('Best places to live in Hawaii');
-    const viewMode = ref('List View'); // 'List View', 'Map View', or 'Web View'
+    const viewMode = ref('List View'); // 'List View' or 'Map View'
     const selectedCategory = ref('All Videos');
     const selectedDuration = ref('Any Duration');
     const selectedUploadTime = ref('Any Time');
@@ -13,7 +9,12 @@
     const selectedSortBy = ref('Relevance');
 
     // Filter options for videos
-    const categories = ref(['All Videos', 'Real Estate', 'Tourism', 'Lifestyle']);
+    const categories = ref([
+        'All Videos',
+        'Real Estate',
+        'Tourism',
+        'Lifestyle',
+    ]);
     const durations = ref([
         'Any Duration',
         'Under 5 minutes',
@@ -43,11 +44,11 @@
         'Duration',
     ]);
 
-    // Mock video data matching the screenshot design
+    // Mock video data
     const videos = ref([
         {
             id: 1,
-            title: 'These are the best Places to Live in Oahu,Hawaii for...',
+            title: 'These are the best Places to Live in Oahu, Hawaii for...',
             channel: 'Hawaii Living Guide',
             duration: '8:25',
             views: '245K views',
@@ -103,18 +104,14 @@
 
     const handleSearch = () => {
         console.log('Searching for:', searchQuery.value);
-        // Implement search logic here
     };
 
     const saveSearch = () => {
         console.log('Saving search...');
-        // Implement save search logic here
     };
 
     const playVideo = (videoId) => {
         console.log('Playing video:', videoId);
-        // Implement video playback logic here
-        // navigateTo(`/kamaina/video/${videoId}`);
     };
 
     const clearSearch = () => {
@@ -124,21 +121,8 @@
 
 <template>
     <div class="space-y-4 lg:space-y-6">
-        <!-- Header Section -->
+        <!-- Filters and Search Section -->
         <div class="bg-white rounded-lg p-3 lg:p-4">
-            <!-- Top Navigation Tabs -->
-            <div class="flex items-center gap-3 mb-3">
-                <NuxtLink to="/kamaina/search"
-                    class="px-4 py-2 text-gray-600 hover:text-gray-900 text-sm font-medium ">
-                    Home
-                </NuxtLink>
-                <button
-                    class=" px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium">
-                    Videos
-                </button>
-            </div>
-
-            <!-- Combined Filter and Search Row -->
             <div class="flex flex-col lg:flex-row gap-3">
                 <!-- Filters Row -->
                 <div
@@ -148,7 +132,6 @@
                         <select
                             v-model="selectedCategory"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
-                            <option value="">Category: For Sell</option>
                             <option
                                 v-for="category in categories"
                                 :key="category"
@@ -166,7 +149,6 @@
                         <select
                             v-model="selectedDuration"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
-                            <option value="">Duration: Any Length</option>
                             <option
                                 v-for="duration in durations"
                                 :key="duration"
@@ -184,7 +166,6 @@
                         <select
                             v-model="selectedUploadTime"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
-                            <option value="">Upload Time: Any Time</option>
                             <option
                                 v-for="time in uploadTimes"
                                 :key="time"
@@ -202,7 +183,6 @@
                         <select
                             v-model="selectedTopic"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
-                            <option value="">Topic: All Topics</option>
                             <option
                                 v-for="topic in topics"
                                 :key="topic"
@@ -220,7 +200,6 @@
                         <select
                             v-model="selectedSortBy"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
-                            <option value="">Sort By: Relevance</option>
                             <option
                                 v-for="option in sortByOptions"
                                 :key="option"
@@ -234,7 +213,7 @@
                     </div>
                 </div>
 
-                <!-- Search Bar with Address -->
+                <!-- Search Bar -->
                 <div class="flex items-center gap-2 lg:min-w-[350px]">
                     <div class="relative flex-1">
                         <input
@@ -286,7 +265,7 @@
                         @click="viewMode = 'List View'">
                         List View
                     </button>
-                   
+
                     <button
                         :class="[
                             'px-3 py-2 text-sm font-medium rounded-lg transition-colors',
@@ -301,13 +280,12 @@
             </div>
         </div>
 
-        <!-- List View: 2-column grid + Map -->
+        <!-- Map View: 2-column grid + Map -->
         <div
             v-if="viewMode === 'Map View'"
             class="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
             <!-- Video Listings Grid -->
             <div class="lg:col-span-8">
-                <!-- Videos Grid - 2 columns on desktop, 1 on mobile -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
                     <div
                         v-for="video in videos"
@@ -322,8 +300,10 @@
                                 class="w-full h-full object-cover" />
 
                             <!-- Play Button -->
-                            <div class="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors">
-                                <div class="bg-red-600 hover:bg-red-700 rounded-full p-3 transition-colors">
+                            <div
+                                class="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors">
+                                <div
+                                    class="bg-red-600 hover:bg-red-700 rounded-full p-3 transition-colors">
                                     <Icon
                                         name="lucide:play"
                                         class="w-6 h-6 text-white ml-1" />
@@ -331,7 +311,8 @@
                             </div>
 
                             <!-- Duration Badge -->
-                            <div class="absolute bottom-2 right-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
+                            <div
+                                class="absolute bottom-2 right-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
                                 {{ video.duration }}
                             </div>
 
@@ -352,7 +333,6 @@
 
                         <!-- Video Details -->
                         <div class="p-4 lg:p-5">
-                            <!-- Title and Channel -->
                             <div class="mb-3">
                                 <h3
                                     class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 leading-snug">
@@ -361,8 +341,9 @@
                                 <p class="text-sm text-gray-600 mb-1">
                                     {{ video.channel }}
                                 </p>
-                                <div class="flex items-center text-xs text-gray-500 gap-2">
-                                    <span>{{ video.views }} views</span>
+                                <div
+                                    class="flex items-center text-xs text-gray-500 gap-2">
+                                    <span>{{ video.views }}</span>
                                     <span>•</span>
                                     <span>{{ video.uploadTime }}</span>
                                 </div>
@@ -370,7 +351,8 @@
 
                             <!-- Video Category Badge -->
                             <div class="mt-2">
-                                <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                <span
+                                    class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
                                     {{ video.category }}
                                 </span>
                             </div>
@@ -383,9 +365,7 @@
             <div class="lg:col-span-4">
                 <div
                     class="bg-white rounded-xl overflow-hidden h-96 lg:h-[600px] lg:sticky lg:top-6">
-                    <!-- Interactive Map -->
                     <div class="w-full h-full bg-gray-100 relative">
-                        <!-- Mock Map with Property Markers matching Figma design -->
                         <div
                             class="relative w-full h-full bg-gradient-to-br from-green-50 via-blue-50 to-green-100 overflow-hidden">
                             <!-- Map Grid Background -->
@@ -457,87 +437,86 @@
                                     opacity="0.5" />
                             </svg>
 
-                            <!-- Property Price Markers -->
+                            <!-- Video Location Markers -->
                             <div
                                 class="absolute top-[20%] left-[25%] transform -translate-x-1/2 -translate-y-1/2">
                                 <div
-                                    class="property-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
-                                    1.30k
+                                    class="video-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
+                                    <Icon
+                                        name="lucide:play-circle"
+                                        class="w-4 h-4 inline mr-1" />
+                                    4
                                 </div>
                             </div>
 
                             <div
                                 class="absolute top-[35%] left-[45%] transform -translate-x-1/2 -translate-y-1/2">
                                 <div
-                                    class="property-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
-                                    1.56k
+                                    class="video-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
+                                    <Icon
+                                        name="lucide:play-circle"
+                                        class="w-4 h-4 inline mr-1" />
+                                    7
                                 </div>
                             </div>
 
                             <div
                                 class="absolute top-[55%] left-[65%] transform -translate-x-1/2 -translate-y-1/2">
                                 <div
-                                    class="property-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
-                                    1.75k
+                                    class="video-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
+                                    <Icon
+                                        name="lucide:play-circle"
+                                        class="w-4 h-4 inline mr-1" />
+                                    3
                                 </div>
                             </div>
 
                             <div
                                 class="absolute top-[70%] left-[35%] transform -translate-x-1/2 -translate-y-1/2">
                                 <div
-                                    class="property-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
-                                    900k
+                                    class="video-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
+                                    <Icon
+                                        name="lucide:play-circle"
+                                        class="w-4 h-4 inline mr-1" />
+                                    5
                                 </div>
                             </div>
 
                             <div
                                 class="absolute top-[40%] left-[75%] transform -translate-x-1/2 -translate-y-1/2">
                                 <div
-                                    class="property-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
-                                    2.1m
+                                    class="video-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
+                                    <Icon
+                                        name="lucide:play-circle"
+                                        class="w-4 h-4 inline mr-1" />
+                                    2
                                 </div>
                             </div>
 
-                            <div
-                                class="absolute top-[25%] left-[70%] transform -translate-x-1/2 -translate-y-1/2">
-                                <div
-                                    class="property-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
-                                    1.24k
-                                </div>
-                            </div>
-
-                            <div
-                                class="absolute top-[60%] left-[20%] transform -translate-x-1/2 -translate-y-1/2">
-                                <div
-                                    class="property-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
-                                    1.50k
-                                </div>
-                            </div>
-
-                            <!-- Location Labels matching Figma -->
+                            <!-- Location Labels -->
                             <div
                                 class="absolute top-4 left-6 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium shadow-sm">
-                                Newton
+                                Honolulu
                             </div>
 
                             <div
                                 class="absolute top-6 right-8 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium shadow-sm">
-                                Wichita
+                                Maui
                             </div>
 
                             <div
                                 class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium shadow-sm">
-                                LAHOMA
+                                Kauai
                             </div>
 
                             <div
                                 class="absolute bottom-8 left-6 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium shadow-sm">
-                                Ponca City
+                                Hilo
                             </div>
 
                             <div
                                 class="absolute top-1/2 right-6 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium shadow-sm">
-                                Bartlesville
+                                Big Island
                             </div>
 
                             <!-- Map Controls -->
@@ -565,11 +544,10 @@
             </div>
         </div>
 
-        <!-- List View: Full-width video grid (no map) -->
+        <!-- List View: Full-width video grid -->
         <div
-            v-else-if="viewMode === 'List View'"
+            v-else
             class="space-y-6">
-            <!-- Videos Grid - 4 columns on desktop, 2 on tablet, 1 on mobile -->
             <div
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
                 <div
@@ -585,8 +563,10 @@
                             class="w-full h-full object-cover" />
 
                         <!-- Play Button -->
-                        <div class="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors">
-                            <div class="bg-red-600 hover:bg-red-700 rounded-full p-3 transition-colors">
+                        <div
+                            class="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors">
+                            <div
+                                class="bg-red-600 hover:bg-red-700 rounded-full p-3 transition-colors">
                                 <Icon
                                     name="lucide:play"
                                     class="w-6 h-6 text-white ml-1" />
@@ -594,7 +574,8 @@
                         </div>
 
                         <!-- Duration Badge -->
-                        <div class="absolute bottom-2 right-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
+                        <div
+                            class="absolute bottom-2 right-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
                             {{ video.duration }}
                         </div>
 
@@ -615,7 +596,6 @@
 
                     <!-- Video Details -->
                     <div class="p-4 lg:p-5">
-                        <!-- Title and Channel -->
                         <div class="mb-3">
                             <h3
                                 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 leading-snug">
@@ -624,8 +604,9 @@
                             <p class="text-sm text-gray-600 mb-1">
                                 {{ video.channel }}
                             </p>
-                            <div class="flex items-center text-xs text-gray-500 gap-2">
-                                <span>{{ video.views }} views</span>
+                            <div
+                                class="flex items-center text-xs text-gray-500 gap-2">
+                                <span>{{ video.views }}</span>
                                 <span>•</span>
                                 <span>{{ video.uploadTime }}</span>
                             </div>
@@ -633,7 +614,8 @@
 
                         <!-- Video Category Badge -->
                         <div class="mt-2">
-                            <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                            <span
+                                class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
                                 {{ video.category }}
                             </span>
                         </div>
@@ -641,35 +623,12 @@
                 </div>
             </div>
         </div>
-
-       
     </div>
 </template>
 
 <style scoped>
-    /* Hide default select arrow for custom styling */
     select {
         background-image: none;
-    }
-
-    /* Custom scrollbar for mobile */
-    @media (max-width: 768px) {
-        .overflow-x-auto::-webkit-scrollbar {
-            display: none;
-        }
-        .overflow-x-auto {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    }
-
-    /* Line clamp utilities */
-    .line-clamp-1 {
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
     }
 
     .line-clamp-2 {
@@ -680,7 +639,6 @@
         overflow: hidden;
     }
 
-    /* Video card hover effects */
     .video-card {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -691,7 +649,6 @@
             0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
 
-    /* Map marker animations */
     @keyframes markerPulse {
         0% {
             transform: scale(1);
@@ -707,7 +664,7 @@
         }
     }
 
-    .property-marker {
+    .video-marker {
         animation: markerPulse 2s infinite;
     }
 </style>
