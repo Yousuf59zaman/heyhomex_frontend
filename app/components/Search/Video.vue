@@ -7,6 +7,14 @@
     const selectedUploadTime = ref('Any Time');
     const selectedTopic = ref('Hawaii Living');
     const selectedSortBy = ref('Relevance');
+    
+    // Map related state
+    const map = ref(null);
+    const mapContainer = ref(null);
+    const markers = ref([]);
+    const hoveredVideo = ref(null);
+    const showPopup = ref(false);
+    const popupPosition = ref({ x: 0, y: 0 });
 
     // Filter options for videos
     const categories = ref([
@@ -56,6 +64,8 @@
             thumbnail: '/images/dashboard/1.png',
             isFavorite: false,
             category: 'Real Estate',
+            location: 'Honolulu',
+            coordinates: [21.3099, -157.8581],
         },
         {
             id: 2,
@@ -67,6 +77,8 @@
             thumbnail: '/images/dashboard/2.png',
             category: 'Real Estate',
             isFavorite: false,
+            location: 'Maui',
+            coordinates: [20.7984, -156.3319],
         },
         {
             id: 3,
@@ -78,6 +90,8 @@
             thumbnail: '/images/dashboard/3.png',
             category: 'Tourism',
             isFavorite: false,
+            location: 'Kauai',
+            coordinates: [22.0964, -159.5261],
         },
         {
             id: 4,
@@ -89,6 +103,8 @@
             thumbnail: '/images/dashboard/1.png',
             category: 'Real Estate',
             isFavorite: false,
+            location: 'Hilo',
+            coordinates: [19.7297, -155.0900],
         },
     ]);
 
@@ -117,6 +133,138 @@
     const clearSearch = () => {
         searchQuery.value = '';
     };
+    
+    // Map related methods
+    const initializeMap = async () => {
+        if (process.client && !map.value) {
+            // Dynamic import for client-side only
+            const L = await import('leaflet');
+            
+            // Fix for default markers
+            delete L.Icon.Default.prototype._getIconUrl;
+            L.Icon.Default.mergeOptions({
+                iconRetinaUrl: '/leaflet/marker-icon-2x.png',
+                iconUrl: '/leaflet/marker-icon.png',
+                shadowUrl: '/leaflet/marker-shadow.png',
+            });
+            
+            // Default coordinates for Hawaii
+            const defaultCenter = [21.3099, -157.8581]; // Honolulu coordinates
+            const defaultZoom = 8;
+            
+            map.value = L.map('video-map').setView(defaultCenter, defaultZoom);
+            
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map.value);
+            
+            // Add markers for all videos
+            addVideoMarkers(L);
+            
+            // Fit map to show all markers
+            setTimeout(() => fitBoundsToMarkers(), 100);
+        }
+    };
+    
+    const addVideoMarkers = (L) => {
+        if (!map.value || !L) return;
+        
+        // Clear existing markers
+        markers.value.forEach(marker => map.value.removeLayer(marker.marker));
+        markers.value = [];
+        
+        videos.value.forEach(video => {
+            const customIcon = L.divIcon({
+                html: `
+                    <div class="relative">
+                        <div class="bg-red-500 text-white rounded-lg px-2 py-1 text-xs font-bold shadow-lg border-2 border-white flex items-center gap-1">
+                            <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                            ${video.duration}
+                        </div>
+                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-2 border-l-transparent border-r-transparent border-t-red-500"></div>
+                    </div>
+                `,
+                className: 'custom-video-marker',
+                iconSize: [60, 32],
+                iconAnchor: [30, 32]
+            });
+            
+            const marker = L.marker(video.coordinates, { icon: customIcon }).addTo(map.value);
+            
+            // Add event listeners
+            marker.on('mouseover', (e) => onMarkerHover(video, e));
+            marker.on('mouseout', () => onMarkerLeave());
+            marker.on('click', () => playVideo(video.id));
+            
+            markers.value.push({ marker, video });
+        });
+    };
+    
+    const fitBoundsToMarkers = async () => {
+        if (!map.value || markers.value.length === 0) return;
+        
+        const L = await import('leaflet');
+        const group = new L.featureGroup(markers.value.map(({ marker }) => marker));
+        map.value.fitBounds(group.getBounds().pad(0.1));
+    };
+    
+    const onMarkerHover = (video, event) => {
+        hoveredVideo.value = video;
+        showPopup.value = true;
+        
+        // Calculate popup position
+        const mapElement = document.getElementById('video-map');
+        if (mapElement) {
+            const rect = mapElement.getBoundingClientRect();
+            popupPosition.value = {
+                x: event.containerPoint.x + rect.left,
+                y: event.containerPoint.y + rect.top - 10
+            };
+        }
+    };
+    
+    const onMarkerLeave = () => {
+        showPopup.value = false;
+        hoveredVideo.value = null;
+    };
+    
+    const onVideoCardHover = (video) => {
+        const markerData = markers.value.find(m => m.video.id === video.id);
+        if (markerData) {
+            markerData.marker.getElement().classList.add('highlighted');
+        }
+    };
+    
+    const onVideoCardLeave = () => {
+        markers.value.forEach(({ marker }) => {
+            marker.getElement().classList.remove('highlighted');
+        });
+    };
+    
+    // Initialize map when component is mounted and in map view
+    onMounted(() => {
+        if (viewMode.value === 'Map View') {
+            nextTick(() => initializeMap());
+        }
+    });
+    
+    // Watch view mode changes to initialize map
+    watch(viewMode, (newMode) => {
+        if (newMode === 'Map View') {
+            nextTick(() => initializeMap());
+        }
+    });
+    
+    // Cleanup map on unmount
+    onUnmounted(() => {
+        if (map.value) {
+            map.value.remove();
+            map.value = null;
+        }
+    });
 </script>
 
 <template>
@@ -291,6 +439,8 @@
                         v-for="video in videos"
                         :key="video.id"
                         class="video-card bg-white rounded-xl overflow-hidden cursor-pointer border border-gray-100"
+                        @mouseenter="onVideoCardHover(video)"
+                        @mouseleave="onVideoCardLeave"
                         @click="playVideo(video.id)">
                         <!-- Video Thumbnail -->
                         <div class="relative h-48 lg:h-52">
@@ -365,180 +515,26 @@
             <div class="lg:col-span-4">
                 <div
                     class="bg-white rounded-xl overflow-hidden h-96 lg:h-[600px] lg:sticky lg:top-6">
-                    <div class="w-full h-full bg-gray-100 relative">
+                    <div class="w-full h-full relative">
                         <div
-                            class="relative w-full h-full bg-gradient-to-br from-green-50 via-blue-50 to-green-100 overflow-hidden">
-                            <!-- Map Grid Background -->
-                            <div class="absolute inset-0 opacity-10">
-                                <div
-                                    class="grid grid-cols-12 grid-rows-12 w-full h-full">
-                                    <div
-                                        v-for="n in 144"
-                                        :key="n"
-                                        class="border border-gray-300/50"></div>
-                                </div>
-                            </div>
-
-                            <!-- Highway Lines -->
-                            <svg
-                                class="absolute inset-0 w-full h-full"
-                                viewBox="0 0 100 100"
-                                preserveAspectRatio="none">
-                                <!-- Horizontal highways -->
-                                <line
-                                    x1="0"
-                                    y1="25"
-                                    x2="100"
-                                    y2="25"
-                                    stroke="#e5e7eb"
-                                    stroke-width="0.5"
-                                    opacity="0.6" />
-                                <line
-                                    x1="0"
-                                    y1="45"
-                                    x2="100"
-                                    y2="45"
-                                    stroke="#e5e7eb"
-                                    stroke-width="0.3"
-                                    opacity="0.4" />
-                                <line
-                                    x1="0"
-                                    y1="65"
-                                    x2="100"
-                                    y2="65"
-                                    stroke="#e5e7eb"
-                                    stroke-width="0.5"
-                                    opacity="0.6" />
-
-                                <!-- Vertical highways -->
-                                <line
-                                    x1="30"
-                                    y1="0"
-                                    x2="30"
-                                    y2="100"
-                                    stroke="#e5e7eb"
-                                    stroke-width="0.4"
-                                    opacity="0.5" />
-                                <line
-                                    x1="60"
-                                    y1="0"
-                                    x2="60"
-                                    y2="100"
-                                    stroke="#e5e7eb"
-                                    stroke-width="0.3"
-                                    opacity="0.4" />
-                                <line
-                                    x1="80"
-                                    y1="0"
-                                    x2="80"
-                                    y2="100"
-                                    stroke="#e5e7eb"
-                                    stroke-width="0.4"
-                                    opacity="0.5" />
-                            </svg>
-
-                            <!-- Video Location Markers -->
-                            <div
-                                class="absolute top-[20%] left-[25%] transform -translate-x-1/2 -translate-y-1/2">
-                                <div
-                                    class="video-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
-                                    <Icon
-                                        name="lucide:play-circle"
-                                        class="w-4 h-4 inline mr-1" />
-                                    4
-                                </div>
-                            </div>
-
-                            <div
-                                class="absolute top-[35%] left-[45%] transform -translate-x-1/2 -translate-y-1/2">
-                                <div
-                                    class="video-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
-                                    <Icon
-                                        name="lucide:play-circle"
-                                        class="w-4 h-4 inline mr-1" />
-                                    7
-                                </div>
-                            </div>
-
-                            <div
-                                class="absolute top-[55%] left-[65%] transform -translate-x-1/2 -translate-y-1/2">
-                                <div
-                                    class="video-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
-                                    <Icon
-                                        name="lucide:play-circle"
-                                        class="w-4 h-4 inline mr-1" />
-                                    3
-                                </div>
-                            </div>
-
-                            <div
-                                class="absolute top-[70%] left-[35%] transform -translate-x-1/2 -translate-y-1/2">
-                                <div
-                                    class="video-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
-                                    <Icon
-                                        name="lucide:play-circle"
-                                        class="w-4 h-4 inline mr-1" />
-                                    5
-                                </div>
-                            </div>
-
-                            <div
-                                class="absolute top-[40%] left-[75%] transform -translate-x-1/2 -translate-y-1/2">
-                                <div
-                                    class="video-marker bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg cursor-pointer hover:bg-red-600 transition-colors">
-                                    <Icon
-                                        name="lucide:play-circle"
-                                        class="w-4 h-4 inline mr-1" />
-                                    2
-                                </div>
-                            </div>
-
-                            <!-- Location Labels -->
-                            <div
-                                class="absolute top-4 left-6 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium shadow-sm">
-                                Honolulu
-                            </div>
-
-                            <div
-                                class="absolute top-6 right-8 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium shadow-sm">
-                                Maui
-                            </div>
-
-                            <div
-                                class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium shadow-sm">
-                                Kauai
-                            </div>
-
-                            <div
-                                class="absolute bottom-8 left-6 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium shadow-sm">
-                                Hilo
-                            </div>
-
-                            <div
-                                class="absolute top-1/2 right-6 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium shadow-sm">
-                                Big Island
-                            </div>
-
-                            <!-- Map Controls -->
-                            <div class="absolute bottom-4 right-4">
-                                <div
-                                    class="bg-white rounded-lg shadow-md p-2 flex flex-col gap-2">
-                                    <button
-                                        class="p-1 hover:bg-gray-100 rounded transition-colors">
-                                        <Icon
-                                            name="lucide:plus"
-                                            class="w-4 h-4 text-gray-600" />
-                                    </button>
-                                    <div class="w-full h-px bg-gray-200"></div>
-                                    <button
-                                        class="p-1 hover:bg-gray-100 rounded transition-colors">
-                                        <Icon
-                                            name="lucide:minus"
-                                            class="w-4 h-4 text-gray-600" />
-                                    </button>
-                                </div>
-                            </div>
+                            id="video-map"
+                            ref="mapContainer"
+                            class="w-full h-full rounded-xl">
                         </div>
+                        
+                        <!-- Popup overlay for video details on map hover -->
+                        <Teleport to="body">
+                            <div
+                                v-if="showPopup && hoveredVideo"
+                                class="fixed z-[10000] pointer-events-none"
+                                :style="{
+                                    left: popupPosition.x + 'px',
+                                    top: popupPosition.y + 'px',
+                                    transform: 'translate(-50%, -100%)',
+                                }">
+                                <CommonCitizenVideoPopup :video="hoveredVideo" />
+                            </div>
+                        </Teleport>
                     </div>
                 </div>
             </div>
@@ -666,5 +662,46 @@
 
     .video-marker {
         animation: markerPulse 2s infinite;
+    }
+    
+    /* Global styles for Leaflet video markers */
+    .custom-video-marker {
+        background: transparent !important;
+        border: none !important;
+    }
+    
+    .custom-video-marker.highlighted {
+        transform: scale(1.1);
+        z-index: 1000 !important;
+    }
+    
+    .custom-video-marker .bg-red-500 {
+        animation: pulse 2s infinite;
+        transition: all 0.3s ease;
+    }
+    
+    .custom-video-marker.highlighted .bg-red-500 {
+        background-color: #059669 !important; /* emerald-600 */
+        animation: none;
+        box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.8;
+        }
+    }
+    
+    /* Ensure map container has proper styling */
+    #video-map {
+        border-radius: 0.75rem;
+    }
+    
+    /* Custom leaflet popup styles if needed */
+    .leaflet-popup-content-wrapper {
+        border-radius: 0.5rem;
     }
 </style>
