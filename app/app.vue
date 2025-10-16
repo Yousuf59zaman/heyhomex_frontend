@@ -37,9 +37,6 @@
      <NuxtLayout>
             <NuxtPage />
         </NuxtLayout>
-
-                <!-- Global Auth Modal -->
-        <AuthCitizenAuthModal />
 </template>
 
 <style lang="scss" scoped></style>

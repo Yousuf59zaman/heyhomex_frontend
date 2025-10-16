@@ -45,7 +45,7 @@ export default defineNuxtConfig({
 
     css: [
         '~/assets/css/main.css',
-        
+        'leaflet/dist/leaflet.css'
     ],
 
     modules: [

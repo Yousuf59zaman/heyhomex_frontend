@@ -2,8 +2,8 @@
     const isScroll = ref(false);
     const isMobileMenuOpen = ref(false);
 
-    // Auth Modal composable
-    const { openModal } = useCitizenModal();
+    // Emits
+    const emit = defineEmits(['open-auth-modal']);
 
     const handleScroll = () => {
         isScroll.value = window.scrollY > 0;
@@ -14,7 +14,8 @@
     };
 
     const handleGetStarted = () => {
-        openModal("initial");
+        console.log('Guest header: Get Started clicked, emitting open-auth-modal event')
+        emit('open-auth-modal');
         // Close mobile menu if open
         isMobileMenuOpen.value = false;
     };
