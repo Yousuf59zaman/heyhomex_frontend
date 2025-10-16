@@ -1,3 +1,26 @@
+<script setup>
+    // Props
+    const props = defineProps({
+        title: {
+            type: String,
+            default: 'Videos you might like!',
+        },
+        videos: {
+            type: Array,
+            default: () => [],
+        },
+    });
+
+    // Emits
+    const emit = defineEmits(['see-all', 'video-click']);
+
+    // Methods
+    const handleVideoClick = (video) => {
+        emit('video-click', video);
+    };
+</script>
+
+
 <template>
     <div class="rounded-lg mb-10">
         <div class="flex items-center justify-between mb-4">
@@ -22,24 +45,4 @@
     </div>
 </template>
 
-<script setup>
-    // Props
-    const props = defineProps({
-        title: {
-            type: String,
-            default: 'Videos you might like!',
-        },
-        videos: {
-            type: Array,
-            default: () => [],
-        },
-    });
 
-    // Emits
-    const emit = defineEmits(['see-all', 'video-click']);
-
-    // Methods
-    const handleVideoClick = (video) => {
-        emit('video-click', video);
-    };
-</script>

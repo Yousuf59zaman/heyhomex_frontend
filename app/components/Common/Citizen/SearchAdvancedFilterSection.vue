@@ -1,3 +1,126 @@
+<script setup>
+    // Props
+    const props = defineProps({
+        placeholder: {
+            type: String,
+            default: '123 Aloha Lane, Honolulu, HI 96818',
+        },
+        modelValue: {
+            type: String,
+            default: '',
+        },
+        category: {
+            type: String,
+            default: 'For Sell',
+        },
+        priceRange: {
+            type: String,
+            default: '$250,000',
+        },
+        homeType: {
+            type: String,
+            default: 'Beds & Baths',
+        },
+        others: {
+            type: String,
+            default: 'More',
+        },
+        bedsAndBaths: {
+            type: String,
+            default: '',
+        },
+    });
+
+    // Emits
+    const emit = defineEmits([
+        'update:modelValue',
+        'update:category',
+        'update:priceRange',
+        'update:homeType',
+        'update:others',
+        'update:bedsAndBaths',
+        'search',
+        'save-search',
+        'filter-change',
+    ]);
+
+    // Static filter options
+    const categories = ['For Sell', 'For Rent', 'Sold'];
+    const priceRanges = ['$250,000', '$500,000', '$750,000', '$1,000,000+'];
+    const homeTypes = ['Beds & Baths', 'Studio', '1 Bed', '2 Beds', '3+ Beds'];
+    const othersOptions = [
+        'More',
+        'New Construction',
+        'Open House',
+        'Recently Sold',
+    ];
+    const bedsAndBathsOptions = ['Any', '1+', '2+', '3+', '4+', '5+'];
+
+    // Reactive state
+    const searchQuery = ref(props.modelValue);
+    const selectedCategory = ref(props.category);
+    const selectedPriceRange = ref(props.priceRange);
+    const selectedHomeType = ref(props.homeType);
+    const selectedOthers = ref(props.others);
+    const selectedBedsAndBaths = ref(props.bedsAndBaths);
+
+    // Watch for prop changes
+    watch(
+        () => props.modelValue,
+        (newValue) => {
+            searchQuery.value = newValue;
+        }
+    );
+
+    watch(
+        () => props.category,
+        (newValue) => {
+            selectedCategory.value = newValue;
+        }
+    );
+
+    watch(
+        () => props.priceRange,
+        (newValue) => {
+            selectedPriceRange.value = newValue;
+        }
+    );
+
+    // Methods
+    const handleSearchChange = () => {
+        emit('update:modelValue', searchQuery.value);
+    };
+
+    const handleSearch = () => {
+        emit('search', searchQuery.value);
+    };
+
+    const handleSaveSearch = () => {
+        emit('save-search');
+    };
+
+    const clearSearch = () => {
+        searchQuery.value = '';
+        emit('update:modelValue', '');
+    };
+
+    const handleFilterChange = () => {
+        emit('update:category', selectedCategory.value);
+        emit('update:priceRange', selectedPriceRange.value);
+        emit('update:homeType', selectedHomeType.value);
+        emit('update:others', selectedOthers.value);
+        emit('update:bedsAndBaths', selectedBedsAndBaths.value);
+        emit('filter-change', {
+            category: selectedCategory.value,
+            priceRange: selectedPriceRange.value,
+            homeType: selectedHomeType.value,
+            others: selectedOthers.value,
+            bedsAndBaths: selectedBedsAndBaths.value,
+        });
+    };
+</script>
+
+
 <template>
     <div class="bg-white rounded-lg p-3 lg:p-4">
         <div class="flex flex-col lg:flex-row gap-3">
@@ -125,127 +248,7 @@
     </div>
 </template>
 
-<script setup>
-    // Props
-    const props = defineProps({
-        placeholder: {
-            type: String,
-            default: '123 Aloha Lane, Honolulu, HI 96818',
-        },
-        modelValue: {
-            type: String,
-            default: '',
-        },
-        category: {
-            type: String,
-            default: 'For Sell',
-        },
-        priceRange: {
-            type: String,
-            default: '$250,000',
-        },
-        homeType: {
-            type: String,
-            default: 'Beds & Baths',
-        },
-        others: {
-            type: String,
-            default: 'More',
-        },
-        bedsAndBaths: {
-            type: String,
-            default: '',
-        },
-    });
 
-    // Emits
-    const emit = defineEmits([
-        'update:modelValue',
-        'update:category',
-        'update:priceRange',
-        'update:homeType',
-        'update:others',
-        'update:bedsAndBaths',
-        'search',
-        'save-search',
-        'filter-change',
-    ]);
-
-    // Static filter options
-    const categories = ['For Sell', 'For Rent', 'Sold'];
-    const priceRanges = ['$250,000', '$500,000', '$750,000', '$1,000,000+'];
-    const homeTypes = ['Beds & Baths', 'Studio', '1 Bed', '2 Beds', '3+ Beds'];
-    const othersOptions = [
-        'More',
-        'New Construction',
-        'Open House',
-        'Recently Sold',
-    ];
-    const bedsAndBathsOptions = ['Any', '1+', '2+', '3+', '4+', '5+'];
-
-    // Reactive state
-    const searchQuery = ref(props.modelValue);
-    const selectedCategory = ref(props.category);
-    const selectedPriceRange = ref(props.priceRange);
-    const selectedHomeType = ref(props.homeType);
-    const selectedOthers = ref(props.others);
-    const selectedBedsAndBaths = ref(props.bedsAndBaths);
-
-    // Watch for prop changes
-    watch(
-        () => props.modelValue,
-        (newValue) => {
-            searchQuery.value = newValue;
-        }
-    );
-
-    watch(
-        () => props.category,
-        (newValue) => {
-            selectedCategory.value = newValue;
-        }
-    );
-
-    watch(
-        () => props.priceRange,
-        (newValue) => {
-            selectedPriceRange.value = newValue;
-        }
-    );
-
-    // Methods
-    const handleSearchChange = () => {
-        emit('update:modelValue', searchQuery.value);
-    };
-
-    const handleSearch = () => {
-        emit('search', searchQuery.value);
-    };
-
-    const handleSaveSearch = () => {
-        emit('save-search');
-    };
-
-    const clearSearch = () => {
-        searchQuery.value = '';
-        emit('update:modelValue', '');
-    };
-
-    const handleFilterChange = () => {
-        emit('update:category', selectedCategory.value);
-        emit('update:priceRange', selectedPriceRange.value);
-        emit('update:homeType', selectedHomeType.value);
-        emit('update:others', selectedOthers.value);
-        emit('update:bedsAndBaths', selectedBedsAndBaths.value);
-        emit('filter-change', {
-            category: selectedCategory.value,
-            priceRange: selectedPriceRange.value,
-            homeType: selectedHomeType.value,
-            others: selectedOthers.value,
-            bedsAndBaths: selectedBedsAndBaths.value,
-        });
-    };
-</script>
 
 <style scoped>
     select {

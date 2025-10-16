@@ -90,7 +90,6 @@
 
     const handleFilterChange = (filters) => {
         console.log('Filters changed:', filters);
-        // Here you could implement filtering logic
     };
 
     // Watch for URL parameter changes
