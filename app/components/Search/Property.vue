@@ -148,7 +148,7 @@
             const customIcon = L.divIcon({
                 html: `
                     <div class="relative">
-                        <div class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shadow-lg border-2 border-white">
+                        <div class="bg-[#F66] text-white rounded-full w-20 h-6 flex items-center justify-center text-sm font-bold shadow-lg ">
                             $${Math.round(property.price / 1000)}k
                         </div>
                         <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-red-500"></div>

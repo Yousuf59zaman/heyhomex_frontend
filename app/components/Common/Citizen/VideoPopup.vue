@@ -1,3 +1,13 @@
+<script setup>
+const props = defineProps({
+    video: {
+        type: Object,
+        required: true,
+    },
+});
+</script>
+
+
 <template>
     <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-4 min-w-[300px] max-w-[350px]">
         <div class="flex items-start gap-3">
@@ -47,14 +57,6 @@
     </div>
 </template>
 
-<script setup>
-const props = defineProps({
-    video: {
-        type: Object,
-        required: true,
-    },
-});
-</script>
 
 <style scoped>
 .line-clamp-2 {
