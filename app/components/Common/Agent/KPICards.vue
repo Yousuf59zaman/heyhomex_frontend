@@ -36,9 +36,9 @@
 
     const getValueColor = (color) => {
         const colors = {
-            blue: '#3B82F6', // Darker blue for text
-            red: '#E82124', // Darker red for text
-            green: '#242424', // Darker green for text
+            blue: '#3B82F6', 
+            red: '#E82124', 
+            green: '#242424', 
         };
         return colors[color] || '#374151';
     };
@@ -54,6 +54,7 @@
             <div class="flex flex-col">
                 <!-- Icon -->
                 <div class="flex-shrink-0">
+                    
                     <div
                         class="w-12 h-12 rounded-full flex items-center justify-start">
                         <img
