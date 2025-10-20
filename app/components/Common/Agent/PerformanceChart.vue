@@ -37,9 +37,9 @@
             {
                 data: [40, 38, 22], // Values that sum to 100 to show 78% utilization
                 backgroundColor: [
-                    '#FF6B6B', // Kama'aina - Red/Pink
-                    '#3C4B66', // Investor - Dark Navy
-                    '#6B9BD8', // Military - Blue
+                    '#FF6B6B', 
+                    '#3C4B66',
+                    '#6B9BD8',
                 ],
                 borderWidth: 0,
                 cutout: '75%',
@@ -63,8 +63,7 @@
             },
         },
     });
-
-    // Center text calculation - fixed 78% display
+    
     const totalPercentage = computed(() => {
         return 78; // Fixed value as shown in the design
     });
