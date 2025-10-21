@@ -1,52 +1,76 @@
 <script setup>
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
-import { Doughnut } from 'vue-chartjs';
+    import {
+        Chart as ChartJS,
+        CategoryScale,
+        LinearScale,
+        PointElement,
+        LineElement,
+        Title,
+        Tooltip,
+        Legend,
+        ArcElement,
+    } from 'chart.js';
+    import { Doughnut } from 'vue-chartjs';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement);
+    ChartJS.register(
+        CategoryScale,
+        LinearScale,
+        PointElement,
+        LineElement,
+        Title,
+        Tooltip,
+        Legend,
+        ArcElement
+    );
 
-// Chart data for targeting snapshot
-const chartData = ref({
-    labels: ['Kama\'aina', 'Investor', 'Military'],
-    datasets: [{
-        data: [40, 38, 22],
-        backgroundColor: [
-            '#FF6B6B',  // Kama'aina - Red/Pink
-            '#3C4B66',  // Investor - Dark Navy
-            '#6B9BD8'   // Military - Blue
+    // Chart data for targeting snapshot
+    const chartData = ref({
+        labels: ["Kama'aina", 'Investor', 'Military'],
+        datasets: [
+            {
+                data: [40, 38, 22],
+                backgroundColor: [
+                    '#FF6B6B', 
+                    '#3C4B66', 
+                    '#6B9BD8', 
+                ],
+                borderWidth: 0,
+                cutout: '75%',
+            },
         ],
-        borderWidth: 0,
-        cutout: '75%'
-    }]
-});
+    });
 
-const chartOptions = ref({
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-        legend: {
-            display: false
+    const chartOptions = ref({
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false,
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                titleColor: 'white',
+                bodyColor: 'white',
+                cornerRadius: 8,
+                displayColors: true,
+            },
         },
-        tooltip: {
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            titleColor: 'white',
-            bodyColor: 'white',
-            cornerRadius: 8,
-            displayColors: true
-        }
-    }
-});
+    });
 
-// Fixed 78% display
-const totalPercentage = computed(() => {
-    return 78;
-});
+    // Fixed 78% display
+    const totalPercentage = computed(() => {
+        return 78;
+    });
 </script>
 
 <template>
-    <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm h-full">
+    <div
+        class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm h-full">
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">
-            <h3 class="text-lg font-semibold text-gray-900">Targeting Snapshot</h3>
+            <h3 class="text-lg font-semibold text-gray-900">
+                Targeting Snapshot
+            </h3>
         </div>
 
         <!-- Chart Container -->
@@ -55,12 +79,20 @@ const totalPercentage = computed(() => {
                 :data="chartData"
                 :options="chartOptions"
                 class="w-full h-full" />
-            
+
             <!-- Center Text -->
-            <div class="absolute inset-0 flex flex-col items-center justify-center">
-                <div class="text-xs text-gray-500 text-center leading-tight">Total User Based</div>
-                <div class="text-xs text-gray-500 text-center leading-tight mb-1">on Category</div>
-                <div class="text-2xl font-bold text-gray-900">{{ totalPercentage }}%</div>
+            <div
+                class="absolute inset-0 flex flex-col items-center justify-center">
+                <div class="text-xs text-gray-500 text-center leading-tight">
+                    Total User Based
+                </div>
+                <div
+                    class="text-xs text-gray-500 text-center leading-tight mb-1">
+                    on Category
+                </div>
+                <div class="text-2xl font-bold text-gray-900">
+                    {{ totalPercentage }}%
+                </div>
             </div>
         </div>
 

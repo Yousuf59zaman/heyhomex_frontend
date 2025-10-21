@@ -127,7 +127,9 @@
                     src="/images/home/home_logo.png"
                     alt="HeyHome Logo"
                     class="h-8 w-8 rounded" />
-                <span class="text-lg font-semibold text-white">HeyHome Advisor</span>
+                <span class="text-lg font-semibold text-white"
+                    >HeyHome Advisor</span
+                >
             </div>
             <button
                 @click="$emit('close-menu')"
@@ -242,7 +244,7 @@
     .mobile-sidebar-link:hover .mobile-sidebar-icon {
         filter: brightness(0) saturate(100%) invert(100%);
     }
-    
+
     .mobile-sidebar-link-active {
         background-color: rgba(255, 255, 255, 0.2) !important;
         color: #ffffff !important;
