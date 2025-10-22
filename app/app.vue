@@ -13,7 +13,7 @@
 </script>
 
 <template>
-    <!-- <ClientOnly fallbackTag="div">
+    <ClientOnly fallbackTag="div">
         <NuxtLayout>
             <NuxtPage />
         </NuxtLayout>
@@ -32,11 +32,11 @@
                 </div>
             </div>
         </template>
-    </ClientOnly> -->
+    </ClientOnly>
 
-     <NuxtLayout>
+     <!-- <NuxtLayout>
             <NuxtPage />
-        </NuxtLayout>
+        </NuxtLayout> -->
 </template>
 
 <style lang="scss" scoped></style>
