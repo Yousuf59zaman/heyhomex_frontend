@@ -19,21 +19,6 @@ const MyPreset = definePreset(Aura, {
                     900: '{sky.900}',
                     950: '{sky.950}'
                 },
-            },
-            dark: {
-                primary: {
-                    50: '{sky.50}',
-                    100: '{sky.100}',
-                    200: '{sky.200}',
-                    300: '{sky.300}',
-                    400: '{sky.400}',
-                    500: '{sky.500}',
-                    600: '{sky.600}',
-                    700: '{sky.700}',
-                    800: '{sky.800}',
-                    900: '{sky.900}',
-                    950: '{sky.950}'
-                }
             }
         }
     },
@@ -63,10 +48,21 @@ export default defineNuxtConfig({
     modules: [
         "@primevue/nuxt-module",
         "@nuxt/icon",
-        
+        "@nuxtjs/color-mode",
         "@nuxtjs/sitemap",
         "@nuxtjs/tailwindcss",
     ],
+
+    colorMode: {
+        preference: 'light', // default value of $colorMode.preference
+        fallback: 'light', // fallback value if not system preference found
+        hid: 'nuxt-color-mode-script',
+        globalName: '__NUXT_COLOR_MODE__',
+        componentName: 'ColorScheme',
+        classPrefix: '',
+        classSuffix: '',
+        storageKey: 'nuxt-color-mode'
+    },
 
     primevue: {
         options: {
@@ -74,7 +70,7 @@ export default defineNuxtConfig({
                 preset: MyPreset,
                 options: {
                     prefix: 'p',
-                    darkModeSelector: 'html.dark', 
+                    darkModeSelector: false, // Explicitly disable dark mode
                     cssLayer: false
                 }
             }
