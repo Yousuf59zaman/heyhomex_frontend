@@ -24,6 +24,7 @@ const submit = async () => {
 	try {
 		const response = await login(form);
 		console.log(response.data.token);
+		console.log('Login successful:', response);
 		if (response) {
 			window.location.href = '/admin-panel';
 			return;
