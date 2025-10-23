@@ -1,4 +1,9 @@
 <script setup>
+    import { useVideoPlayer } from '~/composables/useVideoPlayer';
+
+    const demoVideoUrl = 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
+    const { openVideo } = useVideoPlayer();
+
     // Reactive state
     const searchQuery = ref('Best places to live in Hawaii');
     const viewMode = ref('List View'); // 'List View' or 'Map View'
@@ -66,6 +71,7 @@
             category: 'Real Estate',
             location: 'Honolulu',
             coordinates: [21.3099, -157.8581],
+            videoUrl: demoVideoUrl,
         },
         {
             id: 2,
@@ -79,6 +85,7 @@
             isFavorite: false,
             location: 'Maui',
             coordinates: [20.7984, -156.3319],
+            videoUrl: demoVideoUrl,
         },
         {
             id: 3,
@@ -92,6 +99,7 @@
             isFavorite: false,
             location: 'Kauai',
             coordinates: [22.0964, -159.5261],
+            videoUrl: demoVideoUrl,
         },
         {
             id: 4,
@@ -105,6 +113,7 @@
             isFavorite: false,
             location: 'Hilo',
             coordinates: [19.7297, -155.0900],
+            videoUrl: demoVideoUrl,
         },
     ]);
 
@@ -127,7 +136,12 @@
     };
 
     const playVideo = (videoId) => {
-        console.log('Playing video:', videoId);
+        const video = videos.value.find((item) => item.id === videoId);
+        if (!video) {
+            return;
+        }
+
+        openVideo(video, videos.value);
     };
 
     const clearSearch = () => {

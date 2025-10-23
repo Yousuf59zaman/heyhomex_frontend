@@ -1,6 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import Aura from '@primeuix/themes/aura';
 import { definePreset } from '@primeuix/themes';
+type ProcessEnv = Record<string, string | undefined>;
+
+const runtimeEnv =
+    (globalThis as typeof globalThis & { process?: { env?: ProcessEnv } }).process?.env ?? {};
 
 const MyPreset = definePreset(Aura, {
     semantic: {
@@ -51,7 +55,7 @@ export default defineNuxtConfig({
     modules: [
         "@primevue/nuxt-module",
         "@nuxt/icon",
-        
+
         "@nuxtjs/sitemap",
         "@nuxtjs/tailwindcss",
     ],
@@ -62,13 +66,22 @@ export default defineNuxtConfig({
                 preset: MyPreset,
                 options: {
                     prefix: 'p',
-                    darkModeSelector: 'html.dark', 
+                    darkModeSelector: 'html.dark',
                     cssLayer: false
                 }
             }
         },
         components: {
             include: '*'
+        }
+    },
+
+    // Runtime configuration for JW Player
+    runtimeConfig: {
+        public: {
+            jwplayerKey: runtimeEnv.NUXT_PUBLIC_JWPLAYER_KEY || '',
+            jwplayerLibraryUrl: runtimeEnv.NUXT_PUBLIC_JWPLAYER_LIBRARY_URL || '',
+            jwplayerDemoMode: runtimeEnv.NUXT_PUBLIC_JWPLAYER_DEMO_MODE || 'true',
         }
     },
 

@@ -37,6 +37,11 @@
      <NuxtLayout>
             <NuxtPage />
         </NuxtLayout>
+
+        <!-- Global Video Player Modal -->
+        <ClientOnly>
+            <VideoPlayerModal />
+        </ClientOnly>
 </template>
 
 <style lang="scss" scoped></style>

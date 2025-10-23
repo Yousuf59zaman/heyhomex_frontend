@@ -1,19 +1,35 @@
 <script setup>
-    // Props
-    const props = defineProps({
-        video: {
-            type: Object,
-            required: true,
-        },
-    });
+import { useVideoPlayer } from '~/composables/useVideoPlayer';
 
-    // Emits
-    const emit = defineEmits(['click']);
+// Props
+const props = defineProps({
+    video: {
+        type: Object,
+        required: true,
+    },
+    // Optional: disable auto-play in modal
+    useModal: {
+        type: Boolean,
+        default: true,
+    },
+});
 
-    // Methods
-    const handleClick = () => {
-        emit('click', props.video);
-    };
+// Emits
+const emit = defineEmits(['click']);
+
+// Video player composable
+const { openVideo } = useVideoPlayer();
+
+// Methods
+const handleClick = () => {
+    // Emit click event (for backward compatibility)
+    emit('click', props.video);
+
+    // Open video in modal if enabled
+    if (props.useModal) {
+        openVideo(props.video);
+    }
+};
 </script>
 
 <template>

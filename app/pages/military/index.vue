@@ -3,6 +3,8 @@
         layout: 'citizen',
     });
 
+    const demoVideoUrl = 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
+
     // Search and filter state
     const searchQuery = ref('');
     const selectedPropertyType = ref('');
@@ -94,21 +96,24 @@
             title: 'HAWAIIAN',
             subtitle: 'AIRLINES',
             thumbnail: '/images/dashboard/video/1.png',
-            duration: '3:45'
+            duration: '3:45',
+            videoUrl: demoVideoUrl
         },
         {
             id: 2,
             title: 'LIVESTRAND',
             subtitle: 'HOUSE',
             thumbnail: '/images/dashboard/video/2.png',
-            duration: '5:12'
+            duration: '5:12',
+            videoUrl: demoVideoUrl
         },
         {
             id: 3,
             title: 'WHICH',
             subtitle: 'ONE ARE YOU?',
             thumbnail: '/images/dashboard/video/3.png',
-            duration: '2:58'
+            duration: '2:58',
+            videoUrl: demoVideoUrl
         }
     ]);
 
