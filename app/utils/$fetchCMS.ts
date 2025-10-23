@@ -17,7 +17,7 @@ let failedQueue: Array<{
 }> = [];
 
 const processQueue = (error: any, token: string | null = null) => {
-    failedQueue.forEach(prom => {
+    failedQueue.forEach((prom) => {
         if (error) {
             prom.reject(error);
         } else {
@@ -45,7 +45,12 @@ export async function $fetchCMS<T, R extends ResponseType = 'json'>(
     const { API_URL_CITIZEN } = useRuntimeConfig().public;
     let token = useCookie($XCMS_TOKEN).value;
 
-    if (process.client && ['get', 'post', 'delete', 'put', 'patch'].includes(options?.method?.toLowerCase() ?? '')) {
+    if (
+        process.client &&
+        ['get', 'post', 'delete', 'put', 'patch'].includes(
+            options?.method?.toLowerCase() ?? ''
+        )
+    ) {
         token = getCookie($XCMS_TOKEN);
     }
 
@@ -55,7 +60,7 @@ export async function $fetchCMS<T, R extends ResponseType = 'json'>(
     let headers: any = {
         accept: 'application/json',
         ...options?.headers,
-        ...(token && { [AUTH_HEADER]: `Bearer ${token}` })
+        ...(token && { [AUTH_HEADER]: `Bearer ${token}` }),
     };
 
     if (process.server) {
@@ -70,7 +75,7 @@ export async function $fetchCMS<T, R extends ResponseType = 'json'>(
         return await $fetch<T, R>(path, {
             baseURL: API_URL_CITIZEN,
             ...options,
-            headers
+            headers,
         });
     } catch (error) {
         if (!(error instanceof FetchError)) throw error;
@@ -86,7 +91,7 @@ export async function $fetchCMS<T, R extends ResponseType = 'json'>(
                     return $fetch<T, R>(path, {
                         baseURL: API_URL_CITIZEN,
                         ...options,
-                        headers
+                        headers,
                     });
                 });
             }
@@ -97,13 +102,13 @@ export async function $fetchCMS<T, R extends ResponseType = 'json'>(
                 const newToken = await refreshToken();
                 isRefreshing = false;
                 processQueue(null, newToken);
-                
+
                 // Retry original request with new token
                 headers[AUTH_HEADER] = `Bearer ${newToken}`;
                 return await $fetch<T, R>(path, {
                     baseURL: API_URL_CITIZEN,
                     ...options,
-                    headers
+                    headers,
                 });
             } catch (refreshError) {
                 isRefreshing = false;
@@ -120,6 +125,8 @@ export async function $fetchCMS<T, R extends ResponseType = 'json'>(
 }
 
 function getCookie(name: string) {
-    const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+    const match = document.cookie.match(
+        new RegExp('(^|;\\s*)(' + name + ')=([^;]*)')
+    );
     return match ? decodeURIComponent(match[3]) : null;
 }

@@ -1,10 +1,9 @@
 <script setup>
-    
     useHead({
-        title: "HeyHome - Your Home Starts Here",
+        title: 'HeyHome - Your Home Starts Here',
         meta: [
             {
-                name: "description",
+                name: 'description',
                 content:
                     "Where your next chapter begins — Kama'aina, Military, or Investor, your path starts with purpose",
             },
@@ -13,7 +12,7 @@
 </script>
 
 <template>
-    <ClientOnly fallbackTag="div">
+    <!-- <ClientOnly fallbackTag="div">
         <NuxtLayout>
             <NuxtPage />
         </NuxtLayout>
@@ -32,11 +31,11 @@
                 </div>
             </div>
         </template>
-    </ClientOnly>
+    </ClientOnly> -->
 
-     <!-- <NuxtLayout>
-            <NuxtPage />
-        </NuxtLayout> -->
+    <NuxtLayout>
+        <NuxtPage />
+    </NuxtLayout>
 </template>
 
 <style lang="scss" scoped></style>

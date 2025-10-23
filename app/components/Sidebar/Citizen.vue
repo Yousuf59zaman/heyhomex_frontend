@@ -77,12 +77,12 @@
     <!-- Desktop Sidebar -->
     <aside
         v-if="!isMobile"
-        class="h-full w-[69px] flex flex-col items-center py-4"
+        class="h-full w-[69px] flex flex-col items-center py-7"
         :style="{ backgroundColor: sidebarBackgroundColor }">
         <!-- Logo Section -->
         <div class="mb-8">
             <img
-                src="/images/home/home_logo.png"
+                src="/svg/dashboard/home_logo.svg"
                 alt="HeyHome Logo"
                 class="h-8 w-8 rounded" />
         </div>
