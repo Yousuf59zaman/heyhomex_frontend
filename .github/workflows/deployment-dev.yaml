@@ -1,0 +1,59 @@
+name: Dev deployment 
+
+on:
+    push:
+        branches:
+            - dev
+
+
+jobs:
+    install-build-application:
+        name: Install and Build the application
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Build App artifacts using pnpm
+              uses: pnpm/action-setup@v4
+            - run: |
+                touch .env
+                pnpm install
+                pnpm run build
+                tar -czf output.tar.gz .output
+            - name: Store app artifacts for distribution
+              uses: actions/upload-artifact@v4
+              with:
+                name: app-artifacts
+                path: output.tar.gz
+
+    deploy-application:
+        needs: install-build-application
+        name: Prepare release on server
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/download-artifact@v4
+              with:
+                name: app-artifacts
+            - name: Upload app-artifacts
+              uses: appleboy/scp-action@master
+              with:
+                host: ${{ secrets.DEV_SERVER_SSH_HOST }}
+                port: ${{ secrets.DEV_SERVER_SSH_PORT }}
+                username: ${{ secrets.DEV_SERVER_SSH_USER }}
+                key: ${{ secrets.DEV_SERVER_SSH_KEY }}
+                source: output.tar.gz
+                target: ${{ vars.DEV_ARTIFACT_DIR }}
+
+            - name: Extract archive and create directories
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.DEV_SERVER_SSH_HOST }}
+                port: ${{ secrets.DEV_SERVER_SSH_PORT }}
+                username: ${{ secrets.DEV_SERVER_SSH_USER }}
+                key: ${{ secrets.DEV_SERVER_SSH_KEY }}
+                script: |
+                    cd ${{ vars.DEV_APP_DIR }}
+                    echo "Renaming existing .output folder to .output_old"
+                    mv .output .output_$(date +%Y%m%d%H%M%S)
+                    tar -xzf ${{ vars.DEV_ARTIFACT_DIR }}/output.tar.gz -C ${{ vars.DEV_APP_DIR }}/
+                    rm ${{ vars.DEV_ARTIFACT_DIR }}/output.tar.gz
+                    pm2 restart ${{ vars.DEV_PM2_SL }}
