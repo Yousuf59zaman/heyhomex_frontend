@@ -29,8 +29,7 @@ export default defineNuxtConfig({
     runtimeConfig: {
         public: {
             NUXT_PUBLIC_SITE_URL: process.env.NUXT_PUBLIC_SITE_URL,
-            API_URL_ADMIN: process.env.API_URL_ADMIN,
-            API_URL_CITIZEN: process.env.API_URL_CITIZEN,
+            API_BASE_URL: process.env.API_BASE_URL,
             SCRIPT_URL: process.env.SCRIPT_URL,
             CMS_EMAIL: process.env.CMS_EMAIL,
             CMS_PASSWORD: process.env.CMS_PASSWORD,
