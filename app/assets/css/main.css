@@ -1,21 +1,21 @@
 
 @font-face {
   font-family: 'sf-pro-Regular';
-  src: url('/fonts/sf-pro-display/SFPRODISPLAYREGULAR.otf');
+  src: url('/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF');
   font-weight: 400;
   font-style: normal;
   letter-spacing: 10px;
 }
 @font-face {
   font-family: 'sf-pro-Medium';
-  src: url('/fonts/sf-pro-display/SFPRODISPLAYMEDIUM.otf');
+  src: url('/fonts/sf-pro-display/SFPRODISPLAYMEDIUM.OTF');
   font-weight: 500;
   font-style: normal;
   letter-spacing: 10px;
 }
 @font-face {
   font-family: 'sf-pro-Bold';
-  src: url('/fonts/sf-pro-display/SFPRODISPLAYBOLD.otf');
+  src: url('/fonts/sf-pro-display/SFPRODISPLAYBOLD.OTF');
   font-weight: 700;
   font-style: normal;
 }
@@ -30,10 +30,6 @@ body {
 }
 .custom-container {
   @apply py-20 my-0 mx-44 sm:mx-7 md:mx-24 lg:mx-44;
-}
-
-body {
-  
 }
 
 .p-menubar {
