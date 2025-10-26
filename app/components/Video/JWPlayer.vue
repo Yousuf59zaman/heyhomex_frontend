@@ -16,6 +16,22 @@
 
 import type { Video } from '~/composables/useVideoPlayer';
 
+interface AdSchedule {
+  offset: string; // 'pre', 'post', '50%', or time in seconds
+  tag: string; // VAST tag URL
+  type?: 'linear' | 'nonlinear'; // Ad type (default: linear)
+}
+
+interface AdvertisingConfig {
+  client: 'vast' | 'googima'; // Ad client type
+  schedule?: AdSchedule[]; // Ad schedule (pre-roll, mid-roll, post-roll)
+  skipoffset?: number; // Seconds before skip button appears
+  admessage?: string; // Custom ad message
+  skipmessage?: string; // Custom skip message
+  vpaidcontrols?: boolean; // Show controls during VPAID ads
+  autoplayadsmuted?: boolean; // Auto-play ads muted
+}
+
 interface Props {
   video: Video;
   autoplay?: boolean;
@@ -23,6 +39,7 @@ interface Props {
   muted?: boolean;
   playbackRate?: number;
   aspectRatio?: string;
+  advertising?: AdvertisingConfig; // Advertising configuration
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -43,6 +60,11 @@ const emit = defineEmits<{
   seek: [data: { offset: number }];
   buffer: [data: { percentage: number }];
   fullscreen: [isFullscreen: boolean];
+  adImpression: [data: { tag: string }]; // Ad started
+  adComplete: [data: { tag: string }]; // Ad finished
+  adSkipped: [data: { tag: string }]; // Ad skipped
+  adError: [error: any]; // Ad error
+  adClick: [data: { tag: string }]; // Ad clicked
 }>();
 
 // Unique player ID
@@ -78,7 +100,7 @@ const initializePlayer = () => {
     const videoSource = props.video.videoUrl || 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
 
     // Setup player configuration
-    const config = {
+    const config: any = {
       file: videoSource,
       image: props.video.thumbnail,
       title: props.video.title,
@@ -124,6 +146,19 @@ const initializePlayer = () => {
         oncomplete: 'show',
       },
     };
+
+    // Add advertising configuration if provided
+    if (props.advertising) {
+      config.advertising = {
+        client: props.advertising.client || 'vast',
+        schedule: props.advertising.schedule || [],
+        skipoffset: props.advertising.skipoffset !== undefined ? props.advertising.skipoffset : 5,
+        admessage: props.advertising.admessage || 'Ad will end in xx seconds',
+        skipmessage: props.advertising.skipmessage || 'Skip ad',
+        vpaidcontrols: props.advertising.vpaidcontrols !== undefined ? props.advertising.vpaidcontrols : true,
+        autoplayadsmuted: props.advertising.autoplayadsmuted !== undefined ? props.advertising.autoplayadsmuted : props.muted,
+      };
+    }
 
     // Initialize player
     playerInstance.value = jwplayer(playerId.value).setup(config);
@@ -214,6 +249,32 @@ const bindPlayerEvents = () => {
   // Mute change
   player.on('mute', (data: any) => {
     state.isMuted = data.mute;
+  });
+
+  // Advertising events
+  player.on('adImpression', (data: any) => {
+    console.log('[JWPlayer] Ad impression:', data);
+    emit('adImpression', { tag: data.tag || data.adtitle || 'unknown' });
+  });
+
+  player.on('adComplete', (data: any) => {
+    console.log('[JWPlayer] Ad complete:', data);
+    emit('adComplete', { tag: data.tag || data.adtitle || 'unknown' });
+  });
+
+  player.on('adSkipped', (data: any) => {
+    console.log('[JWPlayer] Ad skipped:', data);
+    emit('adSkipped', { tag: data.tag || data.adtitle || 'unknown' });
+  });
+
+  player.on('adError', (error: any) => {
+    console.error('[JWPlayer] Ad error:', error);
+    emit('adError', error);
+  });
+
+  player.on('adClick', (data: any) => {
+    console.log('[JWPlayer] Ad clicked:', data);
+    emit('adClick', { tag: data.tag || data.adtitle || 'unknown' });
   });
 };
 

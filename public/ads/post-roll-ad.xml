@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAST version="3.0">
+  <Ad id="post-roll-001">
+    <InLine>
+      <AdSystem>HeyHomeX Ad Server</AdSystem>
+      <AdTitle>HeyHomeX Post-Roll Advertisement</AdTitle>
+      <Description>Thank you for watching! Find more on HeyHomeX</Description>
+      <Advertiser>HeyHomeX</Advertiser>
+      <Error><![CDATA[https://your-tracking-server.com/error?campaign=post-roll]]></Error>
+
+      <Impression><![CDATA[https://your-tracking-server.com/impression?campaign=post-roll]]></Impression>
+
+      <Creatives>
+        <Creative id="post-roll-creative-001" sequence="1">
+          <Linear>
+            <Duration>00:00:12</Duration>
+
+            <TrackingEvents>
+              <Tracking event="start"><![CDATA[https://your-tracking-server.com/start?campaign=post-roll]]></Tracking>
+              <Tracking event="firstQuartile"><![CDATA[https://your-tracking-server.com/25?campaign=post-roll]]></Tracking>
+              <Tracking event="midpoint"><![CDATA[https://your-tracking-server.com/50?campaign=post-roll]]></Tracking>
+              <Tracking event="thirdQuartile"><![CDATA[https://your-tracking-server.com/75?campaign=post-roll]]></Tracking>
+              <Tracking event="complete"><![CDATA[https://your-tracking-server.com/complete?campaign=post-roll]]></Tracking>
+              <Tracking event="skip"><![CDATA[https://your-tracking-server.com/skip?campaign=post-roll]]></Tracking>
+            </TrackingEvents>
+
+            <VideoClicks>
+              <ClickThrough><![CDATA[https://your-landing-page.com?source=post-roll]]></ClickThrough>
+              <ClickTracking><![CDATA[https://your-tracking-server.com/click?campaign=post-roll]]></ClickTracking>
+            </VideoClicks>
+
+            <MediaFiles>
+              <MediaFile delivery="progressive" type="video/mp4" width="1280" height="720" scalable="true" maintainAspectRatio="true">
+                <![CDATA[https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4]]>
+              </MediaFile>
+            </MediaFiles>
+          </Linear>
+        </Creative>
+      </Creatives>
+    </InLine>
+  </Ad>
+</VAST>
