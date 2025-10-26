@@ -34,7 +34,7 @@ export default defineNuxtConfig({
             SCRIPT_URL: process.env.SCRIPT_URL,
             CMS_EMAIL: process.env.CMS_EMAIL,
             CMS_PASSWORD: process.env.CMS_PASSWORD,
-           
+
         }
     },
     compatibilityDate: "2025-07-15",
@@ -51,6 +51,7 @@ export default defineNuxtConfig({
         "@nuxtjs/color-mode",
         "@nuxtjs/sitemap",
         "@nuxtjs/tailwindcss",
+        "@nuxt/image"
     ],
 
     colorMode: {
