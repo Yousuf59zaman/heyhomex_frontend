@@ -183,20 +183,20 @@ const createHandler = async () => {
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Name</label>
-                    <LazyInputText v-model="formData.en_short_name" class="w-full"
+                    <InputText v-model="formData.en_short_name" class="w-full"
                         :class="validations_errors.en_short_name ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.en_short_name = ''" placeholder="i.e. United States" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.en_short_name" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.en_short_name" />
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Nationality</label>
-                    <LazyInputText v-model="formData.nationality" class="w-full" placeholder="i.e. American"
+                    <InputText v-model="formData.nationality" class="w-full" placeholder="i.e. American"
                         :class="validations_errors.nationality ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.nationality = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.nationality" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.nationality" />
                 </div>
             </div>
 
@@ -206,27 +206,27 @@ const createHandler = async () => {
                     <InputNumber :useGrouping="false" v-model="formData.num_code" class="w-full"
                         :class="validations_errors.num_code ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.num_code = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.num_code" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.num_code" />
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Country Code(2)</label>
-                    <LazyInputText v-model="formData.alpha_2_code" class="w-full" placeholder="i.e. US"
+                    <InputText v-model="formData.alpha_2_code" class="w-full" placeholder="i.e. US"
                         :class="validations_errors.alpha_2_code ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.alpha_2_code = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.alpha_2_code" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.alpha_2_code" />
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Country Code(3)</label>
-                    <LazyInputText v-model="formData.alpha_3_code" class="w-full" placeholder="i.e. USA"
+                    <InputText v-model="formData.alpha_3_code" class="w-full" placeholder="i.e. USA"
                         :class="validations_errors.alpha_3_code ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.alpha_3_code = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.alpha_3_code" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.alpha_3_code" />
                 </div>
             </div>
 
@@ -235,7 +235,7 @@ const createHandler = async () => {
                 <div class="flex-auto">
                     <ToggleSwitch v-model="isChecked" @change="handleCheckboxChange"
                         @focus="validations_errors.status = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.status" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
                 </div>
             </div>
         </div>

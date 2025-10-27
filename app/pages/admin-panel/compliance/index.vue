@@ -152,7 +152,7 @@ const onChangeHandler = () => {
                     <div class="flex flex-wrap md:flex-nowrap items-center gap-4 w-full md:w-auto">
                         <div class="flex items-center gap-2 w-full md:w-auto">
                             <label for="search" class="text-gray-800 dark:text-gray-200">Search</label>
-                            <LazyInputText type="text" v-model="search" @input="loadData" @keyup.enter="loadData"
+                            <InputText type="text" v-model="search" @input="loadData" @keyup.enter="loadData"
                                 class="w-full md:w-auto" />
                         </div>
                         <div class="flex items-center gap-3 w-full md:w-auto">
@@ -262,7 +262,7 @@ const onChangeHandler = () => {
                     </div>
                     <AddEdit :isOpenModal="isOpenModal" :item="item" :modalTitle="modalTitle" :data="data"
                         @close="cancelModal" @add_emit="receivedData" />
-                    <LazyPagination v-if="!isLoading" class="px-4" :config="paginationConfig" />
+                    <Pagination v-if="!isLoading" class="px-4" :config="paginationConfig" />
                     <LazyConfirmModal :isOpenConModal="isOpenConModal" @confirm="deleteHandler"
                         @update:isOpenConModal="isOpenConModal = $event" />
                     <LazyResponseModal :response_modal="response_modal" />

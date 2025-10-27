@@ -171,7 +171,7 @@ const createHandler = async () => {
                     <InputNumber v-model="formData.year" class="w-full" :useGrouping="false" placeholder="i.e. 2025"
                         :class="validations_errors.year ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.year = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.year" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.year" />
                 </div>
             </div>
 
@@ -180,7 +180,7 @@ const createHandler = async () => {
                 <div class="flex-auto">
                     <ToggleSwitch v-model="isChecked" @change="handleCheckboxChange"
                         @focus="validations_errors.status = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.status" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
                 </div>
             </div>
         </div>

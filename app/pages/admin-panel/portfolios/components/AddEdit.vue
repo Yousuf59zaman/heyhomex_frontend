@@ -211,7 +211,7 @@ const setPhoto = (photo) => {
                     <div class="w-full ">
                         <PhotoBlockPhoto :getPhoto="formData.photo" @set_photo="setPhoto" />
                     </div>
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.photo" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.photo" />
                 </div>
             </div>
             <div></div>
@@ -219,10 +219,10 @@ const setPhoto = (photo) => {
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Title</label>
-                    <LazyInputText v-model="formData.title" class="w-full"
+                    <InputText v-model="formData.title" class="w-full"
                         :class="validations_errors.title ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.title = ''" Placeholder="i.e How to use this website?" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.title" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.title" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -230,34 +230,34 @@ const setPhoto = (photo) => {
                     <label class="font-semibold">Category</label>
                     <Select v-model="formData.cat_id" :options="data" optionLabel="title" placeholder="Select Category"
                         optionValue="id" class="w-full" @focus="validations_errors.cat_id" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.cat_id" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.cat_id" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Slug</label>
-                    <LazyInputText v-model="formData.slug" class="w-full"
+                    <InputText v-model="formData.slug" class="w-full"
                         :class="validations_errors.slug ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.slug = ''" Placeholder="i.e https://example-slug" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.slug" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.slug" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Client Name</label>
-                    <LazyInputText v-model="formData.client_name" class="w-full"
+                    <InputText v-model="formData.client_name" class="w-full"
                         :class="validations_errors.client_name ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.client_name = ''" Placeholder="i.e Jhon Doe" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.client_name" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.client_name" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Project Url</label>
-                    <LazyInputText v-model="formData.project_url" class="w-full"
+                    <InputText v-model="formData.project_url" class="w-full"
                         :class="validations_errors.project_url ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.project_url = ''" Placeholder="i.e https://example.com" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.project_url" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.project_url" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -267,23 +267,23 @@ const setPhoto = (photo) => {
                         :manualInput="false" class="w-full"
                         :class="validations_errors.completion_date ? 'border-[#f44336!important]' : ''"
                         autocomplete="off" @focus="validations_errors.completion_date = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.completion_date" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.completion_date" />
                 </div>
             </div>
             <div class="col-span-1 sm:col-span-3 flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Description</label>
                     <Editor v-model="formData.description" class="w-full" editorStyle="height: 200px" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.description" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.description" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Technologies</label>
-                    <LazyInputText v-model="formData.technologies" class="w-full"
+                    <InputText v-model="formData.technologies" class="w-full"
                         :class="validations_errors.technologies ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.technologies = ''" Placeholder="i.e Vue, React, Laravel" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.technologies" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.technologies" />
                 </div>
             </div>
             <div class="flex items-end justify-start gap-4">
@@ -291,7 +291,7 @@ const setPhoto = (photo) => {
                 <div class="flex-auto">
                     <ToggleSwitch v-model="isChecked" @change="handleCheckboxChange"
                         @focus="validations_errors.status = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.status" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
                 </div>
             </div>
         </div>

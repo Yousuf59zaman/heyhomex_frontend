@@ -222,29 +222,29 @@ const setTwitterImage = (value) => {
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Title</label>
-                    <LazyInputText v-model="formData.title" class="w-full" placeholder="Enter page title"
+                    <InputText v-model="formData.title" class="w-full" placeholder="Enter page title"
                         :class="validations_errors.title ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.title = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.title" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.title" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">OG Title</label>
-                    <LazyInputText v-model="formData.og_title" class="w-full" placeholder="Enter Open Graph title"
+                    <InputText v-model="formData.og_title" class="w-full" placeholder="Enter Open Graph title"
                         :class="validations_errors.og_title ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.og_title = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.og_title" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.og_title" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Twitter Title</label>
-                    <LazyInputText v-model="formData.twitter_title" class="w-full"
+                    <InputText v-model="formData.twitter_title" class="w-full"
                         placeholder="Enter Twitter card title"
                         :class="validations_errors.twitter_title ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.twitter_title = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.twitter_title" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.twitter_title" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -254,7 +254,7 @@ const setTwitterImage = (value) => {
                         placeholder="Enter page description"
                         :class="validations_errors.description ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.description = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.description" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.description" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -264,7 +264,7 @@ const setTwitterImage = (value) => {
                         placeholder="Enter Open Graph description"
                         :class="validations_errors.og_description ? 'border-[#f44336!important]' : ''"
                         autocomplete="off" @focus="validations_errors.og_description = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.og_description" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.og_description" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -274,143 +274,143 @@ const setTwitterImage = (value) => {
                         placeholder="Enter Twitter card description"
                         :class="validations_errors.twitter_description ? 'border-[#f44336!important]' : ''" rows="5"
                         @focus="validations_errors.twitter_description = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.twitter_description" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.twitter_description" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">OG URL</label>
-                    <LazyInputText v-model="formData.og_url" class="w-full" placeholder="https://example.com/page"
+                    <InputText v-model="formData.og_url" class="w-full" placeholder="https://example.com/page"
                         :class="validations_errors.og_url ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.og_url = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.og_url" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.og_url" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">OG Type</label>
-                    <LazyInputText v-model="formData.og_type" class="w-full"
+                    <InputText v-model="formData.og_type" class="w-full"
                         placeholder="website, article, product, etc."
                         :class="validations_errors.og_type ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.og_type = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.og_type" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.og_type" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Twitter Card</label>
-                    <LazyInputText v-model="formData.twitter_card" class="w-full"
+                    <InputText v-model="formData.twitter_card" class="w-full"
                         placeholder="summary, summary_large_image, etc."
                         :class="validations_errors.twitter_card ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.twitter_card = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.twitter_card" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.twitter_card" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">OG Locale</label>
-                    <LazyInputText v-model="formData.og_locale" class="w-full" placeholder="en_US, fr_FR, etc."
+                    <InputText v-model="formData.og_locale" class="w-full" placeholder="en_US, fr_FR, etc."
                         :class="validations_errors.og_locale ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.og_locale = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.og_locale" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.og_locale" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">OG Image Alt</label>
-                    <LazyInputText v-model="formData.og_image_alt" class="w-full"
+                    <InputText v-model="formData.og_image_alt" class="w-full"
                         placeholder="Image description for accessibility"
                         :class="validations_errors.og_image_alt ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.og_image_alt = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.og_image_alt" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.og_image_alt" />
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Twitter Image Alt</label>
-                    <LazyInputText v-model="formData.twitter_image_alt" class="w-full"
+                    <InputText v-model="formData.twitter_image_alt" class="w-full"
                         placeholder="Image description for accessibility"
                         :class="validations_errors.twitter_image_alt ? 'border-[#f44336!important]' : ''"
                         autocomplete="off" @focus="validations_errors.twitter_image_alt = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.twitter_image_alt" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.twitter_image_alt" />
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Keywords</label>
-                    <LazyInputText v-model="formData.keywords" class="w-full" placeholder="keyword1, keyword2, keyword3"
+                    <InputText v-model="formData.keywords" class="w-full" placeholder="keyword1, keyword2, keyword3"
                         :class="validations_errors.keywords ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.keywords = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.keywords" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.keywords" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Robots</label>
-                    <LazyInputText v-model="formData.robots" class="w-full"
+                    <InputText v-model="formData.robots" class="w-full"
                         placeholder="index, follow, noindex, nofollow"
                         :class="validations_errors.robots ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.robots = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.robots" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.robots" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Twitter Site</label>
-                    <LazyInputText v-model="formData.twitter_site" class="w-full" placeholder="@yoursiteusername"
+                    <InputText v-model="formData.twitter_site" class="w-full" placeholder="@yoursiteusername"
                         :class="validations_errors.twitter_site ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.twitter_site = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.twitter_site" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.twitter_site" />
                 </div>
             </div>
             <div class="col-span-1 sm:col-span-2 flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Slug</label>
-                    <LazyInputText v-model="formData.slug" class="w-full" placeholder="page-url-slug"
+                    <InputText v-model="formData.slug" class="w-full" placeholder="page-url-slug"
                         :class="validations_errors.slug ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.slug = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.slug" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.slug" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Twitter Creator</label>
-                    <LazyInputText v-model="formData.twitter_creator" class="w-full" placeholder="@contentcreator"
+                    <InputText v-model="formData.twitter_creator" class="w-full" placeholder="@contentcreator"
                         :class="validations_errors.twitter_creator ? 'border-[#f44336!important]' : ''"
                         autocomplete="off" @focus="validations_errors.twitter_creator = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.twitter_creator" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.twitter_creator" />
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Author</label>
-                    <LazyInputText v-model="formData.author" class="w-full" placeholder="Author name"
+                    <InputText v-model="formData.author" class="w-full" placeholder="Author name"
                         :class="validations_errors.author ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.author = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.author" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.author" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Publisher</label>
-                    <LazyInputText v-model="formData.publisher" class="w-full"
+                    <InputText v-model="formData.publisher" class="w-full"
                         placeholder="Publisher name or organization"
                         :class="validations_errors.publisher ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.publisher = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.publisher" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.publisher" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Canonical</label>
-                    <LazyInputText v-model="formData.canonical" class="w-full"
+                    <InputText v-model="formData.canonical" class="w-full"
                         placeholder="https://example.com/canonical-url"
                         :class="validations_errors.canonical ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.canonical = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.canonical" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.canonical" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -419,7 +419,7 @@ const setTwitterImage = (value) => {
                     <div class="w-full ">
                         <PhotoBlockPhoto :getPhoto="formData.og_image" @set_photo="setOGImage" />
                     </div>
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.og_image" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.og_image" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -428,7 +428,7 @@ const setTwitterImage = (value) => {
                     <div class="w-full ">
                         <PhotoBlockPhoto :getPhoto="formData.twitter_image" @set_photo="setTwitterImage" />
                     </div>
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.twitter_image" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.twitter_image" />
                 </div>
             </div>
             <div> </div>
@@ -437,7 +437,7 @@ const setTwitterImage = (value) => {
                 <div class="flex-auto">
                     <ToggleSwitch v-model="isChecked" @change="handleCheckboxChange"
                         @focus="validations_errors.status = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.status" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
                 </div>
             </div>
         </div>

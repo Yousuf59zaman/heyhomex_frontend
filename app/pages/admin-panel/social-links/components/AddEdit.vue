@@ -203,28 +203,28 @@ const cancelPicker = () => {
             <div class="flex items-center gap-4">
                 <label class="font-semibold min-w-28">Title</label>
                 <div class="flex-auto">
-                    <LazyInputText v-model="formData.social_title" class="w-full" placeholder="i.e Facebook"
+                    <InputText v-model="formData.social_title" class="w-full" placeholder="i.e Facebook"
                         :class="validations_errors.social_title ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.social_title = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.social_title" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.social_title" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <label class="font-semibold min-w-28">URL</label>
                 <div class="flex-auto">
-                    <LazyInputText v-model="formData.url" class="w-full" placeholder="i.e https://www.example.com"
+                    <InputText v-model="formData.url" class="w-full" placeholder="i.e https://www.example.com"
                         :class="validations_errors.url ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.url = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.url" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.url" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <label class="font-semibold min-w-28">Hierarchy</label>
                 <div class="flex-auto">
-                    <LazyInputText v-model="formData.hierarchy" class="w-full" placeholder="i.e 1"
+                    <InputText v-model="formData.hierarchy" class="w-full" placeholder="i.e 1"
                         :class="validations_errors.hierarchy ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.hierarchy = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.hierarchy" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.hierarchy" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -233,23 +233,23 @@ const cancelPicker = () => {
                     <Select v-model="formData.display" :options="iconList" optionLabel="name" optionValue="id"
                         placeholder="Select" class="w-full"
                         :class="validations_errors.display ? 'border-[#f44336!important]' : ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.display" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.display" />
                 </div>
             </div>
             <!-- <div class="flex items-center gap-4">
                 <label class="font-semibold min-w-28">Icon Color</label>
                 <div class="flex-auto">
                     <ColorPicker v-model="formData.color" class="w-full" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.color" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.color" />
                 </div>
             </div> -->
             <div class="flex items-center gap-4">
                 <label class="font-semibold min-w-28">Icon Size</label>
                 <div class="flex-auto">
-                    <LazyInputText v-model="formData.size" class="w-full" placeholder="i.e 20px"
+                    <InputText v-model="formData.size" class="w-full" placeholder="i.e 20px"
                         :class="validations_errors.size ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.size = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.size" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.size" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -261,13 +261,13 @@ const cancelPicker = () => {
                             <i @click="OpenPicker" :class="formData.icon + ' text-[40px] cursor-pointer'"
                                 :style="{ color: `#${formData.color}` }"></i>
                         </div>
-                        <LazyInputError class="text-sm mt-1" :message="validations_errors.icon" :text_size="'text-sm'" />
+                        <InputError class="text-sm mt-1" :message="validations_errors.icon" :text_size="'text-sm'" />
                     </div>
                     <div class="flex items-center gap-4">
                         <label class="font-semibold">Icon Color</label>
                         <div class="flex-auto">
                             <ColorPicker v-model="formData.color" class="w-full" />
-                            <LazyInputError class="text-sm mt-1" :message="validations_errors.color" />
+                            <InputError class="text-sm mt-1" :message="validations_errors.color" />
                         </div>
                     </div>
                 </div>
@@ -278,7 +278,7 @@ const cancelPicker = () => {
                 <div class="flex-auto">
                     <ToggleSwitch v-model="isChecked" @change="handleCheckboxChange"
                         @focus="validations_errors.status = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.status" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
                 </div>
             </div>
         </div>

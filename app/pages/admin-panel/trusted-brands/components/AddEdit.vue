@@ -190,25 +190,25 @@ const setPhoto = (value) => {
                     <div class="w-full ">
                         <PhotoBlockPhoto :getPhoto="formData.photo" @set_photo="setPhoto" />
                     </div>
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.photo" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.photo" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Title</label>
-                    <LazyInputText v-model="formData.title" class="w-full" placeholder="i.e. Accessimate"
+                    <InputText v-model="formData.title" class="w-full" placeholder="i.e. Accessimate"
                         :class="validations_errors.title ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.title = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.title" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.title" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Slug</label>
-                    <LazyInputText v-model="formData.slug" class="w-full" placeholder="i.e. example-slug"
+                    <InputText v-model="formData.slug" class="w-full" placeholder="i.e. example-slug"
                         :class="validations_errors.slug ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.slug = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.slug" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.slug" />
                 </div>
             </div>
             <div class="flex items-end justify-start gap-4">
@@ -216,7 +216,7 @@ const setPhoto = (value) => {
                 <div class="flex-auto">
                     <ToggleSwitch v-model="isChecked" @change="handleCheckboxChange"
                         @focus="validations_errors.status = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.status" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
                 </div>
             </div>
         </div>

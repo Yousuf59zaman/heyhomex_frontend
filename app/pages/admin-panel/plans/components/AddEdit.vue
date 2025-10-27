@@ -390,19 +390,19 @@ const removePrice = (index) => {
             <div class="col-span-1 sm:col-span-2 flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Slug</label>
-                    <LazyInputText v-model="formData.slug" class="w-full" placeholder="i.e. web-development"
+                    <InputText v-model="formData.slug" class="w-full" placeholder="i.e. web-development"
                         :class="validations_errors.slug ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.slug = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.slug" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.slug" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Name</label>
-                    <LazyInputText v-model="formData.name" class="w-full" placeholder="i.e. Web Development"
+                    <InputText v-model="formData.name" class="w-full" placeholder="i.e. Web Development"
                         :class="validations_errors.name ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.name = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.name" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.name" />
                 </div>
             </div>
             <div class="col-span-1 sm:col-span-2 flex items-center gap-4">
@@ -411,14 +411,14 @@ const removePrice = (index) => {
                     <Textarea v-model="formData.description" class="w-full" placeholder="i.e. Write your description here"
                         :class="validations_errors.description ? 'border-[#f44336!important]' : ''" rows="2"
                         @focus="validations_errors.description = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.description" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.description" />
                 </div>
             </div>
             <div class="col-span-1 flex items-end gap-4">
                 <label class="font-semibold mb-2">Status</label>
                 <div class="flex-auto">
                     <ToggleSwitch v-model="formData.status" @focus="validations_errors.status = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.status" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
                 </div>
             </div>
             <div class="col-span-1 sm:col-span-3 flex items-center gap-4">
@@ -589,9 +589,9 @@ const removePrice = (index) => {
                 <div class="flex-auto">
                     <div class="flex items-start gap-2">
                         <label class="font-semibold">Feature</label>
-                        <LazyInputError class="text-sm mt-1" :message="validations_errors.feature" />
+                        <InputError class="text-sm mt-1" :message="validations_errors.feature" />
                     </div>
-                    <LazyInputText v-model="feature" class="w-full" placeholder="i.e. Unlimited Bandwidth"
+                    <InputText v-model="feature" class="w-full" placeholder="i.e. Unlimited Bandwidth"
                         :class="validations_errors.feature ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.feature = ''" />
                 </div>
@@ -600,7 +600,7 @@ const removePrice = (index) => {
                 <div class="flex-auto">
                     <div class="flex items-start gap-2">
                         <label class="font-semibold">Description</label>
-                        <LazyInputError class="text-sm mt-1" :message="validations_errors.description" />
+                        <InputError class="text-sm mt-1" :message="validations_errors.description" />
                     </div>
                     <Textarea v-model="description" class="w-full" placeholder="i.e. Write your description here"
                         :class="validations_errors.description ? 'border-[#f44336!important]' : ''" @focus="validations_errors.description = ''" rows="4"
@@ -640,7 +640,7 @@ const removePrice = (index) => {
                     :class="validations_errors.billing_cycle ? 'border-[#f44336!important]' : ''"
                     @focus="validations_errors.billing_cycle = ''" optionValue="key"
                     placeholder="Select Billing Cycle" />
-                <LazyInputError class="text-sm mt-1" :message="validations_errors.billing_cycle" />
+                <InputError class="text-sm mt-1" :message="validations_errors.billing_cycle" />
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
@@ -649,7 +649,7 @@ const removePrice = (index) => {
                         :class="validations_errors.price ? 'border-[#f44336!important]' : ''"
                         @focus="validations_errors.price = ''" :useGrouping="false" :minFractionDigits="2"
                         :maxFractionDigits="2" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.price" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.price" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -659,7 +659,7 @@ const removePrice = (index) => {
                         :class="validations_errors.discount ? 'border-[#f44336!important]' : ''"
                         @focus="validations_errors.discount = ''" :useGrouping="false" :minFractionDigits="2"
                         :maxFractionDigits="2" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.discount" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.discount" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -669,7 +669,7 @@ const removePrice = (index) => {
                         :class="validations_errors.final_price ? 'border-[#f44336!important]' : ''"
                         @focus="validations_errors.final_price = ''" :useGrouping="false" :minFractionDigits="2"
                         :maxFractionDigits="2" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.final_price" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.final_price" />
                 </div>
             </div>
         </div>

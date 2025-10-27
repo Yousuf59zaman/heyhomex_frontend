@@ -4,7 +4,7 @@
     });
 
     // Active tab state
-    const activeTab = ref('home'); 
+    const activeTab = ref('home');
 </script>
 
 <template>
@@ -18,7 +18,7 @@
                         'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                         activeTab === 'home'
                             ? 'bg-gray-900 text-white'
-                            : 'text-gray-600 hover:text-gray-900'
+                            : 'text-gray-600 hover:text-gray-900',
                     ]">
                     Home
                 </button>
@@ -28,7 +28,7 @@
                         'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                         activeTab === 'videos'
                             ? 'bg-gray-900 text-white'
-                            : 'text-gray-600 hover:text-gray-900'
+                            : 'text-gray-600 hover:text-gray-900',
                     ]">
                     Videos
                 </button>

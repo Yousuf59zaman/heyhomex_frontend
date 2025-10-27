@@ -7,30 +7,30 @@
     const searchQuery = ref('');
     const selectedPropertyType = ref('');
     const selectedPriceRange = ref('');
-    
+
     // Chart state
     const chartPeriod = ref('weekly');
 
-    // Top-Right : Saved List 
+    // Top-Right : Saved List
     const savedHomeItems = ref([
         {
             id: 1,
             title: 'Island Bank Hawaii',
             location: '123 Aloha Lane, Honolulu, HI 96814',
-            image: '/images/dashboard/1.png'
+            image: '/images/dashboard/1.png',
         },
         {
             id: 2,
             title: 'Island Bank Hawaii',
             location: '456 Kamehameha Hwy, Honolulu, HI 96817',
-            image: '/images/dashboard/2.png'
+            image: '/images/dashboard/2.png',
         },
         {
             id: 3,
             title: 'Island Bank Hawaii',
             location: '789 Pali Hwy, Honolulu, HI 96813',
-            image: '/images/dashboard/3.png'
-        }
+            image: '/images/dashboard/3.png',
+        },
     ]);
 
     const savedVideoItems = ref([
@@ -39,15 +39,15 @@
             title: 'Hawaii Property Tour',
             description: 'Virtual tour',
             duration: '5:30',
-            image: '/images/home/home_logo.png'
+            image: '/images/home/home_logo.png',
         },
         {
             id: 2,
             title: 'Neighborhood Guide',
             description: 'Area overview',
             duration: '3:45',
-            image: '/images/home/home_logo.png'
-        }
+            image: '/images/home/home_logo.png',
+        },
     ]);
 
     // Propertis :
@@ -61,7 +61,7 @@
             baths: 3,
             sqft: '1733/5000',
             image: '/images/dashboard/1.png',
-            isFavorited: false
+            isFavorited: false,
         },
         {
             id: 2,
@@ -72,7 +72,7 @@
             baths: 3,
             sqft: '1733/5000',
             image: '/images/dashboard/2.png',
-            isFavorited: false
+            isFavorited: false,
         },
         {
             id: 3,
@@ -83,8 +83,8 @@
             baths: 3,
             sqft: '1733/5000',
             image: '/images/dashboard/3.png',
-            isFavorited: false
-        }
+            isFavorited: false,
+        },
     ]);
 
     // Videos :
@@ -94,22 +94,22 @@
             title: 'HAWAIIAN',
             subtitle: 'AIRLINES',
             thumbnail: '/images/dashboard/video/1.png',
-            duration: '3:45'
+            duration: '3:45',
         },
         {
             id: 2,
             title: 'LIVESTRAND',
             subtitle: 'HOUSE',
             thumbnail: '/images/dashboard/video/2.png',
-            duration: '5:12'
+            duration: '5:12',
         },
         {
             id: 3,
             title: 'WHICH',
             subtitle: 'ONE ARE YOU?',
             thumbnail: '/images/dashboard/video/3.png',
-            duration: '2:58'
-        }
+            duration: '2:58',
+        },
     ]);
 
     // Event handlers
@@ -121,34 +121,40 @@
         // Navigate to search page with search query and show map view
         const query = {
             q: searchQuery.value || '',
-            view: 'map'
+            view: 'map',
         };
-        
+
         // Map property type to search format
         const propertyTypeMapping = {
             'single-family': 'Single Family',
-            'condo': 'Condo',
-            'townhouse': 'Townhouse'
+            condo: 'Condo',
+            townhouse: 'Townhouse',
         };
-        
-        // Map price range to search format  
+
+        // Map price range to search format
         const priceRangeMapping = {
             'under-500k': '$500,000',
             '500k-1m': '$750,000',
-            'over-1m': '$1,000,000+'
+            'over-1m': '$1,000,000+',
         };
-        
+
         // Add filters if they exist
-        if (selectedPropertyType.value && propertyTypeMapping[selectedPropertyType.value]) {
+        if (
+            selectedPropertyType.value &&
+            propertyTypeMapping[selectedPropertyType.value]
+        ) {
             query.homeType = propertyTypeMapping[selectedPropertyType.value];
         }
-        if (selectedPriceRange.value && priceRangeMapping[selectedPriceRange.value]) {
+        if (
+            selectedPriceRange.value &&
+            priceRangeMapping[selectedPriceRange.value]
+        ) {
             query.priceRange = priceRangeMapping[selectedPriceRange.value];
         }
-        
+
         navigateTo({
             path: '/kamaina/search',
-            query
+            query,
         });
     };
 
@@ -172,12 +178,16 @@
     const handleRemoveItem = ({ itemId, type }) => {
         console.log('Remove item:', itemId, type);
         if (type === 'home') {
-            const index = savedHomeItems.value.findIndex(item => item.id === itemId);
+            const index = savedHomeItems.value.findIndex(
+                (item) => item.id === itemId
+            );
             if (index !== -1) {
                 savedHomeItems.value.splice(index, 1);
             }
         } else {
-            const index = savedVideoItems.value.findIndex(item => item.id === itemId);
+            const index = savedVideoItems.value.findIndex(
+                (item) => item.id === itemId
+            );
             if (index !== -1) {
                 savedVideoItems.value.splice(index, 1);
             }
@@ -193,9 +203,10 @@
     };
 
     const handleFavoriteToggle = (property) => {
-        const index = properties.value.findIndex(p => p.id === property.id);
+        const index = properties.value.findIndex((p) => p.id === property.id);
         if (index !== -1) {
-            properties.value[index].isFavorited = !properties.value[index].isFavorited;
+            properties.value[index].isFavorited =
+                !properties.value[index].isFavorited;
         }
     };
 
@@ -211,7 +222,6 @@
         console.log('See all videos');
     };
 </script>
-
 
 <template>
     <div class="space-y-6">

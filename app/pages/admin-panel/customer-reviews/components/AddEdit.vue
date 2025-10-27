@@ -202,16 +202,16 @@ const createHandler = async () => {
                     <Select v-model="formData.plan_id" :options="plan_data" optionLabel="name" optionValue="id"
                         class="w-full" :class="validations_errors.plan_id ? 'border-[#f44336!important]' : ''"
                         @focus="validations_errors.plan_id = ''" placeholder="Select Plan" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.plan_id" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.plan_id" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <label class="font-semibold w-24">Name</label>
                 <div class="flex-auto">
-                    <LazyInputText v-model="formData.name" class="w-full"
+                    <InputText v-model="formData.name" class="w-full"
                         :class="validations_errors.name ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.name = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.name" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.name" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -220,7 +220,7 @@ const createHandler = async () => {
                     <Textarea v-model="formData.review" class="w-full" rows="5" cols="30"
                         :class="validations_errors.review ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.review = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.tag_title" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.tag_title" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -229,7 +229,7 @@ const createHandler = async () => {
                     <Rating v-model="formData.rating" :cancel="false" :stars="5"
                         :class="validations_errors.rating ? 'border-[#f44336!important]' : ''"
                         @focus="validations_errors.rating = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.rating" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.rating" />
                 </div>
             </div>
 
@@ -238,7 +238,7 @@ const createHandler = async () => {
                 <div class="flex-auto">
                     <ToggleSwitch v-model="isChecked" @change="handleCheckboxChange"
                         @focus="validations_errors.status = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.status" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
                 </div>
             </div> -->
         </div>

@@ -177,24 +177,24 @@ const cancelPicker = () => {
 								<div class="grid grid-cols-2 gap-2">
 									<div class="w-full">
 										<label class="font-semibold">Name</label>
-										<LazyInputText v-model="form.node_name" class="w-full" placeholder="i.e Name" />
+										<InputText v-model="form.node_name" class="w-full" placeholder="i.e Name" />
 									</div>
 									<div class="w-full">
 										<label class="font-semibold">Route</label>
-										<LazyInputText v-model="form.route_name" class="w-full" placeholder="i.e Route" />
+										<InputText v-model="form.route_name" class="w-full" placeholder="i.e Route" />
 									</div>
 									<div class="w-full">
 										<label class="font-semibold">Api Route Permission</label>
-										<LazyInputText v-model="form.route_location" class="w-full" placeholder="i.e Api Route Permission" />
+										<InputText v-model="form.route_location" class="w-full" placeholder="i.e Api Route Permission" />
 									</div>
 									<div class="w-full flex items-end gap-2">
 										<div class="flex-1">
 											<label class="font-semibold">Icon</label>
-											<LazyInputText v-model="form.icon" class="w-full" placeholder="i.e Icon" disabled />
+											<InputText v-model="form.icon" class="w-full" placeholder="i.e Icon" disabled />
 										</div>
 										<i :class="form.icon" class="text-[25px] cursor-pointer text-[#f88900ef]"
 											@click="OpenPicker"></i>
-										<LazyIconPicker :isOpenPicker="isOpenPicker" :modelValue="form.icon"
+										<IconPicker :isOpenPicker="isOpenPicker" :modelValue="form.icon"
 											@close="cancelPicker" @update:modelValue="form.icon = $event" />
 									</div>
 									<div class="col-span-1 sm:col-span-2 w-full flex items-end justify-end gap-3">

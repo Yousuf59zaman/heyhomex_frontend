@@ -174,19 +174,19 @@ const createHandler = async () => {
             <div class="flex items-center gap-4">
                 <label class="font-semibold w-24">Name</label>
                 <div class="flex-auto">
-                    <LazyInputText v-model="formData.name" class="w-full" placeholder="i.e. US Dollar"
+                    <InputText v-model="formData.name" class="w-full" placeholder="i.e. US Dollar"
                         :class="validations_errors.name ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.name = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.name" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.name" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <label class="font-semibold w-24">Code</label>
                 <div class="flex-auto">
-                    <LazyInputText v-model="formData.code" class="w-full" placeholder="i.e. USD"
+                    <InputText v-model="formData.code" class="w-full" placeholder="i.e. USD"
                         :class="validations_errors.code ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.code = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.code" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.code" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -196,7 +196,7 @@ const createHandler = async () => {
                         :class="validations_errors.exchange_rate ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.exchange_rate = ''" :useGrouping="false" :minFractionDigits="2"
                         :maxFractionDigits="2" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.exchange_rate" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.exchange_rate" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -204,7 +204,7 @@ const createHandler = async () => {
                 <div class="flex-auto">
                     <ToggleSwitch v-model="isChecked" @change="handleCheckboxChange"
                         @focus="validations_errors.status = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.status" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
                 </div>
             </div>
         </div>

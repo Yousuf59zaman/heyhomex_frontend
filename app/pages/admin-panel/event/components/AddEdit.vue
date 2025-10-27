@@ -423,18 +423,18 @@ const setPhoto = (value) => {
                 <div class="flex items-center gap-4">
                     <div class="flex-auto">
                         <label class="font-semibold">Title</label>
-                        <LazyInputText v-model="formData.title" class="w-full" placeholder="i.e. Event Title"
+                        <InputText v-model="formData.title" class="w-full" placeholder="i.e. Event Title"
                             :class="validations_errors.title ? 'border-[#f44336!important]' : ''" autocomplete="off"
                             @focus="validations_errors.title = ''" />
-                        <LazyInputError class="text-sm mt-1" :message="validations_errors.title" />
+                        <InputError class="text-sm mt-1" :message="validations_errors.title" />
                     </div>
                 </div>
                 <div class="flex-auto">
                     <label class="font-semibold">Slug</label>
-                    <LazyInputText v-model="formData.slug" class="w-full" placeholder="i.e. event-slug"
+                    <InputText v-model="formData.slug" class="w-full" placeholder="i.e. event-slug"
                         :class="validations_errors.slug ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.slug = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.slug" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.slug" />
                 </div>
             </div>
             <div class="col-span-1 flex items-start gap-4">
@@ -443,21 +443,21 @@ const setPhoto = (value) => {
                     <Select v-model="formData.category_id" :options="categoryData" optionLabel="title"
                         placeholder="Select" optionValue="id" class="w-full"
                         @focus="validations_errors.category_id = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.category_id" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.category_id" />
                 </div>
             </div>
             <div class="col-span-1 sm:col-span-3 flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Description</label>
                     <Editor v-model="formData.description" class="w-full" placeholder="i.e. Event Description" editorStyle="height: 200px" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.description" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.description" />
                 </div>
             </div>
             <div class="col-span-1 flex items-end gap-4">
                 <label class="font-semibold mb-2">Status</label>
                 <div class="flex-auto">
                     <ToggleSwitch v-model="formData.status" @focus="validations_errors.status = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.status" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
                 </div>
             </div>
             <div class="col-span-1 sm:col-span-3 flex items-center gap-4">
@@ -603,7 +603,7 @@ const setPhoto = (value) => {
                 <div class="flex-auto">
                     <div class="flex items-start gap-2">
                         <label class="font-semibold">Year Id</label>
-                        <LazyInputError class="text-sm mt-1" :message="validations_errors.year_id" />
+                        <InputError class="text-sm mt-1" :message="validations_errors.year_id" />
                     </div>
                     <Select v-model="year_id" :options="yearData" optionLabel="year" placeholder="Select"
                         optionValue="id" class="w-full" @focus="validations_errors.year_id = ''" />
@@ -613,7 +613,7 @@ const setPhoto = (value) => {
                 <div class="flex-auto">
                     <div class="flex items-start gap-2">
                         <label class="font-semibold">Venue</label>
-                        <LazyInputError class="text-sm mt-1" :message="validations_errors.venue" />
+                        <InputError class="text-sm mt-1" :message="validations_errors.venue" />
                     </div>
                     <Textarea v-model="venue" class="w-full"
                         :class="validations_errors.venue ? 'border-[#f44336!important]' : ''"
@@ -639,7 +639,7 @@ const setPhoto = (value) => {
                             </template>
                         </DatePicker>
 
-                        <LazyInputError class="text-sm mt-1" :message="validations_errors.start_date" />
+                        <InputError class="text-sm mt-1" :message="validations_errors.start_date" />
                     </div>
                 </div>
                 <div class="flex items-start gap-4">
@@ -657,7 +657,7 @@ const setPhoto = (value) => {
                                 </div>
                             </template>
                         </DatePicker>
-                        <LazyInputError class="text-sm mt-1" :message="validations_errors.end_date" />
+                        <InputError class="text-sm mt-1" :message="validations_errors.end_date" />
                     </div>
                 </div>
             </div>

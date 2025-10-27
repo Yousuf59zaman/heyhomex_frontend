@@ -211,10 +211,10 @@ const createHandler = async () => {
             <div class="flex items-center gap-4">
                 <label class="font-semibold w-24">Name</label>
                 <div class="flex-auto">
-                    <LazyInputText v-model="formData.name" class="w-full" placeholder="i.e. PayPal"
+                    <InputText v-model="formData.name" class="w-full" placeholder="i.e. PayPal"
                         :class="validations_errors.name ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.name = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.name" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.name" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -247,10 +247,10 @@ const createHandler = async () => {
                             <tbody>
                                 <tr v-for="(entry, index) in paramList" :key="index">
                                     <td>
-                                        <LazyInputText v-model="entry.key" class="w-full" placeholder="Enter Key" />
+                                        <InputText v-model="entry.key" class="w-full" placeholder="Enter Key" />
                                     </td>
                                     <td>
-                                        <LazyInputText v-model="entry.value" class="w-full" placeholder="Enter Value" />
+                                        <InputText v-model="entry.value" class="w-full" placeholder="Enter Value" />
                                     </td>
                                     <td class="text-center">
                                         <i @click="removeParam(index)"
@@ -274,7 +274,7 @@ const createHandler = async () => {
                 <div class="flex-auto">
                     <ToggleSwitch v-model="isChecked" @change="handleCheckboxChange"
                         @focus="validations_errors.status = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.status" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
                 </div>
             </div>
         </div>

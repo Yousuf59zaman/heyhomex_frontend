@@ -329,34 +329,34 @@ watch(() => formData.value.password, (value) => {
                     <div class="w-[250px]">
                         <PhotoBlockPhoto :getPhoto="formData.photo" @set_photo="setPhoto" />
                     </div>
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.photo" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.photo" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">First Name</label>
-                    <LazyInputText v-model="formData.first_name" class="w-full" placeholder="i.e. John"
+                    <InputText v-model="formData.first_name" class="w-full" placeholder="i.e. John"
                         :class="validations_errors.first_name ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.first_name = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.first_name" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.first_name" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Middle Name</label>
-                    <LazyInputText v-model="formData.middle_name" class="w-full" placeholder="i.e. Doe"
+                    <InputText v-model="formData.middle_name" class="w-full" placeholder="i.e. Doe"
                         :class="validations_errors.middle_name ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.middle_name = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.middle_name" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.middle_name" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Last Name</label>
-                    <LazyInputText v-model="formData.last_name" class="w-full" placeholder="i.e. Smith"
+                    <InputText v-model="formData.last_name" class="w-full" placeholder="i.e. Smith"
                         :class="validations_errors.last_name ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.last_name = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.last_name" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.last_name" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -365,7 +365,7 @@ watch(() => formData.value.password, (value) => {
                     <DatePicker v-model="formData.dob" showIcon fluid iconDisplay="input" :manualInput="false"
                         class="w-full" :class="validations_errors.dob ? 'border-[#f44336!important]' : ''"
                         autocomplete="off" @focus="validations_errors.dob = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.dob" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.dob" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -374,7 +374,7 @@ watch(() => formData.value.password, (value) => {
                     <Select v-model="formData.gender" :options="genderList" optionLabel="gender_name"
                         placeholder="Select Gender" optionValue="id" class="w-full"
                         @focus="validations_errors.gender = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.gender" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.gender" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -383,43 +383,43 @@ watch(() => formData.value.password, (value) => {
                     <Select v-model="formData.nationality_id" :options="nationalityList" filter
                         optionLabel="nationality" placeholder="Select Nationality" optionValue="id" class="w-full"
                         @focus="validations_errors.nationality_id = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.nationality_id" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.nationality_id" />
                 </div>
             </div>
             <div class="col-span-1 sm:col-span-2 flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Email</label>
-                    <LazyInputText v-model="formData.email" class="w-full" type="email" placeholder="i.e. john@example.com"
+                    <InputText v-model="formData.email" class="w-full" type="email" placeholder="i.e. john@example.com"
                         :class="validations_errors.email ? 'border-[#f44336!important]' : ''" autocomplete="username"
                         @focus="validations_errors.email = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.email" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.email" />
                 </div>
             </div>
             <div class="col-span-1 flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Mobile</label>
-                    <LazyInputText v-model="formData.mobile" class="w-full" type="number" placeholder="i.e. 1234567890"
+                    <InputText v-model="formData.mobile" class="w-full" type="number" placeholder="i.e. 1234567890"
                         :class="validations_errors.mobile ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.mobile = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.mobile" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.mobile" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Password</label>
-                    <LazyInputText v-model="formData.password" class="w-full" type="password"
+                    <InputText v-model="formData.password" class="w-full" type="password"
                         :class="validations_errors.password ? 'border-[#f44336!important]' : ''" autocomplete="new-password"
                         @focus="validations_errors.password = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.password" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.password" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Confirm Password</label>
-                    <LazyInputText v-model="formData.password_confirmation" class="w-full" type="password"
+                    <InputText v-model="formData.password_confirmation" class="w-full" type="password"
                         :class="validations_errors.password_confirmation ? 'border-[#f44336!important]' : ''"
                         autocomplete="new-password" @focus="validations_errors.password_confirmation = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.password_confirmation" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.password_confirmation" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -428,7 +428,7 @@ watch(() => formData.value.password, (value) => {
                     <Select v-model="formData.user_type" :options="RoleList" filter optionLabel="role_name"
                         placeholder="Select User Type" optionValue="id" class="w-full"
                         @focus="validations_errors.user_type = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.user_type" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.user_type" />
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -436,7 +436,7 @@ watch(() => formData.value.password, (value) => {
                 <div class="flex-auto">
                     <ToggleSwitch v-model="isChecked" @change="handleCheckboxChange"
                         @focus="validations_errors.status = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.status" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
                 </div>
             </div>
         </form>

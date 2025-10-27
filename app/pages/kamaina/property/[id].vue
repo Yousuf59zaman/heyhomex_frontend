@@ -109,7 +109,8 @@
     // Tab content data
     const tabInsights = ref({
         title: 'Insights',
-        subtitle: 'Real-life suitability for Hawaii residents and local families.',
+        subtitle:
+            'Real-life suitability for Hawaii residents and local families.',
         downloadButtonText: 'Download Local Living Snapshot',
         items: [
             {
@@ -130,7 +131,7 @@
             {
                 id: 4,
                 label: 'Community Vibe',
-                value: 'Quiet, close-knit \'ohana neighborhood',
+                value: "Quiet, close-knit 'ohana neighborhood",
             },
             {
                 id: 5,
@@ -255,7 +256,8 @@
                     </div>
 
                     <!-- Right Side Images Grid - Hidden on mobile, shows on md+ -->
-                    <div class="hidden md:grid grid-rows-2 gap-2 h-full order-2">
+                    <div
+                        class="hidden md:grid grid-rows-2 gap-2 h-full order-2">
                         <!-- Top Right Image -->
                         <div class="relative h-full">
                             <img
@@ -280,7 +282,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Mobile Image Thumbnails -->
                     <div class="md:hidden flex gap-2 order-3">
                         <div class="relative flex-1">
@@ -311,36 +313,43 @@
                 <div class="mb-6">
                     <!-- Mobile Location -->
                     <div class="flex items-start mb-4 md:hidden">
-                        <Icon name="lucide:map-pin" class="w-4 h-4 mt-1 mr-2 text-gray-600" />
+                        <Icon
+                            name="lucide:map-pin"
+                            class="w-4 h-4 mt-1 mr-2 text-gray-600" />
                         <span class="text-sm text-gray-600">
                             {{ propertyData.address }}
                         </span>
                     </div>
-                    
+
                     <!-- Property Title and Price -->
-                    <div class="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
+                    <div
+                        class="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
                         <div class="flex-1 mb-4 md:mb-0">
                             <!-- Desktop Location -->
                             <div class="hidden md:flex items-start mb-2">
-                                <Icon name="lucide:map-pin" class="w-4 h-4 mt-1 mr-2 text-gray-600" />
+                                <Icon
+                                    name="lucide:map-pin"
+                                    class="w-4 h-4 mt-1 mr-2 text-gray-600" />
                                 <span class="text-sm text-gray-600">
                                     {{ propertyData.address }}
                                 </span>
                             </div>
-                           
                         </div>
                         <div class="flex flex-col md:items-end">
-                            <div class="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                            <div
+                                class="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
                                 ${{ propertyData.price.toLocaleString() }}
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Action Buttons -->
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-                     <h1 class="text-xl md:text-md max-w-sm font-bold text-gray-900 mb-2">
-                                {{ propertyData.title }}
-                            </h1>
+                    <div
+                        class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                        <h1
+                            class="text-xl md:text-md max-w-sm font-bold text-gray-900 mb-2">
+                            {{ propertyData.title }}
+                        </h1>
                         <button
                             class="w-full md:w-auto bg-gray-900 text-white px-6 py-3 md:py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
                             Claim This Home
@@ -353,62 +362,82 @@
                         </button>
                     </div>
 
-                   <div class="bg-white rounded-lg p-3 md:p-3">
-                     <!-- Property Stats -->
-                    <div class="flex justify-between items-center space-x-2 md:space-x-4 ">
-                        <div class="flex-1 flex flex-col items-center bg-gray-100 rounded-lg p-3 md:p-4">
-                            <img
-                                src="/svg/dashboard/card.bed.svg"
-                                alt="Beds"
-                                class="w-6 h-6 md:w-8 md:h-8 mb-2" />
-                            <div class="text-lg md:text-xl font-bold text-gray-900">{{ propertyData.beds }}</div>
-                            <div class="text-xs md:text-sm text-gray-600">Beds</div>
-                        </div>
-                        <div class="flex-1 flex flex-col items-center bg-gray-100 rounded-lg p-3 md:p-4">
-                            <img
-                                src="/svg/dashboard/card-bath.svg"
-                                alt="Baths"
-                                class="w-6 h-6 md:w-8 md:h-8 mb-2" />
-                            <div class="text-lg md:text-xl font-bold text-gray-900">{{ propertyData.baths }}</div>
-                            <div class="text-xs md:text-sm text-gray-600">Baths</div>
-                        </div>
-                        <div class="flex-1 flex flex-col items-center bg-gray-100 rounded-lg p-3 md:p-4">
-                            <img
-                                src="/svg/dashboard/card-cube.svg"
-                                alt="SqFt"
-                                class="w-6 h-6 md:w-8 md:h-8 mb-2" />
-                            <div class="text-lg md:text-xl font-bold text-gray-900">
-                                {{ propertyData.sqft.replace('sqft', '') }}
+                    <div class="bg-white rounded-lg p-3 md:p-3">
+                        <!-- Property Stats -->
+                        <div
+                            class="flex justify-between items-center space-x-2 md:space-x-4">
+                            <div
+                                class="flex-1 flex flex-col items-center bg-gray-100 rounded-lg p-3 md:p-4">
+                                <img
+                                    src="/svg/dashboard/card.bed.svg"
+                                    alt="Beds"
+                                    class="w-6 h-6 md:w-8 md:h-8 mb-2" />
+                                <div
+                                    class="text-lg md:text-xl font-bold text-gray-900">
+                                    {{ propertyData.beds }}
+                                </div>
+                                <div class="text-xs md:text-sm text-gray-600">
+                                    Beds
+                                </div>
                             </div>
-                            <div class="text-xs md:text-sm text-gray-600">Sqft</div>
+                            <div
+                                class="flex-1 flex flex-col items-center bg-gray-100 rounded-lg p-3 md:p-4">
+                                <img
+                                    src="/svg/dashboard/card-bath.svg"
+                                    alt="Baths"
+                                    class="w-6 h-6 md:w-8 md:h-8 mb-2" />
+                                <div
+                                    class="text-lg md:text-xl font-bold text-gray-900">
+                                    {{ propertyData.baths }}
+                                </div>
+                                <div class="text-xs md:text-sm text-gray-600">
+                                    Baths
+                                </div>
+                            </div>
+                            <div
+                                class="flex-1 flex flex-col items-center bg-gray-100 rounded-lg p-3 md:p-4">
+                                <img
+                                    src="/svg/dashboard/card-cube.svg"
+                                    alt="SqFt"
+                                    class="w-6 h-6 md:w-8 md:h-8 mb-2" />
+                                <div
+                                    class="text-lg md:text-xl font-bold text-gray-900">
+                                    {{ propertyData.sqft.replace('sqft', '') }}
+                                </div>
+                                <div class="text-xs md:text-sm text-gray-600">
+                                    Sqft
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="py-4 md:pt-6">
+                            <p
+                                class="text-gray-700 leading-relaxed text-sm mb-4">
+                                Welcome to your next mission-ready home — a
+                                perfect fit for military life on O'ahu. Located
+                                just 7 minutes from Pearl Harbor and Hickam Air
+                                Force Base, this spacious 3-bedroom, 2-bath
+                                residence offers comfort, convenience, and
+                                community for you and your family. Step inside
+                                to find a thoughtfully designed interior with
+                                hardwood flooring, a fully updated kitchen with
+                                quartz countertops, and a bright open-concept
+                                living space. The central A/C keeps you cool
+                                year-round, while the large windows...
+                            </p>
+                            <button
+                                class="text-gray-900 font-medium hover:underline text-sm">
+                                See More...
+                            </button>
                         </div>
                     </div>
-
-                    <!-- Description -->
-                    <div class="py-4 md:pt-6">
-                        <p class="text-gray-700 leading-relaxed text-sm mb-4">
-                            Welcome to your next mission-ready home — a perfect
-                            fit for military life on O'ahu. Located just 7
-                            minutes from Pearl Harbor and Hickam Air Force Base,
-                            this spacious 3-bedroom, 2-bath residence offers
-                            comfort, convenience, and community for you and your
-                            family. Step inside to find a thoughtfully designed
-                            interior with hardwood flooring, a fully updated
-                            kitchen with quartz countertops, and a bright
-                            open-concept living space. The central A/C keeps you
-                            cool year-round, while the large windows...
-                        </p>
-                        <button
-                            class="text-gray-900 font-medium hover:underline text-sm">
-                            See More...
-                        </button>
-                    </div>
-                   </div>
                 </div>
 
                 <!-- Tab Navigation -->
-                <div class="pt-4 ">
-                    <div class="flex rounded-lg mb-2 bg-white space-x-2 md:space-x-6 px-3 md:px-3 py-3 overflow-x-auto">
+                <div class="pt-4">
+                    <div
+                        class="flex rounded-lg mb-2 bg-white space-x-2 md:space-x-6 px-3 md:px-3 py-3 overflow-x-auto">
                         <button
                             :class="[
                                 'whitespace-nowrap pb-2 px-3 py-2 rounded-md font-medium text-xs md:text-sm transition-colors hover:bg-black hover:text-white flex-shrink-0',
@@ -441,7 +470,6 @@
                         </button>
                     </div>
 
-                  
                     <!-- Insights Tab -->
                     <div
                         v-if="activeTab === 'Insights'"
@@ -477,7 +505,9 @@
                     </div>
 
                     <!-- Features Tab -->
-                    <div v-if="activeTab === 'Features'" class="bg-white p-6">
+                    <div
+                        v-if="activeTab === 'Features'"
+                        class="bg-white p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">
                             {{ tabFeatures.title }}
                         </h3>
@@ -497,7 +527,9 @@
                     </div>
 
                     <!-- Maps Tab -->
-                    <div v-if="activeTab === 'Maps'" class="bg-white p-3">
+                    <div
+                        v-if="activeTab === 'Maps'"
+                        class="bg-white p-3">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">
                             {{ tabMaps.title }}
                         </h3>
@@ -680,12 +712,12 @@
         .order-3 {
             width: 100%;
         }
-        
+
         /* Adjust video thumbnails for mobile */
         .h-32 {
             height: 6rem; /* 96px on mobile */
         }
-        
+
         /* Mobile tab button adjustments */
         .overflow-x-auto::-webkit-scrollbar {
             display: none;

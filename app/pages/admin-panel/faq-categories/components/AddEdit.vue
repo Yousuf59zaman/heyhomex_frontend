@@ -181,20 +181,20 @@ const createHandler = async () => {
             <div class="flex items-center gap-4">
                 <label class="font-semibold w-24">Title</label>
                 <div class="flex-auto">
-                    <LazyInputText v-model="formData.title" class="w-full"
+                    <InputText v-model="formData.title" class="w-full"
                         :class="validations_errors.title ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.title = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.title" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.title" />
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
                 <label class="font-semibold w-24">Slug</label>
                 <div class="flex-auto">
-                    <LazyInputText v-model="formData.slug" class="w-full"
+                    <InputText v-model="formData.slug" class="w-full"
                         :class="validations_errors.slug ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.slug = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.slug" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.slug" />
                 </div>
             </div>
 
@@ -203,7 +203,7 @@ const createHandler = async () => {
                 <div class="flex-auto">
                     <Select v-model="formData.parent_id" :options="data" optionLabel="title" placeholder="Select" optionValue="id"
                         class="w-full" @focus="validations_errors.parent_id = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.parent_id" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.parent_id" />
                 </div>
             </div>
 
@@ -212,7 +212,7 @@ const createHandler = async () => {
                 <div class="flex-auto">
                     <ToggleSwitch v-model="isChecked" @change="handleCheckboxChange"
                         @focus="validations_errors.status = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.status" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
                 </div>
             </div>
         </div>

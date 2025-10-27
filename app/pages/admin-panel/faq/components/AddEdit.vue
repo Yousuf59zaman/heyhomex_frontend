@@ -270,10 +270,10 @@ const handleType = () => {
             <div class="flex items-center gap-4">
                 <label class="font-semibold w-32">Title</label>
                 <div class="flex-auto">
-                    <LazyInputText v-model="formData.title" class="w-full"
+                    <InputText v-model="formData.title" class="w-full"
                         :class="validations_errors.title ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.title = ''" Placeholder="i.e How to use this website?" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.title" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.title" />
                 </div>
             </div>
 
@@ -282,7 +282,7 @@ const handleType = () => {
                 <div class="flex-auto">
                     <Select v-model="formData.cat_id" :options="data" optionLabel="title" placeholder="Select Category"
                         optionValue="id" class="w-full" @focus="validations_errors.cat_id" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.cat_id" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.cat_id" />
                 </div>
             </div>
 
@@ -291,7 +291,7 @@ const handleType = () => {
                 <div class="flex-auto">
                     <Select v-model="formData.type" :options="typetList" optionLabel="name" placeholder="Select Type"
                         optionValue="id" class="w-full" @focus="validations_errors.type" @change="handleType" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.type" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.type" />
                 </div>
             </div>
 
@@ -300,7 +300,7 @@ const handleType = () => {
                 <div class="flex-auto">
                     <Editor v-model="formData.description" class="w-full" editorStyle="height: 200px" rows="5"
                         cols="30" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.description" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.description" />
                 </div>
             </div>
             <div v-if="formData.type == 2" class="flex items-center gap-4">
@@ -309,7 +309,7 @@ const handleType = () => {
                     <div class="w-[250px] ">
                         <PhotoBlockPhoto :getPhoto="formData.attachment" @set_photo="setPhoto" />
                     </div>
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.attachment" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.attachment" />
                 </div>
             </div>
             <div v-if="formData.type == 3" class="flex items-center gap-4">
@@ -349,17 +349,17 @@ const handleType = () => {
                             </label>
                         </div>
                     </div>
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.attachment" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.attachment" />
                 </div>
             </div>
             <div v-if="formData.type == 4" class="flex items-center gap-4">
                 <label class="font-semibold w-32">Embed URL</label>
                 <div class="flex-auto">
-                    <LazyInputText v-model="formData.embed_url" class="w-full"
+                    <InputText v-model="formData.embed_url" class="w-full"
                         :class="validations_errors.embed_url ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.embed_url = ''"
                         Placeholder="i.e https://www.youtube.com/watch?v=P-I4Bay5SXo" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.embed_url" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.embed_url" />
                 </div>
             </div>
 
@@ -368,7 +368,7 @@ const handleType = () => {
                 <div class="flex-auto">
                     <ToggleSwitch v-model="isChecked" @change="handleCheckboxChange"
                         @focus="validations_errors.status = ''" />
-                    <LazyInputError class="text-sm mt-1" :message="validations_errors.status" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
                 </div>
             </div>
         </div>
