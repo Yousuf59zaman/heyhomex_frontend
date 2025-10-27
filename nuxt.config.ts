@@ -42,6 +42,7 @@ export default defineNuxtConfig({
     css: [
         '~/assets/css/main.css',
         'leaflet/dist/leaflet.css',
+        'primeicons/primeicons.css',
         '~/assets/scss/style.scss',
          '~/assets/fa-6.4.0/css/all.css'
     ],

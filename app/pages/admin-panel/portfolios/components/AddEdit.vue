@@ -263,6 +263,7 @@ const setPhoto = (photo) => {
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Completion Date</label>
+                    {{ formData?.completion_date }}
                     <DatePicker v-model="formData.completion_date" showIcon fluid iconDisplay="input"
                         :manualInput="false" class="w-full"
                         :class="validations_errors.completion_date ? 'border-[#f44336!important]' : ''"

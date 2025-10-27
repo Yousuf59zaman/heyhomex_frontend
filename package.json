@@ -24,6 +24,7 @@
     "leaflet": "^1.9.4",
     "nuxt": "^4.1.2",
     "nuxt-marquee": "^1.0.4",
+    "primeicons": "^7.0.0",
     "primevue": "^4.4.0",
     "quill": "^2.0.3",
     "vue": "^3.5.22",
