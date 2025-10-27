@@ -75,3 +75,40 @@ body {
   background: none;
 }
 
+
+.p-dialog-footer {
+  @apply border-t border-gray-200 pt-4 !important;
+}
+.p-accordionheader,
+.p-accordioncontent,
+.p-accordioncontent-content {
+  @apply p-2 !important;
+}
+.p-accordionpanel:not(.p-disabled).p-accordionpanel-active
+  > .p-accordionheader {
+  @apply bg-sky-500 dark:bg-sky-900 text-white !important;
+}
+.p-accordionpanel,
+.p-accordioncontent-content {
+  @apply bg-gray-100 dark:bg-gray-900 !important;
+}
+/* .p-accordionheader-toggle-icon{
+  @apply text-white !important;
+} */
+.p-accordionpanel:not(.p-disabled).p-accordionpanel-active
+  > .p-accordionheader
+  .p-accordionheader-toggle-icon {
+  @apply text-white !important;
+}
+
+.p-accordionpanel:not(.p-disabled).p-accordionpanel-active
+  > .p-accordionheader
+  span > i {
+    @apply bg-white dark:bg-red-900 hover:dark:bg-red-400 text-red-500 dark:text-red-200 hover:text-red-800 p-2 text-sm h-[26px] w-[26px] flex items-center justify-center rounded-full !important;
+}
+.p-accordionpanel
+  > .p-accordionheader
+  span > i {
+    @apply bg-red-200 dark:bg-red-900 hover:dark:bg-red-400 text-red-500 dark:text-red-200 hover:text-red-800 p-2 text-sm h-[26px] w-[26px] flex items-center justify-center rounded-full !important;
+}
+

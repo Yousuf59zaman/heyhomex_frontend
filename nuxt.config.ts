@@ -42,15 +42,18 @@ export default defineNuxtConfig({
 
     css: [
         '~/assets/css/main.css',
-        'leaflet/dist/leaflet.css'
+        'leaflet/dist/leaflet.css',
+        '~/assets/scss/style.scss',
+         '~/assets/fa-6.4.0/css/all.css'
     ],
 
     modules: [
-        "@primevue/nuxt-module",
-        "@nuxt/icon",
-        "@nuxtjs/color-mode",
-        "@nuxtjs/sitemap",
-        "@nuxtjs/tailwindcss",
+      "@primevue/nuxt-module",
+      "@nuxt/icon",
+      "@nuxtjs/color-mode",
+      "@nuxtjs/sitemap",
+      "@nuxtjs/tailwindcss",
+      '@nuxt/image',
     ],
 
     colorMode: {

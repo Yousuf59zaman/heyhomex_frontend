@@ -171,10 +171,10 @@ const createHandler = async () => {
         <div class="flex items-center gap-4 mb-4">
             <label for="username" class="font-semibold w-24">Name</label>
             <div class="flex-auto">
-                <LazyInputText v-model="formData.role_name" class="flex-auto" placeholder="i.e. Admin"
+                <InputText v-model="formData.role_name" class="flex-auto" placeholder="i.e. Admin"
                     :class="validations_errors.role_name ? 'border-[#f44336!important]' : ''" autocomplete="off"
                     @focus="validations_errors.role_name = ''" />
-                <LazyInputError class="text-sm mt-1" :message="validations_errors.role_name" :text_size="'text-sm'" />
+                <InputError class="text-sm mt-1" :message="validations_errors.role_name" :text_size="'text-sm'" />
             </div>
         </div>
         <div class="flex items-center gap-4 mb-8">
@@ -182,7 +182,7 @@ const createHandler = async () => {
             <div class="flex-auto">
                 <ToggleSwitch v-model="isChecked" @change="handleCheckboxChange"
                     @focus="validations_errors.status = ''" />
-                <LazyInputError class="text-sm mt-1" :message="validations_errors.status" :text_size="'text-sm'" />
+                <InputError class="text-sm mt-1" :message="validations_errors.status" :text_size="'text-sm'" />
             </div>
         </div>
         <template #footer class="flex justify-end gap-2 border-gray-200">

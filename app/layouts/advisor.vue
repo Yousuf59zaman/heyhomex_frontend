@@ -39,7 +39,7 @@
         <div
             class="fixed inset-y-0 right-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:hidden"
             :class="isMobileMenuOpen ? '-translate-x-0' : 'translate-x-full'">
-            <LazySidebarAdvisor
+            <SidebarAdvisor
                 :is-mobile="true"
                 @close-menu="closeMobileMenu" />
         </div>
@@ -47,7 +47,7 @@
         <!-- Desktop Sidebar -->
         <div
             class="hidden lg:block fixed inset-y-0 left-0 z-50 w-16 bg-white border-r border-gray-200">
-            <LazySidebarAdvisor :is-mobile="false" />
+            <SidebarAdvisor :is-mobile="false" />
         </div>
 
         <!-- Main Content -->

@@ -102,18 +102,13 @@
                                                 <span
                                                     class="font-medium text-gray-900 dark:text-white truncate">
                                                     {{
-                                                        admin_user?.data
-                                                            ?.user_info
-                                                            ?.first_name +
-                                                        ' ' +
-                                                        admin_user?.data
-                                                            ?.user_info
-                                                            ?.last_name
+                                                        admin_user?.name
+                                                      
                                                     }}
                                                 </span>
                                                 <span
                                                     class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                                    {{ admin_user.data.email }}
+                                                    {{ admin_user.email }}
                                                 </span>
                                             </div>
                                         </div>
