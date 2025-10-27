@@ -53,7 +53,7 @@ const admin_user = adminUser();
         class="min-h-screen w-full flex items-center justify-center animate-gradient bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
         <div class="w-full max-w-md p-8 transform perspective-1000">
             <div
-                class="bg-white dark:bg-gray-900 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-8 backdrop-blur-xl hover:shadow-[0_8px_40px_rgb(0,0,0,0.16)] transition-all duration-300 ease-in-out">
+                class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-8 backdrop-blur-xl hover:shadow-[0_8px_40px_rgb(0,0,0,0.16)] transition-all duration-300 ease-in-out">
                 <div class="flex justify-center mb-6 scale-animation select-none">
                     <NuxtLink to="/">
                         <ApplicationLogo :width="'160px'" :height="'55px'" />
@@ -72,15 +72,15 @@ const admin_user = adminUser();
                                 class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                             <!-- Show real InputText only after hydration to avoid SSR/CSR mismatch -->
                             <template v-if="hydrated">
-                                <InputText id="login_id" name="login_id" autocomplete="username" type="text"
+                                <LazyInputText id="login_id" name="login_id" autocomplete="username" type="text"
                                     v-model="form.login_id"
-                                    class="w-full pl-12 pr-4 py-4 rounded-xl bg-gray-50 dark:bg-gray-800 border-0 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+                                    class="w-full pl-[40px] pr-4 py-4 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
                                     required placeholder="User ID" />
                             </template>
                             <template v-else>
                                 <!-- non-interactive fallback to match server render -->
                                 <input id="login_id" name="login_id" autocomplete="username" type="text"
-                                    class="w-full pl-12 pr-4 py-4 rounded-xl bg-gray-50 dark:bg-gray-800 border-0 transition-all duration-200"
+                                    class="w-full pl-12 pr-4 py-4 rounded-xl bg-gray-50 border-0 transition-all duration-200"
                                     placeholder="User ID" disabled />
                             </template>
                         </div>
@@ -92,9 +92,9 @@ const admin_user = adminUser();
                                 class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                             <!-- Hydration-safe rendering for password InputText -->
                             <template v-if="hydrated">
-                                <InputText id="password" name="password" autocomplete="current-password"
+                                <LazyInputText id="password" name="password" autocomplete="current-password"
                                     :type="password_open ? 'text' : 'password'" v-model="form.password"
-                                    class="w-full pl-12 pr-12 py-4 rounded-xl bg-gray-50 dark:bg-gray-800 border-0 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+                                    class="w-full pl-[40px] pr-12 py-4 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
                                     required placeholder="Password" />
                                 <button type="button" @click="password_view_status(!password_open)"
                                     class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
@@ -110,7 +110,7 @@ const admin_user = adminUser();
                             <template v-else>
                                 <!-- non-interactive fallback for password -->
                                 <input id="password" name="password" autocomplete="current-password" type="password"
-                                    class="w-full pl-12 pr-12 py-4 rounded-xl bg-gray-50 dark:bg-gray-800 border-0 transition-all duration-200"
+                                    class="w-full pl-12 pr-12 py-4 rounded-xl bg-gray-50 border-0 transition-all duration-200"
                                     placeholder="Password" disabled />
                                 <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
                                     <i class="fa fa-eye-slash text-lg"></i>
@@ -135,12 +135,12 @@ const admin_user = adminUser();
                         </ButtonPrimary>
                     </template>
                     <template v-else>
-                        <!-- non-interactive skeleton fallback to match Home/index.vue style -->
-                        <div class="w-full py-6 rounded-xl bg-gray-700/60 animate-pulse"></div>
+                        <!-- non-interactive skeleton fallback to match server render -->
+                        <div class="w-full py-6 rounded-xl bg-gray-200 animate-pulse"></div>
                     </template>
 
                     <div class="min-h-4 flex items-center justify-center mt-2">
-                        <InputError :message="unauthorizedError" />
+                        <LazyInputError :message="unauthorizedError" />
                     </div>
                 </form>
             </div>
