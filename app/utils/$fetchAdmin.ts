@@ -14,15 +14,10 @@ export async function $fetchAdmin<T, R extends ResponseType = 'json'>(
     path: RequestInfo,
     { ...options }
 ) {
-    const { API_URL_ADMIN } = useRuntimeConfig().public;
+    const { API_BASE_URL } = useRuntimeConfig().public;
     let token = useCookie($XADM_TOKEN).value;
 
-    if (
-        process.client &&
-        ['get', 'post', 'delete', 'put', 'patch'].includes(
-            options?.method?.toLowerCase() ?? ''
-        )
-    ) {
+    if (process.client && ['get', 'post', 'delete', 'put', 'patch'].includes(options?.method?.toLowerCase() ?? '')) {
         token = getCookie($XADM_TOKEN);
     }
 
@@ -32,7 +27,7 @@ export async function $fetchAdmin<T, R extends ResponseType = 'json'>(
     let headers: any = {
         accept: 'application/json',
         ...options?.headers,
-        ...(token && { [AUTH_HEADER]: `Bearer ${token}` }),
+        ...(token && { [AUTH_HEADER]: `Bearer ${token}` })
     };
 
     if (process.server) {
@@ -45,13 +40,17 @@ export async function $fetchAdmin<T, R extends ResponseType = 'json'>(
 
     try {
         return await $fetch<T, R>(path, {
-            baseURL: API_URL_ADMIN,
+            baseURL: API_BASE_URL,
             ...options,
-            headers,
+            headers
         });
     } catch (error) {
         if (!(error instanceof FetchError)) throw error;
         const status = error.response?.status ?? -1;
+        if (status === 401 && import.meta.client) {
+            window.location.href = '/';
+            return;
+        }
         if ([500].includes(status)) {
             console.error('[Http Error]', error.data?.message, error.data);
         }
@@ -60,8 +59,6 @@ export async function $fetchAdmin<T, R extends ResponseType = 'json'>(
 }
 
 function getCookie(name: string) {
-    const match = document.cookie.match(
-        new RegExp('(^|;\\s*)(' + name + ')=([^;]*)')
-    );
-    return match ? decodeURIComponent(match[3]) : null;
+    const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+    return match && match[3] ? decodeURIComponent(match[3]) : null;
 }
