@@ -14,7 +14,7 @@
  * @see https://developer.jwplayer.com/
  */
 
-import type { Video } from '~/composables/useVideoPlayer';
+// import type { Video } from '~/composables/useVideoPlayer';
 
 interface AdSchedule {
   offset: string; // 'pre', 'post', '50%', or time in seconds

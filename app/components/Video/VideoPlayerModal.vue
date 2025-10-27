@@ -9,9 +9,10 @@
  * - Related videos sidebar (optional)
  * - Keyboard shortcuts (ESC to close, Space to play/pause)
  * - Responsive design
+ * - VAST video advertising support
  */
 
-import { useVideoPlayer } from '~/composables/useVideoPlayer';
+// import { useVideoPlayer } from '~/composables/useVideoPlayer';
 
 const {
   isOpen,
@@ -19,8 +20,11 @@ const {
   playlist,
   closeVideo,
   playNext,
-  playPrevious,
 } = useVideoPlayer();
+
+// Get advertising configuration for video playback
+const { getDefaultAdConfig } = useJWPlayerAds();
+const adConfig = getDefaultAdConfig();
 
 const playerRef = ref<any>(null);
 const showInfo = ref(true);
@@ -173,6 +177,7 @@ onBeforeUnmount(() => {
                   ref="playerRef"
                   :video="currentVideo"
                   :autoplay="true"
+                  :advertising="adConfig"
                   @complete="handleVideoComplete" />
               </div>
             </div>
