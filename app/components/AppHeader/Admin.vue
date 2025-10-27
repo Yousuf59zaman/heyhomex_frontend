@@ -67,7 +67,7 @@
                         <div
                             class="relative flex items-center gap-3"
                             ref="dropdownRef">
-                            <ColorMode class="mt-1.5" />
+                            <!-- <ColorMode class="mt-1.5" /> -->
                             <button
                                 @click.stop="
                                     showingNavigationDropdown =

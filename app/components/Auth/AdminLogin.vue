@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { LockClosedIcon, UserIcon } from '@heroicons/vue/24/outline';
 const hydrated = ref(false);
 onMounted(() => {
@@ -6,9 +6,9 @@ onMounted(() => {
 });
 
 const password_open = ref(false);
-const password_view_status = (status) => {
-    password_open.value = status;
-};
+const password_view_status = (status: boolean) => {
+    password_open.value = status
+}
 
 const form = reactive({
     login_id: '',
@@ -24,25 +24,27 @@ const submit = async () => {
     unauthorizedError.value = '';
     try {
         const response = await login(form);
-        console.log(response.data.token);
-        console.log('Login successful:', response);
+        // console.log(response?.data?.token);
+        if (response.status == false) {
+            unauthorizedError.value = response.message;
+            return;
+        }
         if (response) {
             window.location.href = '/admin-panel';
             return;
         }
     } catch (error) {
-        if (error) {
-            const err = error;
+        if (error instanceof Error) {
+            const err = error as any;
             // console.error('Login error: 1', err?.response?._data?.message);
             unauthorizedError.value = err?.response?._data?.message;
         } else {
-            unauthorizedError.value =
-                'An unexpected error occurred. Please try again later.';
+            unauthorizedError.value = 'An unexpected error occurred. Please try again later.';
         }
     } finally {
         isLoading.value = false;
     }
-};
+}
 const admin_user = adminUser();
 </script>
 
@@ -137,7 +139,7 @@ const admin_user = adminUser();
                         <div class="w-full py-6 rounded-xl bg-gray-700/60 animate-pulse"></div>
                     </template>
 
-                    <div class="min-h-4">
+                    <div class="min-h-4 flex items-center justify-center mt-2">
                         <InputError :message="unauthorizedError" />
                     </div>
                 </form>

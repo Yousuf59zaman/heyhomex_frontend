@@ -1,5 +1,4 @@
 export default defineNuxtRouteMiddleware(async () => {
-	const admin_user = adminUser();
-	console.log('Admin User Middleware:', admin_user.value);
-	if (!admin_user.value) return navigateTo('/admin-login', { replace: true });
+	const admin_user = adminUser() as { value?: { data?: { user_type?: string } } };
+	if (!admin_user.value) return navigateTo('/', { replace: true });
 });
