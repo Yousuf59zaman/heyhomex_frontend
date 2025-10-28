@@ -41,6 +41,7 @@ const messageLogs = computed(() => {
                 <div class="flex items-start w-full justify-center items-center">
                     <div v-if="Object.keys(response_modal).length == 0" class="flex justify-center items-center h-40">
                         <div class="responsive loader"></div>
+                        
                     </div>
                     <div v-else class="text-left font-medium text-gray-900 whitespace-nowrap dark:text-white w-full">
                         <div class="success-icon flex justify-center items-center">
