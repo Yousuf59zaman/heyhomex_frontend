@@ -2,8 +2,8 @@
 const { admin_user = {} } = adminAuth();
 const isScroll = ref(false);
 const isMobileMenuOpen = ref(false);
-// Emits
-const emit = defineEmits(['open-auth-modal']);
+
+const { $citizenModals } = useNuxtApp();
 
 const handleScroll = () => {
     isScroll.value = window.scrollY > 0;
@@ -14,14 +14,30 @@ const toggleMobileMenu = () => {
 };
 
 const handleGetStarted = () => {
-    console.log('Guest header: Get Started clicked, emitting open-auth-modal event')
-    emit('open-auth-modal');
-    // Close mobile menu if open
+    console.log('Guest header: Get Started clicked');
+    if ($citizenModals) {
+        console.log('Opening register modal via plugin');
+        $citizenModals.openRegister();
+    } else {
+        console.error('citizenModals plugin not found!');
+    }
+    isMobileMenuOpen.value = false;
+};
+
+const handleSignIn = () => {
+    console.log('Guest header: Sign In clicked');
+    if ($citizenModals) {
+        console.log('Opening login modal via plugin');
+        $citizenModals.openLogin();
+    } else {
+        console.error('citizenModals plugin not found!');
+    }
     isMobileMenuOpen.value = false;
 };
 
 onMounted(() => {
     window.addEventListener("scroll", handleScroll);
+    console.log('Guest Header Mounted. citizenModals:', $citizenModals);
 });
 
 onUnmounted(() => {
@@ -62,9 +78,9 @@ onUnmounted(() => {
                     </NuxtLink>
                 </div>
                 <div v-else class="hidden md:flex items-center space-x-4">
-                    <NuxtLink to="/#" class="text-white text-[0.875rem]">
+                    <button @click="handleSignIn" class="text-white text-[0.875rem] hover:text-gray-300 transition-colors">
                         Sign In
-                    </NuxtLink>
+                    </button>
                     <div class="bg-white w-[1px] h-[1.25rem]"></div>
                     <button @click="handleGetStarted"
                         class="py-[0.5rem] px-[1.5rem] text-black text-[0.875rem] bg-white border rounded-lg hover:bg-gray-50 transition-colors duration-200">
@@ -93,10 +109,10 @@ onUnmounted(() => {
             leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 -translate-y-2">
             <div v-if="isMobileMenuOpen && !admin_user" class="md:hidden bg-[#1a2530] border-t border-gray-700">
                 <div class="px-4 py-4 space-y-3">
-                    <NuxtLink to="/#" @click="toggleMobileMenu"
-                        class="block text-white text-base py-2 hover:text-gray-300 transition-colors">
+                    <button @click="handleSignIn"
+                        class="block w-full text-left text-white text-base py-2 hover:text-gray-300 transition-colors">
                         Sign In
-                    </NuxtLink>
+                    </button>
                     <button @click="handleGetStarted" style="color: black"
                         class="block w-full text-center py-[0.625rem] px-[1.5rem] text-base bg-white border rounded-lg hover:bg-gray-100 transition-colors">
                         Get Started
