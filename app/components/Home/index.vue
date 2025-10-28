@@ -155,8 +155,5 @@
     </div>
 
     <!-- Auth Modal -->
-    <AuthCitizenAuthModal
-        v-model="showAuthModal"
-        @complete="handleModalComplete"
-        @close="handleModalClose" />
+    <AuthCitizenAuthModals/>
 </template>

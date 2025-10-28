@@ -1,124 +1,119 @@
 <script setup lang="ts">
-import { LockClosedIcon, UserIcon } from '@heroicons/vue/24/outline';
+    import { LockClosedIcon, UserIcon } from '@heroicons/vue/24/outline'
 
-interface LoginFormData {
-    email: string;
-    password: string;
-}
-
-// Props
-const props = defineProps<{
-    modelValue: boolean;
-}>();
-
-// Emits
-const emit = defineEmits<{
-    'update:modelValue': [value: boolean];
-    'login-success': [needsOnboarding: boolean];
-    'show-register': [];
-    close: [];
-}>();
-
-// Computed for two-way binding
-const visible = computed({
-    get: () => props.modelValue,
-    set: (value: boolean) => emit('update:modelValue', value)
-});
-
-// State
-const loading = ref(false);
-const errorMessage = ref('');
-const password_open = ref(false);
-
-// Form data
-const formData = reactive<LoginFormData>({
-    email: '',
-    password: '',
-});
-
-// Methods
-const closeModal = () => {
-    emit('update:modelValue', false);
-    emit('close');
-    setTimeout(() => {
-        resetForm();
-    }, 300);
-};
-
-const resetForm = () => {
-    formData.email = '';
-    formData.password = '';
-    errorMessage.value = '';
-    password_open.value = false;
-};
-
-const password_view_status = (status: boolean) => {
-    password_open.value = status;
-};
-
-const handleLogin = async () => {
-    loading.value = true;
-    errorMessage.value = '';
-
-    try {
-        // TODO: Replace with actual API call
-        // const response = await $fetchCitizen('/citizen/login', {
-        //     method: 'POST',
-        //     body: formData
-        // });
-
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Check if user needs onboarding
-        let needsOnboarding = false;
-        if (import.meta.client) {
-            needsOnboarding = localStorage.getItem('citizen_needs_onboarding') === 'true';
-            
-            // Store user data in localStorage (in real app, this comes from API)
-            localStorage.setItem('citizen_user_data', JSON.stringify({
-                email: formData.email,
-                // Add other user data from response
-            }));
-            
-            localStorage.setItem('citizen_token', 'dummy-token'); // Replace with actual token
-        }
-
-        closeModal();
-
-        // Emit login success with onboarding status
-        emit('login-success', needsOnboarding);
-
-    } catch (error: any) {
-        errorMessage.value = error?.response?._data?.message || 'Login failed. Please check your credentials.';
-    } finally {
-        loading.value = false;
+    interface LoginFormData {
+        email: string
+        password: string
     }
-};
 
-const showRegister = () => {
-    closeModal();
-    setTimeout(() => {
-        emit('show-register');
-    }, 300);
-};
+    // Props
+    const props = defineProps<{
+        modelValue: boolean
+    }>()
 
-// Prevent body scroll when modal is open
-watch(
-    () => props.modelValue,
-    (newValue) => {
-        if (import.meta.client) {
-            document.body.style.overflow = newValue ? 'hidden' : '';
+    // Emits
+    const emit = defineEmits<{
+        'update:modelValue': [value: boolean]
+        'login-success': [needsOnboarding: boolean]
+        'show-register': []
+        close: []
+    }>()
+
+    // Computed for two-way binding
+    const visible = computed({
+        get: () => props.modelValue,
+        set: (value: boolean) => emit('update:modelValue', value),
+    })
+
+    // State
+    const loading = ref(false)
+    const password_open = ref(false)
+
+    // Form data
+    const formData = reactive<LoginFormData>({
+        email: '',
+        password: '',
+    })
+
+    // Methods
+    const closeModal = () => {
+        emit('update:modelValue', false)
+        emit('close')
+        setTimeout(() => {
+            resetForm()
+        }, 300)
+    }
+
+    const resetForm = () => {
+        formData.email = ''
+        formData.password = ''
+        password_open.value = false
+    }
+
+    const password_view_status = (status: boolean) => {
+        password_open.value = status
+    }
+
+    const handleLogin = async () => {
+        loading.value = true
+
+        try {
+           
+            // Simulate API call
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+
+            // Check if user needs onboarding
+            let needsOnboarding = false
+            if (import.meta.client) {
+                needsOnboarding =
+                    localStorage.getItem('citizen_needs_onboarding') === 'true'
+
+                // Store user data in localStorage (in real app, this comes from API)
+                localStorage.setItem(
+                    'citizen_user_data',
+                    JSON.stringify({
+                        email: formData.email,
+                        // Add other user data from response
+                    })
+                )
+
+                localStorage.setItem('citizen_token', 'dummy-token') // Replace with actual token
+            }
+
+            closeModal()
+
+            // Emit login success with onboarding status
+            emit('login-success', needsOnboarding)
+        } catch (error: any) {
+            console.error('Login error:', error)
+        } finally {
+            loading.value = false
         }
     }
-);
 
-// Cleanup on unmount
-onUnmounted(() => {
-    if (import.meta.client) {
-        document.body.style.overflow = '';
+    const showRegister = () => {
+        closeModal()
+        setTimeout(() => {
+            emit('show-register')
+        }, 300)
     }
-});
+
+    // Prevent body scroll when modal is open
+    watch(
+        () => props.modelValue,
+        (newValue) => {
+            if (import.meta.client) {
+                document.body.style.overflow = newValue ? 'hidden' : ''
+            }
+        }
+    )
+
+    // Cleanup on unmount
+    onUnmounted(() => {
+        if (import.meta.client) {
+            document.body.style.overflow = ''
+        }
+    })
 </script>
 
 <template>
@@ -129,7 +124,7 @@ onUnmounted(() => {
         :draggable="false"
         :resizable="false"
         class="citizen-login-modal"
-        :style="{ width: 'min(28rem, 95vw)', maxWidth: '95vw' }"
+        :style="{ width: 'min(45rem, 95vw)', maxWidth: '95vw' }"
         :pt="{
             root: 'border-0 rounded-2xl shadow-2xl m-4',
             header: 'border-0 pb-0',
@@ -138,8 +133,10 @@ onUnmounted(() => {
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-sm transition-colors duration-200',
         }">
         <template #header>
-            <div class="w-full text-center px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
-                <h1 class="text-2xl sm:text-3xl font-semibold text-[#121A22] mb-2 leading-tight">
+            <div
+                class="w-full text-center px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
+                <h1
+                    class="text-2xl sm:text-3xl font-semibold text-[#121A22] mb-2 leading-tight">
                     Welcome Back! 👋
                 </h1>
                 <p class="text-sm text-[#121A22]">
@@ -150,15 +147,18 @@ onUnmounted(() => {
 
         <!-- Content -->
         <div class="px-4 sm:px-6 pb-6">
-            <form @submit.prevent="handleLogin" class="space-y-4">
-                <div v-if="errorMessage" class="p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p class="text-sm text-red-600">{{ errorMessage }}</p>
-                </div>
-
+            <form
+                @submit.prevent="handleLogin"
+                class="space-y-4">
                 <div class="flex flex-col gap-2">
-                    <label for="email" class="text-sm font-medium text-gray-700">Email Address</label>
+                    <label
+                        for="email"
+                        class="text-sm font-medium text-gray-700"
+                        >Email Address</label
+                    >
                     <div class="relative">
-                        <UserIcon class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <UserIcon
+                            class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                         <InputText
                             id="email"
                             v-model="formData.email"
@@ -173,9 +173,14 @@ onUnmounted(() => {
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <label for="password" class="text-sm font-medium text-gray-700">Password</label>
+                    <label
+                        for="password"
+                        class="text-sm font-medium text-gray-700"
+                        >Password</label
+                    >
                     <div class="relative">
-                        <LockClosedIcon class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <LockClosedIcon
+                            class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                         <InputText
                             id="password"
                             v-model="formData.password"
@@ -192,20 +197,25 @@ onUnmounted(() => {
                             class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                             :aria-pressed="password_open"
                             aria-label="Toggle password visibility">
-                            <i :class="[
-                                'fa text-lg',
-                                password_open ? 'fa-eye' : 'fa-eye-slash',
-                            ]"></i>
+                            <i
+                                :class="[
+                                    'fa text-lg',
+                                    password_open ? 'fa-eye' : 'fa-eye-slash',
+                                ]"></i>
                         </button>
                     </div>
                 </div>
 
                 <div class="flex items-center justify-between text-sm">
                     <label class="flex items-center">
-                        <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <input
+                            type="checkbox"
+                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
                         <span class="ml-2 text-gray-600">Remember me</span>
                     </label>
-                    <button type="button" class="text-blue-600 hover:text-blue-700 font-medium">
+                    <button
+                        type="button"
+                        class="text-blue-600 hover:text-blue-700 font-medium">
                         Forgot password?
                     </button>
                 </div>
@@ -239,18 +249,18 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.citizen-login-modal .p-dialog {
-    border-radius: 1rem;
-}
+    .citizen-login-modal .p-dialog {
+        border-radius: 1rem;
+    }
 
-.citizen-login-modal .p-dialog-header {
-    border: none;
-    padding-bottom: 0;
-}
+    .citizen-login-modal .p-dialog-header {
+        border: none;
+        padding-bottom: 0;
+    }
 
-.citizen-login-modal .p-dialog-content {
-    border: none;
-    padding-top: 0;
-    padding-bottom: 1.5rem;
-}
+    .citizen-login-modal .p-dialog-content {
+        border: none;
+        padding-top: 0;
+        padding-bottom: 1.5rem;
+    }
 </style>

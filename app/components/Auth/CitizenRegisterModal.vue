@@ -1,137 +1,129 @@
 <script setup lang="ts">
-interface RegisterFormData {
-    fullName: string;
-    email: string;
-    password: string;
-    priceRange: string;
-    preferredLocation: string;
-}
+    interface RegisterFormData {
+        fullName: string
+        email: string
+        password: string
+        priceRange: string
+        preferredLocation: string
+    }
 
-// Props
-const props = defineProps<{
-    modelValue: boolean;
-}>();
+    // Props
+    const props = defineProps<{
+        modelValue: boolean
+    }>()
 
-// Emits
-const emit = defineEmits<{
-    'update:modelValue': [value: boolean];
-    'register-success': [data: RegisterFormData];
-    'show-login': [];
-    close: [];
-}>();
+    // Emits
+    const emit = defineEmits<{
+        'update:modelValue': [value: boolean]
+        'register-success': [data: RegisterFormData]
+        'show-login': []
+        close: []
+    }>()
 
-// Computed for two-way binding
-const visible = computed({
-    get: () => props.modelValue,
-    set: (value: boolean) => emit('update:modelValue', value)
-});
+    // Computed for two-way binding
+    const visible = computed({
+        get: () => props.modelValue,
+        set: (value: boolean) => emit('update:modelValue', value),
+    })
 
-// State
-const loading = ref(false);
-const errorMessage = ref('');
+    // State
+    const loading = ref(false)
 
-// Form data
-const formData = reactive<RegisterFormData>({
-    fullName: '',
-    email: '',
-    password: '',
-    priceRange: '',
-    preferredLocation: '',
-});
+    // Form data
+    const formData = reactive<RegisterFormData>({
+        fullName: '',
+        email: '',
+        password: '',
+        priceRange: '',
+        preferredLocation: '',
+    })
 
-// Static options
-const priceRangeOptions = [
-    { label: 'Select price range', value: '', disabled: true },
-    { label: '$0 - $300K', value: '0-300k' },
-    { label: '$300K - $600K', value: '300k-600k' },
-    { label: '$600K - $1M', value: '600k-1m' },
-    { label: '$1M+', value: '1m+' },
-];
+    // Static options
+    const priceRangeOptions = [
+        { label: 'Select price range', value: '', disabled: true },
+        { label: '$0 - $300K', value: '0-300k' },
+        { label: '$300K - $600K', value: '300k-600k' },
+        { label: '$600K - $1M', value: '600k-1m' },
+        { label: '$1M+', value: '1m+' },
+    ]
 
-const preferredLocationOptions = [
-    { label: 'Select Preferred location', value: '', disabled: true },
-    { label: 'Urban', value: 'urban' },
-    { label: 'Suburban', value: 'suburban' },
-    { label: 'Rural', value: 'rural' },
-    { label: 'Coastal', value: 'coastal' },
-];
+    const preferredLocationOptions = [
+        { label: 'Select Preferred location', value: '', disabled: true },
+        { label: 'Urban', value: 'urban' },
+        { label: 'Suburban', value: 'suburban' },
+        { label: 'Rural', value: 'rural' },
+        { label: 'Coastal', value: 'coastal' },
+    ]
 
-// Methods
-const closeModal = () => {
-    emit('update:modelValue', false);
-    emit('close');
-    setTimeout(() => {
-        resetForm();
-    }, 300);
-};
-
-const resetForm = () => {
-    formData.fullName = '';
-    formData.email = '';
-    formData.password = '';
-    formData.priceRange = '';
-    formData.preferredLocation = '';
-    errorMessage.value = '';
-};
-
-const handleRegister = async () => {
-    loading.value = true;
-    errorMessage.value = '';
-
-    try {
-        // TODO: Replace with actual API call
-        // const response = await $fetchCitizen('/citizen/register', {
-        //     method: 'POST',
-        //     body: formData
-        // });
-
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Store user data temporarily
-        if (import.meta.client) {
-            localStorage.setItem('citizen_needs_onboarding', 'true');
-            localStorage.setItem('citizen_temp_email', formData.email);
-        }
-
-        emit('register-success', { ...formData });
-        closeModal();
-        
-        // Show login modal after registration
+    // Methods
+    const closeModal = () => {
+        emit('update:modelValue', false)
+        emit('close')
         setTimeout(() => {
-            emit('show-login');
-        }, 300);
-
-    } catch (error: any) {
-        errorMessage.value = error?.response?._data?.message || 'Registration failed. Please try again.';
-    } finally {
-        loading.value = false;
+            resetForm()
+        }, 300)
     }
-};
 
-const showLogin = () => {
-    closeModal();
-    setTimeout(() => {
-        emit('show-login');
-    }, 300);
-};
+    const resetForm = () => {
+        formData.fullName = ''
+        formData.email = ''
+        formData.password = ''
+        formData.priceRange = ''
+        formData.preferredLocation = ''
+    }
 
-// Prevent body scroll when modal is open
-watch(
-    () => props.modelValue,
-    (newValue) => {
-        if (import.meta.client) {
-            document.body.style.overflow = newValue ? 'hidden' : '';
+    const handleRegister = async () => {
+        loading.value = true
+
+        try {
+           
+
+            // Simulate API call
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+
+            // Store user data temporarily
+            if (import.meta.client) {
+                localStorage.setItem('citizen_needs_onboarding', 'true')
+                localStorage.setItem('citizen_temp_email', formData.email)
+            }
+
+            emit('register-success', { ...formData })
+            closeModal()
+
+            // Show login modal after registration
+            setTimeout(() => {
+                emit('show-login')
+            }, 300)
+        } catch (error: any) {
+            console.error('Registration error:', error)
+        } finally {
+            loading.value = false
         }
     }
-);
 
-// Cleanup on unmount
-onUnmounted(() => {
-    if (import.meta.client) {
-        document.body.style.overflow = '';
+    const showLogin = () => {
+        closeModal()
+        setTimeout(() => {
+            emit('show-login')
+        }, 300)
     }
-});
+
+    // Prevent body scroll when modal is open
+    watch(
+        () => props.modelValue,
+        (newValue) => {
+            if (import.meta.client) {
+                document.body.style.overflow = newValue ? 'hidden' : ''
+            }
+        }
+    )
+
+    // Cleanup on unmount
+    onUnmounted(() => {
+        if (import.meta.client) {
+            document.body.style.overflow = ''
+        }
+    })
 </script>
 
 <template>
@@ -151,8 +143,10 @@ onUnmounted(() => {
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-sm transition-colors duration-200',
         }">
         <template #header>
-            <div class="w-full text-center px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
-                <h1 class="text-2xl sm:text-3xl max-w-sm mx-auto font-semibold text-[#121A22] mb-2 leading-tight">
+            <div
+                class="w-full text-center px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
+                <h1
+                    class="text-2xl sm:text-3xl max-w-sm mx-auto font-semibold text-[#121A22] mb-2 leading-tight">
                     You bring the dream. We'll map the way. ✨
                 </h1>
                 <p class="text-sm text-[#121A22]">
@@ -163,13 +157,15 @@ onUnmounted(() => {
 
         <!-- Content -->
         <div class="px-4 sm:px-6 pb-6">
-            <form @submit.prevent="handleRegister" class="space-y-4">
-                <div v-if="errorMessage" class="p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p class="text-sm text-red-600">{{ errorMessage }}</p>
-                </div>
-
+            <form
+                @submit.prevent="handleRegister"
+                class="space-y-4">
                 <div class="flex flex-col gap-2">
-                    <label for="fullName" class="text-sm font-medium text-gray-700">Full Name</label>
+                    <label
+                        for="fullName"
+                        class="text-sm font-medium text-gray-700"
+                        >Full Name</label
+                    >
                     <InputText
                         id="fullName"
                         v-model="formData.fullName"
@@ -181,7 +177,11 @@ onUnmounted(() => {
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <label for="email" class="text-sm font-medium text-gray-700">Email Address</label>
+                    <label
+                        for="email"
+                        class="text-sm font-medium text-gray-700"
+                        >Email Address</label
+                    >
                     <InputText
                         id="email"
                         v-model="formData.email"
@@ -194,7 +194,11 @@ onUnmounted(() => {
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <label for="password" class="text-sm font-medium text-gray-700">Password</label>
+                    <label
+                        for="password"
+                        class="text-sm font-medium text-gray-700"
+                        >Password</label
+                    >
                     <InputText
                         id="password"
                         v-model="formData.password"
@@ -208,7 +212,11 @@ onUnmounted(() => {
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="flex flex-col gap-2">
-                        <label for="priceRange" class="text-sm font-medium text-gray-700">Price Range</label>
+                        <label
+                            for="priceRange"
+                            class="text-sm font-medium text-gray-700"
+                            >Price Range</label
+                        >
                         <Dropdown
                             id="priceRange"
                             v-model="formData.priceRange"
@@ -225,7 +233,11 @@ onUnmounted(() => {
                     </div>
 
                     <div class="flex flex-col gap-2">
-                        <label for="preferredLocation" class="text-sm font-medium text-gray-700">Preferred Location</label>
+                        <label
+                            for="preferredLocation"
+                            class="text-sm font-medium text-gray-700"
+                            >Preferred Location</label
+                        >
                         <Dropdown
                             id="preferredLocation"
                             v-model="formData.preferredLocation"
@@ -271,18 +283,18 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.citizen-register-modal .p-dialog {
-    border-radius: 1rem;
-}
+    .citizen-register-modal .p-dialog {
+        border-radius: 1rem;
+    }
 
-.citizen-register-modal .p-dialog-header {
-    border: none;
-    padding-bottom: 0;
-}
+    .citizen-register-modal .p-dialog-header {
+        border: none;
+        padding-bottom: 0;
+    }
 
-.citizen-register-modal .p-dialog-content {
-    border: none;
-    padding-top: 0;
-    padding-bottom: 1.5rem;
-}
+    .citizen-register-modal .p-dialog-content {
+        border: none;
+        padding-top: 0;
+        padding-bottom: 1.5rem;
+    }
 </style>
