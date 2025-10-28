@@ -99,7 +99,7 @@ watchEffect(() => {
         ]">
         <div
             class="flex items-center justify-between w-full px-2 sm:px-3 border-b-2 border-gray-200 dark:border-gray-700">
-            <NuxtLink :to="'/'" :class="!hamburger_button ? 'hidden' : ''" class="flex items-center gap-2">
+            <NuxtLink :to="'/admin-panel'" :class="!hamburger_button ? 'hidden' : ''" class="flex items-center gap-2">
                 <ApplicationIconLogo :width="'40px'" />
                 <span
                     class="pr-3 bg-white dark:bg-gray-900 text-2xl font-semibold leading-6 text-gray-900 dark:text-white">
