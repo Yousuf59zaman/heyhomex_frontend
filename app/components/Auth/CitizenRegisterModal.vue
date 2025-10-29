@@ -1,10 +1,30 @@
 <script setup lang="ts">
+    // Interfaces
     interface RegisterFormData {
-        fullName: string
+        name: string
         email: string
         password: string
-        priceRange: string
-        preferredLocation: string
+        password_confirmation: string
+        price_range_id: string
+        location_id: string
+    }
+
+    interface PriceRange {
+        id: number
+        min_price: string
+        max_price: string
+        range_title: string
+    }
+
+    interface Location {
+        id: number
+        name: string
+    }
+
+    interface ApiResponse<T> {
+        status: string
+        message: string
+        data: T
     }
 
     // Props
@@ -28,32 +48,93 @@
 
     // State
     const loading = ref(false)
+    const validationErrors = ref<Record<string, string>>({})
+    const passwordMatchError = ref('')
 
     // Form data
     const formData = reactive<RegisterFormData>({
-        fullName: '',
+        name: '',
         email: '',
         password: '',
-        priceRange: '',
-        preferredLocation: '',
+        password_confirmation: '',
+        price_range_id: '',
+        location_id: '',
     })
 
-    // Static options
-    const priceRangeOptions = [
+    // Dynamic options - fetched from API
+    const priceRangeOptions = ref([
         { label: 'Select price range', value: '', disabled: true },
-        { label: '$0 - $300K', value: '0-300k' },
-        { label: '$300K - $600K', value: '300k-600k' },
-        { label: '$600K - $1M', value: '600k-1m' },
-        { label: '$1M+', value: '1m+' },
-    ]
+    ])
 
-    const preferredLocationOptions = [
+    const preferredLocationOptions = ref([
         { label: 'Select Preferred location', value: '', disabled: true },
-        { label: 'Urban', value: 'urban' },
-        { label: 'Suburban', value: 'suburban' },
-        { label: 'Rural', value: 'rural' },
-        { label: 'Coastal', value: 'coastal' },
-    ]
+    ])
+
+    // Loading states for dropdowns
+    const loadingPriceRanges = ref(false)
+    const loadingLocations = ref(false)
+
+    // Fetch price ranges from API
+    const fetchPriceRanges = async () => {
+        try {
+            loadingPriceRanges.value = true
+            const response = await $fetchCMS<ApiResponse<PriceRange[]>>('/price-range/list',{})
+
+            if (response?.status === 'success' && Array.isArray(response.data)) {
+                // Map API data to dropdown format
+                const apiOptions = response.data.map((range) => ({
+                    label: range.range_title,
+                    value: String(range.id),
+                    disabled: false,
+                }))
+
+                // Keep the default "Select" option and add API data
+                priceRangeOptions.value = [
+                    { label: 'Select price range', value: '', disabled: true },
+                    ...apiOptions,
+                ]
+            }
+        } catch (error: any) {
+            console.error('Error fetching price ranges:', error)
+            // Keep default option if API fails
+        } finally {
+            loadingPriceRanges.value = false
+        }
+    }
+
+    // Fetch locations from API
+    const fetchLocations = async () => {
+        try {
+            loadingLocations.value = true
+            const response = await $fetchCMS<ApiResponse<Location[]>>('/locations/list',{})
+
+            if (response?.status === 'success' && Array.isArray(response.data)) {
+                // Map API data to dropdown format
+                const apiOptions = response.data.map((location) => ({
+                    label: location.name,
+                    value: String(location.id),
+                    disabled: false,
+                }))
+
+                // Keep the default "Select" option and add API data
+                preferredLocationOptions.value = [
+                    { label: 'Select Preferred location', value: '', disabled: true },
+                    ...apiOptions,
+                ]
+            }
+        } catch (error: any) {
+            console.error('Error fetching locations:', error)
+            // Keep default option if API fails
+        } finally {
+            loadingLocations.value = false
+        }
+    }
+
+    // Fetch dropdown data on component mount
+    onMounted(() => {
+        fetchPriceRanges()
+        fetchLocations()
+    })
 
     // Methods
     const closeModal = () => {
@@ -65,37 +146,89 @@
     }
 
     const resetForm = () => {
-        formData.fullName = ''
+        formData.name = ''
         formData.email = ''
         formData.password = ''
-        formData.priceRange = ''
-        formData.preferredLocation = ''
+        formData.password_confirmation = ''
+        formData.price_range_id = ''
+        formData.location_id = ''
+        validationErrors.value = {}
+        passwordMatchError.value = ''
+    }
+
+    const validatePasswords = () => {
+        if (formData.password && formData.password_confirmation) {
+            if (formData.password !== formData.password_confirmation) {
+                passwordMatchError.value = 'Passwords do not match'
+                return false
+            }
+        }
+        passwordMatchError.value = ''
+        return true
+    }
+
+    const showError = (message: string) => {
+        // You can integrate with a toast notification system here
+        console.error('Error:', message)
+        // For now, we'll use alert, but you can replace this with a better notification
+        alert(message)
     }
 
     const handleRegister = async () => {
+        // Clear previous errors
+        validationErrors.value = {}
+        passwordMatchError.value = ''
+
+        // Validate passwords match
+        if (!validatePasswords()) {
+            loading.value = false
+            return
+        }
+
         loading.value = true
 
         try {
-           
+            const response = await $fetchCMS<ApiResponse<RegisterFormData>>('/register', {
+                method: 'POST',
+                body: formData,
+            })
 
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1000))
+            console.log('Response', response)
 
-            // Store user data temporarily
-            if (import.meta.client) {
-                localStorage.setItem('citizen_needs_onboarding', 'true')
-                localStorage.setItem('citizen_temp_email', formData.email)
+            if (response.status) {
+                console.log('Response in block', response)
+
+                // Store user data temporarily
+                if (import.meta.client) {
+                    localStorage.setItem('citizen_needs_onboarding', 'true')
+                    localStorage.setItem('citizen_temp_email', formData.email)
+                }
+
+                emit('register-success', { ...formData })
+                closeModal()
+
+                // Show login modal after registration
+                setTimeout(() => {
+                    emit('show-login')
+                }, 300)
+            } else {
+                // showError(response?.message || 'Registration failed')
             }
-
-            emit('register-success', { ...formData })
-            closeModal()
-
-            // Show login modal after registration
-            setTimeout(() => {
-                emit('show-login')
-            }, 300)
-        } catch (error: any) {
-            console.error('Registration error:', error)
+        } catch (e: any) {
+            console.log('Get Message', e.message)
+            if (e.response?.status === 404 || e.response?.status === 422) {
+                console.log('here 1', e.response)
+                if (e.response?.status === 404 || e.response?.status === 409) {
+                    for (const key in e.response._data.data) {
+                        if (e.response._data.data.hasOwnProperty(key)) {
+                            const value = e.response._data.data[key][0]
+                            validationErrors.value[key] = value
+                        }
+                    }
+                }
+            } else {
+                showError(e.response?.message || e.message || 'An error occurred during registration')
+            }
         } finally {
             loading.value = false
         }
@@ -168,12 +301,17 @@
                     >
                     <InputText
                         id="fullName"
-                        v-model="formData.fullName"
+                        v-model="formData.name"
                         placeholder="Enter your full name"
                         required
                         :pt="{
                             root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                         }" />
+                    <span
+                        v-if="validationErrors.name"
+                        class="text-xs text-red-500">
+                        {{ validationErrors.name }}
+                    </span>
                 </div>
 
                 <div class="flex flex-col gap-2">
@@ -191,23 +329,64 @@
                         :pt="{
                             root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                         }" />
+                    <span
+                        v-if="validationErrors.email"
+                        class="text-xs text-red-500">
+                        {{ validationErrors.email }}
+                    </span>
                 </div>
 
-                <div class="flex flex-col gap-2">
-                    <label
-                        for="password"
-                        class="text-sm font-medium text-gray-700"
-                        >Password</label
-                    >
-                    <InputText
-                        id="password"
-                        v-model="formData.password"
-                        type="password"
-                        placeholder="Create a password"
-                        required
-                        :pt="{
-                            root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
-                        }" />
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-2">
+                        <label
+                            for="password"
+                            class="text-sm font-medium text-gray-700"
+                            >Password</label
+                        >
+                        <InputText
+                            id="password"
+                            v-model="formData.password"
+                            type="password"
+                            placeholder="Create a password"
+                            required
+                            @blur="validatePasswords"
+                            :pt="{
+                                root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                            }" />
+                        <span
+                            v-if="validationErrors.password"
+                            class="text-xs text-red-500">
+                            {{ validationErrors.password }}
+                        </span>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label
+                            for="confirmPassword"
+                            class="text-sm font-medium text-gray-700"
+                            >Confirm Password</label
+                        >
+                        <InputText
+                            id="confirmPassword"
+                            v-model="formData.password_confirmation"
+                            type="password"
+                            placeholder="Confirm your password"
+                            required
+                            @blur="validatePasswords"
+                            :pt="{
+                                root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                            }" />
+                        <span
+                            v-if="passwordMatchError"
+                            class="text-xs text-red-500">
+                            {{ passwordMatchError }}
+                        </span>
+                        <span
+                            v-if="validationErrors.password_confirmation"
+                            class="text-xs text-red-500">
+                            {{ validationErrors.password_confirmation }}
+                        </span>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -219,17 +398,24 @@
                         >
                         <Dropdown
                             id="priceRange"
-                            v-model="formData.priceRange"
+                            v-model="formData.price_range_id"
                             :options="priceRangeOptions"
                             optionLabel="label"
                             optionValue="value"
                             optionDisabled="disabled"
                             placeholder="Select price range"
+                            :loading="loadingPriceRanges"
+                            :disabled="loadingPriceRanges"
                             required
                             :pt="{
                                 root: 'w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                                 input: 'px-4 py-3',
                             }" />
+                        <span
+                            v-if="validationErrors.price_range_id"
+                            class="text-xs text-red-500">
+                            {{ validationErrors.price_range_id }}
+                        </span>
                     </div>
 
                     <div class="flex flex-col gap-2">
@@ -240,17 +426,24 @@
                         >
                         <Dropdown
                             id="preferredLocation"
-                            v-model="formData.preferredLocation"
+                            v-model="formData.location_id"
                             :options="preferredLocationOptions"
                             optionLabel="label"
                             optionValue="value"
                             optionDisabled="disabled"
                             placeholder="Select location"
+                            :loading="loadingLocations"
+                            :disabled="loadingLocations"
                             required
                             :pt="{
                                 root: 'w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                                 input: 'px-4 py-3',
                             }" />
+                        <span
+                            v-if="validationErrors.location_id"
+                            class="text-xs text-red-500">
+                            {{ validationErrors.location_id }}
+                        </span>
                     </div>
                 </div>
 
