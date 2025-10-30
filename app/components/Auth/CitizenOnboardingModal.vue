@@ -46,6 +46,12 @@
         total: number
     }
 
+    interface UserType {
+        id: number
+        name: string
+        slug: string
+    }
+
     interface OnboardingResponse {
         status: string
         message: string
@@ -54,6 +60,7 @@
             name: string
             email: string
             user_onboard_profile_status: number
+            user_type?: UserType[]
             [key: string]: any
         }
     }
@@ -304,8 +311,10 @@
             emit('onboarding-complete', { ...formData })
             closeModal()
 
-            // Redirect to dashboard
-            navigateTo('/kamaina/')
+            // Redirect to dashboard based on user's first user_type slug
+            // Fallback to '/kamaina/' if user_type is not available
+            const redirectSlug = response.data.user_type?.[0]?.slug || 'kamaina'
+            navigateTo(`/${redirectSlug}/`)
         } catch (error: any) {
             console.error('Onboarding save failed:', error)
 
