@@ -27,6 +27,44 @@
         data: T
     }
 
+    interface RegistrationResponseData {
+        id: number
+        name: string
+        email: string
+        email_verified_at: string
+        user_type: any[]
+        otp_for: string | null
+        photo: string | null
+        email_notification: string | null
+        uid: string
+        mobile: string | null
+        ccode: string
+        auth_code: string | null
+        is_verify: number
+        status: number
+        mobile_verified_at: string
+        role_id: number
+        token: string | null
+        expire_time: string | null
+        refresh_token: string | null
+        user_info: any | null
+        user_role: {
+            id: number
+            role_name: string
+            status: boolean
+            deleted_at: string | null
+        }
+        user_preference: {
+            id: number
+            question_minimum_price: string | null
+            question_maximum_price: string | null
+            range_minimum_price: string
+            range_maximum_price: string
+            question_location: string | null
+        }
+        user_onboard_profile_status: number
+    }
+
     // Props
     const props = defineProps<{
         modelValue: boolean
@@ -188,7 +226,7 @@
         loading.value = true
 
         try {
-            const response = await $fetchCMS<ApiResponse<RegisterFormData>>('/register', {
+            const response = await $fetchCMS<ApiResponse<RegistrationResponseData>>('/register', {
                 method: 'POST',
                 body: formData,
             })
@@ -198,10 +236,21 @@
             if (response.status) {
                 console.log('Response in block', response)
 
-                // Store user data temporarily
+                // Store user data and onboarding status from API response
                 if (import.meta.client) {
-                    localStorage.setItem('citizen_needs_onboarding', 'true')
+                    // Store the user_onboard_profile_status from API response
+                    // 0 = needs onboarding, 1 = onboarding completed
+                    const onboardingStatus = response.data?.user_onboard_profile_status ?? 0
+                    localStorage.setItem('citizen_user_onboard_profile_status', String(onboardingStatus))
                     localStorage.setItem('citizen_temp_email', formData.email)
+
+                    // Also store user data for reference
+                    localStorage.setItem('citizen_user_data', JSON.stringify({
+                        id: response.data?.id,
+                        name: response.data?.name,
+                        email: response.data?.email,
+                        uid: response.data?.uid
+                    }))
                 }
 
                 emit('register-success', { ...formData })

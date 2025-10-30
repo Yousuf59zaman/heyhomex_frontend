@@ -6,6 +6,19 @@
         password: string
     }
 
+    interface LoginResponse {
+        status: boolean
+        message: string
+        data: {
+            id: number
+            name: string
+            email: string
+            token: string
+            user_onboard_profile_status?: number
+            [key: string]: any
+        }
+    }
+
     // Props
     const props = defineProps<{
         modelValue: boolean
@@ -58,34 +71,66 @@
         loading.value = true
 
         try {
-           
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1000))
+            // Create FormData payload for login
+            const payload = new FormData()
+            payload.append('login_id', formData.email)
+            payload.append('password', formData.password)
 
-            // Check if user needs onboarding
-            let needsOnboarding = false
-            if (import.meta.client) {
-                needsOnboarding =
-                    localStorage.getItem('citizen_needs_onboarding') === 'true'
+            // Call login API
+            const response = await $fetchCMS<LoginResponse>('/admin/login', {
+                method: 'POST',
+                body: payload,
+            })
 
-                // Store user data in localStorage (in real app, this comes from API)
-                localStorage.setItem(
-                    'citizen_user_data',
-                    JSON.stringify({
-                        email: formData.email,
-                        // Add other user data from response
-                    })
-                )
+            if (response.status && response.data) {
+                const userData = response.data
 
-                localStorage.setItem('citizen_token', 'dummy-token') // Replace with actual token
+                // Store user-specific data in localStorage
+                if (import.meta.client) {
+                    // Store auth token in cookie for $fetchCMS to use
+                    const tokenCookie = useCookie('XCMS-TOKEN')
+                    tokenCookie.value = userData.token
+
+                    // Store user data
+                    localStorage.setItem('citizen_user_data', JSON.stringify(userData))
+
+                    // Store user ID for reference
+                    localStorage.setItem('citizen_user_id', userData.id.toString())
+
+                    // Store user-specific onboarding status using user ID as key
+                    // This prevents mixing up statuses between different users
+                    const onboardingStatusKey = `citizen_onboard_status_${userData.id}`
+
+                    if (userData.user_onboard_profile_status !== undefined) {
+                        localStorage.setItem(onboardingStatusKey, userData.user_onboard_profile_status.toString())
+                    }
+
+                    // Clean up old global onboarding status (if exists)
+                    localStorage.removeItem('citizen_user_onboard_profile_status')
+                    localStorage.removeItem('citizen_needs_onboarding')
+                }
+
+                // Check if user needs onboarding
+                // 0 = needs onboarding, 1 = onboarding completed
+                const needsOnboarding = userData.user_onboard_profile_status === 0
+
+                if (import.meta.client) {
+                    alert(response.message || 'Login successful')
+                }
+
+                closeModal()
+
+                // Emit login success with onboarding status
+                emit('login-success', needsOnboarding)
             }
-
-            closeModal()
-
-            // Emit login success with onboarding status
-            emit('login-success', needsOnboarding)
         } catch (error: any) {
             console.error('Login error:', error)
+
+            // Handle error feedback
+            if (import.meta.client) {
+                const errorMessage = error?.data?.message || 'Login failed. Please check your credentials and try again.'
+                alert(errorMessage)
+            }
         } finally {
             loading.value = false
         }

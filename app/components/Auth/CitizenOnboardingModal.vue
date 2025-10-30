@@ -2,9 +2,65 @@
     type OnboardingStep = 'motivation' | 'budget' | 'location' | 'success'
 
     interface OnboardingData {
-        motivation: string
-        budget: string
-        locationType: string
+        motivation: number | null
+        budget: number | null
+        locationType: number | null
+    }
+
+    interface QuestionAnswer {
+        id: number
+        answer_text: string
+        user_type_id: number | null
+        is_active: boolean
+        minimum_amount: number | null
+        maximum_amount: number | null
+        area: string | null
+        [key: string]: any
+    }
+
+    interface QuestionGroup {
+        id: number
+        name: string
+        is_active: boolean
+        created_at: string
+    }
+
+    interface Question {
+        id: number
+        question_group: QuestionGroup
+        question_text: string
+        is_active: boolean
+        created_at: string
+        answers: QuestionAnswer[]
+    }
+
+    interface QuestionsListResponse {
+        status: string
+        message: string
+        data: Question[]
+        current_page: number
+        from: number
+        last_page: number
+        per_page: number
+        to: number
+        total: number
+    }
+
+    interface OnboardingResponse {
+        status: string
+        message: string
+        data: {
+            id: number
+            name: string
+            email: string
+            user_onboard_profile_status: number
+            [key: string]: any
+        }
+    }
+
+    interface OptionItem {
+        label: string
+        value: number
     }
 
     // Props
@@ -28,30 +84,67 @@
     // State
     const currentStep = ref<OnboardingStep>('motivation')
     const loading = ref(false)
+    const questionsLoading = ref(false)
 
-    // Form data
+    // Form data - storing answer IDs from API
     const formData = reactive<OnboardingData>({
-        motivation: '',
-        budget: '',
-        locationType: '',
+        motivation: null,
+        budget: null,
+        locationType: null,
     })
 
-    // Static step configurations
-    const stepConfigs = {
+    // Dynamic questions from API
+    const questions = ref<Question[]>([])
+    const motivationQuestion = ref<Question | null>(null)
+    const budgetQuestion = ref<Question | null>(null)
+    const locationQuestion = ref<Question | null>(null)
+
+    // Dynamic options computed from API data
+    const motivationOptions = computed<OptionItem[]>(() => {
+        if (!motivationQuestion.value) return []
+        return motivationQuestion.value.answers
+            .filter(answer => answer.is_active)
+            .map(answer => ({
+                label: answer.answer_text,
+                value: answer.id
+            }))
+    })
+
+    const budgetOptions = computed<OptionItem[]>(() => {
+        if (!budgetQuestion.value) return []
+        return budgetQuestion.value.answers
+            .filter(answer => answer.is_active)
+            .map(answer => ({
+                label: answer.answer_text,
+                value: answer.id
+            }))
+    })
+
+    const locationTypeOptions = computed<OptionItem[]>(() => {
+        if (!locationQuestion.value) return []
+        return locationQuestion.value.answers
+            .filter(answer => answer.is_active)
+            .map(answer => ({
+                label: answer.answer_text,
+                value: answer.id
+            }))
+    })
+
+    // Step configurations with dynamic subtitles from API
+    const stepConfigs = computed(() => ({
         motivation: {
             title: "You bring the dream. We'll map the way. ✨",
-            subtitle: "What's the heart behind your home search?",
+            subtitle: motivationQuestion.value?.question_text || "What's the heart behind your home search?",
             stepLabel: 'Step: 1/3',
         },
         budget: {
             title: "You bring the dream. We'll map the way. ✨",
-            subtitle:
-                "What's your sweet spot, budget-wise?\nNo judgment — just vibes and homes that fit",
+            subtitle: budgetQuestion.value?.question_text || "What's your sweet spot, budget-wise?\nNo judgment — just vibes and homes that fit",
             stepLabel: 'Step: 2/3',
         },
         location: {
             title: "You bring the dream. We'll map the way. ✨",
-            subtitle: "Where's your dream home hiding? We'll find it together.",
+            subtitle: locationQuestion.value?.question_text || "Where's your dream home hiding? We'll find it together.",
             stepLabel: 'Step: 3/3',
         },
         success: {
@@ -60,34 +153,9 @@
                 "We've saved your preferences and we're ready to help you find your perfect home.",
             stepLabel: '',
         },
-    }
+    }))
 
-    const getCurrentStepConfig = () => stepConfigs[currentStep.value]
-
-    // Static options
-    const motivationOptions = [
-        { label: "I'm planting roots — this is home", value: 'planting_roots' },
-        {
-            label: 'Here on orders — base life meets island life',
-            value: 'military_orders',
-        },
-        {
-            label: "I'm scouting the next big opportunity",
-            value: 'investment_opportunity',
-        },
-    ]
-
-    const budgetOptions = [
-        { label: '$400k - $600k', value: '400k-600k' },
-        { label: '$600k - 1.2m', value: '600k-1.2m' },
-        { label: '1.2+', value: '1.2m+' },
-    ]
-
-    const locationTypeOptions = [
-        { label: 'City', value: 'city' },
-        { label: 'Suburbs', value: 'suburbs' },
-        { label: 'All of it', value: 'all' },
-    ]
+    const getCurrentStepConfig = () => stepConfigs.value[currentStep.value]
 
     const progressSteps: OnboardingStep[] = ['motivation', 'budget', 'location']
     const showProgressBar = computed(() =>
@@ -98,6 +166,44 @@
     )
 
     // Methods
+    const fetchQuestions = async () => {
+        questionsLoading.value = true
+        try {
+            const response = await $fetchCMS<QuestionsListResponse>('/admin/question-banks/question/list', {
+                method: 'GET',
+            })
+
+            if (response.status === 'success' && response.data) {
+                questions.value = response.data
+
+                // Filter questions by question_group.name
+                // user-type -> motivation
+                motivationQuestion.value = response.data.find(
+                    q => q.question_group.name === 'user-type' && q.is_active
+                ) || null
+
+                // price-range -> budget
+                budgetQuestion.value = response.data.find(
+                    q => q.question_group.name === 'price-range' && q.is_active
+                ) || null
+
+                // area -> location
+                locationQuestion.value = response.data.find(
+                    q => q.question_group.name === 'area' && q.is_active
+                ) || null
+            }
+        } catch (error: any) {
+            console.error('Failed to fetch questions:', error)
+
+            if (import.meta.client) {
+                const errorMessage = error?.data?.message || 'Failed to load questions. Please try again.'
+                alert(errorMessage)
+            }
+        } finally {
+            questionsLoading.value = false
+        }
+    }
+
     const closeModal = () => {
         emit('update:modelValue', false)
         emit('close')
@@ -144,13 +250,55 @@
         loading.value = true
 
         try {
-            
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1000))
+            // Create FormData payload
+            const payload = new FormData()
 
-            // Mark onboarding as complete
-            if (import.meta.client) {
+            if (formData.motivation !== null) {
+                payload.append('question_answer_one', formData.motivation.toString())
+            }
+            if (formData.budget !== null) {
+                payload.append('question_answer_two', formData.budget.toString())
+            }
+            if (formData.locationType !== null) {
+                payload.append('question_answer_three', formData.locationType.toString())
+            }
+
+            // Call onboarding API
+            const response = await $fetchCMS<OnboardingResponse>('/v1/user/onboard', {
+                method: 'POST',
+                body: payload,
+            })
+
+            // Store user-specific onboarding status in localStorage
+            if (import.meta.client && response.data.user_onboard_profile_status !== undefined) {
+                // Get current user ID from localStorage
+                const userId = localStorage.getItem('citizen_user_id')
+
+                if (userId) {
+                    // Store onboarding status with user-specific key
+                    const onboardingStatusKey = `citizen_onboard_status_${userId}`
+                    localStorage.setItem(onboardingStatusKey, response.data.user_onboard_profile_status.toString())
+
+                    // Update user data with new onboarding status
+                    const userData = localStorage.getItem('citizen_user_data')
+                    if (userData) {
+                        try {
+                            const parsedUserData = JSON.parse(userData)
+                            parsedUserData.user_onboard_profile_status = response.data.user_onboard_profile_status
+                            localStorage.setItem('citizen_user_data', JSON.stringify(parsedUserData))
+                        } catch (e) {
+                            console.error('Failed to update user data:', e)
+                        }
+                    }
+                }
+
+                // Clean up old global onboarding flags
+                localStorage.removeItem('citizen_user_onboard_profile_status')
                 localStorage.removeItem('citizen_needs_onboarding')
+            }
+
+            if (import.meta.client) {
+                alert(response.message || 'User onboarded successfully')
             }
 
             emit('onboarding-complete', { ...formData })
@@ -158,12 +306,30 @@
 
             // Redirect to dashboard
             navigateTo('/kamaina/')
-        } catch (error) {
+        } catch (error: any) {
             console.error('Onboarding save failed:', error)
+
+            // Handle error feedback
+            if (import.meta.client) {
+                const errorMessage = error?.data?.message || 'Failed to complete onboarding. Please try again.'
+                alert(errorMessage)
+            }
         } finally {
             loading.value = false
         }
     }
+
+    // Fetch questions when modal opens
+    watch(
+        () => props.modelValue,
+        (newValue) => {
+            if (newValue && questions.value.length === 0) {
+                // Fetch questions when modal opens for the first time
+                fetchQuestions()
+            }
+        },
+        { immediate: true }
+    )
 
     // Prevent body scroll when modal is open
     watch(
@@ -249,7 +415,18 @@
             <div
                 v-if="currentStep === 'motivation'"
                 class="space-y-6">
-                <div class="space-y-3">
+                <div v-if="questionsLoading" class="space-y-3">
+                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                        <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+                    </div>
+                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                </div>
+                <div v-else class="space-y-3">
                     <div
                         v-for="option in motivationOptions"
                         :key="option.value"
@@ -295,7 +472,18 @@
             <div
                 v-else-if="currentStep === 'budget'"
                 class="space-y-6">
-                <div class="space-y-3">
+                <div v-if="questionsLoading" class="space-y-3">
+                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                        <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+                    </div>
+                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                </div>
+                <div v-else class="space-y-3">
                     <div
                         v-for="option in budgetOptions"
                         :key="option.value"
@@ -341,7 +529,18 @@
             <div
                 v-else-if="currentStep === 'location'"
                 class="space-y-6">
-                <div class="space-y-3">
+                <div v-if="questionsLoading" class="space-y-3">
+                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                        <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+                    </div>
+                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                </div>
+                <div v-else class="space-y-3">
                     <div
                         v-for="option in locationTypeOptions"
                         :key="option.value"
