@@ -6,6 +6,12 @@
         password: string
     }
 
+    interface UserType {
+        id: number
+        name: string
+        slug: string
+    }
+
     interface LoginResponse {
         status: boolean
         message: string
@@ -15,6 +21,7 @@
             email: string
             token: string
             user_onboard_profile_status?: number
+            user_type?: UserType[]
             [key: string]: any
         }
     }
@@ -120,8 +127,14 @@
 
                 closeModal()
 
-                // Emit login success with onboarding status
-                emit('login-success', needsOnboarding)
+                // If user has completed onboarding, redirect to their user type dashboard
+                if (!needsOnboarding && userData.user_type?.[0]?.slug) {
+                    const redirectSlug = userData.user_type[0].slug
+                    navigateTo(`/${redirectSlug}/`)
+                } else {
+                    // Emit login success with onboarding status for modal flow
+                    emit('login-success', needsOnboarding)
+                }
             }
         } catch (error: any) {
             console.error('Login error:', error)
