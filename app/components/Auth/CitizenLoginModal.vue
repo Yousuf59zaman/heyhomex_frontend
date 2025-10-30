@@ -130,7 +130,8 @@
                 // If user has completed onboarding, redirect to their user type dashboard
                 if (!needsOnboarding && userData.user_type?.[0]?.slug) {
                     const redirectSlug = userData.user_type[0].slug
-                    navigateTo(`/${redirectSlug}/`)
+                    const targetPath = redirectSlug === 'kamaaina' ? '/kamaina/' : `/${redirectSlug}/`
+                    navigateTo(targetPath)
                 } else {
                     // Emit login success with onboarding status for modal flow
                     emit('login-success', needsOnboarding)

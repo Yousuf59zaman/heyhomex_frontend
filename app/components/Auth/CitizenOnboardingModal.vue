@@ -314,7 +314,8 @@
             // Redirect to dashboard based on user's first user_type slug
             // Fallback to '/kamaina/' if user_type is not available
             const redirectSlug = response.data.user_type?.[0]?.slug || 'kamaina'
-            navigateTo(`/${redirectSlug}/`)
+            const targetPath = redirectSlug === 'kamaaina' ? '/kamaina/' : `/${redirectSlug}/`
+            navigateTo(targetPath)
         } catch (error: any) {
             console.error('Onboarding save failed:', error)
 
