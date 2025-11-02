@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAST version="3.0">
+  <Ad id="pre-roll-001">
+    <InLine>
+      <AdSystem>HeyHomeX Ad Server</AdSystem>
+      <AdTitle>HeyHomeX Pre-Roll Advertisement</AdTitle>
+      <Description>Discover amazing properties with HeyHomeX</Description>
+      <Advertiser>HeyHomeX</Advertiser>
+      <Error><![CDATA[https://your-tracking-server.com/error?campaign=pre-roll]]></Error>
+
+      <Impression><![CDATA[https://your-tracking-server.com/impression?campaign=pre-roll]]></Impression>
+
+      <Creatives>
+        <Creative id="pre-roll-creative-001" sequence="1">
+          <Linear>
+            <Duration>00:00:15</Duration>
+
+            <TrackingEvents>
+              <Tracking event="start"><![CDATA[https://your-tracking-server.com/start?campaign=pre-roll]]></Tracking>
+              <Tracking event="firstQuartile"><![CDATA[https://your-tracking-server.com/25?campaign=pre-roll]]></Tracking>
+              <Tracking event="midpoint"><![CDATA[https://your-tracking-server.com/50?campaign=pre-roll]]></Tracking>
+              <Tracking event="thirdQuartile"><![CDATA[https://your-tracking-server.com/75?campaign=pre-roll]]></Tracking>
+              <Tracking event="complete"><![CDATA[https://your-tracking-server.com/complete?campaign=pre-roll]]></Tracking>
+              <Tracking event="skip"><![CDATA[https://your-tracking-server.com/skip?campaign=pre-roll]]></Tracking>
+            </TrackingEvents>
+
+            <VideoClicks>
+              <ClickThrough><![CDATA[https://your-landing-page.com?source=pre-roll]]></ClickThrough>
+              <ClickTracking><![CDATA[https://your-tracking-server.com/click?campaign=pre-roll]]></ClickTracking>
+            </VideoClicks>
+
+            <MediaFiles>
+              <MediaFile delivery="progressive" type="video/mp4" width="1280" height="720" scalable="true" maintainAspectRatio="true">
+                <![CDATA[https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4]]>
+              </MediaFile>
+              <MediaFile delivery="progressive" type="video/mp4" width="854" height="480" scalable="true" maintainAspectRatio="true">
+                <![CDATA[https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4]]>
+              </MediaFile>
+            </MediaFiles>
+          </Linear>
+        </Creative>
+      </Creatives>
+    </InLine>
+  </Ad>
+</VAST>
