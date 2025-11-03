@@ -1,4 +1,32 @@
-import type { Property, PropertyApiResponse, PropertyListResponse } from '~/types/property'
+export interface PropertyApiResponse {
+    name: string
+    address: string
+    price: number
+    beds: number
+    baths: number
+    image: string
+    'square-feet': string
+}
+
+// Property Interface (used in frontend components)
+export interface Property {
+    id: number
+    title: string
+    address: string
+    price: number
+    beds: number
+    baths: number
+    sqft: string
+    image: string
+    isFavorited: boolean
+}
+
+// API Response Wrapper
+export interface PropertyListResponse {
+    status: string
+    message?: string
+    data: PropertyApiResponse[]
+}
 
 export const useProperties = () => {
     const properties = ref<Property[]>([])
@@ -8,7 +36,10 @@ export const useProperties = () => {
     /**
      * Transform API response to match frontend Property interface
      */
-    const transformProperty = (apiProperty: PropertyApiResponse, index: number): Property => {
+    const transformProperty = (
+        apiProperty: PropertyApiResponse,
+        index: number
+    ): Property => {
         return {
             id: index + 1, // Generate ID from index since API doesn't provide one
             title: apiProperty.name,
@@ -31,9 +62,12 @@ export const useProperties = () => {
 
         try {
             // Fetch properties using $fetchCMS
-            const response = await $fetchCMS<PropertyApiResponse[]>('/property', {
-                method: 'GET',
-            })
+            const response = await $fetchCMS<PropertyApiResponse[]>(
+                '/property',
+                {
+                    method: 'GET',
+                }
+            )
 
             // Transform the response to match frontend interface
             if (Array.isArray(response)) {
@@ -64,7 +98,7 @@ export const useProperties = () => {
      * Toggle favorite status for a property
      */
     const toggleFavorite = (propertyId: number) => {
-        const property = properties.value.find(p => p.id === propertyId)
+        const property = properties.value.find((p) => p.id === propertyId)
         if (property) {
             property.isFavorited = !property.isFavorited
         }
