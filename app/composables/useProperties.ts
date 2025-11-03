@@ -1,57 +1,60 @@
 import type { Property, PropertyApiResponse, PropertyListResponse } from '~/types/property'
 
+/**
+ * Transform API response to match frontend Property interface
+ */
+const transformProperty = (apiProperty: PropertyApiResponse, index: number): Property => {
+    return {
+        id: index + 1, // Generate ID from index since API doesn't provide one
+        title: apiProperty.name,
+        address: apiProperty.address,
+        price: apiProperty.price,
+        beds: apiProperty.beds,
+        baths: apiProperty.baths,
+        sqft: apiProperty['square-feet'],
+        image: apiProperty.image,
+        isFavorited: false, // Default to false, can be updated based on user favorites
+    }
+}
+
+/**
+ * Composable for lazy-loading properties with caching
+ * Uses Nuxt's useLazyAsyncData for optimal performance
+ */
 export const useProperties = () => {
-    const properties = ref<Property[]>([])
-    const loading = ref(false)
-    const error = ref<Error | null>(null)
+    // Use lazy async data for non-blocking fetch with automatic caching
+    const { data: rawData, pending, error, refresh } = useLazyAsyncData(
+        'properties', // Cache key
+        async () => {
+            try {
+                const response = await $fetchCMS<PropertyApiResponse[]>('/property', {
+                    method: 'GET',
+                })
 
-    /**
-     * Transform API response to match frontend Property interface
-     */
-    const transformProperty = (apiProperty: PropertyApiResponse, index: number): Property => {
-        return {
-            id: index + 1, // Generate ID from index since API doesn't provide one
-            title: apiProperty.name,
-            address: apiProperty.address,
-            price: apiProperty.price,
-            beds: apiProperty.beds,
-            baths: apiProperty.baths,
-            sqft: apiProperty['square-feet'],
-            image: apiProperty.image,
-            isFavorited: false, // Default to false, can be updated based on user favorites
-        }
-    }
-
-    /**
-     * Fetch properties from the API
-     */
-    const fetchProperties = async () => {
-        loading.value = true
-        error.value = null
-
-        try {
-            // Fetch properties using $fetchCMS
-            const response = await $fetchCMS<PropertyApiResponse[]>('/property', {
-                method: 'GET',
-            })
-
-            // Transform the response to match frontend interface
-            if (Array.isArray(response)) {
-                properties.value = response.map((property, index) =>
-                    transformProperty(property, index)
-                )
-            } else {
-                console.error('Unexpected API response format:', response)
-                properties.value = []
+                if (Array.isArray(response)) {
+                    return response
+                } else {
+                    console.error('Unexpected API response format:', response)
+                    return []
+                }
+            } catch (err: any) {
+                console.error('Error fetching properties:', err)
+                throw err
             }
-        } catch (err: any) {
-            console.error('Error fetching properties:', err)
-            error.value = err
-            properties.value = []
-        } finally {
-            loading.value = false
+        },
+        {
+            // Don't fetch on server by default to avoid hydration issues
+            server: false,
         }
-    }
+    )
+
+    // Transform raw data to frontend Property interface
+    const properties = computed<Property[]>(() => {
+        if (!rawData.value || !Array.isArray(rawData.value)) {
+            return []
+        }
+        return rawData.value.map((property, index) => transformProperty(property, index))
+    })
 
     /**
      * Get a limited number of properties
@@ -72,9 +75,9 @@ export const useProperties = () => {
 
     return {
         properties,
-        loading,
+        pending, // Renamed from loading for consistency with Nuxt conventions
         error,
-        fetchProperties,
+        refresh, // Method to manually refresh data
         getPropertiesLimit,
         toggleFavorite,
     }

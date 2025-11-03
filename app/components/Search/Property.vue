@@ -32,8 +32,8 @@
     const popupPosition = ref({ x: 0, y: 0 });
     const showPopup = ref(false);
 
-    // Use the properties composable to fetch dynamic data from CMS
-    const { properties, loading, error, fetchProperties, toggleFavorite: toggleFavoriteComposable } = useProperties();
+    // Use the properties composable to fetch dynamic data from CMS with lazy loading
+    const { properties, pending, error, toggleFavorite: toggleFavoriteComposable } = useProperties();
 
     // Add default coordinates to properties for map markers
     const propertiesWithCoordinates = computed(() => {
@@ -220,10 +220,7 @@
     );
     
     // Initialize map when component is mounted and in map view
-    onMounted(async () => {
-        // Fetch properties from CMS on component mount
-        await fetchProperties();
-
+    onMounted(() => {
         if (viewMode.value === 'Map View') {
             nextTick(() => initializeMap());
         }
@@ -299,13 +296,22 @@
             </div>
         </div>
 
-        <!-- Loading State -->
-        <div
-            v-if="loading"
-            class="bg-white rounded-lg p-8 text-center">
-            <div class="flex flex-col items-center gap-4">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-                <p class="text-gray-600">Loading properties...</p>
+        <!-- Loading State with Skeleton Loaders -->
+        <div v-if="pending">
+            <!-- Map View Skeleton -->
+            <div v-if="viewMode === 'Map View'" class="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
+                <div class="lg:col-span-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+                        <CommonCitizenPropertyCardSkeleton v-for="n in 4" :key="n" />
+                    </div>
+                </div>
+                <div class="lg:col-span-4">
+                    <div class="h-96 lg:h-[600px] bg-gray-200 rounded-lg animate-pulse"></div>
+                </div>
+            </div>
+            <!-- List View Skeleton -->
+            <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                <CommonCitizenPropertyCardSkeleton v-for="n in 8" :key="n" />
             </div>
         </div>
 
@@ -313,7 +319,8 @@
         <div
             v-else-if="error"
             class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-            <p class="text-red-600">Error loading properties. Please try again later.</p>
+            <p class="text-red-600 mb-2">Error loading properties. Please try again later.</p>
+            <p class="text-sm text-red-500">{{ error.message }}</p>
         </div>
 
         <!-- Map View: 2-column grid + Map -->
