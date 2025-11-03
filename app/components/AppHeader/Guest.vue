@@ -16,8 +16,8 @@ const toggleMobileMenu = () => {
 const handleGetStarted = () => {
     console.log('Guest header: Get Started clicked');
     if ($citizenModals) {
-        console.log('Opening register modal via plugin');
-        $citizenModals.openRegister();
+        console.log('Opening get started modal via plugin');
+        $citizenModals.openGetStarted();
     } else {
         console.error('citizenModals plugin not found!');
     }
