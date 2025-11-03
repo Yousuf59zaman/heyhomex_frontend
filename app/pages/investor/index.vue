@@ -3,13 +3,8 @@
         layout: 'citizen',
     });
 
-    // Use properties composable
-    const { properties, loading: propertiesLoading, error: propertiesError, fetchProperties, toggleFavorite } = useProperties()
-
-    // Fetch properties on component mount
-    onMounted(async () => {
-        await fetchProperties()
-    })
+    // Use properties composable with lazy loading
+    const { properties, pending, error, toggleFavorite } = useProperties()
 
     // Search and filter state
     const searchQuery = ref('');
@@ -223,14 +218,26 @@
         </div>
 
         <!-- Homes in Your Favorite Areas Section -->
-        <div v-if="propertiesLoading" class="text-center py-8">
-            <p class="text-gray-600">Loading properties...</p>
+        <!-- Loading State with Skeleton Loaders -->
+        <div v-if="pending" class="space-y-4 md:space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl md:text-2xl font-bold text-gray-900">
+                    Homes in Your Favorite Areas
+                </h2>
+                <div class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                <CommonCitizenPropertyCardSkeleton v-for="n in 3" :key="n" />
+            </div>
         </div>
 
-        <div v-else-if="propertiesError" class="text-center py-8">
-            <p class="text-red-600">Error loading properties. Please try again later.</p>
+        <!-- Error State -->
+        <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p class="text-red-600 mb-2">Error loading properties. Please try again later.</p>
+            <p class="text-sm text-red-500">{{ error.message }}</p>
         </div>
 
+        <!-- Properties Grid -->
         <CommonCitizenPropertyGrid
             v-else
             :properties="properties"

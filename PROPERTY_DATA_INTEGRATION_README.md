@@ -148,6 +148,93 @@ id: index + 1
 - [ ] Favorite toggle works and persists within session
 - [ ] Search page navigation maintains correct segment context
 
+## Performance Optimization (Latest Update)
+
+### Lazy Loading Implementation
+
+To address slow initial load times, the property data fetching has been optimized using Nuxt's `useLazyAsyncData` composable. This provides several benefits:
+
+#### Key Improvements
+
+1. **Non-Blocking Data Fetching**
+   - Uses `useLazyAsyncData` instead of manual `onMounted` fetch
+   - Page renders immediately without waiting for API response
+   - Data loads asynchronously in the background
+
+2. **Automatic Caching**
+   - Implements 5-minute cache using `getCachedData` option
+   - Reduces redundant API calls across page navigations
+   - Improves performance for repeat visits
+
+3. **Skeleton Loaders**
+   - Created `CommonCitizenPropertyCardSkeleton.vue` component
+   - Displays animated placeholder cards during loading
+   - Provides better perceived performance and UX
+   - Different layouts for Map View vs List View
+
+4. **Client-Side Only Fetching**
+   - Set `server: false` to avoid SSR/hydration issues
+   - Ensures consistent behavior across environments
+   - Prevents blocking the initial HTML render
+
+#### Updated Composable: `app/composables/useProperties.ts`
+
+```javascript
+export const useProperties = () => {
+    const { data: rawData, pending, error, refresh } = useLazyAsyncData(
+        'properties', // Cache key
+        async () => {
+            const response = await $fetchCMS<PropertyApiResponse[]>('/property', {
+                method: 'GET',
+            })
+            return Array.isArray(response) ? response : []
+        },
+        {
+            getCachedData: (key) => {
+                const data = useNuxtData(key)
+                const expirationTime = 5 * 60 * 1000 // 5 minutes
+                if (data.data.value && Date.now() - (data._timestamp || 0) < expirationTime) {
+                    return data.data.value
+                }
+                return undefined
+            },
+            server: false, // Client-side only
+        }
+    )
+
+    const properties = computed(() => {
+        return rawData.value?.map((property, index) =>
+            transformProperty(property, index)
+        ) || []
+    })
+
+    return { properties, pending, error, refresh, ... }
+}
+```
+
+#### Updated Pages
+
+All index pages (`kamaina`, `investor`, `military`) now use:
+- `pending` instead of `loading` for consistency with Nuxt conventions
+- Skeleton loaders during the loading state
+- Enhanced error messages with error details
+- No `onMounted` hook needed - composable handles it automatically
+
+#### Skeleton Component
+
+New file: `app/components/Common/Citizen/PropertyCardSkeleton.vue`
+- Matches PropertyCard layout exactly
+- Animated pulse effect for smooth UX
+- Lightweight and reusable
+
+#### Performance Benefits
+
+- **Instant Page Load**: Page renders immediately, data loads in background
+- **Better UX**: Skeleton loaders show structure while loading
+- **Reduced API Calls**: 5-minute cache prevents redundant requests
+- **Improved Perceived Performance**: Users see content structure immediately
+- **Error Resilience**: Graceful error handling with user-friendly messages
+
 ## Next Steps
 
 1. **API Enhancement**: Request stable `id` field from backend to replace index-based IDs
@@ -157,4 +244,6 @@ id: index + 1
 5. **Component Tests**: Write unit tests for loading/error handling in pages and Search component
 6. **Shared Logic**: Consider extracting repeated page logic into a shared composable or layout if additional segments are added
 7. **Type Safety**: Add runtime validation for API responses to catch schema changes early
+8. **Cache Invalidation**: Add manual refresh capability for users to force-reload property data
+9. **Optimistic Updates**: Implement optimistic UI updates for favorite toggles
 
