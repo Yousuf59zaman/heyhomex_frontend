@@ -3,6 +3,14 @@
         layout: 'citizen',
     });
 
+    // Use properties composable
+    const { properties, loading: propertiesLoading, error: propertiesError, fetchProperties, toggleFavorite } = useProperties()
+
+    // Fetch properties on component mount
+    onMounted(async () => {
+        await fetchProperties()
+    })
+
     // Search and filter state
     const searchQuery = ref('');
     const selectedPropertyType = ref('');
@@ -47,43 +55,6 @@
             description: 'Area overview',
             duration: '3:45',
             image: '/images/home/home_logo.png',
-        },
-    ]);
-
-    // Propertis :
-    const properties = ref([
-        {
-            id: 1,
-            title: 'Hawaii Home Movers',
-            address: '123 Aloha Lane, Honolulu, HI 96818',
-            price: 475000,
-            beds: 5,
-            baths: 3,
-            sqft: '1733/5000',
-            image: '/images/dashboard/1.png',
-            isFavorited: false,
-        },
-        {
-            id: 2,
-            title: 'Hawaii Home Movers',
-            address: '123 Aloha Lane, Honolulu, HI 96818',
-            price: 475000,
-            beds: 5,
-            baths: 3,
-            sqft: '1733/5000',
-            image: '/images/dashboard/2.png',
-            isFavorited: false,
-        },
-        {
-            id: 3,
-            title: 'Hawaii Home Movers',
-            address: '123 Aloha Lane, Honolulu, HI 96818',
-            price: 475000,
-            beds: 5,
-            baths: 3,
-            sqft: '1733/5000',
-            image: '/images/dashboard/3.png',
-            isFavorited: false,
         },
     ]);
 
@@ -153,7 +124,7 @@
         }
 
         navigateTo({
-            path: '/kamaina/search',
+            path: '/investor/search',
             query,
         });
     };
@@ -199,15 +170,11 @@
     };
 
     const handlePropertyClick = (property) => {
-        navigateTo(`/kamaina/property/${property.id}`);
+        navigateTo(`/investor/property/${property.id}`);
     };
 
     const handleFavoriteToggle = (property) => {
-        const index = properties.value.findIndex((p) => p.id === property.id);
-        if (index !== -1) {
-            properties.value[index].isFavorited =
-                !properties.value[index].isFavorited;
-        }
+        toggleFavorite(property.id);
     };
 
     const handleVideoClick = (video) => {
@@ -256,7 +223,16 @@
         </div>
 
         <!-- Homes in Your Favorite Areas Section -->
+        <div v-if="propertiesLoading" class="text-center py-8">
+            <p class="text-gray-600">Loading properties...</p>
+        </div>
+
+        <div v-else-if="propertiesError" class="text-center py-8">
+            <p class="text-red-600">Error loading properties. Please try again later.</p>
+        </div>
+
         <CommonCitizenPropertyGrid
+            v-else
             :properties="properties"
             @see-all="handleSeeAllProperties"
             @property-click="handlePropertyClick"

@@ -36,7 +36,7 @@
         </div>
 
         <!-- Content based on active tab -->
-        <SearchProperty v-if="activeTab === 'home'" />
+        <SearchProperty v-if="activeTab === 'home'" segment="military" />
         <SearchVideo v-else-if="activeTab === 'videos'" />
     </div>
 </template>

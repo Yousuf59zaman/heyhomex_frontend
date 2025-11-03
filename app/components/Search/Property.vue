@@ -1,4 +1,15 @@
 <script setup>
+    
+    // Define props to receive user segment
+    const props = defineProps({
+        segment: {
+            type: String,
+            default: 'kamaina',
+            validator: (value) => ['military', 'investor', 'kamaina'].includes(value)
+        }
+    });
+
+
     // Get URL parameters
     const route = useRoute();
 
@@ -21,71 +32,39 @@
     const popupPosition = ref({ x: 0, y: 0 });
     const showPopup = ref(false);
 
-    // Mock property data - using same format as dashboard
-    const properties = ref([
-        {
-            id: 1,
-            title: 'Island Bank Hawaii',
-            address: '456 Ocean View Dr, Maui, HI 96753',
-            price: 431000,
-            beds: 3,
-            baths: 3,
-            sqft: '1734/5000',
-            image: '/images/dashboard/1.png',
-            isFavorited: false,
-            coordinates: [20.7984, -156.3319], // Maui
-        },
-        {
-            id: 2,
-            title: 'Hawaii Home Movers',
-            address: '123 Aloha Lane, Honolulu, HI 96818',
-            price: 475000,
-            beds: 5,
-            baths: 3,
-            sqft: '1753/5000',
-            image: '/images/dashboard/2.png',
-            isFavorited: false,
-            coordinates: [21.3099, -157.8581], // Honolulu
-        },
-        {
-            id: 3,
-            title: "Kama'aina Cleaning...",
-            address: '89 Sunset Blvd, Kauai, HI 96714',
-            price: 231000,
-            beds: 2,
-            baths: 2,
-            sqft: '1200/3000',
-            image: '/images/dashboard/3.png',
-            isFavorited: false,
-            coordinates: [22.0964, -159.5261], // Kauai
-        },
-        {
-            id: 4,
-            title: 'Aloha Handyman...',
-            address: '22 Coral Ave, Hilo, HI 96720',
-            price: 467000,
-            beds: 4,
-            baths: 3,
-            sqft: '1713/5000',
-            image: '/images/dashboard/1.png',
-            isFavorited: false,
-            coordinates: [19.7297, -155.0900], // Hilo, Big Island
-        },
-    ]);
+    // Use the properties composable to fetch dynamic data from CMS
+    const { properties, loading, error, fetchProperties, toggleFavorite: toggleFavoriteComposable } = useProperties();
 
-    const resultsFound = computed(() => properties.value.length);
+    // Add default coordinates to properties for map markers
+    const propertiesWithCoordinates = computed(() => {
+        // Default Hawaii coordinates for map markers
+        const defaultCoordinates = [
+            [20.7984, -156.3319], // Maui
+            [21.3099, -157.8581], // Honolulu
+            [22.0964, -159.5261], // Kauai
+            [19.7297, -155.0900], // Hilo
+            [21.9588, -159.3661], // North Shore
+            [19.5429, -155.6659], // Kona
+            [20.8783, -156.6825], // Lahaina
+            [21.9777, -159.3597], // Princeville
+        ];
+
+        return properties.value.map((property, index) => ({
+            ...property,
+            coordinates: defaultCoordinates[index % defaultCoordinates.length]
+        }));
+    });
+
+    const resultsFound = computed(() => propertiesWithCoordinates.value.length);
 
     // Methods
     const toggleFavorite = (property) => {
-        const index = properties.value.findIndex((p) => p.id === property.id);
-        if (index !== -1) {
-            properties.value[index].isFavorited =
-                !properties.value[index].isFavorited;
-        }
+        toggleFavoriteComposable(property.id);
     };
 
     const handlePropertyClick = (property) => {
-        navigateTo(`/kamaina/property/${property.id}`);
+        const segment = props.segment || route.path.split('/')[1] || 'kamaina';
+        navigateTo(`/${segment}/property/${property.id}`);
     };
 
     const handleSearch = () => {
@@ -139,12 +118,12 @@
     
     const addPropertyMarkers = (L) => {
         if (!map.value || !L) return;
-        
+
         // Clear existing markers
         markers.value.forEach(marker => map.value.removeLayer(marker.marker));
         markers.value = [];
-        
-        properties.value.forEach(property => {
+
+        propertiesWithCoordinates.value.forEach(property => {
             const customIcon = L.divIcon({
                 html: `
                     <div class="relative">
@@ -241,7 +220,10 @@
     );
     
     // Initialize map when component is mounted and in map view
-    onMounted(() => {
+    onMounted(async () => {
+        // Fetch properties from CMS on component mount
+        await fetchProperties();
+
         if (viewMode.value === 'Map View') {
             nextTick(() => initializeMap());
         }
@@ -317,15 +299,32 @@
             </div>
         </div>
 
+        <!-- Loading State -->
+        <div
+            v-if="loading"
+            class="bg-white rounded-lg p-8 text-center">
+            <div class="flex flex-col items-center gap-4">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+                <p class="text-gray-600">Loading properties...</p>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div
+            v-else-if="error"
+            class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p class="text-red-600">Error loading properties. Please try again later.</p>
+        </div>
+
         <!-- Map View: 2-column grid + Map -->
         <div
-            v-if="viewMode === 'Map View'"
+            v-else-if="viewMode === 'Map View'"
             class="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
             <!-- Property Listings Grid -->
             <div class="lg:col-span-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
                     <div
-                        v-for="property in properties"
+                        v-for="property in propertiesWithCoordinates"
                         :key="property.id"
                         @mouseenter="onPropertyCardHover(property)"
                         @mouseleave="onPropertyCardLeave">
@@ -373,7 +372,7 @@
             <div
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
                 <CommonCitizenPropertyCard
-                    v-for="property in properties"
+                    v-for="property in propertiesWithCoordinates"
                     :key="property.id"
                     :property="property"
                     @click="handlePropertyClick"
