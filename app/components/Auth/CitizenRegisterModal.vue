@@ -224,6 +224,7 @@
         }
 
         loading.value = true
+        // emit('register-success', { ...formData })
 
         try {
             const response = await $fetchCMS<ApiResponse<RegistrationResponseData>>('/register', {
@@ -253,12 +254,12 @@
                     }))
                 }
 
-                emit('register-success', { ...formData })
-                closeModal()
+                // emit('register-success', { ...formData })
+                // closeModal()
 
                 // Show login modal after registration
                 setTimeout(() => {
-                    emit('show-login')
+                    emit('register-success', { ...formData })
                 }, 300)
             } else {
                 // showError(response?.message || 'Registration failed')

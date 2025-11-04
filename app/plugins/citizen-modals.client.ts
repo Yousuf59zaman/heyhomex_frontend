@@ -1,6 +1,6 @@
 export default defineNuxtPlugin(() => {
     const showGetStartedModal = useState('showCitizenGetStartedModal', () => false);
-    const showSendOtpModal = useState('showCitizenSendOtpModal', () => false);
+    const showSendEmailModal = useState('showCitizenSendEmailModal', () => false);
     const showVerifyOtpModal = useState('showCitizenVerifyOtpModal', () => false);
     const showAccountTypeModal = useState('showCitizenAccountTypeModal', () => false);
     const showRegisterModal = useState('showCitizenRegisterModal', () => false);
@@ -10,7 +10,7 @@ export default defineNuxtPlugin(() => {
 
     const citizenModals = {
         showGetStartedModal,
-        showSendOtpModal,
+        showSendEmailModal,
         showVerifyOtpModal,
         showAccountTypeModal,
         showRegisterModal,
@@ -20,7 +20,7 @@ export default defineNuxtPlugin(() => {
         openGetStarted: () => {
             console.log('Plugin: Opening get started modal');
             showGetStartedModal.value = true;
-            showSendOtpModal.value = false;
+            showSendEmailModal.value = false;
             showVerifyOtpModal.value = false;
             showAccountTypeModal.value = false;
             showRegisterModal.value = false;
@@ -30,7 +30,7 @@ export default defineNuxtPlugin(() => {
         },
         openSendOtp: () => {
             console.log('Plugin: Opening send otp modal');
-            showSendOtpModal.value = true;
+            showSendEmailModal.value = true;
             showGetStartedModal.value = false;
             showVerifyOtpModal.value = false;
             showAccountTypeModal.value = false;
@@ -43,7 +43,7 @@ export default defineNuxtPlugin(() => {
             console.log('Plugin: Opening verify otp modal');
             showVerifyOtpModal.value = true;
             showGetStartedModal.value = false;
-            showSendOtpModal.value = false;
+            showSendEmailModal.value = false;
             showAccountTypeModal.value = false;
             showRegisterModal.value = false;
             showProfessionalModal.value = false;
@@ -54,7 +54,7 @@ export default defineNuxtPlugin(() => {
             console.log('Plugin: Opening account type modal');
             showAccountTypeModal.value = true;
             showGetStartedModal.value = false;
-            showSendOtpModal.value = false;
+            showSendEmailModal.value = false;
             showVerifyOtpModal.value = false;
             showRegisterModal.value = false;
             showProfessionalModal.value = false;
@@ -65,7 +65,7 @@ export default defineNuxtPlugin(() => {
             console.log('Plugin: Opening register modal');
             showRegisterModal.value = true;
             showGetStartedModal.value = false;
-            showSendOtpModal.value = false;
+            showSendEmailModal.value = false;
             showVerifyOtpModal.value = false;
             showAccountTypeModal.value = false;
             showProfessionalModal.value = false;
@@ -76,7 +76,7 @@ export default defineNuxtPlugin(() => {
             console.log('Plugin: Opening login modal');
             showLoginModal.value = true;
             showGetStartedModal.value = false;
-            showSendOtpModal.value = false;
+            showSendEmailModal.value = false;
             showVerifyOtpModal.value = false;
             showAccountTypeModal.value = false;
             showRegisterModal.value = false;
@@ -87,7 +87,7 @@ export default defineNuxtPlugin(() => {
             console.log('Plugin: Opening professional modal');
             showProfessionalModal.value = true;
             showGetStartedModal.value = false;
-            showSendOtpModal.value = false;
+            showSendEmailModal.value = false;
             showVerifyOtpModal.value = false;
             showAccountTypeModal.value = false;
             showRegisterModal.value = false;
@@ -98,7 +98,7 @@ export default defineNuxtPlugin(() => {
             console.log('Plugin: Opening onboarding modal');
             showOnboardingModal.value = true;
             showGetStartedModal.value = false;
-            showSendOtpModal.value = false;
+            showSendEmailModal.value = false;
             showVerifyOtpModal.value = false;
             showAccountTypeModal.value = false;
             showRegisterModal.value = false;
@@ -108,7 +108,7 @@ export default defineNuxtPlugin(() => {
         closeAll: () => {
             console.log('Plugin: Closing all modals');
             showGetStartedModal.value = false;
-            showSendOtpModal.value = false;
+            showSendEmailModal.value = false;
             showVerifyOtpModal.value = false;
             showAccountTypeModal.value = false;
             showRegisterModal.value = false;

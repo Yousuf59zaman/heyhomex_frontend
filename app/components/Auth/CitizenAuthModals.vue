@@ -1,13 +1,13 @@
-<script setup lang="ts">
+<script setup>
     const { $citizenModals } = useNuxtApp()
 
     // Handle get started modal -> show send otp
-    const handleShowSendOtpFromGetStarted = () => {
+    const handleShowSendEmailFromGetStarted = () => {
         $citizenModals.openSendOtp()
     }
 
     // Handle send otp next -> show verify otp
-    const handleNextFromSendOtp = (email: string) => {
+    const handleNextFromSendOtp = (email) => {
         $citizenModals.openVerifyOtp()
     }
 
@@ -17,20 +17,20 @@
     }
 
     // Handle account type next -> show register
-    const handleAccountTypeNext = (accountType: string) => {
+    const handleAccountTypeNext = (accountType) => {
         console.log('Selected account type:', accountType)
         $citizenModals.openRegister()
     }
 
     // Handle register success -> show professional
-    const handleRegisterSuccess = (data: any) => {
+    const handleRegisterSuccess = (data) => {
         setTimeout(() => {
             $citizenModals.openProfessional()
         }, 500)
     }
 
     // Handle professional next -> show login
-    const handleProfessionalNext = (data: any) => {
+    const handleProfessionalNext = (data) => {
         console.log('Professional info submitted:', data)
         setTimeout(() => {
             $citizenModals.openLogin()
@@ -38,7 +38,7 @@
     }
 
     // Handle login success -> check if onboarding needed
-    const handleLoginSuccess = (needsOnboarding: boolean) => {
+    const handleLoginSuccess = (needsOnboarding) => {
         if (needsOnboarding) {
             setTimeout(() => {
                 $citizenModals.openOnboarding()
@@ -49,7 +49,7 @@
     }
 
     // Handle onboarding complete -> redirect to dashboard
-    const handleOnboardingComplete = (data: any) => {
+    const handleOnboardingComplete = (data) => {
         console.log('Onboarding completed:', data)
     }
 
@@ -71,10 +71,10 @@
         },
     })
 
-    const showSendOtpModal = computed({
-        get: () => $citizenModals.showSendOtpModal.value,
+    const showSendEmailModal = computed({
+        get: () => $citizenModals.showSendEmailModal.value,
         set: (val) => {
-            $citizenModals.showSendOtpModal.value = val
+            $citizenModals.showSendEmailModal.value = val
         },
     })
 
@@ -127,12 +127,12 @@
             <!-- Get Started Modal -->
             <AuthCitizenGetStartedModal
                 v-model="showGetStartedModal"
-                @show-register="handleShowSendOtpFromGetStarted"
+                @show-register="handleShowSendEmailFromGetStarted"
                 @show-login="handleShowLoginFromRegister" />
 
             <!-- Send OTP Modal -->
-            <AuthCitizenSendOtpModal
-                v-model="showSendOtpModal"
+            <AuthCitizenSendEmailModal
+                v-model="showSendEmailModal"
                 @next="handleNextFromSendOtp" />
 
             <!-- Verify OTP Modal -->

@@ -100,6 +100,7 @@
         locationType: null,
     })
 
+
     // Dynamic questions from API
     const questions = ref<Question[]>([])
     const motivationQuestion = ref<Question | null>(null)
