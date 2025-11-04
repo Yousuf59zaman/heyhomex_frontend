@@ -1,18 +1,28 @@
 <script setup>
-    import Avatar from 'primevue/avatar';
+    import Avatar from "primevue/avatar"
+
+    const isScroll = ref(false);
 
     const props = defineProps({
         isMobileMenuOpen: {
             type: Boolean,
             default: false,
         },
-    });
+    })
 
-    defineEmits(['toggle-mobile-menu']);
+    const handleScroll = () => {
+        isScroll.value = window.screenY > 0;
+    }
+
+    onMounted( ()=> {
+        window.addEventListener('scroll' , handleScroll);
+    })
+
+    defineEmits(["toggle-mobile-menu"])
 </script>
 
 <template>
-    <header class="px-4 lg:px-4 py-3 lg:py-6">
+    <header class=" sticky top-0 bg-white z-10 px-4 lg:px-4 py-3 lg:py-6" >
         <!-- Mobile Header -->
         <div class="flex items-center justify-between lg:hidden">
             <!-- Left Side - Hamburger and Logo -->
