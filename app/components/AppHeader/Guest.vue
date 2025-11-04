@@ -1,9 +1,10 @@
 <script setup>
     const { admin_user = {} } = adminAuth()
+    // const { $citizenModals } = useNuxtApp()
     const isScroll = ref(false)
     const isMobileMenuOpen = ref(false)
-
-    const { $citizenModals } = useNuxtApp()
+    const isOpenStartModal = ref(false)
+    
 
     const handleScroll = () => {
         isScroll.value = window.scrollY > 0
@@ -14,13 +15,14 @@
     }
 
     const handleGetStarted = () => {
-        console.log('Guest header: Get Started clicked')
-        if ($citizenModals) {
-            console.log('Opening register modal via plugin')
-            $citizenModals.openRegister()
-        } else {
-            console.error('citizenModals plugin not found!')
-        }
+        // console.log('Guest header: Get Started clicked')
+        // if ($citizenModals) {
+        //     console.log('Opening register modal via plugin')
+        //     $citizenModals.openGetStarted()
+        // } else {
+        //     console.error('citizenModals plugin not found!')
+        // }
+        isOpenStartModal.value = true;
         isMobileMenuOpen.value = false
     }
 
@@ -177,6 +179,9 @@
             </div>
         </transition>
     </nav>
+
+
+    <AuthCitizenAuthModalsCo v-model:isOpenStartModal="isOpenStartModal"/>
 </template>
 
 <style></style>

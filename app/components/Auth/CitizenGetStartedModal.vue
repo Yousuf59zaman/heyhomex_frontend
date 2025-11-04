@@ -1,122 +1,60 @@
-<script setup lang="ts">
-// Props
-const props = defineProps<{
-    modelValue: boolean
-}>()
+<script setup >
 
-// Emits
-const emit = defineEmits<{
-    'update:modelValue': [value: boolean]
-    'show-register': []
-    'show-login': []
-    close: []
-}>()
-
-// Computed for two-way binding
-const visible = computed({
-    get: () => props.modelValue,
-    set: (value: boolean) => emit('update:modelValue', value),
-})
-
-// Methods
-const closeModal = () => {
-    emit('update:modelValue', false)
-    emit('close')
-}
+const emit = defineEmits(['go-to-email'])
 
 const handleBack = () => {
-    closeModal()
+    // Handle back navigation
 }
 
 const handleContinueWithEmail = () => {
-    closeModal()
-    setTimeout(() => {
-        emit('show-register')
-    }, 300)
+    emit('show-register')
 }
 
 const handleContinueWithApple = () => {
     console.log('Continue with Apple')
-    // TODO: Implement Apple OAuth
 }
 
 const handleContinueWithFacebook = () => {
     console.log('Continue with Facebook')
-    // TODO: Implement Facebook OAuth
 }
 
 const handleContinueWithGoogle = () => {
     console.log('Continue with Google')
-    // TODO: Implement Google OAuth
 }
 
-// Prevent body scroll when modal is open
-watch(
-    () => props.modelValue,
-    (newValue) => {
-        if (import.meta.client) {
-            document.body.style.overflow = newValue ? 'hidden' : ''
-        }
-    }
-)
-
-// Cleanup on unmount
-onUnmounted(() => {
-    if (import.meta.client) {
-        document.body.style.overflow = ''
-    }
-})
 </script>
 
 <template>
-    <Dialog
-        v-model:visible="visible"
-        modal
-        :closable="true"
-        :draggable="false"
-        :resizable="false"
-        class="citizen-get-started-modal"
-        :style="{ width: 'min(32rem, 95vw)', maxWidth: '95vw' }"
-        :pt="{
-            root: 'border-0 rounded-2xl shadow-2xl m-4',
-            header: 'border-0 pb-4',
-            content: 'border-0 pt-0 pb-6',
-            closeButton:
-                'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200',
-        }">
-        <template #header>
-            <div class="w-full px-6 pt-6 pb-2">
-                <div class="flex items-center justify-center relative">
-                    <!-- Back Button -->
-                    <button
-                        @click="handleBack"
-                        type="button"
-                        class="absolute left-0 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
-                        aria-label="Go back">
-                        <svg
-                            class="w-5 h-5 text-gray-700"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </button>
+    <div class="citizen-get-started-content">
+        <!-- Header -->
+        <div class="w-full px-6 pt-6 pb-2">
+            <div class="flex items-center justify-center relative">
+                <button
+                    @click="handleBack"
+                    type="button"
+                    class="absolute left-0 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                    aria-label="Go back">
+                    <svg
+                        class="w-5 h-5 text-gray-700"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
 
-                    <!-- Title -->
-                    <h2 class="text-xl font-semibold text-[#121A22]">
-                        Create account
-                    </h2>
-                </div>
+                <h2 class="text-xl font-semibold text-[#121A22]">
+                    Create account
+                </h2>
             </div>
-        </template>
+        </div>
 
         <!-- Content -->
         <div class="px-6 pb-6 space-y-4">
-            <!-- Continue with Email Button -->
             <button
                 @click="handleContinueWithEmail"
                 type="button"
@@ -124,7 +62,6 @@ onUnmounted(() => {
                 Continue with email
             </button>
 
-            <!-- Divider -->
             <div class="relative flex items-center justify-center">
                 <div class="absolute inset-0 flex items-center">
                     <div class="w-full border-t border-gray-300"></div>
@@ -134,7 +71,6 @@ onUnmounted(() => {
                 </div>
             </div>
 
-            <!-- Continue with Apple Button -->
             <button
                 @click="handleContinueWithApple"
                 type="button"
@@ -146,7 +82,6 @@ onUnmounted(() => {
                 Continue with Apple
             </button>
 
-            <!-- Continue with Facebook Button -->
             <button
                 @click="handleContinueWithFacebook"
                 type="button"
@@ -158,7 +93,6 @@ onUnmounted(() => {
                 Continue with Facebook
             </button>
 
-            <!-- Continue with Google Button -->
             <button
                 @click="handleContinueWithGoogle"
                 type="button"
@@ -180,7 +114,6 @@ onUnmounted(() => {
                 Continue with Google
             </button>
 
-            <!-- Terms and Privacy -->
             <div class="text-center pt-2">
                 <p class="text-xs text-gray-600">
                     By using heyhomex, you agree to the
@@ -190,20 +123,10 @@ onUnmounted(() => {
                 </p>
             </div>
         </div>
-    </Dialog>
-</template>
-
-<style scoped>
-.citizen-get-started-modal .p-dialog {
-    border-radius: 1rem;
-}
-
-.citizen-get-started-modal .p-dialog-header {
-    border: none;
-}
-
-.citizen-get-started-modal .p-dialog-content {
-    border: none;
-    padding-top: 0;
+    </div>
+</template><style scoped>
+.citizen-get-started-content {
+    width: 100%;
+    max-width: 32rem;
 }
 </style>

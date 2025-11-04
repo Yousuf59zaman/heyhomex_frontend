@@ -1,5 +1,7 @@
 <script setup>
-    const { $citizenModals } = useNuxtApp()
+    const { $citizenModals } = useNuxtApp();
+
+    const activeIndex = ref(0);
 
     // Handle get started modal -> show send otp
     const handleShowSendEmailFromGetStarted = () => {
@@ -126,6 +128,7 @@
         <div>
             <!-- Get Started Modal -->
             <AuthCitizenGetStartedModal
+                v-if="activeIndex === 0"
                 v-model="showGetStartedModal"
                 @show-register="handleShowSendEmailFromGetStarted"
                 @show-login="handleShowLoginFromRegister" />
