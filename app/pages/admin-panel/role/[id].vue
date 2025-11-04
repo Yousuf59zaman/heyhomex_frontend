@@ -3,10 +3,10 @@ definePageMeta({ middleware: ['auth-admin'], layout: 'admin' });
 const route = useRoute();
 
 const form = reactive({
-    viewPs: [],
-    addPs: [],
-    editPs: [],
-    deletePs: [],
+    viewps: [],
+    addps: [],
+    editps: [],
+    deleteps: [],
 })
 
 const loader = ref(false);
@@ -19,10 +19,10 @@ const loadData = async () => {
         });
         permissions.value = getData.data;
         permissions.value.forEach(item => {
-            if (item.viewP) { form.viewPs.push(item.view); }
-            if (item.addP) { form.addPs.push(item.add); }
-            if (item.editP) { form.editPs.push(item.edit); }
-            if (item.deleteP) { form.deletePs.push(item.delete); }
+            if (item.viewp) { form.viewps.push(item.view); }
+            if (item.addp) { form.addps.push(item.add); }
+            if (item.editp) { form.editps.push(item.edit); }
+            if (item.deletep) { form.deleteps.push(item.delete); }
         })
     } catch (e) {
         console.log('Get Message', e.message);
@@ -41,25 +41,25 @@ const updateHandler = async () => {
     isLoading.value = true;
     response_modal.value = {};
     permissions.value.map(perm => {
-        if (form.viewPs.includes(perm.view)) {
-            perm.viewP = perm.view;
+        if (form.viewps.includes(perm.view)) {
+            perm.viewp = perm.view;
         } else {
-            perm.viewP = null;
+            perm.viewp = null;
         }
-        if (form.addPs.includes(perm.add)) {
-            perm.addP = perm.add;
+        if (form.addps.includes(perm.add)) {
+            perm.addp = perm.add;
         } else {
-            perm.addP = null;
+            perm.addp = null;
         }
-        if (form.editPs.includes(perm.edit)) {
-            perm.editP = perm.edit;
+        if (form.editps.includes(perm.edit)) {
+            perm.editp = perm.edit;
         } else {
-            perm.editP = null;
+            perm.editp = null;
         }
-        if (form.deletePs.includes(perm.delete)) {
-            perm.deleteP = perm.delete;
+        if (form.deleteps.includes(perm.delete)) {
+            perm.deletep = perm.delete;
         } else {
-            perm.deleteP = null;
+            perm.deletep = null;
         }
     });
     // console.log('permission_form', permissions.value);
@@ -184,7 +184,7 @@ const stopPropagation = (event) => {
                                         <div class="flex items-center">
                                             <div class="flex items-center mr-3" @click.stop>
                                                 <span class="mr-1 text-sm text-gray-600 dark:text-gray-300">View</span>
-                                                <Checkbox :id="'p_view-' + group.parent.view" v-model="form.viewPs"
+                                                <Checkbox :id="'p_view-' + group.parent.view" v-model="form.viewps"
                                                     :value="group.parent.view" @click="stopPropagation($event)" />
                                             </div>
                                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -205,23 +205,23 @@ const stopPropagation = (event) => {
                                         <div class="flex flex-wrap justify-end gap-3">
                                             <div v-if="group.parent.view" class="flex items-center">
                                                 <span class="mr-1 text-sm text-gray-600 dark:text-gray-300">View</span>
-                                                <Checkbox :id="'p_view-' + group.parent.view" v-model="form.viewPs"
+                                                <Checkbox :id="'p_view-' + group.parent.view" v-model="form.viewps"
                                                     :value="group.parent.view" />
                                             </div>
                                             <div v-if="group.parent.add" class="flex items-center">
                                                 <span class="mr-1 text-sm text-gray-600 dark:text-gray-300">Add</span>
-                                                <Checkbox :id="'p_add-' + group.parent.add" v-model="form.addPs"
+                                                <Checkbox :id="'p_add-' + group.parent.add" v-model="form.addps"
                                                     :value="group.parent.add" />
                                             </div>
                                             <div v-if="group.parent.edit" class="flex items-center">
                                                 <span class="mr-1 text-sm text-gray-600 dark:text-gray-300">Edit</span>
-                                                <Checkbox :id="'p_edit-' + group.parent.edit" v-model="form.editPs"
+                                                <Checkbox :id="'p_edit-' + group.parent.edit" v-model="form.editps"
                                                     :value="group.parent.edit" />
                                             </div>
                                             <div v-if="group.parent.delete" class="flex items-center">
                                                 <span class="mr-1 text-sm text-gray-600 dark:text-gray-300">Delete</span>
                                                 <Checkbox :id="'p_delete-' + group.parent.delete"
-                                                    v-model="form.deletePs" :value="group.parent.delete" />
+                                                    v-model="form.deleteps" :value="group.parent.delete" />
                                             </div>
                                         </div>
                                     </div>
@@ -239,26 +239,26 @@ const stopPropagation = (event) => {
                                                     <div v-if="child.view" class="flex items-center">
                                                         <span
                                                             class="mr-1 text-sm text-gray-600 dark:text-gray-300">View</span>
-                                                        <Checkbox :id="'p_view-' + child.view" v-model="form.viewPs"
+                                                        <Checkbox :id="'p_view-' + child.view" v-model="form.viewps"
                                                             :value="child.view" />
                                                     </div>
                                                     <div v-if="child.add" class="flex items-center">
                                                         <span
                                                             class="mr-1 text-sm text-gray-600 dark:text-gray-300">Add</span>
-                                                        <Checkbox :id="'p_add-' + child.add" v-model="form.addPs"
+                                                        <Checkbox :id="'p_add-' + child.add" v-model="form.addps"
                                                             :value="child.add" />
                                                     </div>
                                                     <div v-if="child.edit" class="flex items-center">
                                                         <span
                                                             class="mr-1 text-sm text-gray-600 dark:text-gray-300">Edit</span>
-                                                        <Checkbox :id="'p_edit-' + child.edit" v-model="form.editPs"
+                                                        <Checkbox :id="'p_edit-' + child.edit" v-model="form.editps"
                                                             :value="child.edit" />
                                                     </div>
                                                     <div v-if="child.delete" class="flex items-center">
                                                         <span
                                                             class="mr-1 text-sm text-gray-600 dark:text-gray-300">Delete</span>
                                                         <Checkbox :id="'p_delete-' + child.delete"
-                                                            v-model="form.deletePs" :value="child.delete" />
+                                                            v-model="form.deleteps" :value="child.delete" />
                                                     </div>
                                                 </div>
                                             </div>
