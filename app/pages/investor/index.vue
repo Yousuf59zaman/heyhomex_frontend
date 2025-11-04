@@ -3,6 +3,9 @@
         layout: 'citizen',
     });
 
+    // Use properties composable with lazy loading
+    const { properties, pending, error, toggleFavorite } = useProperties()
+
     // Search and filter state
     const searchQuery = ref('');
     const selectedPropertyType = ref('');
@@ -47,43 +50,6 @@
             description: 'Area overview',
             duration: '3:45',
             image: '/images/home/home_logo.png',
-        },
-    ]);
-
-    // Propertis :
-    const properties = ref([
-        {
-            id: 1,
-            title: 'Hawaii Home Movers',
-            address: '123 Aloha Lane, Honolulu, HI 96818',
-            price: 475000,
-            beds: 5,
-            baths: 3,
-            sqft: '1733/5000',
-            image: '/images/dashboard/1.png',
-            isFavorited: false,
-        },
-        {
-            id: 2,
-            title: 'Hawaii Home Movers',
-            address: '123 Aloha Lane, Honolulu, HI 96818',
-            price: 475000,
-            beds: 5,
-            baths: 3,
-            sqft: '1733/5000',
-            image: '/images/dashboard/2.png',
-            isFavorited: false,
-        },
-        {
-            id: 3,
-            title: 'Hawaii Home Movers',
-            address: '123 Aloha Lane, Honolulu, HI 96818',
-            price: 475000,
-            beds: 5,
-            baths: 3,
-            sqft: '1733/5000',
-            image: '/images/dashboard/3.png',
-            isFavorited: false,
         },
     ]);
 
@@ -153,7 +119,7 @@
         }
 
         navigateTo({
-            path: '/kamaina/search',
+            path: '/investor/search',
             query,
         });
     };
@@ -199,15 +165,11 @@
     };
 
     const handlePropertyClick = (property) => {
-        navigateTo(`/kamaina/property/${property.id}`);
+        navigateTo(`/investor/property/${property.id}`);
     };
 
     const handleFavoriteToggle = (property) => {
-        const index = properties.value.findIndex((p) => p.id === property.id);
-        if (index !== -1) {
-            properties.value[index].isFavorited =
-                !properties.value[index].isFavorited;
-        }
+        toggleFavorite(property.id);
     };
 
     const handleVideoClick = (video) => {
@@ -256,7 +218,28 @@
         </div>
 
         <!-- Homes in Your Favorite Areas Section -->
+        <!-- Loading State with Skeleton Loaders -->
+        <div v-if="pending" class="space-y-4 md:space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl md:text-2xl font-bold text-gray-900">
+                    Homes in Your Favorite Areas
+                </h2>
+                <div class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                <CommonCitizenPropertyCardSkeleton v-for="n in 3" :key="n" />
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p class="text-red-600 mb-2">Error loading properties. Please try again later.</p>
+            <p class="text-sm text-red-500">{{ error.message }}</p>
+        </div>
+
+        <!-- Properties Grid -->
         <CommonCitizenPropertyGrid
+            v-else
             :properties="properties"
             @see-all="handleSeeAllProperties"
             @property-click="handlePropertyClick"

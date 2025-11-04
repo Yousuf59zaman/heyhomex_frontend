@@ -23,6 +23,10 @@ logs
 .env.*
 !.env.example
 
+<<<<<<< HEAD
 # md files
 .md
 *.md
+=======
+.mcp
+>>>>>>> cb5d4d7e76a206a8ebec0680ff0c9db51e50565b

@@ -12,11 +12,7 @@
         showAuthModal.value = true;
     };
 
-    const handleModalComplete = (userData) => {
-        console.log('User completed auth:', userData);
-        // Handle user data here
-    };
-
+    
     const handleModalClose = () => {
         showAuthModal.value = false;
     };

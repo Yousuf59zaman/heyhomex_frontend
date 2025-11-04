@@ -18,6 +18,8 @@ const loadData = async () => {
     }
 };
 
+
+
 // Automatically open the parent if a child is selected
 const updateMenuState = () => {
     const setActiveState = (items) => {

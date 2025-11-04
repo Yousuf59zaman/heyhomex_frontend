@@ -39,15 +39,11 @@
 
     // Methods
     const submitContactForm = () => {
-        // Handle contact form submission
         console.log('Contact form submitted:', contactForm.value);
-        // Reset form or show success message
     };
 
     const bookTour = () => {
-        // Handle tour booking
         console.log('Tour booking requested for:', tourTime.value);
-        // Show success message or redirect
     };
 
     const propertyImage = computed(
