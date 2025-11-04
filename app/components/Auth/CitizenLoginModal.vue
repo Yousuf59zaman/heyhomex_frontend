@@ -122,7 +122,7 @@
                 const needsOnboarding = userData.user_onboard_profile_status === 0
 
                 if (import.meta.client) {
-                    alert(response.message || 'Login successful')
+                    // alert(response.message || 'Login successful')
                 }
 
                 closeModal()

@@ -24,9 +24,19 @@
     const formData = ref({
         email: "",
     })
-    const setUuid= useState('uuid' , ()=>({
-        uuid : ''
-    }) ) 
+    const setUuid = useState('uuid', () => ({
+        uuid: ''
+    }))
+
+    // Clear uuid when modal opens
+    watch(
+        () => props.modelValue,
+        (newValue) => {
+            if (newValue && setUuid.value?.uuid) {
+                setUuid.value = { uuid: '' }
+            }
+        }
+    )
     const emailError = ref("")
     const isLoading = ref(false)
 
@@ -50,6 +60,7 @@
             (item) =>
                 !formData.value[item] && !skip_validations.value.includes(item)
         )
+        
         if (errors.length > 0) {
             errors.map((item) => {
                 validations_errors.value[item] = `Email is required`
@@ -60,42 +71,42 @@
 
         try {
             isLoading.value = true
+
             const response = await $fetch(`${baseURL}reg-otp-flow`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: {
-                    ...formData.value,
-                },
+                body: { ...formData.value },
             })
 
-            if(response.status == 'success'){
-                setUuid.value.uuid = response.data.uuid
+            if (response?.status === "success") {
+                // save uuid for verification step
+                setUuid.value = { ...(setUuid.value || {}), uuid: response.data?.uuid }
+
+                // only proceed to next on success
+                emit("next", formData.value.email)
+                closeModal()
+            } else {
+                validations_errors.value.message = response?.message || "Unable to send OTP. Please try again."
             }
         } catch (e) {
-            console.log(
-                "Get Message",
-                e instanceof Error ? e.message : String(e)
-            )
-            if (e.response?.status === 404 || e.response?.status === 422) {
-                console.log("here 1", e.response)
-                if (e.response?.status === 404 || e.response?.status === 409) {
-                    for (const key in e.response._data.data) {
-                        if (e.response._data.data.hasOwnProperty(key)) {
-                            const value = e.response._data.data[key][0]
-                            validations_errors.value[key] = value
-                        }
+            console.log("Get Message", e instanceof Error ? e.message : String(e))
+            const status = e?.response?.status
+            if (status === 422 || status === 409) {
+                const errorsData = e.response?._data?.data || {}
+                for (const key in errorsData) {
+                    if (errorsData.hasOwnProperty(key)) {
+                        validations_errors.value[key] = errorsData[key][0]
                     }
                 }
+            } else if (status === 404) {
+                validations_errors.value.message = e.response?._data?.message || 'Resource not found.'
             } else {
-                validations_errors.value.message =
-                    "Something went wrong. Please try again."
+                validations_errors.value.message = e?.message || "Something went wrong. Please try again."
             }
         } finally {
             isLoading.value = false
-            emit("next", formData.value.email)
-            closeModal()
         }
     }
 

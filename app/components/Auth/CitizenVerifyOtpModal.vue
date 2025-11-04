@@ -15,7 +15,6 @@
 
     // Emits
     const emit = defineEmits(["update:modelValue", "verify-success", "close"])
-    
 
     // Computed for two-way binding
     const visible = computed({
@@ -29,8 +28,7 @@
     const isVerifying = ref(false)
     const errorMessage = ref("")
     const otpInputRefs = ref([])
-    const isLoading = ref(false)
-    const getUuid   = useState('uuid')
+    const getUuid = useState("uuid")
 
     // Resend OTP state
     const resendAttempts = ref(0)
@@ -143,9 +141,12 @@
             errorMessage.value = "You have reached the maximum resend attempts."
             return
         }
-        if (!props.email) {
+
+        // Ensure uuid exists (passed from send-email step)
+        const uuid = getUuid.value?.uuid
+        if (!uuid) {
             errorMessage.value =
-                "Email not found. Please go back and re-enter your email."
+                "Session expired. Please go back and re-enter your email."
             return
         }
 
@@ -153,28 +154,39 @@
         errorMessage.value = ""
 
         try {
-            // Reuse registration OTP flow endpoint for resend if available
-            await $fetch(`${baseURL}reg-otp-flow`, {
+            // Call resend OTP endpoint with uuid
+            const response = await $fetch(`${baseURL}resent/temp/reg/otp`, {
                 method: "POST",
-                body: { email: props.email },
+                body: {uuid},
             })
 
-            resendAttempts.value++
-            // Restart the OTP validity timer so user can enter new code
-            timeRemaining.value = 300
-            startTimer()
-            // clear current inputs so user re-enters new code
-            otpDigits.value = ["", "", "", "", "", ""]
-            // autofocus first input after a short delay
-            setTimeout(() => {
-                const firstInput = otpInputRefs.value[0]
-                if (firstInput) firstInput.focus()
-            }, 150)
+            if (response?.status === "success") {
+                resendAttempts.value++
+                // Restart the OTP validity timer so user can enter new code
+                timeRemaining.value = 300
+                startTimer()
+                // clear current inputs so user re-enters new code
+                otpDigits.value = ["", "", "", "", "", ""]
+                // autofocus first input after a short delay
+                setTimeout(() => {
+                    const firstInput = otpInputRefs.value[0]
+                    if (firstInput) firstInput.focus()
+                }, 150)
 
-            console.log("OTP resent to", props.email)
+                console.log(
+                    "✅ OTP resent successfully. Attempts:",
+                    resendAttempts.value
+                )
+            } else {
+                errorMessage.value =
+                    response?.message || "Failed to resend OTP."
+            }
         } catch (err) {
-            console.error("Resend OTP error", err)
-            errorMessage.value = err?.message || "Unable to resend OTP. Please try again later."
+            console.error("❌ Resend OTP error:", err)
+            errorMessage.value =
+                err?.data?.message ||
+                err?.message ||
+                "Unable to resend OTP. Please try again later."
         } finally {
             isResending.value = false
         }
@@ -190,30 +202,44 @@
             return
         }
 
+        // Ensure uuid exists
+        const uuid = getUuid.value?.uuid
+        if (!uuid) {
+            errorMessage.value = "Session expired. Please start over."
+            return
+        }
+
         isVerifying.value = true
 
         try {
-            isLoading.value = true
-            const response = await $fetch(`${baseURL}otp/verify`, {
+            const response = await $fetch(`${baseURL}temp-reg/otp/verify`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: {
-                    uuid: getUuid.value?.uuid,
+                    uuid,
                     auth_code: otp,
                 },
-                })
-                // On success emit and close
-                console.log("OTP verified:", response)
-                emit("verify-success")
+            })
+
+            // Check for success response
+            if (response?.status === "success") {
+                console.log("✅ OTP verified successfully")
+                emit("verify-success", response.data)
                 closeModal()
+            } else {
+                errorMessage.value =
+                    response?.message || "Invalid OTP. Please try again."
+            }
         } catch (error) {
+            console.error("❌ OTP verify error:", error)
             errorMessage.value =
-                error.message || "Invalid OTP. Please try again."
+                error?.data?.message ||
+                error?.message ||
+                "Invalid OTP. Please try again."
         } finally {
             isVerifying.value = false
-                isLoading.value = false
         }
     }
 
@@ -334,41 +360,57 @@
                     @paste="index === 0 ? handlePaste($event) : null" />
             </div>
 
-            <!-- Timer -->
-            <!-- <div class="text-center">
-                <p class="text-sm text-gray-700">
-                    Time remaining:
-                    <span class="font-semibold">{{ formattedTime }}</span>
-                </p>
-            </div> -->
+            <!-- Timer Display & Resend Section -->
+            <div class="text-center space-y-3">
+                <!-- Show timer only when NO error and time remains -->
+                <div
+                    v-if="timeRemaining > 0 && !errorMessage"
+                    class="text-sm text-gray-700">
+                    <p>
+                        Time remaining:
+                        <span class="font-semibold">{{ formattedTime }}</span>
+                    </p>
+                </div>
 
-            <!-- Resend OTP -->
-            <div class="text-center">
-                <p class="text-sm text-gray-600 mb-2">Didn't receive the code?</p>
-
-                <div class="flex items-center justify-center gap-3">
-                    <!-- Show resend button only after main timer ends -->
+                <!-- Show resend button only when timer expires and no error and attempts available -->
+                <div v-if="timeRemaining <= 0 && !errorMessage">
+                    <p class="text-sm text-gray-600 mb-3">
+                        Didn't receive the code?
+                    </p>
                     <button
-                        v-if="timeRemaining <= 0"
+                        v-if="resendAttempts < maxResendAttempts"
                         @click="handleResend"
-                        :disabled="isResending || resendAttempts >= maxResendAttempts"
-                        class="px-4 py-2 bg-white border rounded-md text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                        :disabled="isResending"
+                        class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                         <span v-if="isResending">Resending...</span>
                         <span v-else>Resend OTP</span>
                     </button>
-
-                    <div class="text-sm text-gray-700">
-                        <template v-if="timeRemaining > 0">Time remaining: {{ formattedTime }}</template>
-                        <template v-else>Attempts: {{ resendAttempts }} / {{ maxResendAttempts }}</template>
-                    </div>
+                    <p
+                        v-else
+                        class="text-sm text-red-600 font-medium">
+                        Maximum resend attempts reached
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                        Attempts used: {{ resendAttempts }} /
+                        {{ maxResendAttempts }}
+                    </p>
                 </div>
             </div>
 
-            <!-- Error Message -->
+            <!-- Error Message with Resend Option -->
             <div
                 v-if="errorMessage"
-                class="text-center">
+                class="text-center space-y-3">
                 <p class="text-xs text-red-500">{{ errorMessage }}</p>
+                <!-- Show resend button when error occurs and attempts available -->
+                <button
+                    v-if="resendAttempts < maxResendAttempts"
+                    @click="handleResend"
+                    :disabled="isResending"
+                    class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    <span v-if="isResending">Resending...</span>
+                    <span v-else>Resend OTP</span>
+                </button>
             </div>
 
             <!-- Verify Button -->

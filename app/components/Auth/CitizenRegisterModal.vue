@@ -1,12 +1,13 @@
 <script setup lang="ts">
     // Interfaces
     interface RegisterFormData {
-        name: string
-        email: string
+        first_name: string
+        last_name: string
         password: string
         password_confirmation: string
         price_range_id: string
         location_id: string
+        uuid : string
     }
 
     interface PriceRange {
@@ -78,6 +79,8 @@
         close: []
     }>()
 
+    const getUuid = useState<{ uuid: string }>("uuid")
+
     // Computed for two-way binding
     const visible = computed({
         get: () => props.modelValue,
@@ -91,12 +94,13 @@
 
     // Form data
     const formData = reactive<RegisterFormData>({
-        name: '',
-        email: '',
+        first_name: '',
+        last_name: '',
         password: '',
         password_confirmation: '',
         price_range_id: '',
         location_id: '',
+        uuid : getUuid.value?.uuid || ''
     })
 
     // Dynamic options - fetched from API
@@ -184,8 +188,8 @@
     }
 
     const resetForm = () => {
-        formData.name = ''
-        formData.email = ''
+        formData.first_name = ''
+        formData.last_name = ''
         formData.password = ''
         formData.password_confirmation = ''
         formData.price_range_id = ''
@@ -225,6 +229,12 @@
 
         loading.value = true
         // emit('register-success', { ...formData })
+        const uuid = getUuid.value?.uuid
+        if (!uuid) {
+            showError("Session expired. Please go back and re-enter your email.")
+            loading.value = false
+            return
+        }
 
         try {
             const response = await $fetchCMS<ApiResponse<RegistrationResponseData>>('/register', {
@@ -243,7 +253,7 @@
                     // 0 = needs onboarding, 1 = onboarding completed
                     const onboardingStatus = response.data?.user_onboard_profile_status ?? 0
                     localStorage.setItem('citizen_user_onboard_profile_status', String(onboardingStatus))
-                    localStorage.setItem('citizen_temp_email', formData.email)
+                    // localStorage.setItem('citizen_temp_email', formData.email)
 
                     // Also store user data for reference
                     localStorage.setItem('citizen_user_data', JSON.stringify({
@@ -347,20 +357,20 @@
                     <label
                         for="fullName"
                         class="text-sm font-medium text-gray-700"
-                        >Full Name</label
+                        >First Name</label
                     >
                     <InputText
                         id="fullName"
-                        v-model="formData.name"
+                        v-model="formData.first_name"
                         placeholder="Enter your full name"
                         required
                         :pt="{
                             root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                         }" />
                     <span
-                        v-if="validationErrors.name"
+                        v-if="validationErrors.first_name"
                         class="text-xs text-red-500">
-                        {{ validationErrors.name }}
+                        {{ validationErrors.first_name }}
                     </span>
                 </div>
 
@@ -368,11 +378,11 @@
                     <label
                         for="email"
                         class="text-sm font-medium text-gray-700"
-                        >Email Address</label
+                        >Last Name</label
                     >
                     <InputText
                         id="email"
-                        v-model="formData.email"
+                        v-model="formData.last_name"
                         type="email"
                         placeholder="Enter your email address"
                         required
@@ -380,9 +390,9 @@
                             root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                         }" />
                     <span
-                        v-if="validationErrors.email"
+                        v-if="validationErrors.last_name"
                         class="text-xs text-red-500">
-                        {{ validationErrors.email }}
+                        {{ validationErrors.last_name }}
                     </span>
                 </div>
 
