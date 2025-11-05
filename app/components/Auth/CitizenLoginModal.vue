@@ -13,13 +13,6 @@
         close: []
     }>()
 
-    const showRegister = () => {
-        closeModal()
-        setTimeout(() => {
-            emit("show-register")
-        }, 300)
-    }
-
     const visible = ref(props.modelValue)
     watch(
         () => props.modelValue,
