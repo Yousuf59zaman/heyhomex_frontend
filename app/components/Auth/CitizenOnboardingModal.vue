@@ -61,13 +61,29 @@
     interface QuestionsListResponse {
         status: string
         message: string
-        data: Question[]
-        current_page: number
-        from: number
-        last_page: number
-        per_page: number
-        to: number
-        total: number
+        data: {
+            data: Question[]
+            links: {
+                first: string | null
+                last: string | null
+                prev: string | null
+                next: string | null
+            }
+            meta: {
+                current_page: number
+                from: number
+                last_page: number
+                per_page: number
+                to: number
+                total: number
+            }
+            permissions?: {
+                view: boolean
+                add: boolean
+                edit: boolean
+                delete: boolean
+            }
+        }
     }
 
     interface UserType {
@@ -189,24 +205,24 @@
                 }
             )
 
-            if (response.status === "success" && response.data) {
-                questions.value = response.data
+            if (response.status === "success" && response.data?.data) {
+                questions.value = response.data.data
 
                 motivationQuestion.value =
-                    response.data.find(
+                    response.data.data.find(
                         (q) =>
                             q.question_group.name === "user-type" && q.is_active
                     ) || null
 
                 budgetQuestion.value =
-                    response.data.find(
+                    response.data.data.find(
                         (q) =>
                             q.question_group.name === "price-range" &&
                             q.is_active
                     ) || null
 
                 locationQuestion.value =
-                    response.data.find(
+                    response.data.data.find(
                         (q) => q.question_group.name === "area" && q.is_active
                     ) || null
             }

@@ -279,7 +279,21 @@ const needsOnboarding = response.data?.needs_onboarding || false;
 
 **CitizenOnboardingModal.vue:**
 ```typescript
-await $fetchCitizen('/citizen/onboarding', {
+// Fetch questions from the API (GET request)
+const response = await $fetchCMS<QuestionsListResponse>(
+    "/admin/question-banks/question/list",
+    {
+        method: "GET",
+    }
+)
+
+// API returns paginated response with nested structure:
+// response.data.data contains the questions array
+// response.data.links contains pagination links
+// response.data.meta contains pagination metadata
+
+// Submit onboarding answers (POST request)
+await $fetchCMS('/v1/user/onboard', {
     method: 'POST',
     body: formData
 });
@@ -370,3 +384,45 @@ Add/remove fields in each modal's `formData` reactive object and template.
 - Account type defaults to "Buyer" when modal opens
 - Selected account type is logged to console and can be used for API calls
 - Account type modal uses a grid layout with 3 columns for responsive design
+
+## Troubleshooting
+
+### Questions Not Showing in CitizenOnboardingModal
+
+**Issue:** After successful login, the onboarding modal opens but no question options are displayed.
+
+**Root Cause:** The API endpoint `/admin/question-banks/question/list` returns a paginated response with nested structure:
+```json
+{
+  "status": "success",
+  "message": "Questions Retrieved Successfully",
+  "data": {
+    "data": [...questions array...],
+    "links": {...},
+    "meta": {...},
+    "permissions": {...}
+  }
+}
+```
+
+The questions array is located at `response.data.data`, not directly at `response.data`.
+
+**Solution:** Updated `CitizenOnboardingModal.vue` (line 208-228) to:
+1. Updated the `QuestionsListResponse` interface to match the actual API response structure with pagination metadata
+2. Changed `response.data` to `response.data.data` when accessing the questions array
+3. Updated all `.find()` operations to use `response.data.data` instead of `response.data`
+
+**Files Modified:**
+- `app/components/Auth/CitizenOnboardingModal.vue`
+  - Updated interface `QuestionsListResponse` (lines 61-87)
+  - Fixed data access in `fetchQuestions()` function (lines 208-228)
+
+**API Response Structure:**
+The questions endpoint returns three question groups:
+1. **user-type** - "What's the heart behind your home search?" (kamaina, investor, military)
+2. **price-range** - "What's your sweet spot, budget-wise?" ($400k-$600k, $600k-$1.2m, $1.2m+)
+3. **area** - "Where's your dream home hiding?" (City, Suburbs, All of it)
+
+Each question contains:
+- `id`, `question_group`, `question_text`, `is_active`, `created_at`
+- `answers` array with answer options containing `id`, `answer_text`, and metadata
