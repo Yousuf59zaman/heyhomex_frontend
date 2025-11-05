@@ -1,15 +1,15 @@
 <script setup lang="ts">
-    import { LockClosedIcon, UserIcon } from '@heroicons/vue/24/outline'
+    import {LockClosedIcon, UserIcon} from "@heroicons/vue/24/outline"
 
     const props = defineProps<{
         modelValue: boolean
     }>()
-    
+
     const emit = defineEmits<{
-        'update:modelValue': [value: boolean]
-        'login-success': [needsOnboarding: boolean]
-        'show-register': []
-        'back': []
+        "update:modelValue": [value: boolean]
+        "login-success": [needsOnboarding: boolean]
+        "show-register": []
+        back: []
         close: []
     }>()
 
@@ -41,35 +41,32 @@
     const visible = computed({
         get: () => props.modelValue,
         set: (value: boolean) => {
-            emit('update:modelValue', value)
+            emit("update:modelValue", value)
             if (!value) {
-                emit('close')
+                emit("close")
             }
         },
     })
 
-  
     const loading = ref(false)
     const password_open = ref(false)
 
-   
     const formData = reactive<LoginFormData>({
-        email: '',
-        password: '',
+        email: "",
+        password: "",
     })
 
-   
     const closeModal = () => {
-        emit('update:modelValue', false)
-        emit('close')
+        emit("update:modelValue", false)
+        emit("close")
         setTimeout(() => {
             resetForm()
         }, 300)
     }
 
     const resetForm = () => {
-        formData.email = ''
-        formData.password = ''
+        formData.email = ""
+        formData.password = ""
         password_open.value = false
     }
 
@@ -81,67 +78,71 @@
         loading.value = true
 
         try {
-          
             const payload = new FormData()
-            payload.append('login_id', formData.email)
-            payload.append('password', formData.password)
+            payload.append("login_id", formData.email)
+            payload.append("password", formData.password)
 
-           
-            const response = await $fetchCMS<LoginResponse>('/admin/login', {
-                method: 'POST',
+            const response = await $fetchCMS<LoginResponse>("/admin/login", {
+                method: "POST",
                 body: payload,
             })
 
             if (response.status && response.data) {
                 const userData = response.data
 
-              
                 if (import.meta.client) {
-                 
-                    const tokenCookie = useCookie('XCMS-TOKEN')
+                    const tokenCookie = useCookie("XCMS-TOKEN")
                     tokenCookie.value = userData.token
 
-                    
-                    localStorage.setItem('citizen_user_data', JSON.stringify(userData))
+                    localStorage.setItem(
+                        "citizen_user_data",
+                        JSON.stringify(userData)
+                    )
 
-                    
-                    localStorage.setItem('citizen_user_id', userData.id.toString())
+                    localStorage.setItem(
+                        "citizen_user_id",
+                        userData.id.toString()
+                    )
 
-                 
                     const onboardingStatusKey = `citizen_onboard_status_${userData.id}`
 
                     if (userData.user_onboard_profile_status !== undefined) {
-                        localStorage.setItem(onboardingStatusKey, userData.user_onboard_profile_status.toString())
+                        localStorage.setItem(
+                            onboardingStatusKey,
+                            userData.user_onboard_profile_status.toString()
+                        )
                     }
 
-                  
-                    localStorage.removeItem('citizen_user_onboard_profile_status')
-                    localStorage.removeItem('citizen_needs_onboarding')
+                    localStorage.removeItem(
+                        "citizen_user_onboard_profile_status"
+                    )
+                    localStorage.removeItem("citizen_needs_onboarding")
                 }
 
-              
-                const needsOnboarding = userData.user_onboard_profile_status === 0
+                const needsOnboarding =
+                    userData.user_onboard_profile_status === 0
 
                 if (import.meta.client) {
-                   
                 }
 
-               
                 if (!needsOnboarding && userData.user_type?.[0]?.slug) {
                     const redirectSlug = userData.user_type[0].slug
-                    const targetPath = redirectSlug === 'kamaaina' ? '/kamaina/' : `/${redirectSlug}/`
+                    const targetPath =
+                        redirectSlug === "kamaaina"
+                            ? "/kamaina/"
+                            : `/${redirectSlug}/`
                     navigateTo(targetPath)
                 } else {
-                
-                    emit('login-success', needsOnboarding)
+                    emit("login-success", needsOnboarding)
                 }
             }
         } catch (error: any) {
-            console.error('Login error:', error)
+            console.error("Login error:", error)
 
-           
             if (import.meta.client) {
-                const errorMessage = error?.data?.message || 'Login failed. Please check your credentials and try again.'
+                const errorMessage =
+                    error?.data?.message ||
+                    "Login failed. Please check your credentials and try again."
                 alert(errorMessage)
             }
         } finally {
@@ -152,21 +153,18 @@
     const showRegister = () => {
         closeModal()
         setTimeout(() => {
-            emit('show-register')
+            emit("show-register")
         }, 300)
     }
 
-   
     watch(
         () => props.modelValue,
         (newValue) => {
             if (import.meta.client) {
-                document.body.style.overflow = newValue ? 'hidden' : ''
+                document.body.style.overflow = newValue ? "hidden" : ""
             }
         }
     )
-
-   
 </script>
 
 <template>
@@ -177,7 +175,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-login-modal"
-        :style="{ width: 'min(45rem, 95vw)', maxWidth: '95vw' }"
+        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-2xl shadow-2xl m-4',
             header: 'border-0 pb-0',
@@ -282,7 +280,7 @@
                     :pt="{
                         root: 'w-full mb-3 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
                     }">
-                    {{ loading ? 'Signing In...' : 'Sign In' }}
+                    {{ loading ? "Signing In..." : "Sign In" }}
                 </Button>
 
                 <div class="text-center">

@@ -53,7 +53,7 @@ watch([cookie, app_key], () => {
         <NuxtPage />
     </NuxtLayout>
     
-    <AuthCitizenAuthModals />
+    <!-- <AuthCitizenAuthModals /> -->
 </template>
 
 <style lang="scss" scoped></style>

@@ -1,5 +1,27 @@
 <script setup lang="ts">
-    type OnboardingStep = 'motivation' | 'budget' | 'location' | 'success'
+    type OnboardingStep = "motivation" | "budget" | "location" | "success"
+
+    const props = defineProps<{
+        modelValue: boolean
+    }>()
+
+    const emit = defineEmits<{
+        "update:modelValue": [value: boolean]
+        "onboarding-complete": [data: OnboardingData]
+        back: []
+        close: []
+    }>()
+
+    const visible = computed({
+        get: () => props.modelValue,
+        set: (value: boolean) => {
+            emit("update:modelValue", value)
+
+            if (!value) {
+                emit("close")
+            }
+        },
+    })
 
     interface OnboardingData {
         motivation: number | null
@@ -70,109 +92,84 @@
         value: number
     }
 
-    // Props
-    const props = defineProps<{
-        modelValue: boolean
-    }>()
-
-    // Emits
-    const emit = defineEmits<{
-        'update:modelValue': [value: boolean]
-        'onboarding-complete': [data: OnboardingData]
-        'back': []
-        close: []
-    }>()
-
-    // Computed for two-way binding
-    const visible = computed({
-        get: () => props.modelValue,
-        set: (value: boolean) => {
-            emit('update:modelValue', value)
-            // If dialog is being closed (value is false), emit close event
-            if (!value) {
-                emit('close')
-            }
-        },
-    })
-
-    // State
-    const currentStep = ref<OnboardingStep>('motivation')
+    const currentStep = ref<OnboardingStep>("motivation")
     const loading = ref(false)
     const questionsLoading = ref(false)
 
-    // Form data - storing answer IDs from API
     const formData = reactive<OnboardingData>({
         motivation: null,
         budget: null,
         locationType: null,
     })
 
-
-    // Dynamic questions from API
     const questions = ref<Question[]>([])
     const motivationQuestion = ref<Question | null>(null)
     const budgetQuestion = ref<Question | null>(null)
     const locationQuestion = ref<Question | null>(null)
 
-    // Dynamic options computed from API data
     const motivationOptions = computed<OptionItem[]>(() => {
         if (!motivationQuestion.value) return []
         return motivationQuestion.value.answers
-            .filter(answer => answer.is_active)
-            .map(answer => ({
+            .filter((answer) => answer.is_active)
+            .map((answer) => ({
                 label: answer.answer_text,
-                value: answer.id
+                value: answer.id,
             }))
     })
 
     const budgetOptions = computed<OptionItem[]>(() => {
         if (!budgetQuestion.value) return []
         return budgetQuestion.value.answers
-            .filter(answer => answer.is_active)
-            .map(answer => ({
+            .filter((answer) => answer.is_active)
+            .map((answer) => ({
                 label: answer.answer_text,
-                value: answer.id
+                value: answer.id,
             }))
     })
 
     const locationTypeOptions = computed<OptionItem[]>(() => {
         if (!locationQuestion.value) return []
         return locationQuestion.value.answers
-            .filter(answer => answer.is_active)
-            .map(answer => ({
+            .filter((answer) => answer.is_active)
+            .map((answer) => ({
                 label: answer.answer_text,
-                value: answer.id
+                value: answer.id,
             }))
     })
 
-    // Step configurations with dynamic subtitles from API
     const stepConfigs = computed(() => ({
         motivation: {
             title: "You bring the dream. We'll map the way. ✨",
-            subtitle: motivationQuestion.value?.question_text || "What's the heart behind your home search?",
-            stepLabel: 'Step: 1/3',
+            subtitle:
+                motivationQuestion.value?.question_text ||
+                "What's the heart behind your home search?",
+            stepLabel: "Step: 1/3",
         },
         budget: {
             title: "You bring the dream. We'll map the way. ✨",
-            subtitle: budgetQuestion.value?.question_text || "What's your sweet spot, budget-wise?\nNo judgment — just vibes and homes that fit",
-            stepLabel: 'Step: 2/3',
+            subtitle:
+                budgetQuestion.value?.question_text ||
+                "What's your sweet spot, budget-wise?\nNo judgment — just vibes and homes that fit",
+            stepLabel: "Step: 2/3",
         },
         location: {
             title: "You bring the dream. We'll map the way. ✨",
-            subtitle: locationQuestion.value?.question_text || "Where's your dream home hiding? We'll find it together.",
-            stepLabel: 'Step: 3/3',
+            subtitle:
+                locationQuestion.value?.question_text ||
+                "Where's your dream home hiding? We'll find it together.",
+            stepLabel: "Step: 3/3",
         },
         success: {
-            title: 'Welcome to your home journey!',
+            title: "Welcome to your home journey!",
             subtitle:
                 "We've saved your preferences and we're ready to help you find your perfect home.",
-            stepLabel: '',
+            stepLabel: "",
         },
     }))
 
     const getCurrentStepConfig = () => stepConfigs.value[currentStep.value]
 
-    const progressSteps: OnboardingStep[] = ['motivation', 'budget', 'location']
+    const progressSteps: OnboardingStep[] = ["motivation", "budget", "location"]
     const showProgressBar = computed(() =>
         progressSteps.includes(currentStep.value)
     )
@@ -180,38 +177,44 @@
         progressSteps.indexOf(currentStep.value)
     )
 
-    // Methods
     const fetchQuestions = async () => {
         questionsLoading.value = true
         try {
-            const response = await $fetchCMS<QuestionsListResponse>('/admin/question-banks/question/list', {
-                method: 'GET',
-            })
+            const response = await $fetchCMS<QuestionsListResponse>(
+                "/admin/question-banks/question/list",
+                {
+                    method: "GET",
+                }
+            )
 
-            if (response.status === 'success' && response.data) {
+            if (response.status === "success" && response.data) {
                 questions.value = response.data
 
-                // Filter questions by question_group.name
-                // user-type -> motivation
-                motivationQuestion.value = response.data.find(
-                    q => q.question_group.name === 'user-type' && q.is_active
-                ) || null
+                motivationQuestion.value =
+                    response.data.find(
+                        (q) =>
+                            q.question_group.name === "user-type" && q.is_active
+                    ) || null
 
-                // price-range -> budget
-                budgetQuestion.value = response.data.find(
-                    q => q.question_group.name === 'price-range' && q.is_active
-                ) || null
+                budgetQuestion.value =
+                    response.data.find(
+                        (q) =>
+                            q.question_group.name === "price-range" &&
+                            q.is_active
+                    ) || null
 
-                // area -> location
-                locationQuestion.value = response.data.find(
-                    q => q.question_group.name === 'area' && q.is_active
-                ) || null
+                locationQuestion.value =
+                    response.data.find(
+                        (q) => q.question_group.name === "area" && q.is_active
+                    ) || null
             }
         } catch (error: any) {
-            console.error('Failed to fetch questions:', error)
+            console.error("Failed to fetch questions:", error)
 
             if (import.meta.client) {
-                const errorMessage = error?.data?.message || 'Failed to load questions. Please try again.'
+                const errorMessage =
+                    error?.data?.message ||
+                    "Failed to load questions. Please try again."
                 alert(errorMessage)
             }
         } finally {
@@ -220,19 +223,19 @@
     }
 
     const closeModal = () => {
-        emit('update:modelValue', false)
-        emit('close')
+        emit("update:modelValue", false)
+        emit("close")
         setTimeout(() => {
-            currentStep.value = 'motivation'
+            currentStep.value = "motivation"
         }, 300)
     }
 
     const handleNext = () => {
         const steps: OnboardingStep[] = [
-            'motivation',
-            'budget',
-            'location',
-            'success',
+            "motivation",
+            "budget",
+            "location",
+            "success",
         ]
         const currentIndex = steps.indexOf(currentStep.value)
 
@@ -246,10 +249,10 @@
 
     const handlePrev = () => {
         const steps: OnboardingStep[] = [
-            'motivation',
-            'budget',
-            'location',
-            'success',
+            "motivation",
+            "budget",
+            "location",
+            "success",
         ]
         const currentIndex = steps.indexOf(currentStep.value)
 
@@ -265,71 +268,85 @@
         loading.value = true
 
         try {
-            // Create FormData payload
             const payload = new FormData()
 
             if (formData.motivation !== null) {
-                payload.append('question_answer_one', formData.motivation.toString())
+                payload.append(
+                    "question_answer_one",
+                    formData.motivation.toString()
+                )
             }
             if (formData.budget !== null) {
-                payload.append('question_answer_two', formData.budget.toString())
+                payload.append(
+                    "question_answer_two",
+                    formData.budget.toString()
+                )
             }
             if (formData.locationType !== null) {
-                payload.append('question_answer_three', formData.locationType.toString())
+                payload.append(
+                    "question_answer_three",
+                    formData.locationType.toString()
+                )
             }
 
-            // Call onboarding API
-            const response = await $fetchCMS<OnboardingResponse>('/v1/user/onboard', {
-                method: 'POST',
-                body: payload,
-            })
+            const response = await $fetchCMS<OnboardingResponse>(
+                "/v1/user/onboard",
+                {
+                    method: "POST",
+                    body: payload,
+                }
+            )
 
-            // Store user-specific onboarding status in localStorage
-            if (import.meta.client && response.data.user_onboard_profile_status !== undefined) {
-                // Get current user ID from localStorage
-                const userId = localStorage.getItem('citizen_user_id')
+            if (
+                import.meta.client &&
+                response.data.user_onboard_profile_status !== undefined
+            ) {
+                const userId = localStorage.getItem("citizen_user_id")
 
                 if (userId) {
-                    // Store onboarding status with user-specific key
                     const onboardingStatusKey = `citizen_onboard_status_${userId}`
-                    localStorage.setItem(onboardingStatusKey, response.data.user_onboard_profile_status.toString())
+                    localStorage.setItem(
+                        onboardingStatusKey,
+                        response.data.user_onboard_profile_status.toString()
+                    )
 
-                    // Update user data with new onboarding status
-                    const userData = localStorage.getItem('citizen_user_data')
+                    const userData = localStorage.getItem("citizen_user_data")
                     if (userData) {
                         try {
                             const parsedUserData = JSON.parse(userData)
-                            parsedUserData.user_onboard_profile_status = response.data.user_onboard_profile_status
-                            localStorage.setItem('citizen_user_data', JSON.stringify(parsedUserData))
+                            parsedUserData.user_onboard_profile_status =
+                                response.data.user_onboard_profile_status
+                            localStorage.setItem(
+                                "citizen_user_data",
+                                JSON.stringify(parsedUserData)
+                            )
                         } catch (e) {
-                            console.error('Failed to update user data:', e)
+                            console.error("Failed to update user data:", e)
                         }
                     }
                 }
 
-                // Clean up old global onboarding flags
-                localStorage.removeItem('citizen_user_onboard_profile_status')
-                localStorage.removeItem('citizen_needs_onboarding')
+                localStorage.removeItem("citizen_user_onboard_profile_status")
+                localStorage.removeItem("citizen_needs_onboarding")
             }
 
             if (import.meta.client) {
-                alert(response.message || 'User onboarded successfully')
+                alert(response.message || "User onboarded successfully")
             }
 
-            // Don't close modal here, let parent handle the transition and redirect
-            emit('onboarding-complete', { ...formData })
+            emit("onboarding-complete", {...formData})
 
-            // Redirect to dashboard based on user's first user_type slug
-            // Fallback to '/kamaina/' if user_type is not available
-            const redirectSlug = response.data.user_type?.[0]?.slug || 'kamaina'
-            const targetPath = redirectSlug === 'kamaaina' ? '/kamaina/' : `/${redirectSlug}/`
+            const redirectSlug = response.data.user_type?.[0]?.slug || "kamaina"
+            const targetPath =
+                redirectSlug === "kamaaina" ? "/kamaina/" : `/${redirectSlug}/`
             navigateTo(targetPath)
         } catch (error: any) {
-            console.error('Onboarding save failed:', error)
+            console.error("Onboarding save failed:", error)
 
-            // Handle error feedback
             if (import.meta.client) {
-                const errorMessage = error?.data?.message || 'Failed to complete onboarding. Please try again.'
+                const errorMessage =
+                    error?.data?.message ||
+                    "Failed to complete onboarding. Please try again."
                 alert(errorMessage)
             }
         } finally {
@@ -337,32 +354,28 @@
         }
     }
 
-    // Fetch questions when modal opens
     watch(
         () => props.modelValue,
         (newValue) => {
             if (newValue && questions.value.length === 0) {
-                // Fetch questions when modal opens for the first time
                 fetchQuestions()
             }
         },
-        { immediate: true }
+        {immediate: true}
     )
 
-    // Prevent body scroll when modal is open
     watch(
         () => props.modelValue,
         (newValue) => {
             if (import.meta.client) {
-                document.body.style.overflow = newValue ? 'hidden' : ''
+                document.body.style.overflow = newValue ? "hidden" : ""
             }
         }
     )
 
-    // Cleanup on unmount
     onUnmounted(() => {
         if (import.meta.client) {
-            document.body.style.overflow = ''
+            document.body.style.overflow = ""
         }
     })
 </script>
@@ -375,7 +388,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-onboarding-modal"
-        :style="{ width: 'min(45rem, 95vw)', maxWidth: '95vw' }"
+        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-2xl shadow-2xl m-4',
             header: 'border-0 pb-0',
@@ -401,17 +414,14 @@
 
         <!-- Content -->
         <div class="px-4 sm:px-6 pb-6">
-            <!-- Step Label and Progress Bar Row -->
             <div
                 class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-3 sm:space-y-0">
-                <!-- Step Label -->
                 <div
                     v-if="getCurrentStepConfig().stepLabel"
                     class="text-xs text-[#121A22] uppercase tracking-wide">
                     {{ getCurrentStepConfig().stepLabel }}
                 </div>
 
-                <!-- Progress Bar -->
                 <div
                     v-if="showProgressBar"
                     class="flex-1 max-w-full sm:max-w-xs sm:ml-4">
@@ -433,18 +443,25 @@
             <div
                 v-if="currentStep === 'motivation'"
                 class="space-y-6">
-                <div v-if="questionsLoading" class="space-y-3">
-                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                <div
+                    v-if="questionsLoading"
+                    class="space-y-3">
+                    <div
+                        class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
                         <div class="h-4 bg-gray-200 rounded w-3/4"></div>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                    <div
+                        class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
                         <div class="h-4 bg-gray-200 rounded w-2/3"></div>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                    <div
+                        class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
                         <div class="h-4 bg-gray-200 rounded w-3/4"></div>
                     </div>
                 </div>
-                <div v-else class="space-y-3">
+                <div
+                    v-else
+                    class="space-y-3">
                     <div
                         v-for="option in motivationOptions"
                         :key="option.value"
@@ -490,18 +507,25 @@
             <div
                 v-else-if="currentStep === 'budget'"
                 class="space-y-6">
-                <div v-if="questionsLoading" class="space-y-3">
-                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                <div
+                    v-if="questionsLoading"
+                    class="space-y-3">
+                    <div
+                        class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
                         <div class="h-4 bg-gray-200 rounded w-3/4"></div>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                    <div
+                        class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
                         <div class="h-4 bg-gray-200 rounded w-2/3"></div>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                    <div
+                        class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
                         <div class="h-4 bg-gray-200 rounded w-3/4"></div>
                     </div>
                 </div>
-                <div v-else class="space-y-3">
+                <div
+                    v-else
+                    class="space-y-3">
                     <div
                         v-for="option in budgetOptions"
                         :key="option.value"
@@ -547,18 +571,25 @@
             <div
                 v-else-if="currentStep === 'location'"
                 class="space-y-6">
-                <div v-if="questionsLoading" class="space-y-3">
-                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                <div
+                    v-if="questionsLoading"
+                    class="space-y-3">
+                    <div
+                        class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
                         <div class="h-4 bg-gray-200 rounded w-3/4"></div>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                    <div
+                        class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
                         <div class="h-4 bg-gray-200 rounded w-2/3"></div>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                    <div
+                        class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
                         <div class="h-4 bg-gray-200 rounded w-3/4"></div>
                     </div>
                 </div>
-                <div v-else class="space-y-3">
+                <div
+                    v-else
+                    class="space-y-3">
                     <div
                         v-for="option in locationTypeOptions"
                         :key="option.value"
@@ -631,7 +662,7 @@
                         :pt="{
                             root: 'flex-1 px-4 sm:px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
                         }">
-                        {{ loading ? 'Saving...' : 'Continue to Dashboard' }}
+                        {{ loading ? "Saving..." : "Continue to Dashboard" }}
                     </Button>
                 </div>
             </div>

@@ -16,13 +16,15 @@
 
     const visible = computed({
         get: () => props.modelValue,
-        set: (value) => emit("update:modelValue", value),
-    })
+        set: (value) => {
+            emit("update:modelValue", value)
 
-    watch(visible, (value) => {
-        if (!value) emit("close")
+            if (!value) {
+                emit("close")
+            }
+        },
     })
-
+    
     const handleBack = () => {
         emit("back")
     }

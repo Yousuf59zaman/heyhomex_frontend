@@ -151,5 +151,5 @@
     </div>
 
     <!-- Auth Modal -->
-    <AuthCitizenAuthModals/>
+    <!-- <AuthCitizenAuthModals/> -->
 </template>

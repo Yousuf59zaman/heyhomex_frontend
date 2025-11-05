@@ -171,7 +171,7 @@
     </nav>
 
 
-    <AuthCitizenAuthModalsCo
+    <AuthCitizenAuthModals
         v-model:isOpenStartModal="isOpenStartModal"
         :initialStep="initialStep" />
 </template>

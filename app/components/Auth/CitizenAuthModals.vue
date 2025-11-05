@@ -57,10 +57,8 @@
         emit("update:isOpenStartModal", false)
     }
 
-   
     const handleBack = () => {
         if (activeIndex.value > 0) {
-           
             if (activeIndex.value === 6) {
                 activeIndex.value = 0
             } else if (activeIndex.value === 4) {
