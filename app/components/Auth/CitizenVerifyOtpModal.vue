@@ -169,11 +169,6 @@
                     const firstInput = otpInputRefs.value[0]
                     if (firstInput) firstInput.focus()
                 }, 150)
-
-                console.log(
-                    "OTP resent successfully. Attempts:",
-                    resendAttempts.value
-                )
             } else {
                 errorMessage.value =
                     response?.message || "Failed to resend OTP."
@@ -219,8 +214,7 @@
             })
 
             if (response?.status === "success") {
-                console.log(" OTP verified successfully") /
-                    emit("verify-success", response.data)
+                emit("verify-success", response.data)
             } else {
                 errorMessage.value =
                     response?.message || "Invalid OTP. Please try again."

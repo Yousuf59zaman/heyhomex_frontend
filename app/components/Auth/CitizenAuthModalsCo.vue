@@ -3,6 +3,10 @@
 
     const props = defineProps({
         isOpenStartModal: Boolean,
+        initialStep: {
+            type: Number,
+            default: 0,
+        },
     })
 
     const activeIndex = ref(0)
@@ -14,7 +18,7 @@
         () => props.isOpenStartModal,
         (newVal) => {
             if (newVal) {
-                activeIndex.value = 0
+                activeIndex.value = props.initialStep
             } else {
                 activeIndex.value = 0
                 userEmail.value = ""
