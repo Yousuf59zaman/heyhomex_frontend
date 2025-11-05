@@ -34,8 +34,10 @@ const loadData = async () => {
             },
         });
         data.value = getData.data.data;
+        // console.log('getData', getData);
         permissions.value = getData.data.permissions;
         paginationConfig.value.data = getData.data.meta;
+        isLoading.value = false;
     } catch (e) {
         console.log('Get Message', e.message);
     } finally {
@@ -227,10 +229,10 @@ const onChangeHandler = () => {
                                                 <img :src="item.photo ? item.photo : '/svg/not-found-img.svg'"
                                                     class="w-24 h-24 object-cover rounded-md" />
                                                 <div class="flex flex-col ">
-                                                    <span class="text-sm font-semibold">{{ item.user_info.first_name }}
-                                                        {{ item.user_info.last_name }}</span>
-                                                    <span class="text-sm">{{ item.email }}</span>
-                                                    <span class="text-sm">{{ item.ccode }} {{ item.mobile }}</span>
+                                                    <span class="text-sm font-semibold">{{ item?.user_info?.first_name }}
+                                                        {{ item?.user_info?.last_name }}</span>
+                                                    <span class="text-sm">{{ item?.email }}</span>
+                                                    <span class="text-sm">{{ item?.ccode }} {{ item?.mobile }}</span>
                                                 </div>
                                             </div>
                                         </td>

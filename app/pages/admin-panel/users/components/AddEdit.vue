@@ -315,7 +315,7 @@ watch(() => formData.value.password, (value) => {
 <template>
     <Dialog v-model:visible="visible" modal :closable="false" :style="{ width: '60rem' }"
         @update:visible="$emit('close')">
-        <pre>{{ formData }}</pre>
+        <!-- <pre>{{ formData }}</pre> -->
         <!-- <pre>{{ data }}</pre> -->
         <template #header>
             <div class="flex items-center justify-center w-full gap-2">
