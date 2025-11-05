@@ -1,6 +1,18 @@
 <script setup lang="ts">
     import { LockClosedIcon, UserIcon } from '@heroicons/vue/24/outline'
 
+    const props = defineProps<{
+        modelValue: boolean
+    }>()
+    
+    const emit = defineEmits<{
+        'update:modelValue': [value: boolean]
+        'login-success': [needsOnboarding: boolean]
+        'show-register': []
+        'back': []
+        close: []
+    }>()
+
     interface LoginFormData {
         email: string
         password: string
@@ -26,43 +38,27 @@
         }
     }
 
-    // Props
-    const props = defineProps<{
-        modelValue: boolean
-    }>()
-
-    // Emits
-    const emit = defineEmits<{
-        'update:modelValue': [value: boolean]
-        'login-success': [needsOnboarding: boolean]
-        'show-register': []
-        'back': []
-        close: []
-    }>()
-
-    // Computed for two-way binding
     const visible = computed({
         get: () => props.modelValue,
         set: (value: boolean) => {
             emit('update:modelValue', value)
-            // If dialog is being closed (value is false), emit close event
             if (!value) {
                 emit('close')
             }
         },
     })
 
-    // State
+  
     const loading = ref(false)
     const password_open = ref(false)
 
-    // Form data
+   
     const formData = reactive<LoginFormData>({
         email: '',
         password: '',
     })
 
-    // Methods
+   
     const closeModal = () => {
         emit('update:modelValue', false)
         emit('close')
@@ -85,12 +81,12 @@
         loading.value = true
 
         try {
-            // Create FormData payload for login
+          
             const payload = new FormData()
             payload.append('login_id', formData.email)
             payload.append('password', formData.password)
 
-            // Call login API
+           
             const response = await $fetchCMS<LoginResponse>('/admin/login', {
                 method: 'POST',
                 body: payload,
@@ -99,56 +95,51 @@
             if (response.status && response.data) {
                 const userData = response.data
 
-                // Store user-specific data in localStorage
+              
                 if (import.meta.client) {
-                    // Store auth token in cookie for $fetchCMS to use
+                 
                     const tokenCookie = useCookie('XCMS-TOKEN')
                     tokenCookie.value = userData.token
 
-                    // Store user data
+                    
                     localStorage.setItem('citizen_user_data', JSON.stringify(userData))
 
-                    // Store user ID for reference
+                    
                     localStorage.setItem('citizen_user_id', userData.id.toString())
 
-                    // Store user-specific onboarding status using user ID as key
-                    // This prevents mixing up statuses between different users
+                 
                     const onboardingStatusKey = `citizen_onboard_status_${userData.id}`
 
                     if (userData.user_onboard_profile_status !== undefined) {
                         localStorage.setItem(onboardingStatusKey, userData.user_onboard_profile_status.toString())
                     }
 
-                    // Clean up old global onboarding status (if exists)
+                  
                     localStorage.removeItem('citizen_user_onboard_profile_status')
                     localStorage.removeItem('citizen_needs_onboarding')
                 }
 
-                // Check if user needs onboarding
-                // 0 = needs onboarding, 1 = onboarding completed
+              
                 const needsOnboarding = userData.user_onboard_profile_status === 0
 
                 if (import.meta.client) {
-                    // alert(response.message || 'Login successful')
+                   
                 }
 
-                // Don't close modal here, let parent handle the transition
-                // closeModal()
-
-                // If user has completed onboarding, redirect to their user type dashboard
+               
                 if (!needsOnboarding && userData.user_type?.[0]?.slug) {
                     const redirectSlug = userData.user_type[0].slug
                     const targetPath = redirectSlug === 'kamaaina' ? '/kamaina/' : `/${redirectSlug}/`
                     navigateTo(targetPath)
                 } else {
-                    // Emit login success with onboarding status for modal flow
+                
                     emit('login-success', needsOnboarding)
                 }
             }
         } catch (error: any) {
             console.error('Login error:', error)
 
-            // Handle error feedback
+           
             if (import.meta.client) {
                 const errorMessage = error?.data?.message || 'Login failed. Please check your credentials and try again.'
                 alert(errorMessage)
@@ -165,7 +156,7 @@
         }, 300)
     }
 
-    // Prevent body scroll when modal is open
+   
     watch(
         () => props.modelValue,
         (newValue) => {
@@ -175,12 +166,7 @@
         }
     )
 
-    // Cleanup on unmount
-    onUnmounted(() => {
-        if (import.meta.client) {
-            document.body.style.overflow = ''
-        }
-    })
+   
 </script>
 
 <template>
