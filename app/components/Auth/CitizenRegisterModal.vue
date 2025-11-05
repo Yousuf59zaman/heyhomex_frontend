@@ -29,21 +29,7 @@
         last_name: string
         password: string
         password_confirmation: string
-        price_range_id: string
-        location_id: string
         uuid: string
-    }
-
-    interface PriceRange {
-        id: number
-        min_price: string
-        max_price: string
-        range_title: string
-    }
-
-    interface Location {
-        id: number
-        name: string
     }
 
     interface ApiResponse<T> {
@@ -93,95 +79,15 @@
     const loading = ref(false)
     const validationErrors = ref<Record<string, string>>({})
     const passwordMatchError = ref("")
+    const showPassword = ref(false)
+    const showConfirmPassword = ref(false)
 
     const formData = reactive<RegisterFormData>({
         first_name: "",
         last_name: "",
         password: "",
         password_confirmation: "",
-        price_range_id: "",
-        location_id: "",
         uuid: getUuid.value?.uuid || "",
-    })
-
-    const priceRangeOptions = ref([
-        {label: "Select price range", value: "", disabled: true},
-    ])
-
-    const preferredLocationOptions = ref([
-        {label: "Select Preferred location", value: "", disabled: true},
-    ])
-
-    const loadingPriceRanges = ref(false)
-    const loadingLocations = ref(false)
-
-    const fetchPriceRanges = async () => {
-        try {
-            loadingPriceRanges.value = true
-            const response = await $fetchCMS<ApiResponse<PriceRange[]>>(
-                "/price-range/list",
-                {}
-            )
-
-            if (
-                response?.status === "success" &&
-                Array.isArray(response.data)
-            ) {
-                const apiOptions = response.data.map((range) => ({
-                    label: range.range_title,
-                    value: String(range.id),
-                    disabled: false,
-                }))
-
-                priceRangeOptions.value = [
-                    {label: "Select price range", value: "", disabled: true},
-                    ...apiOptions,
-                ]
-            }
-        } catch (error: any) {
-            console.error("Error fetching price ranges:", error)
-        } finally {
-            loadingPriceRanges.value = false
-        }
-    }
-
-    const fetchLocations = async () => {
-        try {
-            loadingLocations.value = true
-            const response = await $fetchCMS<ApiResponse<Location[]>>(
-                "/locations/list",
-                {}
-            )
-
-            if (
-                response?.status === "success" &&
-                Array.isArray(response.data)
-            ) {
-                const apiOptions = response.data.map((location) => ({
-                    label: location.name,
-                    value: String(location.id),
-                    disabled: false,
-                }))
-
-                preferredLocationOptions.value = [
-                    {
-                        label: "Select Preferred location",
-                        value: "",
-                        disabled: true,
-                    },
-                    ...apiOptions,
-                ]
-            }
-        } catch (error: any) {
-            console.error("Error fetching locations:", error)
-        } finally {
-            loadingLocations.value = false
-        }
-    }
-
-    onMounted(() => {
-        fetchPriceRanges()
-        fetchLocations()
     })
 
     const closeModal = () => {
@@ -192,13 +98,15 @@
         }, 300)
     }
 
+    const handleBack = () => {
+        emit("back")
+    }
+
     const resetForm = () => {
         formData.first_name = ""
         formData.last_name = ""
         formData.password = ""
         formData.password_confirmation = ""
-        formData.price_range_id = ""
-        formData.location_id = ""
         validationErrors.value = {}
         passwordMatchError.value = ""
     }
@@ -332,15 +240,32 @@
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-sm transition-colors duration-200',
         }">
         <template #header>
-            <div
-                class="w-full text-center px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
-                <h1
-                    class="text-2xl sm:text-3xl max-w-sm mx-auto font-semibold text-[#121A22] mb-2 leading-tight">
-                    You bring the dream. We'll map the way. ✨
-                </h1>
-                <p class="text-sm text-[#121A22]">
-                    Create your account to start your home journey
-                </p>
+            <div class="w-full px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
+                <div class="flex items-center justify-center relative">
+                    <!-- Back Button -->
+                    <button
+                        @click="handleBack"
+                        type="button"
+                        class="absolute left-0 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                        aria-label="Go back">
+                        <svg
+                            class="w-5 h-5 text-gray-700"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+
+                    <!-- Title -->
+                    <h1 class="text-2xl font-semibold text-[#121A22]">
+                        Set up profile
+                    </h1>
+                </div>
             </div>
         </template>
 
@@ -349,157 +274,191 @@
             <form
                 @submit.prevent="handleRegister"
                 class="space-y-4">
-                <div class="flex flex-col gap-2">
-                    <label
-                        for="fullName"
-                        class="text-sm font-medium text-gray-700"
-                        >First Name</label
-                    >
-                    <InputText
-                        id="fullName"
-                        v-model="formData.first_name"
-                        placeholder="Enter your full name"
-                        required
-                        :pt="{
-                            root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
-                        }" />
-                    <span
-                        v-if="validationErrors.first_name"
-                        class="text-xs text-red-500">
-                        {{ validationErrors.first_name }}
-                    </span>
-                </div>
-
-                <div class="flex flex-col gap-2">
-                    <label
-                        for="email"
-                        class="text-sm font-medium text-gray-700"
-                        >Last Name</label
-                    >
-                    <InputText
-                        id="email"
-                        v-model="formData.last_name"
-                        type="email"
-                        placeholder="Enter your email address"
-                        required
-                        :pt="{
-                            root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
-                        }" />
-                    <span
-                        v-if="validationErrors.last_name"
-                        class="text-xs text-red-500">
-                        {{ validationErrors.last_name }}
-                    </span>
-                </div>
-
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="flex flex-col gap-2">
                         <label
-                            for="password"
+                            for="firstName"
                             class="text-sm font-medium text-gray-700"
-                            >Password</label
+                            >First name</label
                         >
+                        <InputText
+                            id="firstName"
+                            v-model="formData.first_name"
+                            placeholder="Enter your first name"
+                            required
+                            :pt="{
+                                root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                            }" />
+                        <span
+                            v-if="validationErrors.first_name"
+                            class="text-xs text-red-500">
+                            {{ validationErrors.first_name }}
+                        </span>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label
+                            for="lastName"
+                            class="text-sm font-medium text-gray-700"
+                            >Last name</label
+                        >
+                        <InputText
+                            id="lastName"
+                            v-model="formData.last_name"
+                            placeholder="Enter your last name"
+                            required
+                            :pt="{
+                                root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                            }" />
+                        <span
+                            v-if="validationErrors.last_name"
+                            class="text-xs text-red-500">
+                            {{ validationErrors.last_name }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label
+                        for="password"
+                        class="text-sm font-medium text-gray-700"
+                        >Password</label
+                    >
+                    <div class="relative">
                         <InputText
                             id="password"
                             v-model="formData.password"
-                            type="password"
-                            placeholder="Create a password"
+                            :type="showPassword ? 'text' : 'password'"
+                            placeholder="Enter your password"
                             required
                             @blur="validatePasswords"
                             :pt="{
-                                root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                                root: 'w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                             }" />
-                        <span
-                            v-if="validationErrors.password"
-                            class="text-xs text-red-500">
-                            {{ validationErrors.password }}
-                        </span>
+                        <button
+                            type="button"
+                            @click="showPassword = !showPassword"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800 focus:outline-none"
+                            tabindex="-1">
+                            <svg
+                                v-if="!showPassword"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg
+                                v-else
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </button>
                     </div>
+                    <span
+                        v-if="validationErrors.password"
+                        class="text-xs text-red-500">
+                        {{ validationErrors.password }}
+                    </span>
+                </div>
 
-                    <div class="flex flex-col gap-2">
-                        <label
-                            for="confirmPassword"
-                            class="text-sm font-medium text-gray-700"
-                            >Confirm Password</label
-                        >
+                <div class="flex flex-col gap-2">
+                    <label
+                        for="confirmPassword"
+                        class="text-sm font-medium text-gray-700"
+                        >Confirm password</label
+                    >
+                    <div class="relative">
                         <InputText
                             id="confirmPassword"
                             v-model="formData.password_confirmation"
-                            type="password"
-                            placeholder="Confirm your password"
+                            :type="showConfirmPassword ? 'text' : 'password'"
+                            placeholder="Enter your password"
                             required
                             @blur="validatePasswords"
                             :pt="{
-                                root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                                root: 'w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                             }" />
-                        <span
-                            v-if="passwordMatchError"
-                            class="text-xs text-red-500">
-                            {{ passwordMatchError }}
-                        </span>
-                        <span
-                            v-if="validationErrors.password_confirmation"
-                            class="text-xs text-red-500">
-                            {{ validationErrors.password_confirmation }}
-                        </span>
+                        <button
+                            type="button"
+                            @click="showConfirmPassword = !showConfirmPassword"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800 focus:outline-none"
+                            tabindex="-1">
+                            <svg
+                                v-if="!showConfirmPassword"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg
+                                v-else
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </button>
                     </div>
+                    <span
+                        v-if="passwordMatchError"
+                        class="text-xs text-red-500">
+                        {{ passwordMatchError }}
+                    </span>
+                    <span
+                        v-if="validationErrors.password_confirmation"
+                        class="text-xs text-red-500">
+                        {{ validationErrors.password_confirmation }}
+                    </span>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="flex flex-col gap-2">
-                        <label
-                            for="priceRange"
-                            class="text-sm font-medium text-gray-700"
-                            >Price Range</label
-                        >
-                        <Dropdown
-                            id="priceRange"
-                            v-model="formData.price_range_id"
-                            :options="priceRangeOptions"
-                            optionLabel="label"
-                            optionValue="value"
-                            optionDisabled="disabled"
-                            placeholder="Select price range"
-                            :loading="loadingPriceRanges"
-                            :disabled="loadingPriceRanges"
-                            required
-                            :pt="{
-                                root: 'w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
-                                input: 'px-4 py-3',
-                            }" />
-                        <span
-                            v-if="validationErrors.price_range_id"
-                            class="text-xs text-red-500">
-                            {{ validationErrors.price_range_id }}
-                        </span>
+                <div class="text-xs text-gray-600 space-y-2.5 mt-2">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-4 h-4 border-2 border-gray-400 rounded-full flex-shrink-0"></span>
+                        <p class="leading-relaxed">Minimum of 8 characters</p>
                     </div>
-
-                    <div class="flex flex-col gap-2">
-                        <label
-                            for="preferredLocation"
-                            class="text-sm font-medium text-gray-700"
-                            >Preferred Location</label
-                        >
-                        <Dropdown
-                            id="preferredLocation"
-                            v-model="formData.location_id"
-                            :options="preferredLocationOptions"
-                            optionLabel="label"
-                            optionValue="value"
-                            optionDisabled="disabled"
-                            placeholder="Select location"
-                            :loading="loadingLocations"
-                            :disabled="loadingLocations"
-                            required
-                            :pt="{
-                                root: 'w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
-                                input: 'px-4 py-3',
-                            }" />
-                        <span
-                            v-if="validationErrors.location_id"
-                            class="text-xs text-red-500">
-                            {{ validationErrors.location_id }}
-                        </span>
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-4 h-4 border-2 border-gray-400 rounded-full flex-shrink-0"></span>
+                        <p class="leading-relaxed">Must have at least 1 symbol</p>
+                    </div>
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-4 h-4 border-2 border-gray-400 rounded-full flex-shrink-0"></span>
+                        <p class="leading-relaxed">Must have at least 1 capital letter</p>
+                    </div>
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-4 h-4 border-2 border-gray-400 rounded-full flex-shrink-0"></span>
+                        <p class="leading-relaxed">Password and confirm password must be the same</p>
                     </div>
                 </div>
 
@@ -512,18 +471,15 @@
                     :pt="{
                         root: 'w-full mb-3 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
                     }">
-                    {{ loading ? "Creating Account..." : "Create Account" }}
+                    {{ loading ? "Processing..." : "Next" }}
                 </Button>
 
                 <div class="text-center">
                     <p class="text-sm text-gray-600">
-                        Already have an account?
-                        <button
-                            type="button"
-                            @click="showLogin"
-                            class="text-blue-600 hover:text-blue-700 font-medium">
-                            Sign In
-                        </button>
+                        By using heyhomex, you agree to the
+                        <a href="/terms" class="text-gray-900 font-medium">Terms</a>
+                        and
+                        <a href="/privacy" class="text-gray-900 font-medium">Privacy Policy</a>.
                     </p>
                 </div>
             </form>

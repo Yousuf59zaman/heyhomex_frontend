@@ -38,7 +38,7 @@
     const resendAttempts = ref(0)
     const maxResendAttempts = 3
     const isResending = ref(false)
-    let timerInterval = null
+    const timerInterval = ref(null)
 
     const formattedTime = computed(() => {
         const minutes = Math.floor(timeRemaining.value / 60)
@@ -47,17 +47,20 @@
     })
 
     const startTimer = () => {
-        if (timerInterval) {
-            clearInterval(timerInterval)
+        if (timerInterval.value) {
+            clearInterval(timerInterval.value)
+            timerInterval.value = null
         }
 
         timeRemaining.value = 300
-        timerInterval = setInterval(() => {
-            if (timeRemaining.value > 0) {
-                timeRemaining.value--
-            } else {
-                if (timerInterval) {
-                    clearInterval(timerInterval)
+
+        timerInterval.value = setInterval(() => {
+            timeRemaining.value--
+
+            if (timeRemaining.value <= 0) {
+                if (timerInterval.value) {
+                    clearInterval(timerInterval.value)
+                    timerInterval.value = null
                 }
             }
         }, 1000)
@@ -66,8 +69,9 @@
     const closeModal = () => {
         emit("update:modelValue", false)
         emit("close")
-        if (timerInterval) {
-            clearInterval(timerInterval)
+        if (timerInterval.value) {
+            clearInterval(timerInterval.value)
+            timerInterval.value = null
         }
         setTimeout(() => {
             resetForm()
@@ -82,8 +86,9 @@
         otpDigits.value = ["", "", "", "", "", ""]
         timeRemaining.value = 300
         errorMessage.value = ""
-        if (timerInterval) {
-            clearInterval(timerInterval)
+        if (timerInterval.value) {
+            clearInterval(timerInterval.value)
+            timerInterval.value = null
         }
     }
 
@@ -231,6 +236,12 @@
         }
     }
 
+    onMounted(() => {
+        if (props.modelValue) {
+            startTimer()
+        }
+    })
+
     watch(
         () => props.modelValue,
         (newValue) => {
@@ -239,7 +250,6 @@
 
                 if (newValue) {
                     resendAttempts.value = 0
-
                     startTimer()
 
                     setTimeout(() => {
@@ -249,10 +259,26 @@
                         }
                     }, 100)
                 } else {
+                    // Clean up timer when modal closes
+                    if (timerInterval.value) {
+                        clearInterval(timerInterval.value)
+                        timerInterval.value = null
+                    }
                 }
             }
         }
     )
+
+    // Cleanup timer on component unmount
+    onUnmounted(() => {
+        if (timerInterval.value) {
+            clearInterval(timerInterval.value)
+            timerInterval.value = null
+        }
+        if (import.meta.client) {
+            document.body.style.overflow = ""
+        }
+    })
 </script>
 
 <template>
