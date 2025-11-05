@@ -126,7 +126,7 @@
     }
 
     const handleShowRegisterFromLogin = () => {
-        activeIndex.value = 4
+        activeIndex.value = 0
     }
 </script>
 

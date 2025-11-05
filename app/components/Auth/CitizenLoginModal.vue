@@ -151,10 +151,7 @@
     }
 
     const showRegister = () => {
-        closeModal()
-        setTimeout(() => {
-            emit("show-register")
-        }, 300)
+        emit("show-register")
     }
 
     watch(

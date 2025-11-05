@@ -74,3 +74,29 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Authentication System
+
+### Modal Flow
+
+The authentication system uses a multi-step modal flow managed by `CitizenAuthModals.vue`:
+
+**Step Navigation:**
+- `activeIndex = 0`: CitizenGetStartedModal (registration entry point)
+- `activeIndex = 1`: CitizenSendEmailModal
+- `activeIndex = 2`: CitizenVerifyOtpModal
+- `activeIndex = 3`: CitizenAccountTypeModal
+- `activeIndex = 4`: CitizenRegisterModal
+- `activeIndex = 5`: CitizenProfessionalModal
+- `activeIndex = 6`: CitizenLoginModal
+- `activeIndex = 7`: CitizenOnboardingModal
+
+**Key Features:**
+- Clicking "Create Account" in CitizenLoginModal navigates to CitizenGetStartedModal (step 0)
+- Clicking "Get Started" in the header opens CitizenGetStartedModal
+- Clicking "Sign In" in the header opens CitizenLoginModal (step 6)
+- Modal transitions are handled smoothly without closing and reopening
+
+**Files Modified:**
+- `app/components/Auth/CitizenLoginModal.vue`: Updated `showRegister()` to emit event without closing modal
+- `app/components/Auth/CitizenAuthModals.vue`: Updated `handleShowRegisterFromLogin()` to navigate to step 0
