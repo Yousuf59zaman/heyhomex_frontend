@@ -4,6 +4,7 @@
     const isScroll = ref(false)
     const isMobileMenuOpen = ref(false)
     const isOpenStartModal = ref(false)
+    const initialStep = ref(0)
     
 
     const handleScroll = () => {
@@ -15,25 +16,14 @@
     }
 
     const handleGetStarted = () => {
-        // console.log('Guest header: Get Started clicked')
-        // if ($citizenModals) {
-        //     console.log('Opening register modal via plugin')
-        //     $citizenModals.openGetStarted()
-        // } else {
-        //     console.error('citizenModals plugin not found!')
-        // }
-        isOpenStartModal.value = true;
+        initialStep.value = 0
+        isOpenStartModal.value = true
         isMobileMenuOpen.value = false
     }
 
     const handleSignIn = () => {
-        console.log('Guest header: Sign In clicked')
-        if ($citizenModals) {
-            console.log('Opening login modal via plugin')
-            $citizenModals.openLogin()
-        } else {
-            console.error('citizenModals plugin not found!')
-        }
+        initialStep.value = 6
+        isOpenStartModal.value = true
         isMobileMenuOpen.value = false
     }
 
@@ -181,7 +171,9 @@
     </nav>
 
 
-    <AuthCitizenAuthModalsCo v-model:isOpenStartModal="isOpenStartModal"/>
+    <AuthCitizenAuthModalsCo
+        v-model:isOpenStartModal="isOpenStartModal"
+        :initialStep="initialStep" />
 </template>
 
 <style></style>
