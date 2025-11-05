@@ -1,9 +1,7 @@
 <script setup lang="ts">
     type OnboardingStep = "motivation" | "budget" | "location" | "success"
 
-    const props = defineProps<{
-        modelValue: boolean
-    }>()
+    const props = defineProps<{ modelValue: boolean }>()
 
     const emit = defineEmits<{
         "update:modelValue": [value: boolean]
@@ -12,15 +10,19 @@
         close: []
     }>()
 
-    const visible = computed({
-        get: () => props.modelValue,
-        set: (value: boolean) => {
-            emit("update:modelValue", value)
+    const visible = ref(props.modelValue)
 
-            if (!value) {
-                emit("close")
-            }
-        },
+    watch(
+        () => props.modelValue,
+        (newVal) => {
+            visible.value = newVal;
+             
+        }
+    )
+
+    watch(visible, (newVal) => {
+        emit("update:modelValue", newVal)
+        if (!newVal) emit("close")
     })
 
     interface OnboardingData {
@@ -215,7 +217,7 @@
                 const errorMessage =
                     error?.data?.message ||
                     "Failed to load questions. Please try again."
-                alert(errorMessage)
+                // alert(errorMessage)
             }
         } finally {
             questionsLoading.value = false
@@ -331,7 +333,7 @@
             }
 
             if (import.meta.client) {
-                alert(response.message || "User onboarded successfully")
+                // alert(response.message || "User onboarded successfully")
             }
 
             emit("onboarding-complete", {...formData})
@@ -373,11 +375,7 @@
         }
     )
 
-    onUnmounted(() => {
-        if (import.meta.client) {
-            document.body.style.overflow = ""
-        }
-    })
+   
 </script>
 
 <template>

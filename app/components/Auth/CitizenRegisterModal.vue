@@ -1,6 +1,8 @@
 <script setup lang="ts">
     const getUuid = useState<{uuid: string}>("uuid")
 
+    const props = defineProps<{ modelValue: boolean }>()
+
     const emit = defineEmits<{
         "update:modelValue": [value: boolean]
         "register-success": [data: RegisterFormData]
@@ -9,19 +11,20 @@
         close: []
     }>()
 
-    const props = defineProps<{
-        modelValue: boolean
-    }>()
+    
 
-    const visible = computed({
-        get: () => props.modelValue,
-        set: (value: boolean) => {
-            emit("update:modelValue", value)
+    const visible = ref(props.modelValue)
 
-            if (!value) {
-                emit("close")
-            }
-        },
+    watch(
+        () => props.modelValue,
+        (newVal) => {
+            visible.value = newVal
+        }
+    )
+
+    watch(visible, (newVal) => {
+        emit("update:modelValue", newVal)
+        if (!newVal) emit("close")
     })
 
     interface RegisterFormData {
@@ -90,14 +93,7 @@
         uuid: getUuid.value?.uuid || "",
     })
 
-    const closeModal = () => {
-        emit("update:modelValue", false)
-        emit("close")
-        setTimeout(() => {
-            resetForm()
-        }, 300)
-    }
-
+    
     const handleBack = () => {
         emit("back")
     }
@@ -206,12 +202,12 @@
         }
     }
 
-    const showLogin = () => {
-        closeModal()
-        setTimeout(() => {
-            emit("show-login")
-        }, 300)
-    }
+    // const showLogin = () => {
+    //     closeModal()
+    //     setTimeout(() => {
+    //         emit("show-login")
+    //     }, 300)
+    // }
 
     watch(
         () => props.modelValue,

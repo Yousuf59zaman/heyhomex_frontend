@@ -1,6 +1,6 @@
-const LOGIN = '/customer/login';
-const LOGOUT = '/customer/logout';
-const CURRENT_USER = '/customer/user';
+const LOGIN = '/admin/login';
+const LOGOUT = '/admin/logout';
+const CURRENT_USER = '/admin/user';
 
 export const citizenUser = () => {
     return useState('citizen_user', () => undefined);

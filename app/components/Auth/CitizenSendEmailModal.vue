@@ -1,12 +1,6 @@
 <script setup>
     const baseURL = useRuntimeConfig().public.API_BASE_URL
 
-    const setUuid = useState("uuid", () => ({
-        uuid: "",
-    }))
-
-    const emit = defineEmits(["update:modelValue", "next", "back", "close"])
-
     const props = defineProps({
         modelValue: {
             type: Boolean,
@@ -14,15 +8,29 @@
         },
     })
 
-    const visible = computed({
-        get: () => props.modelValue,
-        set: (value) => {
-            emit("update:modelValue", value)
+    const setUuid = useState("uuid", () => ({
+        uuid: "",
+    }))
 
-            if (!value) {
-                emit("close")
+    const emit = defineEmits(["update:modelValue", "next", "back", "close"])
+
+    
+
+    const visible = ref(props.modelValue)
+
+    watch(
+        () => props.modelValue,
+        (newVal) => {
+            visible.value = newVal
+            if (newVal && setUuid.value?.uuid) {
+                setUuid.value = {uuid: ""}
             }
-        },
+        }
+    )
+
+    watch(visible, (newVal) => {
+        emit("update:modelValue", newVal)
+        if (!newVal) emit("close")
     })
 
     const validations_errors = ref({})
@@ -32,25 +40,9 @@
         email: "",
     })
 
-    watch(
-        () => props.modelValue,
-        (newValue) => {
-            if (newValue && setUuid.value?.uuid) {
-                setUuid.value = {uuid: ""}
-            }
-        }
-    )
-
     const isLoading = ref(false)
 
-    const closeModal = () => {
-        emit("update:modelValue", false)
-        emit("close")
-        setTimeout(() => {
-            formData.value.email = ""
-            validations_errors.value = {}
-        }, 300)
-    }
+    
 
     const handleBack = () => {
         emit("back")
@@ -73,7 +65,6 @@
 
         try {
             isLoading.value = true
-
             const response = await $fetch(`${baseURL}reg-otp-flow`, {
                 method: "POST",
                 headers: {
@@ -87,10 +78,9 @@
                     ...(setUuid.value || {}),
                     uuid: response.data?.uuid,
                 }
-
                 emit("next", formData.value.email)
             } else {
-                validations_errors.value.message =
+                validations_errors.value =
                     response?.message || "Unable to send OTP. Please try again."
             }
         } catch (e) {
@@ -100,7 +90,8 @@
             )
             const status = e?.response?.status
             if (status === 422 || status === 409) {
-                const errorsData = e.response?._data?.data || {}
+                const errorsData = e.response?._data.errors || {}
+                console.log("Errors Data", errorsData)
                 for (const key in errorsData) {
                     if (errorsData.hasOwnProperty(key)) {
                         validations_errors.value[key] = errorsData[key][0]
@@ -116,11 +107,6 @@
         } finally {
             isLoading.value = false
         }
-    }
-
-    const handleNext = () => {
-        console.log("handle next called")
-        handleSubmit()
     }
 
     watch(
@@ -190,7 +176,7 @@
                     v-model="formData.email"
                     type="email"
                     placeholder="Enter your email address"
-                    @keyup.enter="handleNext"
+                    @keyup.enter="handleSubmit"
                     :pt="{
                         root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                     }" />
@@ -202,7 +188,7 @@
             </div>
 
             <button
-                @click="handleNext"
+                @click="handleSubmit"
                 :disabled="isLoading"
                 type="button"
                 class="w-full px-6 py-3.5 font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"

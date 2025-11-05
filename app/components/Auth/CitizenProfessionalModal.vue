@@ -6,19 +6,20 @@
         close: []
     }>()
 
-    const props = defineProps<{
-        modelValue: boolean
-    }>()
+    const props = defineProps<{ modelValue: boolean }>()
 
-    const visible = computed({
-        get: () => props.modelValue,
-        set: (value: boolean) => {
-            emit("update:modelValue", value)
+    const visible = ref(props.modelValue)
 
-            if (!value) {
-                emit("close")
-            }
-        },
+    watch(
+        () => props.modelValue,
+        (newVal) => {
+            visible.value = newVal
+        }
+    )
+
+    watch(visible, (newVal) => {
+        emit("update:modelValue", newVal)
+        if (!newVal) emit("close")
     })
 
     const formData = reactive({
@@ -41,27 +42,7 @@
         {label: "Investor", value: "investor"},
     ]
 
-    const closeModal = () => {
-        emit("update:modelValue", false)
-        emit("close")
-        setTimeout(() => {
-            resetForm()
-        }, 300)
-    }
-
-    const handleBack = () => {
-        emit("back")
-    }
-
-    const resetForm = () => {
-        formData.professionalType = ""
-        formData.licenseNumber = ""
-        formData.brokerId = ""
-        formData.zipCode = ""
-        formData.mobilePhone = ""
-        formData.extension = ""
-        errorMessage.value = ""
-    }
+    
 
     const handleNext = async () => {
         errorMessage.value = ""
