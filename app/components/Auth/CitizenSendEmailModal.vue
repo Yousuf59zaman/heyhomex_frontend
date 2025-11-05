@@ -1,7 +1,12 @@
 <script setup>
     const baseURL = useRuntimeConfig().public.API_BASE_URL
 
-    // Props
+    const setUuid = useState("uuid", () => ({
+        uuid: "",
+    }))
+
+    const emit = defineEmits(["update:modelValue", "next", "back", "close"])
+
     const props = defineProps({
         modelValue: {
             type: Boolean,
@@ -9,38 +14,35 @@
         },
     })
 
-    // Emits
-    const emit = defineEmits(["update:modelValue", "next", "close"])
-
-    // Computed for two-way binding
     const visible = computed({
         get: () => props.modelValue,
-        set: (value) => emit("update:modelValue", value),
+        set: (value) => {
+            emit("update:modelValue", value)
+
+            if (!value) {
+                emit("close")
+            }
+        },
     })
 
-    // Datas
     const validations_errors = ref({})
     const skip_validations = ref([])
+
     const formData = ref({
         email: "",
     })
-    const setUuid = useState('uuid', () => ({
-        uuid: ''
-    }))
 
-    // Clear uuid when modal opens
     watch(
         () => props.modelValue,
         (newValue) => {
             if (newValue && setUuid.value?.uuid) {
-                setUuid.value = { uuid: '' }
+                setUuid.value = {uuid: ""}
             }
         }
     )
-    const emailError = ref("")
+
     const isLoading = ref(false)
 
-    // Methods
     const closeModal = () => {
         emit("update:modelValue", false)
         emit("close")
@@ -51,22 +53,22 @@
     }
 
     const handleBack = () => {
-        closeModal()
+        emit("back")
     }
 
     const handleSubmit = async () => {
-        validations_errors.value = {};
+        validations_errors.value = {}
         const errors = Object.keys(formData.value).filter(
             (item) =>
                 !formData.value[item] && !skip_validations.value.includes(item)
         )
-        
+
         if (errors.length > 0) {
             errors.map((item) => {
                 validations_errors.value[item] = `Email is required`
             })
             console.log(validations_errors.value)
-            return;
+            return
         }
 
         try {
@@ -77,21 +79,25 @@
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: { ...formData.value },
+                body: {...formData.value},
             })
 
             if (response?.status === "success") {
-                // save uuid for verification step
-                setUuid.value = { ...(setUuid.value || {}), uuid: response.data?.uuid }
+                setUuid.value = {
+                    ...(setUuid.value || {}),
+                    uuid: response.data?.uuid,
+                }
 
-                // only proceed to next on success
                 emit("next", formData.value.email)
-                closeModal()
             } else {
-                validations_errors.value.message = response?.message || "Unable to send OTP. Please try again."
+                validations_errors.value.message =
+                    response?.message || "Unable to send OTP. Please try again."
             }
         } catch (e) {
-            console.log("Get Message", e instanceof Error ? e.message : String(e))
+            console.log(
+                "Get Message",
+                e instanceof Error ? e.message : String(e)
+            )
             const status = e?.response?.status
             if (status === 422 || status === 409) {
                 const errorsData = e.response?._data?.data || {}
@@ -101,9 +107,11 @@
                     }
                 }
             } else if (status === 404) {
-                validations_errors.value.message = e.response?._data?.message || 'Resource not found.'
+                validations_errors.value.message =
+                    e.response?._data?.message || "Resource not found."
             } else {
-                validations_errors.value.message = e?.message || "Something went wrong. Please try again."
+                validations_errors.value.message =
+                    e?.message || "Something went wrong. Please try again."
             }
         } finally {
             isLoading.value = false
@@ -115,7 +123,6 @@
         handleSubmit()
     }
 
-    // Prevent body scroll when modal is open
     watch(
         () => props.modelValue,
         (newValue) => {
@@ -124,13 +131,6 @@
             }
         }
     )
-
-    // Cleanup on unmount
-    onUnmounted(() => {
-        if (import.meta.client) {
-            document.body.style.overflow = ""
-        }
-    })
 </script>
 
 <template>
@@ -152,7 +152,6 @@
         <template #header>
             <div class="w-full px-6 pt-6 pb-2">
                 <div class="flex items-center justify-center relative">
-                    <!-- Back Button -->
                     <button
                         @click="handleBack"
                         type="button"
@@ -171,7 +170,6 @@
                         </svg>
                     </button>
 
-                    <!-- Title -->
                     <h2 class="text-xl font-semibold text-[#121A22]">
                         Add your email
                     </h2>
@@ -181,7 +179,6 @@
 
         <!-- Content -->
         <div class="px-6 pb-6 space-y-4">
-            <!-- Email Input -->
             <div class="flex flex-col gap-2">
                 <label
                     for="email"
@@ -204,7 +201,6 @@
                 </span>
             </div>
 
-            <!-- Next Button -->
             <button
                 @click="handleNext"
                 :disabled="isLoading"
@@ -236,7 +232,6 @@
                 {{ isLoading ? "Loading..." : "Next" }}
             </button>
 
-            <!-- Terms and Privacy -->
             <div class="text-center pt-2">
                 <p class="text-xs text-gray-600">
                     By using heyhomex, you agree to the

@@ -1,23 +1,29 @@
 <script setup lang="ts">
-// Props
+
+const emit = defineEmits<{
+    'update:modelValue': [value: boolean]
+    'next': [data: any]
+    'back': []
+    'close': []
+}>()
+
 const props = defineProps<{
     modelValue: boolean
 }>()
 
-// Emits
-const emit = defineEmits<{
-    'update:modelValue': [value: boolean]
-    'next': [data: any]
-    'close': []
-}>()
 
-// Computed for two-way binding
 const visible = computed({
     get: () => props.modelValue,
-    set: (value: boolean) => emit('update:modelValue', value),
+    set: (value: boolean) => {
+        emit('update:modelValue', value)
+     
+        if (!value) {
+            emit('close')
+        }
+    },
 })
 
-// State
+
 const formData = reactive({
     professionalType: '',
     licenseNumber: '',
@@ -30,7 +36,7 @@ const formData = reactive({
 const errorMessage = ref('')
 const isSubmitting = ref(false)
 
-// Professional type options
+
 const professionalTypes = [
     { label: 'Real Estate Agent', value: 'agent' },
     { label: 'Real Estate Broker', value: 'broker' },
@@ -39,7 +45,7 @@ const professionalTypes = [
     { label: 'Investor', value: 'investor' },
 ]
 
-// Methods
+
 const closeModal = () => {
     emit('update:modelValue', false)
     emit('close')
@@ -49,7 +55,7 @@ const closeModal = () => {
 }
 
 const handleBack = () => {
-    closeModal()
+    emit('back')
 }
 
 const resetForm = () => {
@@ -65,7 +71,7 @@ const resetForm = () => {
 const handleNext = async () => {
     errorMessage.value = ''
 
-    // Validation
+   
     if (!formData.professionalType) {
         errorMessage.value = 'Please select a professional type'
         return
@@ -89,13 +95,6 @@ const handleNext = async () => {
     isSubmitting.value = true
 
     try {
-        // TODO: Replace with actual API call
-        // const response = await $fetchCitizen('/citizen/professional-info', {
-        //     method: 'POST',
-        //     body: formData
-        // })
-
-        // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1000))
 
         console.log('Professional info submitted:', formData)
@@ -107,7 +106,7 @@ const handleNext = async () => {
     }
 }
 
-// Watch for modal open
+
 watch(
     () => props.modelValue,
     (newValue) => {
@@ -117,7 +116,7 @@ watch(
     }
 )
 
-// Cleanup on unmount
+
 onUnmounted(() => {
     if (import.meta.client) {
         document.body.style.overflow = ''
@@ -152,9 +151,9 @@ onUnmounted(() => {
             </div>
         </template>
 
-        <!-- Content -->
+   
         <div class="px-6 pb-6 space-y-4">
-            <!-- Professional Type -->
+         
             <div class="space-y-2">
                 <label for="professionalType" class="block text-sm font-medium text-gray-700">
                     Professional type
@@ -172,7 +171,7 @@ onUnmounted(() => {
                     }" />
             </div>
 
-            <!-- License Number and Broker ID -->
+           
             <div class="grid grid-cols-2 gap-3">
                 <div class="space-y-2">
                     <label for="licenseNumber" class="block text-sm font-medium text-gray-700">
@@ -199,7 +198,7 @@ onUnmounted(() => {
                 </div>
             </div>
 
-            <!-- Zip Code -->
+           
             <div class="space-y-2">
                 <label for="zipCode" class="block text-sm font-medium text-gray-700">
                     Zip code
@@ -212,7 +211,7 @@ onUnmounted(() => {
                     class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
             </div>
 
-            <!-- Mobile/Phone Number and Extension -->
+           
             <div class="grid grid-cols-2 gap-3">
                 <div class="space-y-2">
                     <label for="mobilePhone" class="block text-sm font-medium text-gray-700">
@@ -239,12 +238,12 @@ onUnmounted(() => {
                 </div>
             </div>
 
-            <!-- Error Message -->
+           
             <div v-if="errorMessage" class="text-center">
                 <p class="text-xs text-red-500">{{ errorMessage }}</p>
             </div>
 
-            <!-- Next Button -->
+          
             <button
                 @click="handleNext"
                 :disabled="isSubmitting"
@@ -253,7 +252,7 @@ onUnmounted(() => {
                 {{ isSubmitting ? 'Submitting...' : 'Next' }}
             </button>
 
-            <!-- Terms and Privacy -->
+            
             <div class="text-center pt-2">
                 <p class="text-xs text-gray-600">
                     By using heyhomex, you agree to the

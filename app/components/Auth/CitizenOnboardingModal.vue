@@ -79,13 +79,20 @@
     const emit = defineEmits<{
         'update:modelValue': [value: boolean]
         'onboarding-complete': [data: OnboardingData]
+        'back': []
         close: []
     }>()
 
     // Computed for two-way binding
     const visible = computed({
         get: () => props.modelValue,
-        set: (value: boolean) => emit('update:modelValue', value),
+        set: (value: boolean) => {
+            emit('update:modelValue', value)
+            // If dialog is being closed (value is false), emit close event
+            if (!value) {
+                emit('close')
+            }
+        },
     })
 
     // State
@@ -309,8 +316,8 @@
                 alert(response.message || 'User onboarded successfully')
             }
 
+            // Don't close modal here, let parent handle the transition and redirect
             emit('onboarding-complete', { ...formData })
-            closeModal()
 
             // Redirect to dashboard based on user's first user_type slug
             // Fallback to '/kamaina/' if user_type is not available

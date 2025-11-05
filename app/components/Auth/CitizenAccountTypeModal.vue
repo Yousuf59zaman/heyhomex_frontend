@@ -8,13 +8,20 @@ const props = defineProps<{
 const emit = defineEmits<{
     'update:modelValue': [value: boolean]
     'next': [accountType: string]
+    'back': []
     'close': []
 }>()
 
 // Computed for two-way binding
 const visible = computed({
     get: () => props.modelValue,
-    set: (value: boolean) => emit('update:modelValue', value),
+    set: (value: boolean) => {
+        emit('update:modelValue', value)
+        // If dialog is being closed (value is false), emit close event
+        if (!value) {
+            emit('close')
+        }
+    },
 })
 
 // State
@@ -30,7 +37,7 @@ const closeModal = () => {
 }
 
 const handleBack = () => {
-    closeModal()
+    emit('back')
 }
 
 const resetForm = () => {

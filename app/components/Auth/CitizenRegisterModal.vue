@@ -1,5 +1,29 @@
 <script setup lang="ts">
-    // Interfaces
+    const getUuid = useState<{uuid: string}>("uuid")
+
+    const emit = defineEmits<{
+        "update:modelValue": [value: boolean]
+        "register-success": [data: RegisterFormData]
+        "show-login": []
+        back: []
+        close: []
+    }>()
+
+    const props = defineProps<{
+        modelValue: boolean
+    }>()
+
+    const visible = computed({
+        get: () => props.modelValue,
+        set: (value: boolean) => {
+            emit("update:modelValue", value)
+
+            if (!value) {
+                emit("close")
+            }
+        },
+    })
+
     interface RegisterFormData {
         first_name: string
         last_name: string
@@ -7,7 +31,7 @@
         password_confirmation: string
         price_range_id: string
         location_id: string
-        uuid : string
+        uuid: string
     }
 
     interface PriceRange {
@@ -66,162 +90,138 @@
         user_onboard_profile_status: number
     }
 
-    // Props
-    const props = defineProps<{
-        modelValue: boolean
-    }>()
-
-    // Emits
-    const emit = defineEmits<{
-        'update:modelValue': [value: boolean]
-        'register-success': [data: RegisterFormData]
-        'show-login': []
-        close: []
-    }>()
-
-    const getUuid = useState<{ uuid: string }>("uuid")
-
-    // Computed for two-way binding
-    const visible = computed({
-        get: () => props.modelValue,
-        set: (value: boolean) => emit('update:modelValue', value),
-    })
-
-    // State
     const loading = ref(false)
     const validationErrors = ref<Record<string, string>>({})
-    const passwordMatchError = ref('')
+    const passwordMatchError = ref("")
 
-    // Form data
     const formData = reactive<RegisterFormData>({
-        first_name: '',
-        last_name: '',
-        password: '',
-        password_confirmation: '',
-        price_range_id: '',
-        location_id: '',
-        uuid : getUuid.value?.uuid || ''
+        first_name: "",
+        last_name: "",
+        password: "",
+        password_confirmation: "",
+        price_range_id: "",
+        location_id: "",
+        uuid: getUuid.value?.uuid || "",
     })
 
-    // Dynamic options - fetched from API
     const priceRangeOptions = ref([
-        { label: 'Select price range', value: '', disabled: true },
+        {label: "Select price range", value: "", disabled: true},
     ])
 
     const preferredLocationOptions = ref([
-        { label: 'Select Preferred location', value: '', disabled: true },
+        {label: "Select Preferred location", value: "", disabled: true},
     ])
 
-    // Loading states for dropdowns
     const loadingPriceRanges = ref(false)
     const loadingLocations = ref(false)
 
-    // Fetch price ranges from API
     const fetchPriceRanges = async () => {
         try {
             loadingPriceRanges.value = true
-            const response = await $fetchCMS<ApiResponse<PriceRange[]>>('/price-range/list',{})
+            const response = await $fetchCMS<ApiResponse<PriceRange[]>>(
+                "/price-range/list",
+                {}
+            )
 
-            if (response?.status === 'success' && Array.isArray(response.data)) {
-                // Map API data to dropdown format
+            if (
+                response?.status === "success" &&
+                Array.isArray(response.data)
+            ) {
                 const apiOptions = response.data.map((range) => ({
                     label: range.range_title,
                     value: String(range.id),
                     disabled: false,
                 }))
 
-                // Keep the default "Select" option and add API data
                 priceRangeOptions.value = [
-                    { label: 'Select price range', value: '', disabled: true },
+                    {label: "Select price range", value: "", disabled: true},
                     ...apiOptions,
                 ]
             }
         } catch (error: any) {
-            console.error('Error fetching price ranges:', error)
-            // Keep default option if API fails
+            console.error("Error fetching price ranges:", error)
         } finally {
             loadingPriceRanges.value = false
         }
     }
 
-    // Fetch locations from API
     const fetchLocations = async () => {
         try {
             loadingLocations.value = true
-            const response = await $fetchCMS<ApiResponse<Location[]>>('/locations/list',{})
+            const response = await $fetchCMS<ApiResponse<Location[]>>(
+                "/locations/list",
+                {}
+            )
 
-            if (response?.status === 'success' && Array.isArray(response.data)) {
-                // Map API data to dropdown format
+            if (
+                response?.status === "success" &&
+                Array.isArray(response.data)
+            ) {
                 const apiOptions = response.data.map((location) => ({
                     label: location.name,
                     value: String(location.id),
                     disabled: false,
                 }))
 
-                // Keep the default "Select" option and add API data
                 preferredLocationOptions.value = [
-                    { label: 'Select Preferred location', value: '', disabled: true },
+                    {
+                        label: "Select Preferred location",
+                        value: "",
+                        disabled: true,
+                    },
                     ...apiOptions,
                 ]
             }
         } catch (error: any) {
-            console.error('Error fetching locations:', error)
-            // Keep default option if API fails
+            console.error("Error fetching locations:", error)
         } finally {
             loadingLocations.value = false
         }
     }
 
-    // Fetch dropdown data on component mount
     onMounted(() => {
         fetchPriceRanges()
         fetchLocations()
     })
 
-    // Methods
     const closeModal = () => {
-        emit('update:modelValue', false)
-        emit('close')
+        emit("update:modelValue", false)
+        emit("close")
         setTimeout(() => {
             resetForm()
         }, 300)
     }
 
     const resetForm = () => {
-        formData.first_name = ''
-        formData.last_name = ''
-        formData.password = ''
-        formData.password_confirmation = ''
-        formData.price_range_id = ''
-        formData.location_id = ''
+        formData.first_name = ""
+        formData.last_name = ""
+        formData.password = ""
+        formData.password_confirmation = ""
+        formData.price_range_id = ""
+        formData.location_id = ""
         validationErrors.value = {}
-        passwordMatchError.value = ''
+        passwordMatchError.value = ""
     }
 
     const validatePasswords = () => {
         if (formData.password && formData.password_confirmation) {
             if (formData.password !== formData.password_confirmation) {
-                passwordMatchError.value = 'Passwords do not match'
+                passwordMatchError.value = "Passwords do not match"
                 return false
             }
         }
-        passwordMatchError.value = ''
+        passwordMatchError.value = ""
         return true
     }
 
     const showError = (message: string) => {
-        // You can integrate with a toast notification system here
-        console.error('Error:', message)
-        // For now, we'll use alert, but you can replace this with a better notification
-        alert(message)
+        // alert(message)
     }
 
     const handleRegister = async () => {
-        // Clear previous errors
         validationErrors.value = {}
-        passwordMatchError.value = ''
+        passwordMatchError.value = ""
 
-        // Validate passwords match
         if (!validatePasswords()) {
             loading.value = false
             return
@@ -231,53 +231,53 @@
         // emit('register-success', { ...formData })
         const uuid = getUuid.value?.uuid
         if (!uuid) {
-            showError("Session expired. Please go back and re-enter your email.")
+            showError(
+                "Session expired. Please go back and re-enter your email."
+            )
             loading.value = false
             return
         }
 
         try {
-            const response = await $fetchCMS<ApiResponse<RegistrationResponseData>>('/register', {
-                method: 'POST',
+            const response = await $fetchCMS<
+                ApiResponse<RegistrationResponseData>
+            >("/register", {
+                method: "POST",
                 body: formData,
             })
 
-            console.log('Response', response)
+            console.log("Response", response)
 
             if (response.status) {
-                console.log('Response in block', response)
+                console.log("Response in block", response)
 
-                // Store user data and onboarding status from API response
                 if (import.meta.client) {
-                    // Store the user_onboard_profile_status from API response
-                    // 0 = needs onboarding, 1 = onboarding completed
-                    const onboardingStatus = response.data?.user_onboard_profile_status ?? 0
-                    localStorage.setItem('citizen_user_onboard_profile_status', String(onboardingStatus))
-                    // localStorage.setItem('citizen_temp_email', formData.email)
-
-                    // Also store user data for reference
-                    localStorage.setItem('citizen_user_data', JSON.stringify({
-                        id: response.data?.id,
-                        name: response.data?.name,
-                        email: response.data?.email,
-                        uid: response.data?.uid
-                    }))
+                    const onboardingStatus =
+                        response.data?.user_onboard_profile_status ?? 0
+                    localStorage.setItem(
+                        "citizen_user_onboard_profile_status",
+                        String(onboardingStatus)
+                    )
+                    localStorage.setItem(
+                        "citizen_user_data",
+                        JSON.stringify({
+                            id: response.data?.id,
+                            name: response.data?.name,
+                            email: response.data?.email,
+                            uid: response.data?.uid,
+                        })
+                    )
                 }
 
-                // emit('register-success', { ...formData })
-                // closeModal()
-
-                // Show login modal after registration
                 setTimeout(() => {
-                    emit('register-success', { ...formData })
+                    emit("register-success", {...formData})
                 }, 300)
             } else {
-                // showError(response?.message || 'Registration failed')
             }
         } catch (e: any) {
-            console.log('Get Message', e.message)
+            console.log("Get Message", e.message)
             if (e.response?.status === 404 || e.response?.status === 422) {
-                console.log('here 1', e.response)
+                console.log("here 1", e.response)
                 if (e.response?.status === 404 || e.response?.status === 409) {
                     for (const key in e.response._data.data) {
                         if (e.response._data.data.hasOwnProperty(key)) {
@@ -287,7 +287,11 @@
                     }
                 }
             } else {
-                showError(e.response?.message || e.message || 'An error occurred during registration')
+                showError(
+                    e.response?.message ||
+                        e.message ||
+                        "An error occurred during registration"
+                )
             }
         } finally {
             loading.value = false
@@ -297,26 +301,18 @@
     const showLogin = () => {
         closeModal()
         setTimeout(() => {
-            emit('show-login')
+            emit("show-login")
         }, 300)
     }
 
-    // Prevent body scroll when modal is open
     watch(
         () => props.modelValue,
         (newValue) => {
             if (import.meta.client) {
-                document.body.style.overflow = newValue ? 'hidden' : ''
+                document.body.style.overflow = newValue ? "hidden" : ""
             }
         }
     )
-
-    // Cleanup on unmount
-    onUnmounted(() => {
-        if (import.meta.client) {
-            document.body.style.overflow = ''
-        }
-    })
 </script>
 
 <template>
@@ -327,7 +323,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-register-modal"
-        :style="{ width: 'min(45rem, 95vw)', maxWidth: '95vw' }"
+        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-2xl shadow-2xl m-4',
             header: 'border-0 pb-0',
@@ -516,7 +512,7 @@
                     :pt="{
                         root: 'w-full mb-3 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
                     }">
-                    {{ loading ? 'Creating Account...' : 'Create Account' }}
+                    {{ loading ? "Creating Account..." : "Create Account" }}
                 </Button>
 
                 <div class="text-center">

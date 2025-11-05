@@ -36,13 +36,20 @@
         'update:modelValue': [value: boolean]
         'login-success': [needsOnboarding: boolean]
         'show-register': []
+        'back': []
         close: []
     }>()
 
     // Computed for two-way binding
     const visible = computed({
         get: () => props.modelValue,
-        set: (value: boolean) => emit('update:modelValue', value),
+        set: (value: boolean) => {
+            emit('update:modelValue', value)
+            // If dialog is being closed (value is false), emit close event
+            if (!value) {
+                emit('close')
+            }
+        },
     })
 
     // State
@@ -125,7 +132,8 @@
                     // alert(response.message || 'Login successful')
                 }
 
-                closeModal()
+                // Don't close modal here, let parent handle the transition
+                // closeModal()
 
                 // If user has completed onboarding, redirect to their user type dashboard
                 if (!needsOnboarding && userData.user_type?.[0]?.slug) {

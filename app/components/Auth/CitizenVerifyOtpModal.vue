@@ -1,7 +1,13 @@
 <script setup>
     const baseURL = useRuntimeConfig().public.API_BASE_URL
 
-    // Props
+    const emit = defineEmits([
+        "update:modelValue",
+        "verify-success",
+        "back",
+        "close",
+    ])
+
     const props = defineProps({
         modelValue: {
             type: Boolean,
@@ -13,39 +19,33 @@
         },
     })
 
-    // Emits
-    const emit = defineEmits(["update:modelValue", "verify-success", "close"])
-
-    // Computed for two-way binding
     const visible = computed({
         get: () => props.modelValue,
-        set: (value) => emit("update:modelValue", value),
+        set: (value) => {
+            emit("update:modelValue", value)
+            if (!value) {
+                emit("close")
+            }
+        },
     })
 
-    // State
     const otpDigits = ref(["", "", "", "", "", ""])
-    const timeRemaining = ref(300) // 5 minutes in seconds
+    const timeRemaining = ref(300)
     const isVerifying = ref(false)
     const errorMessage = ref("")
     const otpInputRefs = ref([])
     const getUuid = useState("uuid")
-
-    // Resend OTP state
     const resendAttempts = ref(0)
     const maxResendAttempts = 3
     const isResending = ref(false)
-
-    // Timer countdown
     let timerInterval = null
 
-    //Computed
     const formattedTime = computed(() => {
         const minutes = Math.floor(timeRemaining.value / 60)
         const seconds = timeRemaining.value % 60
         return `${minutes}:${seconds.toString().padStart(2, "0")}`
     })
 
-    //Interval
     const startTimer = () => {
         if (timerInterval) {
             clearInterval(timerInterval)
@@ -63,7 +63,6 @@
         }, 1000)
     }
 
-    // Methods
     const closeModal = () => {
         emit("update:modelValue", false)
         emit("close")
@@ -76,7 +75,7 @@
     }
 
     const handleBack = () => {
-        closeModal()
+        emit("back")
     }
 
     const resetForm = () => {
@@ -92,7 +91,6 @@
         const input = event.target
         const value = input.value
 
-        // Only allow digits
         if (value && !/^\d$/.test(value)) {
             input.value = ""
             return
@@ -100,7 +98,6 @@
 
         otpDigits.value[index] = value
 
-        // Auto-focus next input
         if (value && index < 5) {
             const nextInput = otpInputRefs.value[index + 1]
             if (nextInput) {
@@ -110,7 +107,6 @@
     }
 
     const handleKeyDown = (index, event) => {
-        // Handle backspace
         if (event.key === "Backspace" && !otpDigits.value[index] && index > 0) {
             const prevInput = otpInputRefs.value[index - 1]
             if (prevInput) {
@@ -127,7 +123,6 @@
             const digits = pastedData.split("")
             otpDigits.value = digits
 
-            // Focus last input
             const lastInput = otpInputRefs.value[5]
             if (lastInput) {
                 lastInput.focus()
@@ -136,13 +131,11 @@
     }
 
     const handleResend = async () => {
-        // Prevent repeated requests
         if (resendAttempts.value >= maxResendAttempts) {
             errorMessage.value = "You have reached the maximum resend attempts."
             return
         }
 
-        // Ensure uuid exists (passed from send-email step)
         const uuid = getUuid.value?.uuid
         if (!uuid) {
             errorMessage.value =
@@ -154,7 +147,6 @@
         errorMessage.value = ""
 
         try {
-            // Call resend OTP endpoint with uuid
             const response = await $fetch(`${baseURL}resent/temp/reg/otp`, {
                 method: "POST",
                 body: {uuid},
@@ -162,19 +154,19 @@
 
             if (response?.status === "success") {
                 resendAttempts.value++
-                // Restart the OTP validity timer so user can enter new code
+
                 timeRemaining.value = 300
                 startTimer()
-                // clear current inputs so user re-enters new code
+
                 otpDigits.value = ["", "", "", "", "", ""]
-                // autofocus first input after a short delay
+
                 setTimeout(() => {
                     const firstInput = otpInputRefs.value[0]
                     if (firstInput) firstInput.focus()
                 }, 150)
 
                 console.log(
-                    "✅ OTP resent successfully. Attempts:",
+                    "OTP resent successfully. Attempts:",
                     resendAttempts.value
                 )
             } else {
@@ -182,7 +174,7 @@
                     response?.message || "Failed to resend OTP."
             }
         } catch (err) {
-            console.error("❌ Resend OTP error:", err)
+            console.error("Resend OTP error:", err)
             errorMessage.value =
                 err?.data?.message ||
                 err?.message ||
@@ -195,14 +187,12 @@
     const handleVerify = async () => {
         errorMessage.value = ""
 
-        // Check if all digits are filled
         const otp = otpDigits.value.join("")
         if (otp.length !== 6) {
             errorMessage.value = "Please enter all 6 digits"
             return
         }
 
-        // Ensure uuid exists
         const uuid = getUuid.value?.uuid
         if (!uuid) {
             errorMessage.value = "Session expired. Please start over."
@@ -223,17 +213,15 @@
                 },
             })
 
-            // Check for success response
             if (response?.status === "success") {
-                console.log("✅ OTP verified successfully")
-                emit("verify-success", response.data)
-                closeModal()
+                console.log(" OTP verified successfully") /
+                    emit("verify-success", response.data)
             } else {
                 errorMessage.value =
                     response?.message || "Invalid OTP. Please try again."
             }
         } catch (error) {
-            console.error("❌ OTP verify error:", error)
+            console.error("OTP verify error:", error)
             errorMessage.value =
                 error?.data?.message ||
                 error?.message ||
@@ -243,7 +231,6 @@
         }
     }
 
-    // Watch for modal open
     watch(
         () => props.modelValue,
         (newValue) => {
@@ -251,11 +238,10 @@
                 document.body.style.overflow = newValue ? "hidden" : ""
 
                 if (newValue) {
-                    // Reset resend state when modal opens for a fresh flow
                     resendAttempts.value = 0
 
                     startTimer()
-                    // Auto-focus first input
+
                     setTimeout(() => {
                         const firstInput = otpInputRefs.value[0]
                         if (firstInput) {
@@ -263,21 +249,10 @@
                         }
                     }, 100)
                 } else {
-                    // modal closed
                 }
             }
         }
     )
-
-    // Cleanup on unmount
-    onUnmounted(() => {
-        if (import.meta.client) {
-            document.body.style.overflow = ""
-        }
-        if (timerInterval) {
-            clearInterval(timerInterval)
-        }
-    })
 </script>
 
 <template>
@@ -299,7 +274,6 @@
         <template #header>
             <div class="w-full px-6 pt-6 pb-2">
                 <div class="flex items-center justify-center relative">
-                    <!-- Back Button -->
                     <button
                         @click="handleBack"
                         type="button"
@@ -318,7 +292,6 @@
                         </svg>
                     </button>
 
-                    <!-- Title -->
                     <h2 class="text-xl font-semibold text-[#121A22]">
                         OTP Verification
                     </h2>
@@ -328,7 +301,6 @@
 
         <!-- Content -->
         <div class="px-6 pb-6 space-y-6">
-            <!-- Description -->
             <div class="text-center space-y-1">
                 <p class="text-sm text-gray-700">
                     We have sent a 6-digit OTP to your email. Please enter it
@@ -340,7 +312,6 @@
                 </p>
             </div>
 
-            <!-- OTP Input Boxes -->
             <div class="flex justify-center gap-2">
                 <input
                     v-for="(digit, index) in otpDigits"
@@ -360,9 +331,7 @@
                     @paste="index === 0 ? handlePaste($event) : null" />
             </div>
 
-            <!-- Timer Display & Resend Section -->
             <div class="text-center space-y-3">
-                <!-- Show timer only when NO error and time remains -->
                 <div
                     v-if="timeRemaining > 0 && !errorMessage"
                     class="text-sm text-gray-700">
@@ -372,7 +341,6 @@
                     </p>
                 </div>
 
-                <!-- Show resend button only when timer expires and no error and attempts available -->
                 <div v-if="timeRemaining <= 0 && !errorMessage">
                     <p class="text-sm text-gray-600 mb-3">
                         Didn't receive the code?
@@ -397,12 +365,11 @@
                 </div>
             </div>
 
-            <!-- Error Message with Resend Option -->
             <div
                 v-if="errorMessage"
                 class="text-center space-y-3">
                 <p class="text-xs text-red-500">{{ errorMessage }}</p>
-                <!-- Show resend button when error occurs and attempts available -->
+
                 <button
                     v-if="resendAttempts < maxResendAttempts"
                     @click="handleResend"
@@ -413,7 +380,6 @@
                 </button>
             </div>
 
-            <!-- Verify Button -->
             <button
                 @click="handleVerify"
                 :disabled="isVerifying"
@@ -422,7 +388,6 @@
                 {{ isVerifying ? "Verifying..." : "Verify email" }}
             </button>
 
-            <!-- Terms and Privacy -->
             <div class="text-center pt-2">
                 <p class="text-xs text-gray-600">
                     By using heyhomex, you agree to the
