@@ -1,10 +1,9 @@
 <script setup lang="ts">
     import {LockClosedIcon, UserIcon} from "@heroicons/vue/24/outline"
+    const { login } = citizenAuth();
 
-    const props = defineProps<{
-        modelValue: boolean
-    }>()
-
+    const props = defineProps<{ modelValue: boolean }>()
+    
     const emit = defineEmits<{
         "update:modelValue": [value: boolean]
         "login-success": [needsOnboarding: boolean]
@@ -12,6 +11,26 @@
         back: []
         close: []
     }>()
+
+    const showRegister = () => {
+        closeModal()
+        setTimeout(() => {
+            emit("show-register")
+        }, 300)
+    }
+
+    const visible = ref(props.modelValue)
+    watch(
+        () => props.modelValue,
+        (newVal) => {
+            visible.value = newVal
+        }
+    )
+    watch(visible, (newVal) => {
+        emit("update:modelValue", newVal)
+        if (!newVal) emit("close")
+    })
+    
 
     interface LoginFormData {
         email: string
@@ -38,15 +57,7 @@
         }
     }
 
-    const visible = computed({
-        get: () => props.modelValue,
-        set: (value: boolean) => {
-            emit("update:modelValue", value)
-            if (!value) {
-                emit("close")
-            }
-        },
-    })
+    
 
     const loading = ref(false)
     const password_open = ref(false)
@@ -74,97 +85,70 @@
         password_open.value = status
     }
 
+   
+
+
     const handleLogin = async () => {
-        loading.value = true
+    loading.value = true;
 
-        try {
-            const payload = new FormData()
-            payload.append("login_id", formData.email)
-            payload.append("password", formData.password)
+    try {
+        const payload = new FormData();
+        payload.append("login_id", formData.email);
+        payload.append("password", formData.password);
 
-            const response = await $fetchCMS<LoginResponse>("/admin/login", {
-                method: "POST",
-                body: payload,
-            })
+      
+        const response: any = await login(payload);
 
-            if (response.status && response.data) {
-                const userData = response.data
-
-                if (import.meta.client) {
-                    const tokenCookie = useCookie("XCMS-TOKEN")
-                    tokenCookie.value = userData.token
-
-                    localStorage.setItem(
-                        "citizen_user_data",
-                        JSON.stringify(userData)
-                    )
-
-                    localStorage.setItem(
-                        "citizen_user_id",
-                        userData.id.toString()
-                    )
-
-                    const onboardingStatusKey = `citizen_onboard_status_${userData.id}`
-
-                    if (userData.user_onboard_profile_status !== undefined) {
-                        localStorage.setItem(
-                            onboardingStatusKey,
-                            userData.user_onboard_profile_status.toString()
-                        )
-                    }
-
-                    localStorage.removeItem(
-                        "citizen_user_onboard_profile_status"
-                    )
-                    localStorage.removeItem("citizen_needs_onboarding")
-                }
-
-                const needsOnboarding =
-                    userData.user_onboard_profile_status === 0
-
-                if (import.meta.client) {
-                }
-
-                if (!needsOnboarding && userData.user_type?.[0]?.slug) {
-                    const redirectSlug = userData.user_type[0].slug
-                    const targetPath =
-                        redirectSlug === "kamaaina"
-                            ? "/kamaina/"
-                            : `/${redirectSlug}/`
-                    navigateTo(targetPath)
-                } else {
-                    emit("login-success", needsOnboarding)
-                }
-            }
-        } catch (error: any) {
-            console.error("Login error:", error)
+        if (response?.status && response?.data) {
+            const userData = response.data;
 
             if (import.meta.client) {
-                const errorMessage =
-                    error?.data?.message ||
-                    "Login failed. Please check your credentials and try again."
-                alert(errorMessage)
-            }
-        } finally {
-            loading.value = false
-        }
-    }
+                const tokenCookie = useCookie("XCMS-TOKEN");
+                tokenCookie.value = userData.token;
 
-    const showRegister = () => {
-        closeModal()
-        setTimeout(() => {
-            emit("show-register")
-        }, 300)
-    }
+                localStorage.setItem("citizen_user_data", JSON.stringify(userData));
+                localStorage.setItem("citizen_user_id", userData.id.toString());
 
-    watch(
-        () => props.modelValue,
-        (newValue) => {
-            if (import.meta.client) {
-                document.body.style.overflow = newValue ? "hidden" : ""
+                const onboardingStatusKey = `citizen_onboard_status_${userData.id}`;
+                if (userData.user_onboard_profile_status !== undefined) {
+                    localStorage.setItem(
+                        onboardingStatusKey,
+                        userData.user_onboard_profile_status.toString()
+                    );
+                }
+
+                localStorage.removeItem("citizen_user_onboard_profile_status");
+                localStorage.removeItem("citizen_needs_onboarding");
+            }
+
+            const needsOnboarding = userData.user_onboard_profile_status === 0;
+
+            if (!needsOnboarding && userData.user_type?.[0]?.slug) {
+                const redirectSlug = userData.user_type[0].slug;
+                const targetPath =
+                    redirectSlug === "kamaaina" ? "/kamaina/" : `/${redirectSlug}/`;
+                navigateTo(targetPath);
+            } else {
+                emit("login-success", needsOnboarding);
             }
         }
-    )
+    } catch (error: any) {
+        console.error("Login error:", error);
+
+        if (import.meta.client) {
+            const errorMessage =
+                error?.data?.message ||
+                "Login failed. Please check your credentials and try again.";
+            alert(errorMessage);
+        }
+    } finally {
+        loading.value = false;
+    }
+};
+
+   
+
+   
 </script>
 
 <template>

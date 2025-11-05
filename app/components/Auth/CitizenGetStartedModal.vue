@@ -14,17 +14,25 @@
         },
     })
 
-    const visible = computed({
-        get: () => props.modelValue,
-        set: (value) => {
-            emit("update:modelValue", value)
+    const visible = ref(props.modelValue)
 
-            if (!value) {
-                emit("close")
-            }
-        },
+    watch(
+        () => props.modelValue,
+        (newVal) => {
+            visible.value = newVal
+        }
+    )
+
+    watch(visible, (newVal) => {
+        emit("update:modelValue", newVal)
+        if (!newVal) emit("close")
     })
-    
+
+    // const visible = ref(props.isOpenModal);
+    // watch(() => props.isOpenModal, (newVal) => {
+    //     visible.value = newVal;
+    // });
+
     const handleBack = () => {
         emit("back")
     }

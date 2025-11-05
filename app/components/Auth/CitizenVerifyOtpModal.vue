@@ -19,14 +19,18 @@
         },
     })
 
-    const visible = computed({
-        get: () => props.modelValue,
-        set: (value) => {
-            emit("update:modelValue", value)
-            if (!value) {
-                emit("close")
-            }
-        },
+    const visible = ref(props.modelValue)
+
+    watch(
+        () => props.modelValue,
+        (newVal) => {
+            visible.value = newVal
+        }
+    )
+
+    watch(visible, (newVal) => {
+        emit("update:modelValue", newVal)
+        if (!newVal) emit("close")
     })
 
     const otpDigits = ref(["", "", "", "", "", ""])
@@ -56,7 +60,6 @@
 
         timerInterval.value = setInterval(() => {
             timeRemaining.value--
-
             if (timeRemaining.value <= 0) {
                 if (timerInterval.value) {
                     clearInterval(timerInterval.value)
@@ -66,36 +69,13 @@
         }, 1000)
     }
 
-    const closeModal = () => {
-        emit("update:modelValue", false)
-        emit("close")
-        if (timerInterval.value) {
-            clearInterval(timerInterval.value)
-            timerInterval.value = null
-        }
-        setTimeout(() => {
-            resetForm()
-        }, 300)
-    }
-
     const handleBack = () => {
         emit("back")
-    }
-
-    const resetForm = () => {
-        otpDigits.value = ["", "", "", "", "", ""]
-        timeRemaining.value = 300
-        errorMessage.value = ""
-        if (timerInterval.value) {
-            clearInterval(timerInterval.value)
-            timerInterval.value = null
-        }
     }
 
     const handleOtpInput = (index, event) => {
         const input = event.target
         const value = input.value
-
         if (value && !/^\d$/.test(value)) {
             input.value = ""
             return
@@ -123,7 +103,6 @@
     const handlePaste = (event) => {
         event.preventDefault()
         const pastedData = event.clipboardData?.getData("text")
-
         if (pastedData && /^\d{6}$/.test(pastedData)) {
             const digits = pastedData.split("")
             otpDigits.value = digits
@@ -159,12 +138,9 @@
 
             if (response?.status === "success") {
                 resendAttempts.value++
-
                 timeRemaining.value = 300
                 startTimer()
-
                 otpDigits.value = ["", "", "", "", "", ""]
-
                 setTimeout(() => {
                     const firstInput = otpInputRefs.value[0]
                     if (firstInput) firstInput.focus()
