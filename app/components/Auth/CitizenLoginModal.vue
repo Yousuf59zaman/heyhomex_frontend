@@ -9,6 +9,7 @@
         "update:modelValue": [value: boolean]
         "login-success": [needsOnboarding: boolean]
         "show-register": []
+        "show-forgot-password": []
         back: []
         close: []
     }>()
@@ -154,6 +155,10 @@
         emit("show-register")
     }
 
+    const showForgotPassword = () => {
+        emit("show-forgot-password")
+    }
+
     watch(
         () => props.modelValue,
         (newValue) => {
@@ -263,6 +268,7 @@
                     </label>
                     <button
                         type="button"
+                        @click="showForgotPassword"
                         class="text-blue-600 hover:text-blue-700 font-medium">
                         Forgot password?
                     </button>

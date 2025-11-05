@@ -90,13 +90,35 @@ The authentication system uses a multi-step modal flow managed by `CitizenAuthMo
 - `activeIndex = 5`: CitizenProfessionalModal
 - `activeIndex = 6`: CitizenLoginModal
 - `activeIndex = 7`: CitizenOnboardingModal
+- `activeIndex = 8`: CitizenForgotPasswordModal
 
 **Key Features:**
 - Clicking "Create Account" in CitizenLoginModal navigates to CitizenGetStartedModal (step 0)
 - Clicking "Get Started" in the header opens CitizenGetStartedModal
 - Clicking "Sign In" in the header opens CitizenLoginModal (step 6)
+- Clicking "Forgot password?" in CitizenLoginModal navigates to CitizenForgotPasswordModal (step 8)
 - Modal transitions are handled smoothly without closing and reopening
 
+**Forgot Password Flow:**
+The forgot password feature allows users to reset their password by receiving a reset link via email.
+
+**Components:**
+- `CitizenForgotPasswordModal.vue`: Dedicated modal for password reset
+  - Email validation (required field and valid email format)
+  - API integration with `forgot-password` endpoint
+  - Success state with automatic redirect back to login
+  - "Back to Sign in" button to return to login modal
+
 **Files Modified:**
-- `app/components/Auth/CitizenLoginModal.vue`: Updated `showRegister()` to emit event without closing modal
-- `app/components/Auth/CitizenAuthModals.vue`: Updated `handleShowRegisterFromLogin()` to navigate to step 0
+- `app/components/Auth/CitizenLoginModal.vue`:
+  - Updated `showRegister()` to emit event without closing modal
+  - Added `showForgotPassword()` function and "show-forgot-password" emit event
+  - Connected "Forgot password?" button to emit the event
+- `app/components/Auth/CitizenAuthModals.vue`:
+  - Updated `handleShowRegisterFromLogin()` to navigate to step 0
+  - Added `handleShowForgotPasswordFromLogin()` to navigate to step 8
+  - Added `handleBackToLoginFromForgotPassword()` to navigate back to step 6
+  - Integrated CitizenForgotPasswordModal component
+
+**Files Created:**
+- `app/components/Auth/CitizenForgotPasswordModal.vue`: New forgot password modal component based on Figma design

@@ -52,6 +52,9 @@
     const isOnboardingVisible = computed(
         () => props.isOpenStartModal && activeIndex.value === 7
     )
+    const isForgotPasswordVisible = computed(
+        () => props.isOpenStartModal && activeIndex.value === 8
+    )
 
     const closeJourney = () => {
         emit("update:isOpenStartModal", false)
@@ -128,6 +131,14 @@
     const handleShowRegisterFromLogin = () => {
         activeIndex.value = 0
     }
+
+    const handleShowForgotPasswordFromLogin = () => {
+        activeIndex.value = 8
+    }
+
+    const handleBackToLoginFromForgotPassword = () => {
+        activeIndex.value = 6
+    }
 </script>
 
 <template>
@@ -185,6 +196,7 @@
                 v-model="isLoginVisible"
                 @login-success="handleLoginSuccess"
                 @show-register="handleShowRegisterFromLogin"
+                @show-forgot-password="handleShowForgotPasswordFromLogin"
                 @back="handleBack"
                 @close="handleModalClose" />
 
@@ -193,6 +205,12 @@
                 v-model="isOnboardingVisible"
                 @onboarding-complete="handleOnboardingComplete"
                 @back="handleBack"
+                @close="handleModalClose" />
+
+            <AuthCitizenForgotPasswordModal
+                v-if="isForgotPasswordVisible"
+                v-model="isForgotPasswordVisible"
+                @back-to-login="handleBackToLoginFromForgotPassword"
                 @close="handleModalClose" />
         </div>
     </ClientOnly>
