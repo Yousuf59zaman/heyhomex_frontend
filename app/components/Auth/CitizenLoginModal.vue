@@ -1,9 +1,9 @@
 <script setup lang="ts">
     import {LockClosedIcon, UserIcon} from "@heroicons/vue/24/outline"
-    const { login } = citizenAuth();
+    const {login} = citizenAuth()
 
-    const props = defineProps<{ modelValue: boolean }>()
-    
+    const props = defineProps<{modelValue: boolean}>()
+
     const emit = defineEmits<{
         "update:modelValue": [value: boolean]
         "login-success": [needsOnboarding: boolean]
@@ -24,7 +24,6 @@
         emit("update:modelValue", newVal)
         if (!newVal) emit("close")
     })
-    
 
     interface LoginFormData {
         email: string
@@ -37,24 +36,10 @@
         slug: string
     }
 
-    interface LoginResponse {
-        status: boolean
-        message: string
-        data: {
-            id: number
-            name: string
-            email: string
-            token: string
-            user_onboard_profile_status?: number
-            user_type?: UserType[]
-            [key: string]: any
-        }
-    }
-
-    
-
     const loading = ref(false)
     const password_open = ref(false)
+    // const errorMessage = ref("")
+    const validations_errors = ref("")
 
     const formData = reactive<LoginFormData>({
         email: "",
@@ -73,68 +58,78 @@
         formData.email = ""
         formData.password = ""
         password_open.value = false
+        validations_errors.value = ""
     }
 
     const password_view_status = (status: boolean) => {
         password_open.value = status
     }
 
-   
-
-
     const handleLogin = async () => {
-    loading.value = true;
+        loading.value = true
+        validations_errors.value = ""
 
-    try {
-        const payload = new FormData();
-        payload.append("login_id", formData.email);
-        payload.append("password", formData.password);
+        try {
+            const payload = new FormData()
+            payload.append("login_id", formData.email)
+            payload.append("password", formData.password)
 
-      
-        const response: any = await login(payload);
+            const response: any = await login(payload)
 
-        if (response?.status && response?.data) {
-            const userData = response.data;
+            if (response?.status && response?.data) {
+                const userData = response.data
 
-            if (import.meta.client) {
-                const tokenCookie = useCookie("XCMS-TOKEN");
-                tokenCookie.value = userData.token;
+                if (import.meta.client) {
+                    const tokenCookie = useCookie("XCMS-TOKEN")
+                    tokenCookie.value = userData.token
 
-                localStorage.setItem("citizen_user_data", JSON.stringify(userData));
-                localStorage.setItem("citizen_user_id", userData.id.toString());
-
-                const onboardingStatusKey = `citizen_onboard_status_${userData.id}`;
-                if (userData.user_onboard_profile_status !== undefined) {
                     localStorage.setItem(
-                        onboardingStatusKey,
-                        userData.user_onboard_profile_status.toString()
-                    );
+                        "citizen_user_data",
+                        JSON.stringify(userData)
+                    )
+                    localStorage.setItem(
+                        "citizen_user_id",
+                        userData.id.toString()
+                    )
+
+                    const onboardingStatusKey = `citizen_onboard_status_${userData.id}`
+                    if (userData.user_onboard_profile_status !== undefined) {
+                        localStorage.setItem(
+                            onboardingStatusKey,
+                            userData.user_onboard_profile_status.toString()
+                        )
+                    }
+
+                    localStorage.removeItem(
+                        "citizen_user_onboard_profile_status"
+                    )
+                    localStorage.removeItem("citizen_needs_onboarding")
                 }
 
-                localStorage.removeItem("citizen_user_onboard_profile_status");
-                localStorage.removeItem("citizen_needs_onboarding");
-            }
+                const needsOnboarding =
+                    userData.user_onboard_profile_status === 0
 
-            const needsOnboarding = userData.user_onboard_profile_status === 0;
-
-            if (!needsOnboarding && userData.user_type?.[0]?.slug) {
-                const redirectSlug = userData.user_type[0].slug;
-                const targetPath =
-                    redirectSlug === "kamaaina" ? "/kamaina/" : `/${redirectSlug}/`;
-                navigateTo(targetPath);
+                if (!needsOnboarding && userData.user_type?.[0]?.slug) {
+                    const redirectSlug = userData.user_type[0].slug
+                    const targetPath =
+                        redirectSlug === "kamaaina"
+                            ? "/kamaina/"
+                            : `/${redirectSlug}/`
+                    navigateTo(targetPath)
+                } else {
+                    emit("login-success", needsOnboarding)
+                }
             } else {
-                emit("login-success", needsOnboarding);
-            }
-        }
-    } catch (error: any) {
-        console.error("Login error:", error);
-
-            if (import.meta.client) {
-                const errorMessage =
-                    error?.data?.message ||
+                validations_errors.value =
+                    response?.message ||
                     "Login failed. Please check your credentials and try again."
-                alert(errorMessage)
             }
+        } catch (error: any) {
+            console.error("Login error:", error)
+            validations_errors.value =
+                error.response?._data?.message ||
+                error.message ||
+                "Login failed. Please check your credentials and try again."
         } finally {
             loading.value = false
         }
@@ -274,6 +269,13 @@
                     }">
                     {{ loading ? "Signing In..." : "Sign In" }}
                 </Button>
+                <!-- Error Message -->
+                <div
+                    v-if="validations_errors"
+                    class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+                    <i class="pi pi-exclamation-circle text-red-600 mt-0.5"></i>
+                    <p class="text-sm text-red-800">{{ validations_errors }}</p>
+                </div>
 
                 <div class="text-center">
                     <p class="text-sm text-gray-600">
