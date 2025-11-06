@@ -302,6 +302,7 @@
         <div class="px-4 sm:px-6 pb-6">
             <form
                 @submit.prevent="handleRegister"
+                autocomplete="off"
                 class="space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="flex flex-col gap-2">
@@ -315,6 +316,7 @@
                             v-model="formData.first_name"
                             placeholder="Enter your first name"
                             required
+                            autocomplete="off"
                             :pt="{
                                 root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                             }" />
@@ -336,6 +338,7 @@
                             v-model="formData.last_name"
                             placeholder="Enter your last name"
                             required
+                            autocomplete="off"
                             :pt="{
                                 root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                             }" />
@@ -360,6 +363,7 @@
                             :type="showPassword ? 'text' : 'password'"
                             placeholder="Enter your password"
                             required
+                            autocomplete="new-password"
                             @blur="validatePasswords"
                             :pt="{
                                 root: 'w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
@@ -428,6 +432,7 @@
                             :type="showConfirmPassword ? 'text' : 'password'"
                             placeholder="Enter your password"
                             required
+                            autocomplete="new-password"
                             @blur="validatePasswords"
                             :pt="{
                                 root: 'w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
