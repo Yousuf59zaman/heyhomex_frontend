@@ -58,7 +58,7 @@
         <template #header>
             <div class="w-full px-6 pt-6 pb-2">
                 <div class="flex items-center justify-center relative">
-                    <!-- Back Button -->
+                  
                     <button
                         @click="handleBack"
                         type="button"
@@ -77,7 +77,7 @@
                         </svg>
                     </button>
 
-                    <!-- Title -->
+                  
                     <h2 class="text-xl font-semibold text-[#121A22]">
                         Select account type
                     </h2>
@@ -87,9 +87,9 @@
 
         <!-- Content -->
         <div class="px-6 pb-6 space-y-6">
-            <!-- Account Type Selection -->
+         
             <div class="grid grid-cols-3 gap-3">
-                <!-- Buyer Option -->
+                
                 <button
                     @click="selectAccountType('buyer')"
                     type="button"
@@ -102,7 +102,7 @@
                     I am a Buyer
                 </button>
 
-                <!-- Agent Option -->
+               
                 <button
                     @click="selectAccountType('agent')"
                     type="button"
@@ -115,7 +115,7 @@
                     I am an Agent
                 </button>
 
-                <!-- Advertiser Option -->
+            
                 <button
                     @click="selectAccountType('advertiser')"
                     type="button"
@@ -129,7 +129,7 @@
                 </button>
             </div>
 
-            <!-- Next Button -->
+         
             <button
                 @click="handleNext"
                 type="button"
@@ -137,7 +137,7 @@
                 Next
             </button>
 
-            <!-- Terms and Privacy -->
+         
             <div class="text-center pt-2">
                 <p class="text-xs text-gray-600">
                     By using heyhomex, you agree to the
