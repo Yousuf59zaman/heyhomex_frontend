@@ -1,17 +1,17 @@
 <script setup lang="ts">
-    const emit = defineEmits<{
-        'update:modelValue': [value: boolean]
-        'password-changed': []
-        'back': []
-        'close': []
-    }>()
-
     interface Props {
         modelValue: boolean
         email: string
     }
 
     const props = defineProps<Props>()
+
+    const emit = defineEmits<{
+        'update:modelValue': [value: boolean]
+        'password-changed': []
+        'back': []
+        'close': []
+    }>()
 
     const visible = computed({
         get: (): boolean => props.modelValue,

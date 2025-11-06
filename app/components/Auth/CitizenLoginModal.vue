@@ -3,16 +3,6 @@
     const {login} = citizenAuth()
 
     const props = defineProps<{modelValue: boolean}>()
-
-    const emit = defineEmits<{
-        "update:modelValue": [value: boolean]
-        "login-success": [needsOnboarding: boolean]
-        "show-register": []
-        "show-forgot-password": []
-        back: []
-        close: []
-    }>()
-
     const visible = ref(props.modelValue)
     watch(
         () => props.modelValue,
@@ -24,6 +14,15 @@
         emit("update:modelValue", newVal)
         if (!newVal) emit("close")
     })
+
+    const emit = defineEmits<{
+        "update:modelValue": [value: boolean]
+        "login-success": [needsOnboarding: boolean]
+        "show-register": []
+        "show-forgot-password": []
+        back: []
+        close: []
+    }>()
 
     interface LoginFormData {
         email: string

@@ -1,11 +1,4 @@
 <script setup lang="ts">
-    const emit = defineEmits<{
-        "update:modelValue": [value: boolean]
-        next: [data: any]
-        back: []
-        close: []
-    }>()
-
     const props = defineProps<{ modelValue: boolean }>()
 
     const visible = ref(props.modelValue)
@@ -21,6 +14,13 @@
         emit("update:modelValue", newVal)
         if (!newVal) emit("close")
     })
+
+    const emit = defineEmits<{
+        "update:modelValue": [value: boolean]
+        next: [data: any]
+        back: []
+        close: []
+    }>()
 
     const formData = reactive({
         professionalType: "",

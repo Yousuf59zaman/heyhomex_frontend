@@ -1,5 +1,8 @@
 <script setup lang="ts">
-    const baseURL = useRuntimeConfig().public.API_BASE_URL
+    interface Props {
+        modelValue: boolean
+    }
+    const props = defineProps<Props>()
 
     interface UuidState {
         uuid: string
@@ -15,12 +18,6 @@
         'back': []
         'close': []
     }>()
-
-    interface Props {
-        modelValue: boolean
-    }
-
-    const props = defineProps<Props>()
 
     interface ValidationErrors {
         [key: string]: string

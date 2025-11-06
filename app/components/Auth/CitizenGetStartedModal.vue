@@ -1,4 +1,10 @@
 <script setup lang="ts">
+    interface Props {
+        modelValue: boolean
+    }
+    const props = defineProps<Props>()
+    const visible = ref<boolean>(props.modelValue)
+    
     const emit = defineEmits<{
         'update:modelValue': [value: boolean]
         'go-to-email': []
@@ -6,14 +12,7 @@
         'back': []
         'close': []
     }>()
-
-    interface Props {
-        modelValue: boolean
-    }
-
-    const props = defineProps<Props>()
-
-    const visible = ref<boolean>(props.modelValue)
+    
     //modelValue jodi true hoe
     watch(
         () => props.modelValue,

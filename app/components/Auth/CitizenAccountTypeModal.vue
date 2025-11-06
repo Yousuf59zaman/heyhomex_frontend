@@ -2,14 +2,6 @@
     const props = defineProps<{
         modelValue: boolean
     }>()
-
-    const emit = defineEmits<{
-        "update:modelValue": [value: boolean]
-        next: [accountType: string]
-        back: []
-        close: []
-    }>()
-
     const visible = ref(props.modelValue)
 
     watch(
@@ -23,6 +15,12 @@
         emit("update:modelValue", newVal)
         if (!newVal) emit("close")
     })
+    const emit = defineEmits<{
+        "update:modelValue": [value: boolean]
+        next: [accountType: string]
+        back: []
+        close: []
+    }>()
 
     const selectedAccountType = ref("buyer")
 

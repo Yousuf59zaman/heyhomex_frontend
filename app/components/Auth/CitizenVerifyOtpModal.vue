@@ -1,14 +1,4 @@
 <script setup lang="ts">
-    const baseURL = useRuntimeConfig().public.API_BASE_URL
-
-    const emit = defineEmits<{
-        'update:modelValue': [value: boolean]
-        'verify-success': [data: any]
-        'verify-forgot-password-success': [data: any]
-        'back': []
-        'close': []
-    }>()
-
     interface Props {
         modelValue: boolean
         email?: string
@@ -33,6 +23,14 @@
         emit("update:modelValue", newVal)
         if (!newVal) emit("close")
     })
+
+    const emit = defineEmits<{
+        'update:modelValue': [value: boolean]
+        'verify-success': [data: any]
+        'verify-forgot-password-success': [data: any]
+        'back': []
+        'close': []
+    }>()
 
     const otpDigits = ref<string[]>(["", "", "", "", "", ""])
     const timeRemaining = ref<number>(300)

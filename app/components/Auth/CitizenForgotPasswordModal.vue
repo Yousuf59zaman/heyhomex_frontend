@@ -1,5 +1,9 @@
 <script setup lang="ts">
-    const baseURL = useRuntimeConfig().public.API_BASE_URL
+    interface Props {
+        modelValue: boolean
+    }
+
+    const props = defineProps<Props>()
 
     const emit = defineEmits<{
         'update:modelValue': [value: boolean]
@@ -9,11 +13,6 @@
         'verify-otp': []
     }>()
 
-    interface Props {
-        modelValue: boolean
-    }
-
-    const props = defineProps<Props>()
 
     const visible = computed({
         get: (): boolean => props.modelValue,

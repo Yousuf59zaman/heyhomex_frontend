@@ -2,6 +2,19 @@
     type OnboardingStep = "motivation" | "budget" | "location" | "success"
 
     const props = defineProps<{ modelValue: boolean }>()
+    const visible = ref(props.modelValue)
+
+    watch(
+        () => props.modelValue,
+        (newVal) => {
+            visible.value = newVal;
+
+        }
+    )
+    watch(visible, (newVal) => {
+        emit("update:modelValue", newVal)
+        if (!newVal) emit("close")
+    })
 
     const emit = defineEmits<{
         "update:modelValue": [value: boolean]
@@ -9,21 +22,6 @@
         back: []
         close: []
     }>()
-
-    const visible = ref(props.modelValue)
-
-    watch(
-        () => props.modelValue,
-        (newVal) => {
-            visible.value = newVal;
-             
-        }
-    )
-
-    watch(visible, (newVal) => {
-        emit("update:modelValue", newVal)
-        if (!newVal) emit("close")
-    })
 
     interface OnboardingData {
         motivation: number | null
