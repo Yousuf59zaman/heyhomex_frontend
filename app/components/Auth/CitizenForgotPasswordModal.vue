@@ -28,15 +28,7 @@
     const isLoading = ref(false)
     const isSuccess = ref(false)
 
-    const closeModal = () => {
-        emit("update:modelValue", false)
-        emit("close")
-        setTimeout(() => {
-            formData.value.email = ""
-            validations_errors.value = {}
-            isSuccess.value = false
-        }, 300)
-    }
+ 
 
     const handleBackToLogin = () => {
         emit("back-to-login")
