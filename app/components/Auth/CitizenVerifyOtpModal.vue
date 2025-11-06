@@ -4,6 +4,7 @@
     const emit = defineEmits([
         "update:modelValue",
         "verify-success",
+        "verify-forgot-password-success",
         "back",
         "close",
     ])
@@ -16,6 +17,10 @@
         email: {
             type: String,
             default: "",
+        },
+        source: {
+            type: String,
+            default: "registration",
         },
     })
 
@@ -115,6 +120,7 @@
     }
 
     const handleResend = async () => {
+
         if (resendAttempts.value >= maxResendAttempts) {
             errorMessage.value = "You have reached the maximum resend attempts."
             return
@@ -169,40 +175,43 @@
             return
         }
 
-        const uuid = getUuid.value?.uuid
-        if (!uuid) {
-            errorMessage.value = "Session expired. Please start over."
-            return
-        }
-
-        isVerifying.value = true
-
-        try {
-            const response = await $fetch(`${baseURL}temp-reg/otp/verify`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: {
-                    uuid,
-                    auth_code: otp,
-                },
-            })
-
-            if (response?.status === "success") {
-                emit("verify-success", response.data)
-            } else {
-                errorMessage.value =
-                    response?.message || "Invalid OTP. Please try again."
+        if (props.source === "registration") {
+            const uuid = getUuid.value?.uuid
+            if (!uuid) {
+                errorMessage.value = "Session expired. Please start over."
+                return
             }
-        } catch (error) {
-            console.error("OTP verify error:", error)
-            errorMessage.value =
-                error?.data?.message ||
-                error?.message ||
-                "Invalid OTP. Please try again."
-        } finally {
-            isVerifying.value = false
+            isVerifying.value = true
+            try {
+                const response = await $fetch(`${baseURL}temp-reg/otp/verify`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: {
+                        uuid,
+                        auth_code: otp,
+                    },
+                })
+
+                if (response?.status === "success") {
+                    emit("verify-success", response.data)
+                } else {
+                    errorMessage.value =
+                        response?.message || "Invalid OTP. Please try again."
+                }
+            } catch (error) {
+                console.error("OTP verify error:", error)
+                errorMessage.value =
+                    error?.data?.message ||
+                    error?.message ||
+                    "Invalid OTP. Please try again."
+            } finally {
+                isVerifying.value = false
+            }
+        } else {
+            isVerifying.value = true
+             emit("verify-forgot-password-success", response.data)
         }
     }
 
