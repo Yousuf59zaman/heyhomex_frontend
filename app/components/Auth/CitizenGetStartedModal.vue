@@ -1,50 +1,49 @@
-<script setup>
-    const emit = defineEmits([
-        "update:modelValue",
-        "go-to-email",
-        "show-login",
-        "back",
-        "close",
-    ])
+<script setup lang="ts">
+    const emit = defineEmits<{
+        'update:modelValue': [value: boolean]
+        'go-to-email': []
+        'show-login': []
+        'back': []
+        'close': []
+    }>()
 
-    const props = defineProps({
-        modelValue: {
-            type: Boolean,
-            required: true,
-        },
-    })
+    interface Props {
+        modelValue: boolean
+    }
 
-    const visible = ref(props.modelValue)
+    const props = defineProps<Props>()
+
+    const visible = ref<boolean>(props.modelValue)
     //modelValue jodi true hoe
     watch(
         () => props.modelValue,
-        (newVal) => {
+        (newVal: boolean): void => {
             visible.value = newVal
         }
     )
     //visible jodi false hoe
-    watch(visible, (newVal) => {
+    watch(visible, (newVal: boolean): void => {
         emit("update:modelValue", newVal)
         if (!newVal) emit("close")
     })
 
-    const handleBack = () => {
+    const handleBack = (): void => {
         emit("back")
     }
 
-    const handleContinueWithEmail = () => {
+    const handleContinueWithEmail = (): void => {
         emit("go-to-email")
     }
 
-    const handleContinueWithApple = () => {
+    const handleContinueWithApple = (): void => {
         console.log("Continue with Apple")
     }
 
-    const handleContinueWithFacebook = () => {
+    const handleContinueWithFacebook = (): void => {
         console.log("Continue with Facebook")
     }
 
-    const handleContinueWithGoogle = () => {
+    const handleContinueWithGoogle = (): void => {
         console.log("Continue with Google")
     }
 </script>

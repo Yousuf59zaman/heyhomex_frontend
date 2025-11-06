@@ -1,19 +1,22 @@
-<script setup>
-    const emit = defineEmits(["update:isOpenStartModal"])
+<script setup lang="ts">
+    const emit = defineEmits<{
+        'update:isOpenStartModal': [value: boolean]
+    }>()
 
-    const props = defineProps({
-        isOpenStartModal: Boolean,
-        initialStep: {
-            type: Number,
-            default: 0,
-        },
+    interface Props {
+        isOpenStartModal: boolean
+        initialStep?: number
+    }
+
+    const props = withDefaults(defineProps<Props>(), {
+        initialStep: 0,
     })
 
-    const activeIndex = ref(0)
-    const userEmail = ref("")
-    const accountType = ref("")
-    const needsOnboarding = ref(false)
-    const otpSource = ref("")
+    const activeIndex = ref<number>(0)
+    const userEmail = ref<string>("")
+    const accountType = ref<string>("")
+    const needsOnboarding = ref<boolean>(false)
+    const otpSource = ref<string>("")
 
     watch(
         () => props.isOpenStartModal,
@@ -84,37 +87,37 @@
         activeIndex.value = 1
     }
 
-   const handleNextFromSendOtp = (email) => {
+   const handleNextFromSendOtp = (email: string): void => {
         userEmail.value = email
-        otpSource.value = "registration" 
+        otpSource.value = "registration"
         activeIndex.value = 2
     }
 
-    const handleNextFromForgetPasswaord = (email) => {
+    const handleNextFromForgetPasswaord = (email: string): void => {
         userEmail.value = email
-        otpSource.value = "forgot-password" 
+        otpSource.value = "forgot-password"
         activeIndex.value = 2
     }
 
-    const handleVerifyOtpSuccess = () => {
+    const handleVerifyOtpSuccess = (): void => {
         activeIndex.value = 3
     }
 
-    const handleAccountTypeNext = (type) => {
+    const handleAccountTypeNext = (type: string): void => {
         accountType.value = type
 
         activeIndex.value = 4
     }
 
-    const handleRegisterSuccess = (data) => {
+    const handleRegisterSuccess = (data: any): void => {
         activeIndex.value = 5
     }
 
-    const handleProfessionalNext = (data) => {
+    const handleProfessionalNext = (data: any): void => {
         activeIndex.value = 6
     }
 
-    const handleLoginSuccess = (needsOnboardingCheck) => {
+    const handleLoginSuccess = (needsOnboardingCheck: boolean): void => {
         needsOnboarding.value = needsOnboardingCheck
         if (needsOnboardingCheck) {
             activeIndex.value = 7
@@ -124,7 +127,7 @@
         }
     }
 
-    const handleOnboardingComplete = (data) => {
+    const handleOnboardingComplete = (data: any): void => {
         closeJourney()
         navigateTo("/kamaina/")
     }

@@ -1,61 +1,57 @@
-<script setup>
+<script setup lang="ts">
     const baseURL = useRuntimeConfig().public.API_BASE_URL
 
-    const emit = defineEmits([
-        "update:modelValue",
-        "verify-success",
-        "verify-forgot-password-success",
-        "back",
-        "close",
-    ])
+    const emit = defineEmits<{
+        'update:modelValue': [value: boolean]
+        'verify-success': [data: any]
+        'verify-forgot-password-success': [data: any]
+        'back': []
+        'close': []
+    }>()
 
-    const props = defineProps({
-        modelValue: {
-            type: Boolean,
-            required: true,
-        },
-        email: {
-            type: String,
-            default: "",
-        },
-        source: {
-            type: String,
-            default: "registration",
-        },
+    interface Props {
+        modelValue: boolean
+        email?: string
+        source?: string
+    }
+
+    const props = withDefaults(defineProps<Props>(), {
+        email: "",
+        source: "registration",
     })
 
-    const visible = ref(props.modelValue)
+    const visible = ref<boolean>(props.modelValue)
 
     watch(
         () => props.modelValue,
-        (newVal) => {
+        (newVal: boolean): void => {
             visible.value = newVal
         }
     )
 
-    watch(visible, (newVal) => {
+    watch(visible, (newVal: boolean): void => {
         emit("update:modelValue", newVal)
         if (!newVal) emit("close")
     })
 
-    const otpDigits = ref(["", "", "", "", "", ""])
-    const timeRemaining = ref(300)
-    const isVerifying = ref(false)
-    const errorMessage = ref("")
-    const otpInputRefs = ref([])
-    const getUuid = useState("uuid")
-    const resendAttempts = ref(0)
-    const maxResendAttempts = 3
-    const isResending = ref(false)
-    const timerInterval = ref(null)
+    const otpDigits = ref<string[]>(["", "", "", "", "", ""])
+    const timeRemaining = ref<number>(300)
+    const isVerifying = ref<boolean>(false)
+    const errorMessage = ref<string>("")
+    const otpInputRefs = ref<HTMLInputElement[]>([])
+    const getUuid = useState<any>("uuid")
+    const resendAttempts = ref<number>(0)
+    const maxResendAttempts: number = 3
+    const isResending = ref<boolean>(false)
+    const timerInterval = ref<NodeJS.Timeout | null>(null)
 
-    const formattedTime = computed(() => {
+    const formattedTime = computed((): string => {
         const minutes = Math.floor(timeRemaining.value / 60)
         const seconds = timeRemaining.value % 60
         return `${minutes}:${seconds.toString().padStart(2, "0")}`
     })
 
-    const startTimer = () => {
+    const startTimer = (): void => {
         if (timerInterval.value) {
             clearInterval(timerInterval.value)
             timerInterval.value = null
@@ -74,12 +70,12 @@
         }, 1000)
     }
 
-    const handleBack = () => {
+    const handleBack = (): void => {
         emit("back")
     }
 
-    const handleOtpInput = (index, event) => {
-        const input = event.target
+    const handleOtpInput = (index: number, event: Event): void => {
+        const input = event.target as HTMLInputElement
         const value = input.value
         if (value && !/^\d$/.test(value)) {
             input.value = ""
@@ -96,7 +92,7 @@
         }
     }
 
-    const handleKeyDown = (index, event) => {
+    const handleKeyDown = (index: number, event: KeyboardEvent): void => {
         if (event.key === "Backspace" && !otpDigits.value[index] && index > 0) {
             const prevInput = otpInputRefs.value[index - 1]
             if (prevInput) {
@@ -105,7 +101,7 @@
         }
     }
 
-    const handlePaste = (event) => {
+    const handlePaste = (event: ClipboardEvent): void => {
         event.preventDefault()
         const pastedData = event.clipboardData?.getData("text")
         if (pastedData && /^\d{6}$/.test(pastedData)) {
@@ -119,7 +115,7 @@
         }
     }
 
-    const handleResend = async () => {
+    const handleResend = async (): Promise<void> => {
 
         if (resendAttempts.value >= maxResendAttempts) {
             errorMessage.value = "You have reached the maximum resend attempts."
@@ -137,7 +133,7 @@
         errorMessage.value = ""
 
         try {
-            const response = await $fetchCMS(`/resent/temp/reg/otp`, {
+            const response: any = await $fetchCMS(`/resent/temp/reg/otp`, {
                 method: "POST",
                 body: {uuid},
             })
@@ -155,7 +151,7 @@
                 errorMessage.value =
                     response?.message || "Failed to resend OTP."
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error("Resend OTP error:", err)
             errorMessage.value =
                 err?.data?.message ||
@@ -166,7 +162,7 @@
         }
     }
 
-    const handleVerify = async () => {
+    const handleVerify = async (): Promise<void> => {
         errorMessage.value = ""
 
         const otp = otpDigits.value.join("")
@@ -183,7 +179,7 @@
             }
             isVerifying.value = true
             try {
-                const response = await $fetchCMS(`/temp-reg/otp/verify`, {
+                const response: any = await $fetchCMS(`/temp-reg/otp/verify`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -200,7 +196,7 @@
                     errorMessage.value =
                         response?.message || "Invalid OTP. Please try again."
                 }
-            } catch (error) {
+            } catch (error: any) {
                 console.error("OTP verify error:", error)
                 errorMessage.value =
                     error?.data?.message ||
@@ -211,7 +207,7 @@
             }
         } else {
              isVerifying.value = true
-             emit("verify-forgot-password-success", response.data)
+             emit("verify-forgot-password-success", {})
         }
     }
 
@@ -323,7 +319,7 @@
                     :key="index"
                     :ref="
                         (el) => {
-                            if (el) otpInputRefs[index] = el
+                            if (el) otpInputRefs[index] = el as HTMLInputElement
                         }
                     "
                     v-model="otpDigits[index]"
