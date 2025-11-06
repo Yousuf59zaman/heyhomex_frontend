@@ -1,16 +1,15 @@
 <script setup lang="ts">
-    const emit = defineEmits<{
-        'update:isOpenStartModal': [value: boolean]
-    }>()
-
     interface Props {
         isOpenStartModal: boolean
         initialStep?: number
     }
-
     const props = withDefaults(defineProps<Props>(), {
         initialStep: 0,
+        isOpenStartModal: false,
     })
+    const emit = defineEmits<{
+        'update:isOpenStartModal': [value: boolean]
+    }>()
 
     const activeIndex = ref<number>(0)
     const userEmail = ref<string>("")
