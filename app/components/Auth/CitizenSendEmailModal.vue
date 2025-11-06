@@ -1,32 +1,48 @@
-<script setup>
+<script setup lang="ts">
     const baseURL = useRuntimeConfig().public.API_BASE_URL
 
-    const setUuid = useState("uuid", () => ({
+    interface UuidState {
+        uuid: string
+    }
+
+    const setUuid = useState<UuidState>("uuid", () => ({
         uuid: "",
     }))
 
-    const emit = defineEmits(["update:modelValue", "next", "back", "close"])
+    const emit = defineEmits<{
+        'update:modelValue': [value: boolean]
+        'next': [email: string]
+        'back': []
+        'close': []
+    }>()
 
-    const props = defineProps({
-        modelValue: {
-            type: Boolean,
-            required: true,
-        },
-    })
+    interface Props {
+        modelValue: boolean
+    }
 
-    const visible = ref(props.modelValue)
-    const validations_errors = ref({})
-    const skip_validations = ref([])
+    const props = defineProps<Props>()
 
-    const formData = ref({
+    interface ValidationErrors {
+        [key: string]: string
+    }
+
+    interface FormData {
+        email: string
+    }
+
+    const visible = ref<boolean>(props.modelValue)
+    const validations_errors = ref<ValidationErrors>({})
+    const skip_validations = ref<string[]>([])
+
+    const formData = ref<FormData>({
         email: "",
     })
 
-    const isLoading = ref(false)
+    const isLoading = ref<boolean>(false)
 
     watch(
         () => props.modelValue,
-        (newVal) => {
+        (newVal: boolean): void => {
             visible.value = newVal
             if (newVal && setUuid.value?.uuid) {
                 setUuid.value = {uuid: ""}
@@ -34,24 +50,24 @@
         }
     )
 
-    watch(visible, (newVal) => {
+    watch(visible, (newVal: boolean): void => {
         emit("update:modelValue", newVal)
         if (!newVal) emit("close")
     })
 
-    const handleBack = () => {
+    const handleBack = (): void => {
         emit("back")
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (): Promise<void> => {
         validations_errors.value = {}
-        const errors = Object.keys(formData.value).filter(
+        const errors = (Object.keys(formData.value) as Array<keyof FormData>).filter(
             (item) =>
                 !formData.value[item] && !skip_validations.value.includes(item)
         )
 
         if (errors.length > 0) {
-            errors.map((item) => {
+            errors.forEach((item) => {
                 validations_errors.value[item] = `Email is required`
             })
             console.log(validations_errors.value)
@@ -60,7 +76,7 @@
 
         try {
             isLoading.value = true
-            const response = await $fetchCMS(`/reg-otp-flow`, {
+            const response: any = await $fetchCMS(`/reg-otp-flow`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -75,10 +91,10 @@
                 }
                 emit("next", formData.value.email)
             } else {
-                validations_errors.value =
+                validations_errors.value.message =
                     response?.message || "Unable to send OTP. Please try again."
             }
-        } catch (e) {
+        } catch (e: any) {
             console.log(
                 "Get Message",
                 e instanceof Error ? e.message : String(e)

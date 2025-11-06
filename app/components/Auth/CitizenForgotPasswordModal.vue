@@ -1,18 +1,23 @@
-<script setup>
+<script setup lang="ts">
     const baseURL = useRuntimeConfig().public.API_BASE_URL
 
-    const emit = defineEmits(["update:modelValue", "next", "back-to-login", "close", "verify-otp"])
+    const emit = defineEmits<{
+        'update:modelValue': [value: boolean]
+        'next': [email: string]
+        'back-to-login': []
+        'close': []
+        'verify-otp': []
+    }>()
 
-    const props = defineProps({
-        modelValue: {
-            type: Boolean,
-            required: true,
-        },
-    })
+    interface Props {
+        modelValue: boolean
+    }
+
+    const props = defineProps<Props>()
 
     const visible = computed({
-        get: () => props.modelValue,
-        set: (value) => {
+        get: (): boolean => props.modelValue,
+        set: (value: boolean): void => {
             emit("update:modelValue", value)
 
             if (!value) {
@@ -21,20 +26,30 @@
         },
     })
 
-    const validations_errors = ref({})
-    const formData = ref({
+    interface ValidationErrors {
+        email?: string
+        message?: string
+        [key: string]: string | undefined
+    }
+
+    interface FormData {
+        email: string
+    }
+
+    const validations_errors = ref<ValidationErrors>({})
+    const formData = ref<FormData>({
         email: "",
     })
-    const isLoading = ref(false)
-    const isSuccess = ref(false)
+    const isLoading = ref<boolean>(false)
+    const isSuccess = ref<boolean>(false)
 
  
 
-    const handleBackToLogin = () => {
+    const handleBackToLogin = (): void => {
         emit("back-to-login")
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (): Promise<void> => {
         validations_errors.value = {}
 
         if (!formData.value.email) {
@@ -53,7 +68,7 @@
         try {
             isLoading.value = true
 
-            const response = await $fetchCMS(`/forget-password`, {
+            const response: any = await $fetchCMS(`/forget-password`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -63,13 +78,13 @@
 
             if (response?.status === "success") {
                 isSuccess.value = true
-                emit("next" , response.data.email)
+                emit("next" , response.data?.email || formData.value.email)
             } else {
                 validations_errors.value.message =
                     response?.message ||
                     "Unable to send reset link. Please try again."
             }
-        } catch (e) {
+        } catch (e: any) {
             console.log(
                 "Forgot Password Error:",
                 e instanceof Error ? e.message : String(e)
