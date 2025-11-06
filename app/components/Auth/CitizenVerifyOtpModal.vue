@@ -183,7 +183,7 @@
             }
             isVerifying.value = true
             try {
-                const response = await $fetch(`${baseURL}temp-reg/otp/verify`, {
+                const response = await $fetchCMS(`/temp-reg/otp/verify`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
