@@ -1,73 +1,42 @@
 <script setup lang="ts">
-// Props
-const props = defineProps<{
-    modelValue: boolean
-}>()
+    const props = defineProps<{
+        modelValue: boolean
+    }>()
 
-// Emits
-const emit = defineEmits<{
-    'update:modelValue': [value: boolean]
-    'next': [accountType: string]
-    'back': []
-    'close': []
-}>()
+    const emit = defineEmits<{
+        "update:modelValue": [value: boolean]
+        next: [accountType: string]
+        back: []
+        close: []
+    }>()
 
-// Computed for two-way binding
-const visible = computed({
-    get: () => props.modelValue,
-    set: (value: boolean) => {
-        emit('update:modelValue', value)
-        // If dialog is being closed (value is false), emit close event
-        if (!value) {
-            emit('close')
+    const visible = ref(props.modelValue)
+
+    watch(
+        () => props.modelValue,
+        (newVal) => {
+            visible.value = newVal
         }
-    },
-})
+    )
 
-// State
-const selectedAccountType = ref('buyer')
+    watch(visible, (newVal) => {
+        emit("update:modelValue", newVal)
+        if (!newVal) emit("close")
+    })
 
-// Methods
-const closeModal = () => {
-    emit('update:modelValue', false)
-    emit('close')
-    setTimeout(() => {
-        resetForm()
-    }, 300)
-}
+    const selectedAccountType = ref("buyer")
 
-const handleBack = () => {
-    emit('back')
-}
-
-const resetForm = () => {
-    selectedAccountType.value = 'buyer'
-}
-
-const selectAccountType = (type: string) => {
-    selectedAccountType.value = type
-}
-
-const handleNext = () => {
-    emit('next', selectedAccountType.value)
-}
-
-// Watch for modal open
-watch(
-    () => props.modelValue,
-    (newValue) => {
-        if (import.meta.client) {
-            document.body.style.overflow = newValue ? 'hidden' : ''
-        }
+    const handleBack = () => {
+        emit("back")
     }
-)
 
-// Cleanup on unmount
-onUnmounted(() => {
-    if (import.meta.client) {
-        document.body.style.overflow = ''
+    const selectAccountType = (type: string) => {
+        selectedAccountType.value = type
     }
-})
+
+    const handleNext = () => {
+        emit("next", selectedAccountType.value)
+    }
 </script>
 
 <template>
@@ -78,7 +47,7 @@ onUnmounted(() => {
         :draggable="false"
         :resizable="false"
         class="citizen-account-type-modal"
-        :style="{ width: 'min(32rem, 95vw)', maxWidth: '95vw' }"
+        :style="{width: 'min(32rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-2xl shadow-2xl m-4',
             header: 'border-0 pb-4',
@@ -128,7 +97,7 @@ onUnmounted(() => {
                         'px-4 py-3.5 rounded-lg font-medium transition-all duration-200',
                         selectedAccountType === 'buyer'
                             ? 'bg-[#1E293B] text-white'
-                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50',
                     ]">
                     I am a Buyer
                 </button>
@@ -141,7 +110,7 @@ onUnmounted(() => {
                         'px-4 py-3.5 rounded-lg font-medium transition-all duration-200',
                         selectedAccountType === 'agent'
                             ? 'bg-[#1E293B] text-white'
-                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50',
                     ]">
                     I am an Agent
                 </button>
@@ -154,7 +123,7 @@ onUnmounted(() => {
                         'px-4 py-3.5 rounded-lg font-medium transition-all duration-200',
                         selectedAccountType === 'advertiser'
                             ? 'bg-[#1E293B] text-white'
-                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50',
                     ]">
                     I am an Advertiser
                 </button>
@@ -172,9 +141,17 @@ onUnmounted(() => {
             <div class="text-center pt-2">
                 <p class="text-xs text-gray-600">
                     By using heyhomex, you agree to the
-                    <a href="/terms" class="text-gray-900 font-medium hover:underline">Terms</a>
+                    <a
+                        href="/terms"
+                        class="text-gray-900 font-medium hover:underline"
+                        >Terms</a
+                    >
                     and
-                    <a href="/privacy" class="text-gray-900 font-medium hover:underline">Privacy Policy</a>.
+                    <a
+                        href="/privacy"
+                        class="text-gray-900 font-medium hover:underline"
+                        >Privacy Policy</a
+                    >.
                 </p>
             </div>
         </div>
@@ -182,16 +159,16 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.citizen-account-type-modal .p-dialog {
-    border-radius: 1rem;
-}
+    .citizen-account-type-modal .p-dialog {
+        border-radius: 1rem;
+    }
 
-.citizen-account-type-modal .p-dialog-header {
-    border: none;
-}
+    .citizen-account-type-modal .p-dialog-header {
+        border: none;
+    }
 
-.citizen-account-type-modal .p-dialog-content {
-    border: none;
-    padding-top: 0;
-}
+    .citizen-account-type-modal .p-dialog-content {
+        border: none;
+        padding-top: 0;
+    }
 </style>

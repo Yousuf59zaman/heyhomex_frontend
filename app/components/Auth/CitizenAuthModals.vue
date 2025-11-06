@@ -60,10 +60,13 @@
     const isForgotPasswordVisible = computed(
         () => props.isOpenStartModal && activeIndex.value === 8
     )
-    const isChangePasswordVisible = computed(
+    const isSuccessVisible = computed(
         () => props.isOpenStartModal && activeIndex.value === 9
     )
 
+    const isChangePasswordVisible = computed(
+        () => props.isOpenStartModal && activeIndex.value === 10
+    )
     const closeJourney = () => {
         emit("update:isOpenStartModal", false)
     }
@@ -108,12 +111,11 @@
 
     const handleAccountTypeNext = (type: string): void => {
         accountType.value = type
-
         activeIndex.value = 4
     }
 
-    const handleRegisterSuccess = (data: any): void => {
-        activeIndex.value = 5
+    const handleRegisterSuccess = (data:any) => {
+        activeIndex.value = 9 
     }
 
     const handleProfessionalNext = (data: any): void => {
@@ -155,13 +157,16 @@
         activeIndex.value = 6
     }
 
-    const handleVerifyForgotPasswordSuccess = (): void => {
-        activeIndex.value = 9
+    const handleVerifyForgotPasswordSuccess = () => {
+        activeIndex.value = 10
     }
 
-    const handlePasswordChanged = (): void => {
-        // After successful password change, go back to login
-        activeIndex.value = 6
+    const handleSuccessModalNext = () => {
+        activeIndex.value = 6 
+    }
+
+    const handlePasswordChanged = ()=> {
+        activeIndex.value =  9
     }
 </script>
 
@@ -241,6 +246,11 @@
                 @back-to-login="handleBackToLoginFromForgotPassword"
                 @close="handleModalClose" />
 
+            <AuthCitizenSuccessModal
+                v-if="isSuccessVisible"
+                v-model="isSuccessVisible"
+                @next="handleSuccessModalNext"
+                 @close="handleModalClose" />
             <AuthCitizenChangePasswordModal
                 v-if="isChangePasswordVisible"
                 v-model="isChangePasswordVisible"
