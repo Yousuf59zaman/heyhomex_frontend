@@ -211,7 +211,7 @@
             }
         } else {
              isVerifying.value = true
-             emit("verify-forgot-password-success", response.data)
+             emit("verify-forgot-password-success")
         }
     }
 

@@ -57,6 +57,9 @@
     const isForgotPasswordVisible = computed(
         () => props.isOpenStartModal && activeIndex.value === 8
     )
+    const isSuccessVisible = computed(
+        () => props.isOpenStartModal && activeIndex.value === 9
+    )
 
     const closeJourney = () => {
         emit("update:isOpenStartModal", false)
@@ -102,12 +105,11 @@
 
     const handleAccountTypeNext = (type) => {
         accountType.value = type
-
         activeIndex.value = 4
     }
 
     const handleRegisterSuccess = (data) => {
-        activeIndex.value = 5
+        activeIndex.value = 9 // Show success modal
     }
 
     const handleProfessionalNext = (data) => {
@@ -150,7 +152,11 @@
     }
 
     const handleVerifyForgotPasswordSuccess = () => {
-        activeIndex.value = 9
+        activeIndex.value = 10
+    }
+
+    const handleSuccessModalNext = () => {
+        activeIndex.value = 6 // Navigate to login
     }
 </script>
 
@@ -228,6 +234,12 @@
                 v-model="isForgotPasswordVisible"
                 @next="handleNextFromForgetPasswaord"
                 @back-to-login="handleBackToLoginFromForgotPassword"
+                @close="handleModalClose" />
+
+            <AuthCitizenSuccessModal
+                v-if="isSuccessVisible"
+                v-model="isSuccessVisible"
+                @next="handleSuccessModalNext"
                 @close="handleModalClose" />
         </div>
     </ClientOnly>
