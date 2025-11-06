@@ -91,6 +91,7 @@ The authentication system uses a multi-step modal flow managed by `CitizenAuthMo
 - `activeIndex = 6`: CitizenLoginModal
 - `activeIndex = 7`: CitizenOnboardingModal
 - `activeIndex = 8`: CitizenForgotPasswordModal
+- `activeIndex = 9`: CitizenChangePasswordModal
 
 **Key Features:**
 - Clicking "Create Account" in CitizenLoginModal navigates to CitizenGetStartedModal (step 0)
@@ -120,5 +121,44 @@ The forgot password feature allows users to reset their password by receiving a 
   - Added `handleBackToLoginFromForgotPassword()` to navigate back to step 6
   - Integrated CitizenForgotPasswordModal component
 
+**Complete Forgot Password Flow:**
+1. User clicks "Forgot password?" from login → Shows CitizenForgotPasswordModal (step 8)
+2. User enters email → Calls `/forget-password` API to send OTP
+3. Shows CitizenVerifyOtpModal with source="forgot-password" (step 2)
+4. User enters OTP → Calls `/forget-password/otp/verify` API
+5. On success → Shows CitizenChangePasswordModal (step 9)
+6. User creates new password with validations → Calls `/forget-password/update` API
+7. On success → Redirects to CitizenLoginModal (step 6)
+
 **Files Created:**
-- `app/components/Auth/CitizenForgotPasswordModal.vue`: New forgot password modal component based on Figma design
+- `app/components/Auth/CitizenForgotPasswordModal.vue`: Forgot password modal component
+- `app/components/Auth/CitizenChangePasswordModal.vue`: Change password modal with password validations
+
+**Files Modified:**
+- `app/components/Auth/CitizenVerifyOtpModal.vue`: Added forgot password OTP verification flow
+- `app/components/Auth/CitizenAuthModals.vue`: Integrated CitizenChangePasswordModal
+
+### Form Security
+
+**Autofill Prevention:**
+
+To enhance security and prevent browser autofill from interfering with user input, the following components have autofill disabled:
+
+**CitizenRegisterModal.vue:**
+- Form level: `autocomplete="off"` on the `<form>` element
+- First name field: `autocomplete="off"`
+- Last name field: `autocomplete="off"`
+- Password field: `autocomplete="new-password"` (industry best practice for new password fields)
+- Confirm password field: `autocomplete="new-password"`
+
+**Implementation Details:**
+- HTML `autocomplete` attributes prevent browsers from suggesting or auto-filling form data
+- `autocomplete="off"` completely disables autofill for text fields
+- `autocomplete="new-password"` tells browsers this is a new password creation field (not login)
+- Password fields use `new-password` to prevent browsers from suggesting existing saved passwords
+
+**Benefits:**
+- Prevents accidental data leakage from browser autofill
+- Ensures users manually enter their information
+- Improves security for sensitive registration data
+- Better UX control over form input behavior
