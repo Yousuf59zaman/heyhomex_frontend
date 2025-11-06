@@ -131,7 +131,7 @@
         errorMessage.value = ""
 
         try {
-            const response = await $fetch(`${baseURL}resent/temp/reg/otp`, {
+            const response = await $fetchCMS(`/resent/temp/reg/otp`, {
                 method: "POST",
                 body: {uuid},
             })
@@ -178,7 +178,7 @@
         isVerifying.value = true
 
         try {
-            const response = await $fetch(`${baseURL}temp-reg/otp/verify`, {
+            const response = await $fetchCMS(`/temp-reg/otp/verify`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

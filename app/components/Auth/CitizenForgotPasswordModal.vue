@@ -59,7 +59,7 @@
         try {
             isLoading.value = true
 
-            const response = await $fetch(`${baseURL}forget-password`, {
+            const response = await $fetchCMS(`/forget-password`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -65,7 +65,7 @@
 
         try {
             isLoading.value = true
-            const response = await $fetch(`${baseURL}reg-otp-flow`, {
+            const response = await $fetchCMS(`/reg-otp-flow`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
