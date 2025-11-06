@@ -1,7 +1,7 @@
 <script setup>
     const baseURL = useRuntimeConfig().public.API_BASE_URL
 
-    const emit = defineEmits(["update:modelValue", "back-to-login", "close"])
+    const emit = defineEmits(["update:modelValue", "back-to-login", "close", "verify-otp"])
 
     const props = defineProps({
         modelValue: {
