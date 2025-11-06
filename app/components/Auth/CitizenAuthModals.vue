@@ -60,6 +60,9 @@
     const isForgotPasswordVisible = computed(
         () => props.isOpenStartModal && activeIndex.value === 8
     )
+    const isChangePasswordVisible = computed(
+        () => props.isOpenStartModal && activeIndex.value === 9
+    )
 
     const closeJourney = () => {
         emit("update:isOpenStartModal", false)
@@ -152,8 +155,13 @@
         activeIndex.value = 6
     }
 
-    const handleVerifyForgotPasswordSuccess = () => {
+    const handleVerifyForgotPasswordSuccess = (): void => {
         activeIndex.value = 9
+    }
+
+    const handlePasswordChanged = (): void => {
+        // After successful password change, go back to login
+        activeIndex.value = 6
     }
 </script>
 
@@ -231,6 +239,14 @@
                 v-model="isForgotPasswordVisible"
                 @next="handleNextFromForgetPasswaord"
                 @back-to-login="handleBackToLoginFromForgotPassword"
+                @close="handleModalClose" />
+
+            <AuthCitizenChangePasswordModal
+                v-if="isChangePasswordVisible"
+                v-model="isChangePasswordVisible"
+                :email="userEmail"
+                @password-changed="handlePasswordChanged"
+                @back="handleBack"
                 @close="handleModalClose" />
         </div>
     </ClientOnly>

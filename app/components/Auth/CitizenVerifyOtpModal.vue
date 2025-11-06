@@ -205,9 +205,37 @@
             } finally {
                 isVerifying.value = false
             }
-        } else {
-             isVerifying.value = true
-             emit("verify-forgot-password-success", {})
+        } else if (props.source === "forgot-password") {
+            // Forgot password flow
+            isVerifying.value = true
+            try {
+                const otp = otpDigits.value.join("")
+                const response: any = await $fetchCMS(`/forget-password/otp/verify`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: {
+                        email: props.email,
+                        otp: otp,
+                    },
+                })
+
+                if (response?.status === "success") {
+                    emit("verify-forgot-password-success", response.data)
+                } else {
+                    errorMessage.value =
+                        response?.message || "Invalid OTP. Please try again."
+                }
+            } catch (error: any) {
+                console.error("Forgot Password OTP verify error:", error)
+                errorMessage.value =
+                    error?.data?.message ||
+                    error?.message ||
+                    "Invalid OTP. Please try again."
+            } finally {
+                isVerifying.value = false
+            }
         }
     }
 
