@@ -59,7 +59,7 @@
         try {
             isLoading.value = true
 
-            const response = await $fetch(`${baseURL}forgot-password`, {
+            const response = await $fetch(`${baseURL}forget-password`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
