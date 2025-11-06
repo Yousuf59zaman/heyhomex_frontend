@@ -1,7 +1,7 @@
 <script setup>
     const baseURL = useRuntimeConfig().public.API_BASE_URL
 
-    const emit = defineEmits(["update:modelValue", "back-to-login", "close", "verify-otp"])
+    const emit = defineEmits(["update:modelValue", "next", "back-to-login", "close", "verify-otp"])
 
     const props = defineProps({
         modelValue: {
@@ -48,6 +48,8 @@
             return
         }
 
+        
+
         try {
             isLoading.value = true
 
@@ -61,9 +63,7 @@
 
             if (response?.status === "success") {
                 isSuccess.value = true
-                setTimeout(() => {
-                    handleBackToLogin()
-                }, 2000)
+                emit("next" , response.data.email)
             } else {
                 validations_errors.value.message =
                     response?.message ||

@@ -13,6 +13,7 @@
     const userEmail = ref("")
     const accountType = ref("")
     const needsOnboarding = ref(false)
+    const otpSource = ref("")
 
     watch(
         () => props.isOpenStartModal,
@@ -24,6 +25,7 @@
                 userEmail.value = ""
                 accountType.value = ""
                 needsOnboarding.value = false
+                otpSource.value = ""
             }
         }
     )
@@ -82,8 +84,15 @@
         activeIndex.value = 1
     }
 
-    const handleNextFromSendOtp = (email) => {
+   const handleNextFromSendOtp = (email) => {
         userEmail.value = email
+        otpSource.value = "registration" 
+        activeIndex.value = 2
+    }
+
+    const handleNextFromForgetPasswaord = (email) => {
+        userEmail.value = email
+        otpSource.value = "forgot-password" 
         activeIndex.value = 2
     }
 
@@ -139,11 +148,16 @@
     const handleBackToLoginFromForgotPassword = () => {
         activeIndex.value = 6
     }
+
+    const handleVerifyForgotPasswordSuccess = () => {
+        activeIndex.value = 9
+    }
 </script>
 
 <template>
     <ClientOnly>
         <div>
+       
             <AuthCitizenGetStartedModal
                 v-if="isGetStartedVisible"
                 v-model="isGetStartedVisible"
@@ -163,7 +177,9 @@
                 v-if="isVerifyOtpVisible"
                 v-model="isVerifyOtpVisible"
                 :email="userEmail"
+                :source="otpSource"
                 @verify-success="handleVerifyOtpSuccess"
+                @verify-forgot-password-success="handleVerifyForgotPasswordSuccess"
                 @back="handleBack"
                 @close="handleModalClose" />
 
@@ -210,6 +226,7 @@
             <AuthCitizenForgotPasswordModal
                 v-if="isForgotPasswordVisible"
                 v-model="isForgotPasswordVisible"
+                @next="handleNextFromForgetPasswaord"
                 @back-to-login="handleBackToLoginFromForgotPassword"
                 @close="handleModalClose" />
         </div>

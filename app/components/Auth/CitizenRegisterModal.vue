@@ -93,19 +93,17 @@
         uuid: getUuid.value?.uuid || "",
     })
 
-    // Password validation computed properties
+   
     const hasMinimumLength = computed(() => {
         return formData.password.length >= 8
     })
 
     const hasSymbol = computed(() => {
-        // Check for at least one special character/symbol
         const symbolRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/
         return symbolRegex.test(formData.password)
     })
 
     const hasCapitalLetter = computed(() => {
-        // Check for at least one uppercase letter
         const capitalRegex = /[A-Z]/
         return capitalRegex.test(formData.password)
     })
@@ -156,8 +154,7 @@
     const handleRegister = async () => {
         validationErrors.value = {}
         passwordMatchError.value = ""
-
-        // Validate all password requirements
+        
         if (!allPasswordValidationsPassed.value) {
             if (!validatePasswords()) {
                 loading.value = false
@@ -274,7 +271,7 @@
         <template #header>
             <div class="w-full px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
                 <div class="flex items-center justify-center relative">
-                    <!-- Back Button -->
+                    
                     <button
                         @click="handleBack"
                         type="button"
@@ -293,7 +290,7 @@
                         </svg>
                     </button>
 
-                    <!-- Title -->
+                    
                     <h1 class="text-2xl font-semibold text-[#121A22]">
                         Set up profile
                     </h1>

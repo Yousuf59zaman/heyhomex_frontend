@@ -1,6 +1,12 @@
 <script setup>
     const baseURL = useRuntimeConfig().public.API_BASE_URL
 
+    const setUuid = useState("uuid", () => ({
+        uuid: "",
+    }))
+
+    const emit = defineEmits(["update:modelValue", "next", "back", "close"])
+
     const props = defineProps({
         modelValue: {
             type: Boolean,
@@ -8,15 +14,15 @@
         },
     })
 
-    const setUuid = useState("uuid", () => ({
-        uuid: "",
-    }))
-
-    const emit = defineEmits(["update:modelValue", "next", "back", "close"])
-
-    
-
     const visible = ref(props.modelValue)
+    const validations_errors = ref({})
+    const skip_validations = ref([])
+
+    const formData = ref({
+        email: "",
+    })
+
+    const isLoading = ref(false)
 
     watch(
         () => props.modelValue,
@@ -32,17 +38,6 @@
         emit("update:modelValue", newVal)
         if (!newVal) emit("close")
     })
-
-    const validations_errors = ref({})
-    const skip_validations = ref([])
-
-    const formData = ref({
-        email: "",
-    })
-
-    const isLoading = ref(false)
-
-    
 
     const handleBack = () => {
         emit("back")
