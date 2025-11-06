@@ -91,7 +91,7 @@
                 }
                 emit("next", formData.value.email)
             } else {
-                validations_errors.value.message =
+                validations_errors.value.email =
                     response?.message || "Unable to send OTP. Please try again."
             }
         } catch (e: any) {
@@ -109,11 +109,11 @@
                     }
                 }
             } else if (status === 404) {
-                validations_errors.value.message =
+                validations_errors.value.email =
                     e.response?._data?.message || "Resource not found."
             } else {
-                validations_errors.value.message =
-                    e?.message || "Something went wrong. Please try again."
+                validations_errors.value.email =
+                    e.response?._data?.message || "Something went wrong. Please try again."
             }
         } finally {
             isLoading.value = false
