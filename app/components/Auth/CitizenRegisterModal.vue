@@ -93,7 +93,38 @@
         uuid: getUuid.value?.uuid || "",
     })
 
-    
+    // Password validation computed properties
+    const hasMinimumLength = computed(() => {
+        return formData.password.length >= 8
+    })
+
+    const hasSymbol = computed(() => {
+        // Check for at least one special character/symbol
+        const symbolRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/
+        return symbolRegex.test(formData.password)
+    })
+
+    const hasCapitalLetter = computed(() => {
+        // Check for at least one uppercase letter
+        const capitalRegex = /[A-Z]/
+        return capitalRegex.test(formData.password)
+    })
+
+    const passwordsMatch = computed(() => {
+        if (!formData.password || !formData.password_confirmation) {
+            return false
+        }
+        return formData.password === formData.password_confirmation
+    })
+
+    const allPasswordValidationsPassed = computed(() => {
+        return hasMinimumLength.value &&
+               hasSymbol.value &&
+               hasCapitalLetter.value &&
+               passwordsMatch.value
+    })
+
+
     const handleBack = () => {
         emit("back")
     }
@@ -126,7 +157,12 @@
         validationErrors.value = {}
         passwordMatchError.value = ""
 
-        if (!validatePasswords()) {
+        // Validate all password requirements
+        if (!allPasswordValidationsPassed.value) {
+            if (!validatePasswords()) {
+                loading.value = false
+                return
+            }
             loading.value = false
             return
         }
@@ -456,29 +492,126 @@
                 </div>
 
                 <div class="text-xs text-gray-600 space-y-2.5 mt-2">
+                    <!-- Minimum 8 characters validation -->
                     <div class="flex items-center gap-2.5">
                         <span
-                            class="w-4 h-4 border-2 border-gray-400 rounded-full flex-shrink-0"></span>
-                        <p class="leading-relaxed">Minimum of 8 characters</p>
+                            :class="[
+                                'w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-200',
+                                hasMinimumLength
+                                    ? 'bg-green-500 border-2 border-green-500'
+                                    : 'border-2 border-gray-400',
+                            ]">
+                            <svg
+                                v-if="hasMinimumLength"
+                                class="w-2.5 h-2.5 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="4"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                        </span>
+                        <p
+                            :class="[
+                                'leading-relaxed transition-colors duration-200',
+                                hasMinimumLength ? 'text-green-600' : 'text-gray-600',
+                            ]">
+                            Minimum of 8 characters
+                        </p>
                     </div>
+
+                    <!-- Symbol validation -->
                     <div class="flex items-center gap-2.5">
                         <span
-                            class="w-4 h-4 border-2 border-gray-400 rounded-full flex-shrink-0"></span>
-                        <p class="leading-relaxed">
+                            :class="[
+                                'w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-200',
+                                hasSymbol
+                                    ? 'bg-green-500 border-2 border-green-500'
+                                    : 'border-2 border-gray-400',
+                            ]">
+                            <svg
+                                v-if="hasSymbol"
+                                class="w-2.5 h-2.5 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="4"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                        </span>
+                        <p
+                            :class="[
+                                'leading-relaxed transition-colors duration-200',
+                                hasSymbol ? 'text-green-600' : 'text-gray-600',
+                            ]">
                             Must have at least 1 symbol
                         </p>
                     </div>
+
+                    <!-- Capital letter validation -->
                     <div class="flex items-center gap-2.5">
                         <span
-                            class="w-4 h-4 border-2 border-gray-400 rounded-full flex-shrink-0"></span>
-                        <p class="leading-relaxed">
+                            :class="[
+                                'w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-200',
+                                hasCapitalLetter
+                                    ? 'bg-green-500 border-2 border-green-500'
+                                    : 'border-2 border-gray-400',
+                            ]">
+                            <svg
+                                v-if="hasCapitalLetter"
+                                class="w-2.5 h-2.5 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="4"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                        </span>
+                        <p
+                            :class="[
+                                'leading-relaxed transition-colors duration-200',
+                                hasCapitalLetter ? 'text-green-600' : 'text-gray-600',
+                            ]">
                             Must have at least 1 capital letter
                         </p>
                     </div>
+
+                    <!-- Passwords match validation -->
                     <div class="flex items-center gap-2.5">
                         <span
-                            class="w-4 h-4 border-2 border-gray-400 rounded-full flex-shrink-0"></span>
-                        <p class="leading-relaxed">
+                            :class="[
+                                'w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-200',
+                                passwordsMatch
+                                    ? 'bg-green-500 border-2 border-green-500'
+                                    : 'border-2 border-gray-400',
+                            ]">
+                            <svg
+                                v-if="passwordsMatch"
+                                class="w-2.5 h-2.5 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="4"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                        </span>
+                        <p
+                            :class="[
+                                'leading-relaxed transition-colors duration-200',
+                                passwordsMatch ? 'text-green-600' : 'text-gray-600',
+                            ]">
                             Password and confirm password must be the same
                         </p>
                     </div>
@@ -486,12 +619,12 @@
 
                 <Button
                     type="submit"
-                    :disabled="loading"
+                    :disabled="loading || !allPasswordValidationsPassed"
                     :loading="loading"
                     loadingIcon="pi pi-spin pi-spinner"
                     class="w-full"
                     :pt="{
-                        root: 'w-full mb-3 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
+                        root: 'w-full mb-3 px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
                     }">
                     {{ loading ? "Processing..." : "Next" }}
                 </Button>
