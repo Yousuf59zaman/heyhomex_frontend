@@ -185,7 +185,8 @@
         <div class="px-4 sm:px-6 pb-6">
             <form
                 @submit.prevent="handleLogin"
-                class="space-y-4">
+                class="space-y-4"
+                autocomplete="off">
                 <div class="flex flex-col gap-2">
                     <label
                         for="email"
@@ -201,7 +202,7 @@
                             type="email"
                             placeholder="Enter your email"
                             required
-                            autocomplete="username"
+                            autocomplete="off"
                             :pt="{
                                 root: 'w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                             }" />
