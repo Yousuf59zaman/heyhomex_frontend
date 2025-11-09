@@ -655,7 +655,7 @@
                 </div>
 
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2"9>
                         Perfect! Your preferences are saved.
                     </h3>
                     <p class="text-gray-600 text-sm">
