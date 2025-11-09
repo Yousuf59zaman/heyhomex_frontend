@@ -80,7 +80,7 @@
     const showPassword = ref(false)
     const showConfirmPassword = ref(false)
 
-    const formData = reactive<RegisterFormData>({
+    const formData = ref<RegisterFormData>({
         first_name: "",
         last_name: "",
         password: "",
@@ -90,24 +90,24 @@
 
    
     const hasMinimumLength = computed(() => {
-        return formData.password.length >= 8
+        return formData.value.password.length >= 8
     })
 
     const hasSymbol = computed(() => {
         const symbolRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/
-        return symbolRegex.test(formData.password)
+        return symbolRegex.test(formData.value.password)
     })
 
     const hasCapitalLetter = computed(() => {
         const capitalRegex = /[A-Z]/
-        return capitalRegex.test(formData.password)
+        return capitalRegex.test(formData.value.password)
     })
 
     const passwordsMatch = computed(() => {
-        if (!formData.password || !formData.password_confirmation) {
+        if (!formData.value.password || !formData.value.password_confirmation) {
             return false
         }
-        return formData.password === formData.password_confirmation
+        return formData.value.password === formData.value.password_confirmation
     })
 
     const allPasswordValidationsPassed = computed(() => {
@@ -123,17 +123,17 @@
     }
 
     const resetForm = () => {
-        formData.first_name = ""
-        formData.last_name = ""
-        formData.password = ""
-        formData.password_confirmation = ""
+        formData.value.first_name = ""
+        formData.value.last_name = ""
+        formData.value.password = ""
+        formData.value.password_confirmation = ""
         validationErrors.value = {}
         passwordMatchError.value = ""
     }
 
     const validatePasswords = () => {
-        if (formData.password && formData.password_confirmation) {
-            if (formData.password !== formData.password_confirmation) {
+        if (formData.value.password && formData.value.password_confirmation) {
+            if (formData.value.password !== formData.value.password_confirmation) {
                 passwordMatchError.value = "Passwords do not match"
                 return false
             }
@@ -175,7 +175,7 @@
                 ApiResponse<RegistrationResponseData>
             >("/register", {
                 method: "POST",
-                body: formData,
+                body: formData.value,
             })
 
             console.log("Response", response)
@@ -202,7 +202,7 @@
                 }
 
                 setTimeout(() => {
-                    emit("register-success", {...formData})
+                    emit("register-success", {...formData.value})
                 }, 300)
             } else {
             }

@@ -17,6 +17,18 @@
     const needsOnboarding = ref<boolean>(false)
     const otpSource = ref<string>("")
 
+    const isGetStartedVisible = ref(false)
+    const isSendEmailVisible = ref(false)
+    const isVerifyOtpVisible = ref(false)
+    const isAccountTypeVisible = ref(false)
+    const isRegisterVisible = ref(false)
+    const isProfessionalVisible = ref(false)
+    const isLoginVisible = ref(false)
+    const isOnboardingVisible = ref(false)
+    const isForgotPasswordVisible = ref(false)
+    const isSuccessVisible = ref(false)
+    const isChangePasswordVisible = ref(false)
+
     watch(
         () => props.isOpenStartModal,
         (newVal) => {
@@ -32,39 +44,22 @@
         }
     )
 
-    const isGetStartedVisible = computed(
-        () => props.isOpenStartModal && activeIndex.value === 0
-    )
-    const isSendEmailVisible = computed(
-        () => props.isOpenStartModal && activeIndex.value === 1
-    )
-    const isVerifyOtpVisible = computed(
-        () => props.isOpenStartModal && activeIndex.value === 2
-    )
-    const isAccountTypeVisible = computed(
-        () => props.isOpenStartModal && activeIndex.value === 3
-    )
-    const isRegisterVisible = computed(
-        () => props.isOpenStartModal && activeIndex.value === 4
-    )
-    const isProfessionalVisible = computed(
-        () => props.isOpenStartModal && activeIndex.value === 5
-    )
-    const isLoginVisible = computed(
-        () => props.isOpenStartModal && activeIndex.value === 6
-    )
-    const isOnboardingVisible = computed(
-        () => props.isOpenStartModal && activeIndex.value === 7
-    )
-    const isForgotPasswordVisible = computed(
-        () => props.isOpenStartModal && activeIndex.value === 8
-    )
-    const isSuccessVisible = computed(
-        () => props.isOpenStartModal && activeIndex.value === 9
-    )
-
-    const isChangePasswordVisible = computed(
-        () => props.isOpenStartModal && activeIndex.value === 10
+    watch(
+        [() => props.isOpenStartModal, activeIndex],
+        ([isOpen, index]) => {
+            isGetStartedVisible.value = isOpen && index === 0
+            isSendEmailVisible.value = isOpen && index === 1
+            isVerifyOtpVisible.value = isOpen && index === 2
+            isAccountTypeVisible.value = isOpen && index === 3
+            isRegisterVisible.value = isOpen && index === 4
+            isProfessionalVisible.value = isOpen && index === 5
+            isLoginVisible.value = isOpen && index === 6
+            isOnboardingVisible.value = isOpen && index === 7
+            isForgotPasswordVisible.value = isOpen && index === 8
+            isSuccessVisible.value = isOpen && index === 9
+            isChangePasswordVisible.value = isOpen && index === 10
+        },
+        { immediate: true }
     )
     const closeJourney = () => {
         emit("update:isOpenStartModal", false)
@@ -250,6 +245,7 @@
                 v-model="isSuccessVisible"
                 @next="handleSuccessModalNext"
                  @close="handleModalClose" />
+                 
             <AuthCitizenChangePasswordModal
                 v-if="isChangePasswordVisible"
                 v-model="isChangePasswordVisible"
