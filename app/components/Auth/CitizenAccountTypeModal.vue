@@ -1,9 +1,13 @@
 <script setup lang="ts">
+   
     const props = defineProps<{
         modelValue: boolean
+        source?: string
+        ssoData?: Record<string, any> | null
     }>()
     const visible = ref(props.modelValue)
-
+    const loading = ref(false)
+    const validations_errors = ref("")
     watch(
         () => props.modelValue,
         (newVal) => {
@@ -17,6 +21,7 @@
     })
     const emit = defineEmits<{
         "update:modelValue": [value: boolean]
+        "login-success":[needsOnboarding: boolean]
         next: [accountType: string]
         back: []
         close: []
@@ -32,9 +37,58 @@
         selectedAccountType.value = type
     }
 
-    const handleNext = () => {
+    const handleNext = async () => {
+         
+    if (props.source === "sso" && props.ssoData) {
+        loading.value = true
+        validations_errors.value = ""
+        console.log('coming sso data' , props.ssoData);
+        const first_name = props.ssoData.first_name;
+        const social_media_id = props.ssoData.social_media_id
+        const last_name = props.ssoData.last_name
+       
+        try {
+            const response: any = await $fetchCitizen("/admin/login", {
+                method: 'POST',
+                body: { social_media_id , first_name , last_name},
+            });
+            
+            if (response?.status && response?.data) {
+                const userData = response.data
+                if (import.meta.client) {
+                    const tokenCookie = useCookie("XCMS-TOKEN")
+                    tokenCookie.value = userData.token
+                    
+                    localStorage.setItem("citizen_user_data", JSON.stringify(userData))
+                    localStorage.setItem("citizen_user_id", userData.id.toString())
+                    
+                    const onboardingStatusKey = `citizen_onboard_status_${userData.id}`
+                    if (userData.user_onboard_profile_status !== undefined) {
+                        localStorage.setItem(
+                            onboardingStatusKey,
+                            userData.user_onboard_profile_status.toString()
+                        )
+                    }
+                }
+                const needsOnboarding = userData.user_onboard_profile_status === 0
+                if (!needsOnboarding && userData.user_type?.[0]?.slug) {
+                    const redirectSlug = userData.user_type[0].slug
+                    const targetPath = redirectSlug === "kamaaina" ? "/kamaina/" : `/${redirectSlug}/`
+                    navigateTo(targetPath)
+                } else {
+                    emit("login-success", needsOnboarding)
+                }
+            }
+        } catch (error: any) {
+            console.error(`${props.ssoData} login error:`, error)
+            validations_errors.value = error?.message || error?.data?.errors || `Failed to sign in with ${props.ssoData}. Please try again.`
+        } finally {
+            loading.value = false
+        }
+    } else {
         emit("next", selectedAccountType.value)
     }
+}
 </script>
 
 <template>

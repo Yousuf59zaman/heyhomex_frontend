@@ -2,7 +2,7 @@ import { signInWithPopup } from 'firebase/auth';
 const LOGIN = '/admin/login';
 const LOGOUT = '/admin/logout';
 const CURRENT_USER = '/admin/user';
-const SSO_LOGIN = '/customer/sso-login';
+const SSO_LOGIN = '/admin/login';
 
 export const citizenUser = () => {
     return useState('citizen_user', () => undefined);
@@ -38,14 +38,25 @@ export const citizenAuth = () => {
             const result = await signInWithPopup($auth, provider);
             console.log(result);
             const { user } = result;
-            const idToken = await user.getIdToken();
-
+            const social_media_id =  user.uid;
+            const first_name = user.displayName?.split(' ')[0] || '';
+            const last_name = user.displayName?.split(' ').slice(1).join(' ') || '';
+            console.log(' coming data' , social_media_id , first_name , last_name)
             const response: any = await $fetchCitizen(SSO_LOGIN, {
                 method: 'POST',
-                body: { idToken },
+                body: { social_media_id , first_name , last_name},
             });
             cookie.value = response.data?.token;
-            return response;
+            console.log('coming response' , response.data)
+            return {
+            ...response,
+            ssoData: {
+                social_media_id,
+                first_name,
+                last_name,
+                provider: 'google'
+            }
+        };;
         } catch (error: any) {
             console.error('Google login error:', error);
             if (error.code === 'auth/configuration-not-found') {

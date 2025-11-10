@@ -16,6 +16,8 @@
     const accountType = ref<string>("")
     const needsOnboarding = ref<boolean>(false)
     const otpSource = ref<string>("")
+    const typeSource = ref<string>("")
+    const ssoData = ref({})
 
     const isGetStartedVisible = ref(false)
     const isSendEmailVisible = ref(false)
@@ -100,6 +102,13 @@
     }
 
     const handleVerifyOtpSuccess = (): void => {
+        typeSource.value = "otp"
+        activeIndex.value = 3
+    }
+    const handleSsoSuccess = (data:any): void => {
+        typeSource.value = "sso"
+        console.log('check from test' , data)
+        ssoData.value = data;
         activeIndex.value = 3
     }
 
@@ -167,7 +176,6 @@
 <template>
     <ClientOnly>
         <div>
-       
             <AuthCitizenGetStartedModal
                 v-if="isGetStartedVisible"
                 v-model="isGetStartedVisible"
@@ -196,6 +204,9 @@
             <AuthCitizenAccountTypeModal
                 v-if="isAccountTypeVisible"
                 v-model="isAccountTypeVisible"
+                :source="typeSource"
+                :ssoData="ssoData"
+                @login-success="handleLoginSuccess"
                 @next="handleAccountTypeNext"
                 @back="handleBack"
                 @close="handleModalClose" />
@@ -223,6 +234,7 @@
                 @login-success="handleLoginSuccess"
                 @show-register="handleShowRegisterFromLogin"
                 @show-forgot-password="handleShowForgotPasswordFromLogin"
+                @show-account-type="handleSsoSuccess"
                 @back="handleBack"
                 @close="handleModalClose" />
 
@@ -245,7 +257,7 @@
                 v-model="isSuccessVisible"
                 @next="handleSuccessModalNext"
                  @close="handleModalClose" />
-                 
+
             <AuthCitizenChangePasswordModal
                 v-if="isChangePasswordVisible"
                 v-model="isChangePasswordVisible"

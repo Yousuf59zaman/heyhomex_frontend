@@ -400,7 +400,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-onboarding-modal"
-        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: 'min(32rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-2xl shadow-2xl m-4',
             header: 'border-0 pb-0',
