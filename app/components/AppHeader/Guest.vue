@@ -82,7 +82,7 @@
                         Admin Panel
                     </NuxtLink>
                 </div>
-                <div
+                <!-- <div
                     v-else-if="citizen_user"
                     class="hidden md:flex items-center space-x-4">
                     <NuxtLink
@@ -90,7 +90,7 @@
                         class="py-[0.5rem] px-[1.5rem] text-black text-[0.875rem] bg-white border rounded-lg hover:bg-gray-50 transition-colors duration-200">
                         Admin Panel
                     </NuxtLink>
-                </div>
+                </div> -->
                 <div
                     v-else
                     class="hidden md:flex items-center space-x-4">
