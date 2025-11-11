@@ -1,36 +1,29 @@
 <script setup>
     import Avatar from "primevue/avatar"
     import Menu from "primevue/menu"
-
-    const { citizen_user, logout, isLoadingLogout } = citizenAuth()
+    const {citizen_user, logout, isLoadingLogout} = citizenAuth()
 
     const isScroll = ref(false)
     const menu = ref()
     const profileMenuItems = ref([
         {
-            label: 'Profile',
-            icon: 'pi pi-user',
+            label: "Homepage",
+            icon: "pi pi-user",
             command: () => {
-                navigateTo('/kamaina/profile')
-            }
+                navigateTo("/")
+            },
+        },
+
+        {
+            separator: true,
         },
         {
-            label: 'Settings',
-            icon: 'pi pi-cog',
-            command: () => {
-                navigateTo('/kamaina/settings')
-            }
-        },
-        {
-            separator: true
-        },
-        {
-            label: 'Logout',
-            icon: 'pi pi-sign-out',
+            label: "Logout",
+            icon: "pi pi-sign-out",
             command: async () => {
                 await handleLogout()
-            }
-        }
+            },
+        },
     ])
 
     const props = defineProps({
@@ -52,29 +45,24 @@
         try {
             await logout()
         } catch (error) {
-            console.error('Logout error:', error)
+            console.error("Logout error:", error)
         }
     }
 
     const getUserName = computed(() => {
-        if (!citizen_user.value) return 'User'
-        
-        // Check for name field
-        if (citizen_user.value.name) {
-            return citizen_user.value.name.split(' ')[0]
+        if (!citizen_user.value) return "User"
+        if (citizen_user.value.data.name) {
+            return citizen_user.value.data.name.split(" ")[0]
         }
-        
-        // Check for first_name field
-        if (citizen_user.value.first_name) {
-            return citizen_user.value.first_name
+        if (citizen_user.value.data.first_name) {
+            return citizen_user.value.data.first_name
         }
-        
-        // Check for email
-        if (citizen_user.value.email) {
-            return citizen_user.value.email.split('@')[0]
+
+        if (citizen_user.value.data.email) {
+            return citizen_user.value.data.email.split("@")[0]
         }
-        
-        return 'User'
+
+        return "User"
     })
 
     const getUserInitial = computed(() => {
@@ -82,62 +70,68 @@
     })
 
     onMounted(() => {
-        window.addEventListener('scroll', handleScroll)
+        window.addEventListener("scroll", handleScroll)
     })
 
     onUnmounted(() => {
-        window.removeEventListener('scroll', handleScroll)
+        window.removeEventListener("scroll", handleScroll)
     })
 
     defineEmits(["toggle-mobile-menu"])
 </script>
 
 <template>
-    <header class=" sticky top-0 bg-white z-10 px-4 lg:px-4 py-3 lg:py-6" >
+    <header class="sticky top-0 bg-white z-10 px-4 lg:px-4 py-3 lg:py-6">
+        <!-- {{ citizen_user.data.name }} -->
         <!-- Mobile Header -->
         <div class="flex items-center justify-between lg:hidden">
-            <!-- Left Side - Hamburger and Logo -->
+            <!-- Left -->
             <div class="flex items-center space-x-3">
-                <!-- Logo -->
                 <NuxtLink to="/kamaina">
                     <img
                         class="w-8 h-8"
                         src="/svg/dashboard/home_logo.svg"
                         alt="HeyHome Logo" />
                 </NuxtLink>
+                <div class="flex flex-col">
+                    <span class="text-sm font-semibold text-gray-800">{{
+                        getUserName
+                    }}</span>
+                    <span class="text-xs text-gray-500">Community Member</span>
+                </div>
             </div>
 
             <!-- Right Side - Notification and Profile -->
             <div class="flex items-center space-x-2">
-                <!-- Notification Bell Icon -->
                 <button
-                    class="text-gray-400 hover:text-gray-600 transition-colors">
+                    class="text-gray-400 hover:text-gray-600 transition-colors p-2 flex items-center">
                     <img
                         src="/svg/dashboard/bell-icon.svg"
-                        alt="Notifications" />
+                        alt="Notifications"
+                        class="w-6 h-6" />
                 </button>
 
-                <!-- Profile Avatar -->
-                <Button 
+                <Button
                     @click="toggleProfileMenu"
+                    :disabled="isLoadingLogout"
                     class="flex items-center rounded-lg hover:bg-gray-100 p-2">
                     <Avatar
                         :label="getUserInitial"
                         class="avatar-bg"
+                        size="normal"
                         shape="circle" />
                 </Button>
-                
-                <!-- Profile Menu -->
-                <Menu 
-                    ref="menu" 
-                    :model="profileMenuItems" 
+
+                <Menu
+                    ref="menu"
+                    :model="profileMenuItems"
                     :popup="true"
                     :pt="{
                         root: 'mt-2 w-48 shadow-lg rounded-lg border border-gray-200',
                         menu: 'p-2',
                         menuitem: 'rounded-md',
                         action: 'px-3 py-2 hover:bg-gray-100 rounded-md transition-colors',
-                        separator: 'my-2 border-t border-gray-200'
+                        separator: 'my-2 border-t border-gray-200',
                     }" />
 
                 <!-- Hamburger Menu -->
@@ -153,10 +147,9 @@
 
         <!-- Desktop Header -->
         <div class="hidden lg:flex items-center justify-between">
-            <!-- Left Side - Welcome Message -->
+            <!-- Left Side -->
             <div class="flex flex-col">
                 <div class="flex items-center space-x-2">
-                    <!-- User Avatar -->
                     <NuxtLink to="/kamaina">
                         <img
                             class="w-8 h-8"
@@ -182,7 +175,6 @@
 
             <!-- Right Side Actions -->
             <div class="flex items-center space-x-2">
-                <!-- Notification Bell Icon -->
                 <button
                     class="text-gray-400 hover:text-gray-600 transition-colors">
                     <img
@@ -192,8 +184,7 @@
 
                 <div class="w-[1px] h-[20px] bg-[#D4D4D4]"></div>
 
-                <!-- Profile Icon with Dropdown -->
-                <Button 
+                <Button
                     @click="toggleProfileMenu"
                     :disabled="isLoadingLogout"
                     class="flex items-center rounded-lg hover:bg-gray-100 gap-2">
@@ -201,23 +192,25 @@
                         :label="getUserInitial"
                         class="avatar-bg"
                         shape="circle" />
-                    <span class="text-sm font-medium text-gray-700">{{ getUserName }}</span>
-                    <Icon 
-                        name="lucide:chevron-down" 
+                    <span class="text-sm font-medium text-gray-700">{{
+                        getUserName
+                    }}</span>
+                    <Icon
+                        name="lucide:chevron-down"
                         class="w-4 h-4 text-gray-500" />
                 </Button>
-                
+
                 <!-- Profile Menu -->
-                <Menu 
-                    ref="menu" 
-                    :model="profileMenuItems" 
+                <Menu
+                    ref="menu"
+                    :model="profileMenuItems"
                     :popup="true"
                     :pt="{
                         root: 'mt-2 w-48 shadow-lg rounded-lg border border-gray-200',
                         menu: 'p-2',
                         menuitem: 'rounded-md',
                         action: 'px-3 py-2 hover:bg-gray-100 rounded-md transition-colors',
-                        separator: 'my-2 border-t border-gray-200'
+                        separator: 'my-2 border-t border-gray-200',
                     }" />
             </div>
         </div>

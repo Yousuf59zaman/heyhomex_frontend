@@ -142,10 +142,6 @@
         isVisible.value = false;
     };
 
-    const togglePicker = () => {
-        isVisible.value = !isVisible.value;
-    };
-
     const closePicker = () => {
         emit('close');
         isVisible.value = false;

@@ -4,75 +4,72 @@
             type: Boolean,
             default: false,
         },
-    });
+    })
 
-    defineEmits(['close-menu']);
+    defineEmits(["close-menu"])
 
-    // Get current route
-    const route = useRoute();
+    const route = useRoute()
 
-    // Advisor theme color (professional green)
-    const sidebarBackgroundColor = '#18222C';
+    const sidebarBackgroundColor = "#18222C"
 
-    // Navigation items for advisor
     const navigationItems = ref([
         {
-            id: 'dashboard',
-            label: 'Dashboard',
-            icon: '/svg/menubar/dashboard.svg',
-            iconType: 'svg',
-            path: '/advisor',
+            id: "dashboard",
+            label: "Dashboard",
+            icon: "/svg/menubar/dashboard.svg",
+            iconType: "svg",
+            path: "/advisor",
         },
         {
-            id: 'campaigns',
-            label: 'Campaigns',
-            icon: 'lucide:megaphone',
-            iconType: 'lucide',
-            path: '/advisor/campaigns',
+            id: "campaigns",
+            label: "Campaigns",
+            icon: "lucide:megaphone",
+            iconType: "lucide",
+            path: "/advisor/campaigns",
         },
         {
-            id: 'analytics',
-            label: 'Analytics',
-            icon: 'lucide:bar-chart-3',
-            iconType: 'lucide',
-            path: '/advisor/analytics',
+            id: "analytics",
+            label: "Analytics",
+            icon: "lucide:bar-chart-3",
+            iconType: "lucide",
+            path: "/advisor/analytics",
         },
         {
-            id: 'targeting',
-            label: 'Targeting',
-            icon: 'lucide:target',
-            iconType: 'lucide',
-            path: '/advisor/targeting',
+            id: "targeting",
+            label: "Targeting",
+            icon: "lucide:target",
+            iconType: "lucide",
+            path: "/advisor/targeting",
         },
         {
-            id: 'creatives',
-            label: 'Creatives',
-            icon: 'lucide:image',
-            iconType: 'lucide',
-            path: '/advisor/creatives',
+            id: "creatives",
+            label: "Creatives",
+            icon: "lucide:image",
+            iconType: "lucide",
+            path: "/advisor/creatives",
         },
         {
-            id: 'reports',
-            label: 'Reports',
-            icon: 'lucide:file-text',
-            iconType: 'lucide',
-            path: '/advisor/reports',
+            id: "reports",
+            label: "Reports",
+            icon: "lucide:file-text",
+            iconType: "lucide",
+            path: "/advisor/reports",
         },
         {
-            id: 'budget',
-            label: 'Budget',
-            icon: 'lucide:dollar-sign',
-            iconType: 'lucide',
-            path: '/advisor/budget',
+            id: "budget",
+            label: "Budget",
+            icon: "lucide:dollar-sign",
+            iconType: "lucide",
+            path: "/advisor/budget",
         },
         {
-            id: 'settings',
-            label: 'Settings',
-            icon: '/svg/menubar/setting.svg',
-            iconType: 'svg',
-            path: '/advisor/settings',
+            id: "settings",
+            label: "Settings",
+            icon: "/svg/menubar/setting.svg",
+            iconType: "svg",
+            path: "/advisor/settings",
         },
-    ]);
+    ])
 </script>
 
 <template>
@@ -80,8 +77,7 @@
     <aside
         v-if="!isMobile"
         class="h-full w-[69px] flex flex-col items-center py-4"
-        :style="{ backgroundColor: sidebarBackgroundColor }">
-        <!-- Logo Section -->
+        :style="{backgroundColor: sidebarBackgroundColor}">
         <div class="mb-8">
             <img
                 src="/images/home/home_logo.png"
@@ -118,8 +114,7 @@
     <aside
         v-else
         class="h-full w-64 flex flex-col"
-        :style="{ backgroundColor: sidebarBackgroundColor }">
-        <!-- Header -->
+        :style="{backgroundColor: sidebarBackgroundColor}">
         <div
             class="flex items-center justify-between p-4 border-b border-white/20">
             <div class="flex items-center space-x-3">
@@ -183,19 +178,16 @@
 </template>
 
 <style scoped>
-    /* Desktop Sidebar Styles */
     .sidebar-link {
         position: relative;
-        color: white; /* Make Lucide icons white by default */
+        color: white;
     }
 
-    /* Default state - fully white icons */
     .sidebar-link .sidebar-icon {
         filter: brightness(0) invert(1) opacity(1);
         transition: all 0.2s ease;
     }
 
-    /* Hover state - fully opaque white icons with background */
     .sidebar-link:hover {
         background-color: rgba(255, 255, 255, 0.15);
     }
@@ -205,10 +197,9 @@
         transform: scale(1.05);
     }
 
-    /* Active state - white background with black icons */
     .sidebar-link-active {
         background-color: white !important;
-        color: black !important; /* Make Lucide icons black when active */
+        color: black !important;
     }
 
     .sidebar-link-active .sidebar-icon {
@@ -217,25 +208,21 @@
         -webkit-filter: brightness(0) !important;
     }
 
-    /* Ensure hover doesn't override active state */
     .sidebar-link-active:hover .sidebar-icon {
         filter: brightness(0) !important;
         -webkit-filter: brightness(0) !important;
         transform: scale(1);
     }
 
-    /* Mobile Sidebar Styles */
     .mobile-sidebar-link {
         color: #ffffff;
     }
 
-    /* Default state - white icons */
     .mobile-sidebar-link .mobile-sidebar-icon {
         filter: brightness(0) saturate(100%) invert(100%);
         transition: all 0.2s ease;
     }
 
-    /* Hover state */
     .mobile-sidebar-link:hover {
         background-color: rgba(255, 255, 255, 0.1);
         color: #ffffff;

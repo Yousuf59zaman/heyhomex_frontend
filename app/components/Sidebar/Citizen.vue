@@ -1,76 +1,127 @@
 <script setup>
+    const {citizen_user} = citizenAuth()
+
     const props = defineProps({
         isMobile: {
             type: Boolean,
             default: false,
         },
-    });
+    })
 
-    defineEmits(['close-menu']);
+    defineEmits(["close-menu"])
 
-    // Get current route
-    const route = useRoute();
+    const route = useRoute()
 
     const sidebarBackgroundColor = computed(() => {
-        const currentPath = route.path;
+        const currentPath = route.path
 
-        if (currentPath.includes('kamaina')) {
-            return '#FF6666';
-        } else if (currentPath.includes('military')) {
-            return '#6E9EF3';
-        } else if (currentPath.includes('investor')) {
-            return '#333365';
+        if (currentPath.includes("kamaina")) {
+            return "#FF6666"
+        } else if (currentPath.includes("military")) {
+            return "#6E9EF3"
+        } else if (currentPath.includes("investor")) {
+            return "#333365"
         }
 
-        // Default color (fallback)
-        return '#FF6666';
-    });
+        return "#FF6666"
+    })
 
-    // Navigation items data
-    const navigationItems = ref([
+    const getUserName = computed(() => {
+        if (!citizen_user.value) return "User"
+
+        if (citizen_user.value.data?.name) {
+            return citizen_user.value.data.name.split(" ")[0]
+        }
+
+        if (citizen_user.value.data?.first_name) {
+            return citizen_user.value.data.first_name
+        }
+
+        if (citizen_user.value.data?.email) {
+            return citizen_user.value.data.email.split("@")[0]
+        }
+
+        return "User"
+    })
+
+    const getUserInitial = computed(() => {
+        return getUserName.value.charAt(0).toUpperCase()
+    })
+
+    const getUserType = computed(() => {
+        if (!citizen_user.value) return "Citizen"
+
+        if (
+            citizen_user.value.data?.user_type &&
+            citizen_user.value.data.user_type.length > 0
+        ) {
+            const userType = citizen_user.value.data.user_type[0]
+
+            return (
+                userType.name ||
+                userType.slug?.charAt(0).toUpperCase() +
+                    userType.slug?.slice(1) ||
+                "Citizen"
+            )
+        }
+
+        return "Citizen"
+    })
+
+    const getBasePath = computed(() => {
+        if (!citizen_user.value || !citizen_user.value.data?.user_type)
+            return "/kamaina"
+
+        const userType = citizen_user.value.data.user_type[0]
+        const slug = userType?.slug || "kamaina"
+
+        return slug === "kamaaina" ? "/kamaina" : `/${slug}`
+    })
+
+    const navigationItems = computed(() => [
         {
-            id: 'dashboard',
-            label: 'Dashboard',
-            icon: '/svg/menubar/dashboard.svg',
-            iconType: 'svg',
-            path: '/kamaina',
+            id: "dashboard",
+            label: "Dashboard",
+            icon: "/svg/menubar/dashboard.svg",
+            iconType: "svg",
+            path: getBasePath.value,
         },
         {
-            id: 'Search',
-            label: 'Search',
-            icon: '/svg/menubar/search.svg',
-            iconType: 'svg',
-            path: '/kamaina/search',
+            id: "Search",
+            label: "Search",
+            icon: "/svg/menubar/search.svg",
+            iconType: "svg",
+            path: `${getBasePath.value}/search`,
         },
         {
-            id: 'videos',
-            label: 'Videos',
-            icon: '/svg/menubar/video.svg',
-            iconType: 'svg',
-            path: '/#',
+            id: "videos",
+            label: "Videos",
+            icon: "/svg/menubar/video.svg",
+            iconType: "svg",
+            path: `${getBasePath.value}/videos`,
         },
         {
-            id: 'favourites',
-            label: 'Favourites',
-            icon: '/svg/menubar/favourite.svg',
-            iconType: 'svg',
-            path: '/#',
+            id: "favourites",
+            label: "Favourites",
+            icon: "/svg/menubar/favourite.svg",
+            iconType: "svg",
+            path: `${getBasePath.value}/favourites`,
         },
         {
-            id: 'reports',
-            label: 'Reports',
-            icon: '/svg/menubar/search.svg',
-            iconType: 'svg',
-            path: '/#',
+            id: "reports",
+            label: "Reports",
+            icon: "/svg/menubar/search.svg",
+            iconType: "svg",
+            path: `${getBasePath.value}/reports`,
         },
         {
-            id: 'settings',
-            label: 'Settings',
-            icon: '/svg/menubar/setting.svg',
-            iconType: 'svg',
-            path: '/#',
+            id: "settings",
+            label: "Settings",
+            icon: "/svg/menubar/setting.svg",
+            iconType: "svg",
+            path: `${getBasePath.value}/settings`,
         },
-    ]);
+    ])
 </script>
 
 <template>
@@ -78,8 +129,7 @@
     <aside
         v-if="!isMobile"
         class="h-full w-[69px] flex flex-col items-center py-7"
-        :style="{ backgroundColor: sidebarBackgroundColor }">
-        <!-- Logo Section -->
+        :style="{backgroundColor: sidebarBackgroundColor}">
         <div class="mb-8">
             <img
                 src="/svg/dashboard/home_logo.svg"
@@ -116,8 +166,7 @@
     <aside
         v-else
         class="h-full w-64 flex flex-col"
-        :style="{ backgroundColor: sidebarBackgroundColor }">
-        <!-- Header -->
+        :style="{backgroundColor: sidebarBackgroundColor}">
         <div
             class="flex items-center justify-between p-4 border-b border-white/20">
             <div class="flex items-center space-x-3">
@@ -167,11 +216,15 @@
             <div class="flex items-center space-x-3">
                 <div
                     class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                    <span class="text-white text-sm font-medium">U</span>
+                    <span class="text-white text-sm font-medium">{{
+                        getUserInitial
+                    }}</span>
                 </div>
                 <div class="flex-1">
-                    <p class="text-sm font-medium text-white">Priad</p>
-                    <p class="text-xs text-white/70">Citizen</p>
+                    <p class="text-sm font-medium text-white">
+                        {{ getUserName }}
+                    </p>
+                    <p class="text-xs text-white/70">{{ getUserType }}</p>
                 </div>
             </div>
         </div>
@@ -179,18 +232,15 @@
 </template>
 
 <style scoped>
-    /* Desktop Sidebar Styles */
     .sidebar-link {
         position: relative;
     }
 
-    /* Default state - semi-transparent white icons */
     .sidebar-link .sidebar-icon {
         filter: brightness(0) invert(1) opacity(0.6);
         transition: all 0.2s ease;
     }
 
-    /* Hover state - fully opaque white icons with background */
     .sidebar-link:hover {
         background-color: rgba(255, 255, 255, 0.15);
     }
@@ -200,7 +250,6 @@
         transform: scale(1.05);
     }
 
-    /* Active state - white background with black icons */
     .sidebar-link-active {
         background-color: white !important;
     }
@@ -238,7 +287,7 @@
     .mobile-sidebar-link:hover .mobile-sidebar-icon {
         filter: brightness(0) saturate(100%) invert(100%);
     }
-    
+
     .mobile-sidebar-link-active {
         background-color: rgba(255, 255, 255, 0.2) !important;
         color: #ffffff !important;

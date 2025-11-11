@@ -1,12 +1,11 @@
 <script setup>
-    const { admin_user = {} } = adminAuth()
-    // const { citizen_user = {} } = adminAuth()
+    const {admin_user = {}} = adminAuth()
+    const {citizen_user = {}} = citizenAuth()
     // const { $citizenModals } = useNuxtApp()
     const isScroll = ref(false)
     const isMobileMenuOpen = ref(false)
     const isOpenStartModal = ref(false)
     const initialStep = ref(0)
-    
 
     const handleScroll = () => {
         isScroll.value = window.scrollY > 0
@@ -28,17 +27,25 @@
         isMobileMenuOpen.value = false
     }
 
+    const handleDashboardRedirect = (userData) => {
+        console.log("user_data", userData.data)
+        const redirectSlug = userData.data.user_type[0].slug
+        const targetPath =
+            redirectSlug === "kamaaina" ? "/kamaina/" : `/${redirectSlug}/`
+        window.location.href = targetPath
+    }
+
     onMounted(() => {
-        window.addEventListener('scroll', handleScroll)
-       
+        window.addEventListener("scroll", handleScroll)
     })
 
     onUnmounted(() => {
-        window.removeEventListener('scroll', handleScroll)
+        window.removeEventListener("scroll", handleScroll)
     })
 </script>
 
 <template>
+    <!-- {{ citizen_user }} -->
     <nav
         :class="[
             'sticky top-0 bg-[#121A22] w-full transition-all duration-300 z-50',
@@ -46,7 +53,7 @@
         ]">
         <div
             class="relative flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12">
-            <!-- Left Spacer (hidden on mobile) -->
+            <!-- Left Spacer-->
             <div class="md:w-[200px]">
                 <img
                     class="hidden sm:block lg:hidden"
@@ -54,7 +61,7 @@
                     alt="" />
             </div>
 
-            <!-- Logo Section (Centered) -->
+            <!-- Logo Section-->
             <div
                 :class="[
                     'absolute left-1/2 -translate-x-1/2 transition-transform duration-300',
@@ -82,15 +89,16 @@
                         Admin Panel
                     </NuxtLink>
                 </div>
-                <!-- <div
+                <div
                     v-else-if="citizen_user"
-                    class="hidden md:flex items-center space-x-4">
-                    <NuxtLink
-                        to="/admin-panel"
+                    style="cursor: pointer"
+                    class="hidden cursor-pointer md:flex items-center space-x-4">
+                    <div
+                        @click="handleDashboardRedirect(citizen_user)"
                         class="py-[0.5rem] px-[1.5rem] text-black text-[0.875rem] bg-white border rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                        Admin Panel
-                    </NuxtLink>
-                </div> -->
+                        Citizen Panel
+                    </div>
+                </div>
                 <div
                     v-else
                     class="hidden md:flex items-center space-x-4">
@@ -148,23 +156,25 @@
             leave-active-class="transition duration-150 ease-in"
             leave-from-class="opacity-100 translate-y-0"
             leave-to-class="opacity-0 -translate-y-2">
+            <!-- Guest Mobile Menu -->
             <div
-                v-if="isMobileMenuOpen && !admin_user"
+                v-if="isMobileMenuOpen && !admin_user && !citizen_user"
                 class="md:hidden bg-[#1a2530] border-t border-gray-700">
                 <div class="px-4 py-4 space-y-3">
                     <button
                         @click="handleSignIn"
-                        class="block w-full text-left text-white text-base py-2 hover:text-gray-300 transition-colors">
+                        class="block w-full text-left text-white text-base py-2 px-3 rounded-lg hover:bg-[#2a3540] transition-colors">
                         Sign In
                     </button>
                     <button
                         @click="handleGetStarted"
-                        style="color: black"
-                        class="block w-full text-center py-[0.625rem] px-[1.5rem] text-base bg-white border rounded-lg hover:bg-gray-100 transition-colors">
+                        class="block w-full text-center py-[0.625rem] px-[1.5rem] text-base text-black bg-white border rounded-lg hover:bg-gray-100 transition-colors">
                         Get Started
                     </button>
                 </div>
             </div>
+
+            <!-- Admin Mobile Menu -->
             <div
                 v-else-if="isMobileMenuOpen && admin_user"
                 class="md:hidden bg-[#1a2530] border-t border-gray-700">
@@ -172,28 +182,30 @@
                     <NuxtLink
                         to="/admin-panel"
                         @click="toggleMobileMenu"
-                        class="block w-full text-center py-[0.625rem] px-[1.5rem] text-base bg-white border rounded-lg hover:bg-gray-100 transition-colors">
+                        class="block w-full text-center py-[0.625rem] px-[1.5rem] text-base text-black bg-white border rounded-lg hover:bg-gray-100 transition-colors">
                         Admin Panel
                     </NuxtLink>
                 </div>
             </div>
+
+            <!-- Citizen Mobile Menu -->
             <div
                 v-else-if="isMobileMenuOpen && citizen_user"
                 class="md:hidden bg-[#1a2530] border-t border-gray-700">
                 <div class="px-4 py-4 space-y-3">
-                    <NuxtLink
-                        to="/admin-panel"
-                        @click="toggleMobileMenu"
-                        class="block w-full text-center py-[0.625rem] px-[1.5rem] text-base bg-white border rounded-lg hover:bg-gray-100 transition-colors">
-                        Admin Panel
-                    </NuxtLink>
+                    <button
+                        @click="handleDashboardRedirect(citizen_user)"
+                        class="block w-full text-center py-[0.625rem] px-[1.5rem] text-base text-black bg-white border rounded-lg hover:bg-gray-100 transition-colors">
+                        Go to Dashboard
+                    </button>
                 </div>
             </div>
         </transition>
     </nav>
 
-
-    <AuthCitizenAuthModals v-model:isOpenStartModal="isOpenStartModal" :initialStep="initialStep" />
+    <AuthCitizenAuthModals
+        v-model:isOpenStartModal="isOpenStartModal"
+        :initialStep="initialStep" />
 </template>
 
 <style></style>

@@ -16,11 +16,12 @@ export const citizenAuth = () => {
     const isLoadingLogout = ref(false);
 
     async function login(credentials: any) {
+        console.log('isCitizenLoggedIn.value' , isCitizenLoggedIn.value)
+        console.log('isCitizen user.value' , citizen_user.value)
         if (isCitizenLoggedIn.value) return;
 
         const response: any = await $fetchCitizen(LOGIN, { method: 'POST', body: credentials });
         cookie.value = response.data?.token;
-        citizen_user.value = response.data;
         console.log('coming response ' , response.data)
         return response;
     }
@@ -47,7 +48,6 @@ export const citizenAuth = () => {
                 body: { social_media_id , first_name , last_name},
             });
             cookie.value = response.data?.token;
-            citizen_user.value = response.data;
             return {
             ...response,
             ssoData: {
@@ -133,6 +133,7 @@ export const citizenAuth = () => {
         if (!isCitizenLoggedIn.value) return;
         await $fetchCitizen(LOGOUT, { method: 'POST' });
         citizen_user.value = null;
+        localStorage.clear();
         cookie.value = null;
         isLoadingLogout.value = false;
         await router.push('/');

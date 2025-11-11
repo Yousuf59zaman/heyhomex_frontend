@@ -122,12 +122,14 @@
             const needsOnboarding = userData.user_onboard_profile_status === 0
 
             if (!needsOnboarding && userData.user_type?.[0]?.slug) {
+                // window.location.href = '/admin-panel';
                 const redirectSlug = userData.user_type[0].slug
                 const targetPath =
                     redirectSlug === "kamaaina"
                         ? "/kamaina/"
                         : `/${redirectSlug}/`
-                navigateTo(targetPath)
+                // navigateTo(targetPath)
+                window.location.href = targetPath;
             } else {
                 emit("login-success", needsOnboarding)
             }
