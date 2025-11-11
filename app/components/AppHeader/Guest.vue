@@ -1,5 +1,6 @@
 <script setup>
     const { admin_user = {} } = adminAuth()
+    // const { citizen_user = {} } = adminAuth()
     // const { $citizenModals } = useNuxtApp()
     const isScroll = ref(false)
     const isMobileMenuOpen = ref(false)
@@ -74,6 +75,15 @@
                 <!-- Desktop Menu -->
                 <div
                     v-if="admin_user"
+                    class="hidden md:flex items-center space-x-4">
+                    <NuxtLink
+                        to="/admin-panel"
+                        class="py-[0.5rem] px-[1.5rem] text-black text-[0.875rem] bg-white border rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                        Admin Panel
+                    </NuxtLink>
+                </div>
+                <div
+                    v-else-if="citizen_user"
                     class="hidden md:flex items-center space-x-4">
                     <NuxtLink
                         to="/admin-panel"
@@ -157,6 +167,18 @@
             </div>
             <div
                 v-else-if="isMobileMenuOpen && admin_user"
+                class="md:hidden bg-[#1a2530] border-t border-gray-700">
+                <div class="px-4 py-4 space-y-3">
+                    <NuxtLink
+                        to="/admin-panel"
+                        @click="toggleMobileMenu"
+                        class="block w-full text-center py-[0.625rem] px-[1.5rem] text-base bg-white border rounded-lg hover:bg-gray-100 transition-colors">
+                        Admin Panel
+                    </NuxtLink>
+                </div>
+            </div>
+            <div
+                v-else-if="isMobileMenuOpen && citizen_user"
                 class="md:hidden bg-[#1a2530] border-t border-gray-700">
                 <div class="px-4 py-4 space-y-3">
                     <NuxtLink

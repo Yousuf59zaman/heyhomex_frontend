@@ -1,5 +1,4 @@
 <script setup lang="ts">
-   
     const props = defineProps<{
         modelValue: boolean
         source?: string
@@ -21,74 +20,87 @@
     })
     const emit = defineEmits<{
         "update:modelValue": [value: boolean]
-        "login-success":[needsOnboarding: boolean]
-        next: [accountType: string]
+        "login-success": [needsOnboarding: boolean]
+        next: [accountType: any]
         back: []
         close: []
     }>()
 
-    const selectedAccountType = ref("buyer")
+    const selectedAccountType = ref(3)
 
     const handleBack = () => {
         emit("back")
     }
 
-    const selectAccountType = (type: string) => {
+    const selectAccountType = (type: any) => {
         selectedAccountType.value = type
     }
 
     const handleNext = async () => {
-         
-    if (props.source === "sso" && props.ssoData) {
-        loading.value = true
-        validations_errors.value = ""
-        console.log('coming sso data' , props.ssoData);
-        const first_name = props.ssoData.first_name;
-        const social_media_id = props.ssoData.social_media_id
-        const last_name = props.ssoData.last_name
-       
-        try {
-            const response: any = await $fetchCitizen("/admin/login", {
-                method: 'POST',
-                body: { social_media_id , first_name , last_name},
-            });
-            
-            if (response?.status && response?.data) {
-                const userData = response.data
-                if (import.meta.client) {
-                    const tokenCookie = useCookie("XCMS-TOKEN")
-                    tokenCookie.value = userData.token
-                    
-                    localStorage.setItem("citizen_user_data", JSON.stringify(userData))
-                    localStorage.setItem("citizen_user_id", userData.id.toString())
-                    
-                    const onboardingStatusKey = `citizen_onboard_status_${userData.id}`
-                    if (userData.user_onboard_profile_status !== undefined) {
+        if (props.source === "sso" && props.ssoData) {
+            loading.value = true
+            validations_errors.value = ""
+
+            const {first_name, last_name, social_media_id} = props.ssoData
+            const role_id = selectedAccountType.value
+
+            try {
+                const response: any = await $fetchCitizen("/admin/login", {
+                    method: "POST",
+                    body: {social_media_id, first_name, last_name, role_id},
+                })
+
+                const userData = response?.data
+
+                if (response?.status && userData) {
+                    if (import.meta.client) {
+                        const tokenCookie = useCookie("XCMS-TOKEN")
+                        tokenCookie.value = userData.token
+                        const userId = userData.id?.toString()
                         localStorage.setItem(
-                            onboardingStatusKey,
-                            userData.user_onboard_profile_status.toString()
+                            "citizen_user_data",
+                            JSON.stringify(userData)
                         )
+                        localStorage.setItem("citizen_user_id", userId)
+                        const onboardingKey = `citizen_onboard_status_${userId}`
+                        const onboardStatus =
+                            userData.user_onboard_profile_status ?? null
+                        if (onboardStatus !== null) {
+                            localStorage.setItem(
+                                onboardingKey,
+                                onboardStatus.toString()
+                            )
+                        }
+                    }
+                    const needsOnboarding =
+                        userData.user_onboard_profile_status === 0
+                    const userSlug = userData.user_type?.[0]?.slug
+
+                    if (!needsOnboarding && userSlug) {
+                        const redirectMap: Record<string, string> = {
+                            kamaaina: "/kamaina/",
+                        }
+                        navigateTo(redirectMap[userSlug] || `/${userSlug}/`)
+                    } else {
+                        emit("login-success", needsOnboarding)
                     }
                 }
-                const needsOnboarding = userData.user_onboard_profile_status === 0
-                if (!needsOnboarding && userData.user_type?.[0]?.slug) {
-                    const redirectSlug = userData.user_type[0].slug
-                    const targetPath = redirectSlug === "kamaaina" ? "/kamaina/" : `/${redirectSlug}/`
-                    navigateTo(targetPath)
-                } else {
-                    emit("login-success", needsOnboarding)
-                }
+            } catch (error: any) {
+                console.error("SSO login error:", error)
+
+                validations_errors.value =
+                    error?.data?.errors ||
+                    error?.message ||
+                    `Failed to sign in with ${
+                        props.ssoData?.provider || "SSO"
+                    }. Please try again.`
+            } finally {
+                loading.value = false
             }
-        } catch (error: any) {
-            console.error(`${props.ssoData} login error:`, error)
-            validations_errors.value = error?.message || error?.data?.errors || `Failed to sign in with ${props.ssoData}. Please try again.`
-        } finally {
-            loading.value = false
+        } else {
+            emit("next", selectedAccountType.value)
         }
-    } else {
-        emit("next", selectedAccountType.value)
     }
-}
 </script>
 
 <template>
@@ -110,7 +122,6 @@
         <template #header>
             <div class="w-full px-6 pt-6 pb-2">
                 <div class="flex items-center justify-center relative">
-                  
                     <button
                         @click="handleBack"
                         type="button"
@@ -129,7 +140,6 @@
                         </svg>
                     </button>
 
-                  
                     <h2 class="text-xl font-semibold text-[#121A22]">
                         Select account type
                     </h2>
@@ -139,41 +149,37 @@
 
         <!-- Content -->
         <div class="px-6 pb-6 space-y-6">
-         
             <div class="grid grid-cols-3 gap-3">
-                
                 <button
-                    @click="selectAccountType('buyer')"
+                    @click="selectAccountType(3)"
                     type="button"
                     :class="[
                         'px-4 py-3.5 rounded-lg font-medium transition-all duration-200',
-                        selectedAccountType === 'buyer'
+                        selectedAccountType === 3
                             ? 'bg-[#1E293B] text-white'
                             : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50',
                     ]">
                     I am a Buyer
                 </button>
 
-               
                 <button
-                    @click="selectAccountType('agent')"
+                    @click="selectAccountType(2)"
                     type="button"
                     :class="[
                         'px-4 py-3.5 rounded-lg font-medium transition-all duration-200',
-                        selectedAccountType === 'agent'
+                        selectedAccountType === 2
                             ? 'bg-[#1E293B] text-white'
                             : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50',
                     ]">
                     I am an Agent
                 </button>
 
-            
                 <button
-                    @click="selectAccountType('advertiser')"
+                    @click="selectAccountType(1)"
                     type="button"
                     :class="[
                         'px-4 py-3.5 rounded-lg font-medium transition-all duration-200',
-                        selectedAccountType === 'advertiser'
+                        selectedAccountType === 1
                             ? 'bg-[#1E293B] text-white'
                             : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50',
                     ]">
@@ -181,7 +187,6 @@
                 </button>
             </div>
 
-         
             <button
                 @click="handleNext"
                 type="button"
@@ -189,7 +194,6 @@
                 Next
             </button>
 
-         
             <div class="text-center pt-2">
                 <p class="text-xs text-gray-600">
                     By using heyhomex, you agree to the

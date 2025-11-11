@@ -10,7 +10,7 @@ export const citizenUser = () => {
 
 export const citizenAuth = () => {
     const router = useRouter();
-    const citizen_user: any = citizenUser();
+    let citizen_user: any = citizenUser();
     const isCitizenLoggedIn = computed(() => !!citizen_user.value);
     const cookie = useCookie($XCTN_TOKEN);
     const isLoadingLogout = ref(false);
@@ -20,6 +20,8 @@ export const citizenAuth = () => {
 
         const response: any = await $fetchCitizen(LOGIN, { method: 'POST', body: credentials });
         cookie.value = response.data?.token;
+        citizen_user.value = response.data;
+        console.log('coming response ' , response.data)
         return response;
     }
 
@@ -30,13 +32,11 @@ export const citizenAuth = () => {
         if (sidCookie.value) {
             sidCookie.value = null;
         }
-
         try {
             const { $auth, $GoogleAuthProvider }: any = useNuxtApp();
             const provider = new $GoogleAuthProvider();
             provider.setCustomParameters({ prompt: 'select_account' });
             const result = await signInWithPopup($auth, provider);
-            console.log(result);
             const { user } = result;
             const social_media_id =  user.uid;
             const first_name = user.displayName?.split(' ')[0] || '';
@@ -47,7 +47,7 @@ export const citizenAuth = () => {
                 body: { social_media_id , first_name , last_name},
             });
             cookie.value = response.data?.token;
-            console.log('coming response' , response.data)
+            citizen_user.value = response.data;
             return {
             ...response,
             ssoData: {
@@ -56,7 +56,7 @@ export const citizenAuth = () => {
                 last_name,
                 provider: 'google'
             }
-        };;
+        };
         } catch (error: any) {
             console.error('Google login error:', error);
             if (error.code === 'auth/configuration-not-found') {
@@ -128,6 +128,7 @@ export const citizenAuth = () => {
     } 
 
     async function logout() {
+        
         isLoadingLogout.value = true;
         if (!isCitizenLoggedIn.value) return;
         await $fetchCitizen(LOGOUT, { method: 'POST' });

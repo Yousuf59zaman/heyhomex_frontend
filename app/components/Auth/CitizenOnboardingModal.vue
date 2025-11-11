@@ -1,14 +1,13 @@
 <script setup lang="ts">
     type OnboardingStep = "motivation" | "budget" | "location" | "success"
 
-    const props = defineProps<{ modelValue: boolean }>()
+    const props = defineProps<{modelValue: boolean}>()
     const visible = ref(props.modelValue)
 
     watch(
         () => props.modelValue,
         (newVal) => {
-            visible.value = newVal;
-
+            visible.value = newVal
         }
     )
     watch(visible, (newVal) => {
@@ -388,8 +387,6 @@
             }
         }
     )
-
-   
 </script>
 
 <template>
@@ -400,7 +397,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-onboarding-modal"
-        :style="{width: 'min(32rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-2xl shadow-2xl m-4',
             header: 'border-0 pb-0',
@@ -655,7 +652,7 @@
                 </div>
 
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2"9>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">
                         Perfect! Your preferences are saved.
                     </h3>
                     <p class="text-gray-600 text-sm">

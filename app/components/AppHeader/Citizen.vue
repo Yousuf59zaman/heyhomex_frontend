@@ -1,7 +1,37 @@
 <script setup>
     import Avatar from "primevue/avatar"
+    import Menu from "primevue/menu"
 
-    const isScroll = ref(false);
+    const { citizen_user, logout, isLoadingLogout } = citizenAuth()
+
+    const isScroll = ref(false)
+    const menu = ref()
+    const profileMenuItems = ref([
+        {
+            label: 'Profile',
+            icon: 'pi pi-user',
+            command: () => {
+                navigateTo('/kamaina/profile')
+            }
+        },
+        {
+            label: 'Settings',
+            icon: 'pi pi-cog',
+            command: () => {
+                navigateTo('/kamaina/settings')
+            }
+        },
+        {
+            separator: true
+        },
+        {
+            label: 'Logout',
+            icon: 'pi pi-sign-out',
+            command: async () => {
+                await handleLogout()
+            }
+        }
+    ])
 
     const props = defineProps({
         isMobileMenuOpen: {
@@ -11,11 +41,52 @@
     })
 
     const handleScroll = () => {
-        isScroll.value = window.screenY > 0;
+        isScroll.value = window.screenY > 0
     }
 
-    onMounted( ()=> {
-        window.addEventListener('scroll' , handleScroll);
+    const toggleProfileMenu = (event) => {
+        menu.value.toggle(event)
+    }
+
+    const handleLogout = async () => {
+        try {
+            await logout()
+        } catch (error) {
+            console.error('Logout error:', error)
+        }
+    }
+
+    const getUserName = computed(() => {
+        if (!citizen_user.value) return 'User'
+        
+        // Check for name field
+        if (citizen_user.value.name) {
+            return citizen_user.value.name.split(' ')[0]
+        }
+        
+        // Check for first_name field
+        if (citizen_user.value.first_name) {
+            return citizen_user.value.first_name
+        }
+        
+        // Check for email
+        if (citizen_user.value.email) {
+            return citizen_user.value.email.split('@')[0]
+        }
+        
+        return 'User'
+    })
+
+    const getUserInitial = computed(() => {
+        return getUserName.value.charAt(0).toUpperCase()
+    })
+
+    onMounted(() => {
+        window.addEventListener('scroll', handleScroll)
+    })
+
+    onUnmounted(() => {
+        window.removeEventListener('scroll', handleScroll)
     })
 
     defineEmits(["toggle-mobile-menu"])
@@ -43,8 +114,31 @@
                     class="text-gray-400 hover:text-gray-600 transition-colors">
                     <img
                         src="/svg/dashboard/bell-icon.svg"
-                        alt="" />
+                        alt="Notifications" />
                 </button>
+
+                <!-- Profile Avatar -->
+                <Button 
+                    @click="toggleProfileMenu"
+                    class="flex items-center rounded-lg hover:bg-gray-100 p-2">
+                    <Avatar
+                        :label="getUserInitial"
+                        class="avatar-bg"
+                        shape="circle" />
+                </Button>
+                
+                <!-- Profile Menu -->
+                <Menu 
+                    ref="menu" 
+                    :model="profileMenuItems" 
+                    :popup="true"
+                    :pt="{
+                        root: 'mt-2 w-48 shadow-lg rounded-lg border border-gray-200',
+                        menu: 'p-2',
+                        menuitem: 'rounded-md',
+                        action: 'px-3 py-2 hover:bg-gray-100 rounded-md transition-colors',
+                        separator: 'my-2 border-t border-gray-200'
+                    }" />
 
                 <!-- Hamburger Menu -->
                 <button
@@ -75,7 +169,7 @@
                         <h1
                             style="letter-spacing: 1px"
                             class="text-[1.655rem] font-extrabold text-[#2C3E50]">
-                            Welcome back, Priad!
+                            Welcome back, {{ getUserName }}!
                         </h1>
                     </div>
                 </div>
@@ -93,18 +187,38 @@
                     class="text-gray-400 hover:text-gray-600 transition-colors">
                     <img
                         src="/svg/dashboard/bell-icon.svg"
-                        alt="" />
+                        alt="Notifications" />
                 </button>
 
                 <div class="w-[1px] h-[20px] bg-[#D4D4D4]"></div>
 
-                <!-- Profile Icon -->
-                <Button class="flex items-center rounded-lg hover:bg-gray-100">
+                <!-- Profile Icon with Dropdown -->
+                <Button 
+                    @click="toggleProfileMenu"
+                    :disabled="isLoadingLogout"
+                    class="flex items-center rounded-lg hover:bg-gray-100 gap-2">
                     <Avatar
-                        label="U"
+                        :label="getUserInitial"
                         class="avatar-bg"
                         shape="circle" />
+                    <span class="text-sm font-medium text-gray-700">{{ getUserName }}</span>
+                    <Icon 
+                        name="lucide:chevron-down" 
+                        class="w-4 h-4 text-gray-500" />
                 </Button>
+                
+                <!-- Profile Menu -->
+                <Menu 
+                    ref="menu" 
+                    :model="profileMenuItems" 
+                    :popup="true"
+                    :pt="{
+                        root: 'mt-2 w-48 shadow-lg rounded-lg border border-gray-200',
+                        menu: 'p-2',
+                        menuitem: 'rounded-md',
+                        action: 'px-3 py-2 hover:bg-gray-100 rounded-md transition-colors',
+                        separator: 'my-2 border-t border-gray-200'
+                    }" />
             </div>
         </div>
     </header>
