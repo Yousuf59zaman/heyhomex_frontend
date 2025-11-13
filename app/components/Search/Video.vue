@@ -1,7 +1,5 @@
 <script setup>
     import { useVideoPlayer } from '~/composables/useVideoPlayer';
-
-    const demoVideoUrl = 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
     const { openVideo } = useVideoPlayer();
 
     // Reactive state
@@ -71,7 +69,7 @@
             category: 'Real Estate',
             location: 'Honolulu',
             coordinates: [21.3099, -157.8581],
-            videoUrl: demoVideoUrl,
+            videoUrl: 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8',
         },
         {
             id: 2,
@@ -85,7 +83,7 @@
             isFavorite: false,
             location: 'Maui',
             coordinates: [20.7984, -156.3319],
-            videoUrl: demoVideoUrl,
+            videoUrl: 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8',
         },
         {
             id: 3,
@@ -99,7 +97,7 @@
             isFavorite: false,
             location: 'Kauai',
             coordinates: [22.0964, -159.5261],
-            videoUrl: demoVideoUrl,
+            videoUrl: 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8',
         },
         {
             id: 4,
@@ -113,7 +111,7 @@
             isFavorite: false,
             location: 'Hilo',
             coordinates: [19.7297, -155.0900],
-            videoUrl: demoVideoUrl,
+            videoUrl: 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8',
         },
     ]);
 
