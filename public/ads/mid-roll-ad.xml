@@ -2,33 +2,9 @@
 <VAST version="3.0">
   <Ad id="mid-roll-001">
     <InLine>
-      <AdSystem>HeyHomeX Ad Server</AdSystem>
-      <AdTitle>HeyHomeX Mid-Roll Advertisement</AdTitle>
-      <Description>Explore premium features on HeyHomeX</Description>
-      <Advertiser>HeyHomeX</Advertiser>
-      <Error><![CDATA[https://your-tracking-server.com/error?campaign=mid-roll]]></Error>
-
-      <Impression><![CDATA[https://your-tracking-server.com/impression?campaign=mid-roll]]></Impression>
-
       <Creatives>
         <Creative id="mid-roll-creative-001" sequence="1">
           <Linear>
-            <Duration>00:00:10</Duration>
-
-            <TrackingEvents>
-              <Tracking event="start"><![CDATA[https://your-tracking-server.com/start?campaign=mid-roll]]></Tracking>
-              <Tracking event="firstQuartile"><![CDATA[https://your-tracking-server.com/25?campaign=mid-roll]]></Tracking>
-              <Tracking event="midpoint"><![CDATA[https://your-tracking-server.com/50?campaign=mid-roll]]></Tracking>
-              <Tracking event="thirdQuartile"><![CDATA[https://your-tracking-server.com/75?campaign=mid-roll]]></Tracking>
-              <Tracking event="complete"><![CDATA[https://your-tracking-server.com/complete?campaign=mid-roll]]></Tracking>
-              <Tracking event="skip"><![CDATA[https://your-tracking-server.com/skip?campaign=mid-roll]]></Tracking>
-            </TrackingEvents>
-
-            <VideoClicks>
-              <ClickThrough><![CDATA[https://your-landing-page.com?source=mid-roll]]></ClickThrough>
-              <ClickTracking><![CDATA[https://your-tracking-server.com/click?campaign=mid-roll]]></ClickTracking>
-            </VideoClicks>
-
             <MediaFiles>
               <MediaFile delivery="progressive" type="video/mp4" width="1280" height="720" scalable="true" maintainAspectRatio="true">
                 <![CDATA[https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4]]>
