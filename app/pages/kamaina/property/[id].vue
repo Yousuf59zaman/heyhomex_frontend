@@ -1,10 +1,5 @@
 <script setup>
     import { useVideoPlayer } from '~/composables/useVideoPlayer';
-
-    definePageMeta({
-        layout: 'citizen',
-    });
-
     const demoVideoUrl = 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
 
     const { openVideo } = useVideoPlayer();
