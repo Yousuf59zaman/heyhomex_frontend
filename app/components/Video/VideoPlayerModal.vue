@@ -1,4 +1,10 @@
 <script setup lang="ts">
+const props = defineProps({
+  adConfig: {
+    type: Object,
+    default: () => ({}),
+  },
+});
 /**
  * Video Player Modal Component
  *
@@ -23,8 +29,6 @@ const {
 } = useVideoPlayer();
 
 // Get advertising configuration for video playback
-const { getDefaultAdConfig } = useJWPlayerAds();
-const adConfig = getDefaultAdConfig();
 
 const playerRef = ref<any>(null);
 const showInfo = ref(true);
@@ -177,7 +181,7 @@ onBeforeUnmount(() => {
                   ref="playerRef"
                   :video="currentVideo"
                   :autoplay="true"
-                  :advertising="adConfig"
+                  :advertising="{ client: adConfig.client ?? '', ...adConfig }"
                   @complete="handleVideoComplete" />
               </div>
             </div>

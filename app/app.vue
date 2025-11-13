@@ -1,15 +1,15 @@
 <script setup>
-    
-    useHead({
-        title: "HeyHome - Your Home Starts Here",
-        meta: [
-            {
-                name: "description",
-                content:
-                    "Where your next chapter begins — Kama'aina, Military, or Investor, your path starts with purpose",
-            },
-        ],
-    });
+
+useHead({
+    title: "HeyHome - Your Home Starts Here",
+    meta: [
+        {
+            name: "description",
+            content:
+                "Where your next chapter begins — Kama'aina, Military, or Investor, your path starts with purpose",
+        },
+    ],
+});
 </script>
 
 <template>
@@ -32,16 +32,11 @@
                 </div>
             </div>
         </template>
-    </ClientOnly> -->
+</ClientOnly> -->
 
-     <NuxtLayout>
-            <NuxtPage />
-        </NuxtLayout>
-
-        <!-- Global Video Player Modal -->
-        <ClientOnly>
-            <VideoPlayerModal />
-        </ClientOnly>
+    <NuxtLayout>
+        <NuxtPage />
+    </NuxtLayout>
 </template>
 
 <style lang="scss" scoped></style>
