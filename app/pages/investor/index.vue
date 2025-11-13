@@ -4,35 +4,37 @@
     });
 
     const demoVideoUrl = 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
+    // Use properties composable with lazy loading
+    const { properties, pending, error, toggleFavorite } = useProperties()
 
     // Search and filter state
     const searchQuery = ref('');
     const selectedPropertyType = ref('');
     const selectedPriceRange = ref('');
-    
+
     // Chart state
     const chartPeriod = ref('weekly');
 
-    // Top-Right : Saved List 
+    // Top-Right : Saved List
     const savedHomeItems = ref([
         {
             id: 1,
             title: 'Island Bank Hawaii',
             location: '123 Aloha Lane, Honolulu, HI 96814',
-            image: '/images/dashboard/1.png'
+            image: '/images/dashboard/1.png',
         },
         {
             id: 2,
             title: 'Island Bank Hawaii',
             location: '456 Kamehameha Hwy, Honolulu, HI 96817',
-            image: '/images/dashboard/2.png'
+            image: '/images/dashboard/2.png',
         },
         {
             id: 3,
             title: 'Island Bank Hawaii',
             location: '789 Pali Hwy, Honolulu, HI 96813',
-            image: '/images/dashboard/3.png'
-        }
+            image: '/images/dashboard/3.png',
+        },
     ]);
 
     const savedVideoItems = ref([
@@ -41,52 +43,15 @@
             title: 'Hawaii Property Tour',
             description: 'Virtual tour',
             duration: '5:30',
-            image: '/images/home/home_logo.png'
+            image: '/images/home/home_logo.png',
         },
         {
             id: 2,
             title: 'Neighborhood Guide',
             description: 'Area overview',
             duration: '3:45',
-            image: '/images/home/home_logo.png'
-        }
-    ]);
-
-    // Propertis :
-    const properties = ref([
-        {
-            id: 1,
-            title: 'Hawaii Home Movers',
-            address: '123 Aloha Lane, Honolulu, HI 96818',
-            price: 475000,
-            beds: 5,
-            baths: 3,
-            sqft: '1733/5000',
-            image: '/images/dashboard/1.png',
-            isFavorited: false
+            image: '/images/home/home_logo.png',
         },
-        {
-            id: 2,
-            title: 'Hawaii Home Movers',
-            address: '123 Aloha Lane, Honolulu, HI 96818',
-            price: 475000,
-            beds: 5,
-            baths: 3,
-            sqft: '1733/5000',
-            image: '/images/dashboard/2.png',
-            isFavorited: false
-        },
-        {
-            id: 3,
-            title: 'Hawaii Home Movers',
-            address: '123 Aloha Lane, Honolulu, HI 96818',
-            price: 475000,
-            beds: 5,
-            baths: 3,
-            sqft: '1733/5000',
-            image: '/images/dashboard/3.png',
-            isFavorited: false
-        }
     ]);
 
     // Videos :
@@ -126,34 +91,40 @@
         // Navigate to search page with search query and show map view
         const query = {
             q: searchQuery.value || '',
-            view: 'map'
+            view: 'map',
         };
-        
+
         // Map property type to search format
         const propertyTypeMapping = {
             'single-family': 'Single Family',
-            'condo': 'Condo',
-            'townhouse': 'Townhouse'
+            condo: 'Condo',
+            townhouse: 'Townhouse',
         };
-        
-        // Map price range to search format  
+
+        // Map price range to search format
         const priceRangeMapping = {
             'under-500k': '$500,000',
             '500k-1m': '$750,000',
-            'over-1m': '$1,000,000+'
+            'over-1m': '$1,000,000+',
         };
-        
+
         // Add filters if they exist
-        if (selectedPropertyType.value && propertyTypeMapping[selectedPropertyType.value]) {
+        if (
+            selectedPropertyType.value &&
+            propertyTypeMapping[selectedPropertyType.value]
+        ) {
             query.homeType = propertyTypeMapping[selectedPropertyType.value];
         }
-        if (selectedPriceRange.value && priceRangeMapping[selectedPriceRange.value]) {
+        if (
+            selectedPriceRange.value &&
+            priceRangeMapping[selectedPriceRange.value]
+        ) {
             query.priceRange = priceRangeMapping[selectedPriceRange.value];
         }
-        
+
         navigateTo({
-            path: '/kamaina/search',
-            query
+            path: '/investor/search',
+            query,
         });
     };
 
@@ -177,12 +148,16 @@
     const handleRemoveItem = ({ itemId, type }) => {
         console.log('Remove item:', itemId, type);
         if (type === 'home') {
-            const index = savedHomeItems.value.findIndex(item => item.id === itemId);
+            const index = savedHomeItems.value.findIndex(
+                (item) => item.id === itemId
+            );
             if (index !== -1) {
                 savedHomeItems.value.splice(index, 1);
             }
         } else {
-            const index = savedVideoItems.value.findIndex(item => item.id === itemId);
+            const index = savedVideoItems.value.findIndex(
+                (item) => item.id === itemId
+            );
             if (index !== -1) {
                 savedVideoItems.value.splice(index, 1);
             }
@@ -194,14 +169,11 @@
     };
 
     const handlePropertyClick = (property) => {
-        navigateTo(`/kamaina/property/${property.id}`);
+        navigateTo(`/investor/property/${property.id}`);
     };
 
     const handleFavoriteToggle = (property) => {
-        const index = properties.value.findIndex(p => p.id === property.id);
-        if (index !== -1) {
-            properties.value[index].isFavorited = !properties.value[index].isFavorited;
-        }
+        toggleFavorite(property.id);
     };
 
     const handleVideoClick = (video) => {
@@ -216,7 +188,6 @@
         console.log('See all videos');
     };
 </script>
-
 
 <template>
     <div class="space-y-6">
@@ -251,7 +222,28 @@
         </div>
 
         <!-- Homes in Your Favorite Areas Section -->
+        <!-- Loading State with Skeleton Loaders -->
+        <div v-if="pending" class="space-y-4 md:space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl md:text-2xl font-bold text-gray-900">
+                    Homes in Your Favorite Areas
+                </h2>
+                <div class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                <CommonCitizenPropertyCardSkeleton v-for="n in 3" :key="n" />
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p class="text-red-600 mb-2">Error loading properties. Please try again later.</p>
+            <p class="text-sm text-red-500">{{ error.message }}</p>
+        </div>
+
+        <!-- Properties Grid -->
         <CommonCitizenPropertyGrid
+            v-else
             :properties="properties"
             @see-all="handleSeeAllProperties"
             @property-click="handlePropertyClick"

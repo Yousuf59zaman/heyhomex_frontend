@@ -1,42 +1,59 @@
 <script setup>
-
 useHead({
-    title: "HeyHome - Your Home Starts Here",
+    title: 'HeyHome - Your Home Starts Here',
     meta: [
         {
-            name: "description",
+            name: 'description',
             content:
                 "Where your next chapter begins — Kama'aina, Military, or Investor, your path starts with purpose",
         },
     ],
 });
+
+const app_key = useCookie('app_key', {
+    default: () => [],
+    watch: true
+})
+const { setAppKey } = useAppKey()
+const cookie = useCookie($XCMS_TOKEN);
+const auth = ref([]);
+let retryCount = 0;
+const MAX_RETRIES = 3;
+const getCMSauth = async () => {
+    try {
+        auth.value = await $fetch('/api/auth');
+        cookie.value = auth.value.login.data.token;
+        retryCount = 0;
+        setAppKey(auth.value.login.data.token);
+    } catch (error) {
+        if (error.response?.status === 401 && retryCount < MAX_RETRIES) {
+            retryCount++;
+            console.log(`Retrying authentication attempt ${retryCount}`);
+            setTimeout(() => {
+                getCMSauth();
+            }, 1000 * retryCount);
+        } else {
+            console.error('Authentication failed:', error);
+        }
+    }
+}
+onMounted(() => {
+    getCMSauth()
+});
+const isLoading = ref(false);
+watch([cookie, app_key], () => {
+    if (cookie.value && app_key.value.length) {
+        isLoading.value = true
+    }
+})
 </script>
 
 <template>
-    <!-- <ClientOnly fallbackTag="div">
-        <NuxtLayout>
-            <NuxtPage />
-        </NuxtLayout>
-
-        <AuthCitizenAuthModal />
-
-        <template #fallback>
-            <div class="flex items-center justify-center w-screen h-screen">
-                <div class="flex justify-center card">
-                    <ProgressSpinner
-                        style="width: 50px; height: 50px"
-                        strokeWidth="8"
-                        fill="transparent"
-                        animationDuration=".5s"
-                        aria-label="Custom ProgressSpinner" />
-                </div>
-            </div>
-        </template>
-</ClientOnly> -->
-
     <NuxtLayout>
         <NuxtPage />
     </NuxtLayout>
+    
+    <!-- <AuthCitizenAuthModals /> -->
 </template>
 
 <style lang="scss" scoped></style>

@@ -15,6 +15,7 @@ jobs:
             - name: Build App artifacts using pnpm
               uses: pnpm/action-setup@v4
             - run: |
+                echo API_BASE_URL="${{ vars.DEV_API_BASE_URL }}" >> .env
                 touch .env
                 pnpm install
                 pnpm run build
@@ -52,6 +53,7 @@ jobs:
                 key: ${{ secrets.DEV_SERVER_SSH_KEY }}
                 script: |
                     cd ${{ vars.DEV_APP_DIR }}
+                    git pull --autostash
                     echo "Renaming existing .output folder to .output_old"
                     mv .output .output_$(date +%Y%m%d%H%M%S)
                     tar -xzf ${{ vars.DEV_ARTIFACT_DIR }}/output.tar.gz -C ${{ vars.DEV_APP_DIR }}/

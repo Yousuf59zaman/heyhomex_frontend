@@ -1,14 +1,14 @@
 <script setup>
-    import Avatar from 'primevue/avatar';
+    import Avatar from "primevue/avatar"
 
     const props = defineProps({
         isMobileMenuOpen: {
             type: Boolean,
             default: false,
         },
-    });
+    })
 
-    defineEmits(['toggle-mobile-menu']);
+    defineEmits(["toggle-mobile-menu"])
 </script>
 
 <template>

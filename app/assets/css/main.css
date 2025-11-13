@@ -1,21 +1,21 @@
 
 @font-face {
   font-family: 'sf-pro-Regular';
-  src: url('/fonts/sf-pro-display/SFPRODISPLAYREGULAR.otf');
+  src: url('/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF');
   font-weight: 400;
   font-style: normal;
   letter-spacing: 10px;
 }
 @font-face {
   font-family: 'sf-pro-Medium';
-  src: url('/fonts/sf-pro-display/SFPRODISPLAYMEDIUM.otf');
+  src: url('/fonts/sf-pro-display/SFPRODISPLAYMEDIUM.OTF');
   font-weight: 500;
   font-style: normal;
   letter-spacing: 10px;
 }
 @font-face {
   font-family: 'sf-pro-Bold';
-  src: url('/fonts/sf-pro-display/SFPRODISPLAYBOLD.otf');
+  src: url('/fonts/sf-pro-display/SFPRODISPLAYBOLD.OTF');
   font-weight: 700;
   font-style: normal;
 }
@@ -30,10 +30,6 @@ body {
 }
 .custom-container {
   @apply py-20 my-0 mx-44 sm:mx-7 md:mx-24 lg:mx-44;
-}
-
-body {
-  
 }
 
 .p-menubar {
@@ -73,5 +69,42 @@ body {
 
 ::-webkit-scrollbar-track {
   background: none;
+}
+
+
+.p-dialog-footer {
+  @apply border-t border-gray-200 pt-4 !important;
+}
+.p-accordionheader,
+.p-accordioncontent,
+.p-accordioncontent-content {
+  @apply p-2 !important;
+}
+.p-accordionpanel:not(.p-disabled).p-accordionpanel-active
+  > .p-accordionheader {
+  @apply bg-sky-500 dark:bg-sky-900 text-white !important;
+}
+.p-accordionpanel,
+.p-accordioncontent-content {
+  @apply bg-gray-100 dark:bg-gray-900 !important;
+}
+/* .p-accordionheader-toggle-icon{
+  @apply text-white !important;
+} */
+.p-accordionpanel:not(.p-disabled).p-accordionpanel-active
+  > .p-accordionheader
+  .p-accordionheader-toggle-icon {
+  @apply text-white !important;
+}
+
+.p-accordionpanel:not(.p-disabled).p-accordionpanel-active
+  > .p-accordionheader
+  span > i {
+    @apply bg-white dark:bg-red-900 hover:dark:bg-red-400 text-red-500 dark:text-red-200 hover:text-red-800 p-2 text-sm h-[26px] w-[26px] flex items-center justify-center rounded-full !important;
+}
+.p-accordionpanel
+  > .p-accordionheader
+  span > i {
+    @apply bg-red-200 dark:bg-red-900 hover:dark:bg-red-400 text-red-500 dark:text-red-200 hover:text-red-800 p-2 text-sm h-[26px] w-[26px] flex items-center justify-center rounded-full !important;
 }
 

@@ -11,16 +11,26 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.7.23",
+    "@heroicons/vue": "^2.2.0",
+    "@nuxt/image": "^1.11.0",
+    "@nuxtjs/color-mode": "^3.5.2",
     "@nuxtjs/sitemap": "7.4.7",
     "@nuxtjs/tailwindcss": "6.14.0",
     "@primeuix/themes": "^1.2.5",
     "@types/leaflet": "^1.9.21",
     "chart.js": "^4.5.0",
+    "date-fns": "^4.1.0",
+    "firebase": "^12.5.0",
     "leaflet": "^1.9.4",
     "nuxt": "^4.1.2",
+    "nuxt-marquee": "^1.0.4",
+    "primeicons": "^7.0.0",
     "primevue": "^4.4.0",
+    "quill": "^2.0.3",
     "vue": "^3.5.22",
     "vue-chartjs": "^5.3.2",
+    "vue-draggable-next": "^2.3.0",
     "vue-router": "^4.5.1"
   },
   "packageManager": "pnpm@10.18.0+sha512.e804f889f1cecc40d572db084eec3e4881739f8dec69c0ff10d2d1beff9a4e309383ba27b5b750059d7f4c149535b6cd0d2cb1ed3aeb739239a4284a68f40cfa",
@@ -28,6 +38,8 @@
     "@iconify-json/lucide": "^1.2.69",
     "@nuxt/icon": "^2.0.0",
     "@primevue/nuxt-module": "^4.4.0",
-    "@types/jwplayer": "^8.31.3"
+    "@types/jwplayer": "^8.31.3",
+    "@types/node": "^24.9.1",
+    "sass-embedded": "^1.93.2"
   }
 }

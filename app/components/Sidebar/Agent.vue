@@ -4,75 +4,72 @@
             type: Boolean,
             default: false,
         },
-    });
+    })
 
-    defineEmits(['close-menu']);
+    defineEmits(["close-menu"])
 
-    // Get current route
-    const route = useRoute();
+    const route = useRoute()
 
-    // Agent theme color (different from citizen)
-    const sidebarBackgroundColor = '#2C3E50'; // Professional dark blue-gray
+    const sidebarBackgroundColor = "#2C3E50"
 
-    // Navigation items for agent
     const navigationItems = ref([
         {
-            id: 'dashboard',
-            label: 'Dashboard',
-            icon: '/svg/menubar/dashboard.svg',
-            iconType: 'svg',
-            path: '/agent',
+            id: "dashboard",
+            label: "Dashboard",
+            icon: "/svg/menubar/dashboard.svg",
+            iconType: "svg",
+            path: "/agent",
         },
         {
-            id: 'leads',
-            label: 'Leads',
-            icon: 'lucide:users',
-            iconType: 'lucide',
-            path: '/agent/leads',
+            id: "leads",
+            label: "Leads",
+            icon: "lucide:users",
+            iconType: "lucide",
+            path: "/agent/leads",
         },
         {
-            id: 'properties',
-            label: 'Properties',
-            icon: '/svg/menubar/search.svg',
-            iconType: 'svg',
-            path: '/agent/properties',
+            id: "properties",
+            label: "Properties",
+            icon: "/svg/menubar/search.svg",
+            iconType: "svg",
+            path: "/agent/properties",
         },
         {
-            id: 'analytics',
-            label: 'Analytics',
-            icon: 'lucide:bar-chart-3',
-            iconType: 'lucide',
-            path: '/agent/analytics',
+            id: "analytics",
+            label: "Analytics",
+            icon: "lucide:bar-chart-3",
+            iconType: "lucide",
+            path: "/agent/analytics",
         },
         {
-            id: 'clients',
-            label: 'Clients',
-            icon: 'lucide:user-check',
-            iconType: 'lucide',
-            path: '/agent/clients',
+            id: "clients",
+            label: "Clients",
+            icon: "lucide:user-check",
+            iconType: "lucide",
+            path: "/agent/clients",
         },
         {
-            id: 'calendar',
-            label: 'Calendar',
-            icon: 'lucide:calendar',
-            iconType: 'lucide',
-            path: '/agent/calendar',
+            id: "calendar",
+            label: "Calendar",
+            icon: "lucide:calendar",
+            iconType: "lucide",
+            path: "/agent/calendar",
         },
         {
-            id: 'reports',
-            label: 'Reports',
-            icon: 'lucide:file-text',
-            iconType: 'lucide',
-            path: '/agent/reports',
+            id: "reports",
+            label: "Reports",
+            icon: "lucide:file-text",
+            iconType: "lucide",
+            path: "/agent/reports",
         },
         {
-            id: 'settings',
-            label: 'Settings',
-            icon: '/svg/menubar/setting.svg',
-            iconType: 'svg',
-            path: '/agent/settings',
+            id: "settings",
+            label: "Settings",
+            icon: "/svg/menubar/setting.svg",
+            iconType: "svg",
+            path: "/agent/settings",
         },
-    ]);
+    ])
 </script>
 
 <template>
@@ -80,8 +77,7 @@
     <aside
         v-if="!isMobile"
         class="h-full w-[69px] flex flex-col items-center py-4"
-        :style="{ backgroundColor: sidebarBackgroundColor }">
-        <!-- Logo Section -->
+        :style="{backgroundColor: sidebarBackgroundColor}">
         <div class="mb-8">
             <img
                 src="/images/home/home_logo.png"
@@ -89,7 +85,6 @@
                 class="h-8 w-8 rounded" />
         </div>
 
-        <!-- Navigation Icons -->
         <nav class="flex-1">
             <ul class="space-y-4">
                 <li
@@ -118,8 +113,7 @@
     <aside
         v-else
         class="h-full w-64 flex flex-col"
-        :style="{ backgroundColor: sidebarBackgroundColor }">
-        <!-- Header -->
+        :style="{backgroundColor: sidebarBackgroundColor}">
         <div
             class="flex items-center justify-between p-4 border-b border-white/20">
             <div class="flex items-center space-x-3">
@@ -140,7 +134,6 @@
             </button>
         </div>
 
-        <!-- Navigation Menu -->
         <nav class="flex-1 px-4 py-6">
             <ul class="space-y-2">
                 <li
@@ -166,7 +159,6 @@
             </ul>
         </nav>
 
-        <!-- User Profile Section -->
         <div class="p-4 border-t border-white/20">
             <div class="flex items-center space-x-3">
                 <div
@@ -183,19 +175,16 @@
 </template>
 
 <style scoped>
-    /* Desktop Sidebar Styles */
     .sidebar-link {
         position: relative;
-        color: white; /* Make Lucide icons white by default */
+        color: white;
     }
 
-    /* Default state - fully white icons */
     .sidebar-link .sidebar-icon {
         filter: brightness(0) invert(1) opacity(1);
         transition: all 0.2s ease;
     }
 
-    /* Hover state - fully opaque white icons with background */
     .sidebar-link:hover {
         background-color: rgba(255, 255, 255, 0.15);
     }
@@ -205,10 +194,9 @@
         transform: scale(1.05);
     }
 
-    /* Active state - white background with black icons */
     .sidebar-link-active {
         background-color: white !important;
-        color: black !important; /* Make Lucide icons black when active */
+        color: black !important;
     }
 
     .sidebar-link-active .sidebar-icon {
@@ -217,25 +205,21 @@
         -webkit-filter: brightness(0) !important;
     }
 
-    /* Ensure hover doesn't override active state */
     .sidebar-link-active:hover .sidebar-icon {
         filter: brightness(0) !important;
         -webkit-filter: brightness(0) !important;
         transform: scale(1);
     }
 
-    /* Mobile Sidebar Styles */
     .mobile-sidebar-link {
         color: #ffffff;
     }
 
-    /* Default state - white icons */
     .mobile-sidebar-link .mobile-sidebar-icon {
         filter: brightness(0) saturate(100%) invert(100%);
         transition: all 0.2s ease;
     }
 
-    /* Hover state */
     .mobile-sidebar-link:hover {
         background-color: rgba(255, 255, 255, 0.1);
         color: #ffffff;
