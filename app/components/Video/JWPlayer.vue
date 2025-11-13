@@ -14,7 +14,7 @@
  * @see https://developer.jwplayer.com/
  */
 
-// import type { Video } from '~/composables/useVideoPlayer';
+import type { Video } from '~/composables/useVideoPlayer';
 
 interface AdSchedule {
     offset: string; // 'pre', 'post', '50%', or time in seconds
@@ -342,6 +342,52 @@ defineExpose({
     state,
 });
 
+/**
+ * Cleanup and remove player instance
+ */
+const cleanupPlayer = () => {
+    if (playerInstance.value) {
+        try {
+            // Stop any playing content or ads
+            playerInstance.value.stop();
+
+            // Remove the player instance
+            playerInstance.value.remove();
+            playerInstance.value = null;
+            isReady.value = false;
+
+            console.log('[JWPlayer] Player cleaned up successfully');
+        } catch (error) {
+            console.error('[JWPlayer] Cleanup error:', error);
+        }
+    }
+};
+
+/**
+ * Reload player with new video
+ * This completely recreates the player instance to avoid ad-related issues
+ */
+const reloadPlayerWithNewVideo = (newVideo: any) => {
+    if (!newVideo || !newVideo.videoUrl) {
+        console.warn('[JWPlayer] No video URL provided for reload');
+        return;
+    }
+
+    try {
+        // Cleanup existing player completely
+        cleanupPlayer();
+
+        // Small delay to ensure cleanup is complete
+        setTimeout(() => {
+            // Reinitialize with new video
+            initializePlayer();
+            console.log('[JWPlayer] Player reloaded with new video');
+        }, 100);
+    } catch (error) {
+        console.error('[JWPlayer] Error reloading player:', error);
+    }
+};
+
 // Lifecycle hooks
 onMounted(() => {
     // Wait for JW Player library to be loaded
@@ -358,27 +404,17 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     // Cleanup player instance
-    if (playerInstance.value) {
-        try {
-            playerInstance.value.remove();
-            playerInstance.value = null;
-        } catch (error) {
-            console.error('[JWPlayer] Cleanup error:', error);
-        }
-    }
+    cleanupPlayer();
 });
 
 // Watch for video changes
 watch(
     () => props.video,
-    (newVideo) => {
-        if (playerInstance.value && newVideo.videoUrl) {
-            playerInstance.value.load({
-                file: newVideo.videoUrl,
-                image: newVideo.thumbnail,
-                title: newVideo.title,
-                description: newVideo.description || newVideo.subtitle,
-            });
+    (newVideo, oldVideo) => {
+        // Only reload if the video has actually changed
+        if (newVideo && oldVideo && newVideo.id !== oldVideo.id) {
+            console.log('[JWPlayer] Video changed, reloading player...');
+            reloadPlayerWithNewVideo(newVideo);
         }
     }
 );
