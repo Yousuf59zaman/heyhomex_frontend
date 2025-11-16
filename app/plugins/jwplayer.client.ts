@@ -10,12 +10,16 @@
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig();
 
-  // Get JW Player configuration from environment
-  const jwplayerKey = config.public.jwplayerKey as string || '';
-  const libraryUrl = config.public.jwplayerLibraryUrl as string || '';
+  // Get JW Player configuration from runtime config
+  const jwplayerKey = config.public.NUXT_PUBLIC_JWPLAYER_KEY as string || '';
+  const isDevMode = config.public.NUXT_PUBLIC_JWPLAYER_DEVMODE as string || false;
+  const demoLibraryUrl = config.public.NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL as string || '';
+  const productionLibraryUrl = config.public.NUXT_PUBLIC_JWPLAYER_LIBRARY_URL as string || '';
 
-  // Determine the script URL to load
-  const scriptUrl = libraryUrl || 'https://cdn.jwplayer.com/libraries/KB5zFt7A.js'; // Free tier demo library
+  // Determine the script URL based on devmode flag
+  // If devmode is true, use the demo library URL; otherwise use the production library URL
+  const scriptUrl = isDevMode ? demoLibraryUrl : productionLibraryUrl;
+
 
   return new Promise<void>((resolve, reject) => {
     // Check if JW Player is already loaded
