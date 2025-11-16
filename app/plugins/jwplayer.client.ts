@@ -38,7 +38,7 @@ export default defineNuxtPlugin(() => {
       console.log('[JW Player] Library loaded successfully');
 
       // Set license key if provided
-      if (jwplayerKey && jwplayerKey !== 'YOUR_LICENSE_KEY_HERE') {
+      if (jwplayerKey && jwplayerKey.trim() !== '') {
         try {
           (window as any).jwplayer.key = jwplayerKey;
           console.log('[JW Player] License key configured');
