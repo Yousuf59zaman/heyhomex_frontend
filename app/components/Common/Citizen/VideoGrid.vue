@@ -1,23 +1,39 @@
 <script setup>
-    // Props
-    const props = defineProps({
-        title: {
-            type: String,
-            default: 'Videos you might like!',
-        },
-        videos: {
-            type: Array,
-            default: () => [],
-        },
-    });
+import { useVideoPlayer } from '~/composables/useVideoPlayer';
 
-    // Emits
-    const emit = defineEmits(['see-all', 'video-click']);
+// Props
+const props = defineProps({
+    title: {
+        type: String,
+        default: 'Videos you might like!',
+    },
+    videos: {
+        type: Array,
+        default: () => [],
+    },
+    // Enable playlist mode (videos will auto-play next)
+    enablePlaylist: {
+        type: Boolean,
+        default: true,
+    },
+});
 
-    // Methods
-    const handleVideoClick = (video) => {
-        emit('video-click', video);
-    };
+// Emits
+const emit = defineEmits(['see-all', 'video-click']);
+
+// Video player composable
+const { openVideo } = useVideoPlayer();
+
+// Methods
+const handleVideoClick = (video) => {
+    // Emit click event (for backward compatibility)
+    emit('video-click', video);
+
+    // Open video with playlist if enabled
+    if (props.enablePlaylist) {
+        openVideo(video, props.videos);
+    }
+};
 </script>
 
 

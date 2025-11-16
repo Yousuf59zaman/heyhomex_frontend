@@ -22,9 +22,9 @@ const MAX_RETRIES = 3;
 const getCMSauth = async () => {
     try {
         auth.value = await $fetch('/api/auth');
-        cookie.value = auth.value.login.data.token;
+        cookie.value = auth.value.login?.data?.token;
         retryCount = 0;
-        setAppKey(auth.value.login.data.token);
+        setAppKey(auth.value.login?.data?.token);
     } catch (error) {
         if (error.response?.status === 401 && retryCount < MAX_RETRIES) {
             retryCount++;

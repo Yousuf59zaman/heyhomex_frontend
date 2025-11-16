@@ -1,7 +1,13 @@
 <script setup>
+    import { useVideoPlayer } from '~/composables/useVideoPlayer';
+
     definePageMeta({
         layout: 'citizen',
     });
+
+    const demoVideoUrl = 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
+
+    const { openVideo } = useVideoPlayer();
 
     // Get route parameters
     const route = useRoute();
@@ -67,6 +73,7 @@
             channelInitial: 'H',
             views: '53K Views',
             timeAgo: '5 Months ago',
+            videoUrl: demoVideoUrl,
         },
         {
             id: 2,
@@ -79,6 +86,7 @@
             channelInitial: 'H',
             views: '53K Views',
             timeAgo: '5 Months ago',
+            videoUrl: demoVideoUrl,
         },
         {
             id: 3,
@@ -91,6 +99,7 @@
             channelInitial: 'H',
             views: '53K Views',
             timeAgo: '5 Months ago',
+            videoUrl: demoVideoUrl,
         },
         {
             id: 4,
@@ -103,8 +112,13 @@
             channelInitial: 'H',
             views: '53K Views',
             timeAgo: '5 Months ago',
+            videoUrl: demoVideoUrl,
         },
     ]);
+
+    const playSidebarVideo = (video) => {
+        openVideo(video, videos.value);
+    };
 
     // Tab content data
     const tabInsights = ref({
@@ -555,7 +569,8 @@
                         <div
                             v-for="video in videos"
                             :key="video.id"
-                            class="group cursor-pointer">
+                            class="group cursor-pointer"
+                            @click="playSidebarVideo(video)">
                             <!-- Video Thumbnail -->
                             <div class="relative w-full h-32 mb-3">
                                 <img

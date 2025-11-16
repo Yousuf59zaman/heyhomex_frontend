@@ -3,6 +3,7 @@
         layout: 'citizen',
     });
 
+    const demoVideoUrl = 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
     // Use properties composable with lazy loading
     const { properties, pending, error, toggleFavorite } = useProperties()
 
@@ -61,6 +62,7 @@
             subtitle: 'AIRLINES',
             thumbnail: '/images/dashboard/video/1.png',
             duration: '3:45',
+            videoUrl: demoVideoUrl
         },
         {
             id: 2,
@@ -68,6 +70,7 @@
             subtitle: 'HOUSE',
             thumbnail: '/images/dashboard/video/2.png',
             duration: '5:12',
+            videoUrl: demoVideoUrl
         },
         {
             id: 3,
@@ -75,7 +78,8 @@
             subtitle: 'ONE ARE YOU?',
             thumbnail: '/images/dashboard/video/3.png',
             duration: '2:58',
-        },
+            videoUrl: demoVideoUrl
+        }
     ]);
 
     // Event handlers

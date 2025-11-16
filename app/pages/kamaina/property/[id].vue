@@ -1,4 +1,8 @@
 <script setup>
+    import { useVideoPlayer } from '~/composables/useVideoPlayer';
+    const demoVideoUrl = 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
+
+    const { openVideo } = useVideoPlayer();
     definePageMeta({middleware: ["auth-citizen"], layout: "citizen"})
 
     const route = useRoute()
@@ -46,52 +50,61 @@
             id: 1,
             title: "These are the best Places to Live in Oahu,Hawaii for...",
             description:
-                "These are the best Places to Live in Oahu,Hawaii for...",
-            thumbnail: "/images/dashboard/video/1.png",
-            duration: "10:33",
-            channelName: "Hello Hawaii",
-            channelInitial: "H",
-            views: "53K Views",
-            timeAgo: "5 Months ago",
+                'These are the best Places to Live in Oahu,Hawaii for...',
+            thumbnail: '/images/dashboard/video/1.png',
+            duration: '10:33',
+            channelName: 'Hello Hawaii',
+            channelInitial: 'H',
+            views: '53K Views',
+            timeAgo: '5 Months ago',
+            videoUrl: demoVideoUrl,
         },
         {
             id: 2,
             title: "These are the best Places to Live in Oahu,Hawaii for...",
             description:
-                "These are the best Places to Live in Oahu,Hawaii for...",
-            thumbnail: "/images/dashboard/video/2.png",
-            duration: "5:25",
-            channelName: "Hello Hawaii",
-            channelInitial: "H",
-            views: "53K Views",
-            timeAgo: "5 Months ago",
+                'These are the best Places to Live in Oahu,Hawaii for...',
+            thumbnail: '/images/dashboard/video/2.png',
+            duration: '5:25',
+            channelName: 'Hello Hawaii',
+            channelInitial: 'H',
+            views: '53K Views',
+            timeAgo: '5 Months ago',
+            videoUrl: demoVideoUrl,
         },
         {
             id: 3,
             title: "These are the best Places to Live in Oahu,Hawaii for...",
             description:
-                "These are the best Places to Live in Oahu,Hawaii for...",
-            thumbnail: "/images/dashboard/video/3.png",
-            duration: "5:25",
-            channelName: "Hello Hawaii",
-            channelInitial: "H",
-            views: "53K Views",
-            timeAgo: "5 Months ago",
+                'These are the best Places to Live in Oahu,Hawaii for...',
+            thumbnail: '/images/dashboard/video/3.png',
+            duration: '5:25',
+            channelName: 'Hello Hawaii',
+            channelInitial: 'H',
+            views: '53K Views',
+            timeAgo: '5 Months ago',
+            videoUrl: demoVideoUrl,
         },
         {
             id: 4,
             title: "These are the best Places to Live in Oahu,Hawaii for...",
             description:
-                "These are the best Places to Live in Oahu,Hawaii for...",
-            thumbnail: "/images/dashboard/video/1.png",
-            duration: "5:25",
-            channelName: "Hello Hawaii",
-            channelInitial: "H",
-            views: "53K Views",
-            timeAgo: "5 Months ago",
+                'These are the best Places to Live in Oahu,Hawaii for...',
+            thumbnail: '/images/dashboard/video/1.png',
+            duration: '5:25',
+            channelName: 'Hello Hawaii',
+            channelInitial: 'H',
+            views: '53K Views',
+            timeAgo: '5 Months ago',
+            videoUrl: demoVideoUrl,
         },
     ])
 
+    const playSidebarVideo = (video) => {
+        openVideo(video, videos.value);
+    };
+
+    // Tab content data
     const tabInsights = ref({
         title: "Insights",
         subtitle:
@@ -519,7 +532,9 @@
                         <div
                             v-for="video in videos"
                             :key="video.id"
-                            class="group cursor-pointer">
+                            class="group cursor-pointer"
+                            @click="playSidebarVideo(video)">
+                            <!-- Video Thumbnail -->
                             <div class="relative w-full h-32 mb-3">
                                 <img
                                     :src="video.thumbnail"

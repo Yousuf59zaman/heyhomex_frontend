@@ -38,6 +38,7 @@
     "@iconify-json/lucide": "^1.2.69",
     "@nuxt/icon": "^2.0.0",
     "@primevue/nuxt-module": "^4.4.0",
+    "@types/jwplayer": "^8.31.3",
     "@types/node": "^24.9.1",
     "sass-embedded": "^1.93.2"
   }
