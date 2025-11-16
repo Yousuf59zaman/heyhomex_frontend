@@ -62,18 +62,11 @@ export const useVideoPlayer = () => {
     isFullscreen: false,
   }));
 
-  const config = useRuntimeConfig();
-  const demoModeSource = config.public?.jwplayerDemoMode as string | boolean | undefined;
-  const demoMode = demoModeSource === true || demoModeSource === 'true';
-
   /**
    * Open video player modal with a video
    */
   const openVideo = (video: Video, playlist: Video[] = []) => {
-    // If in demo mode and no videoUrl, use demo video
-    if (demoMode && !video.videoUrl) {
-      video.videoUrl = 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8'; // Demo HLS stream
-    }
+ 
 
     playerState.value.currentVideo = video;
     playerState.value.playlist = playlist;
@@ -222,7 +215,6 @@ export const useVideoPlayer = () => {
     playbackRate: computed(() => playerState.value.playbackRate),
     quality: computed(() => playerState.value.quality),
     isFullscreen: computed(() => playerState.value.isFullscreen),
-    demoMode,
 
     // Methods
     openVideo,

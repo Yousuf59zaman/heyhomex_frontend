@@ -45,7 +45,6 @@ export default defineNuxtConfig({
             FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
             NUXT_PUBLIC_JWPLAYER_KEY: process.env.NUXT_PUBLIC_JWPLAYER_KEY,
             NUXT_PUBLIC_JWPLAYER_LIBRARY_URL: process.env.NUXT_PUBLIC_JWPLAYER_LIBRARY_URL,
-            NUXT_PUBLIC_JWPLAYER_DEMO_MODE: process.env.NUXT_PUBLIC_JWPLAYER_DEMO_MODE
         }
     },
     compatibilityDate: "2025-07-15",
