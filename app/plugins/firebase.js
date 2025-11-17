@@ -14,12 +14,12 @@ export default defineNuxtPlugin((nuxtApp) => {
     } = useRuntimeConfig();
 
     const firebaseConfig = {
-        apiKey: 'AIzaSyA5wXRy11IyBxVsGEZeJcc4ZWWDdwgVP44',
-        authDomain: 'next-auth-b8364.firebaseapp.com',
-        projectId: 'next-auth-b8364',
-        storageBucket: 'next-auth-b8364.appspot.com',
-        messagingSenderId: '740203057927',
-        appId: '1:740203057927:web:4aa7df75ef6ffe8a67aba2',
+        apiKey: FIREBASE_API_KEY,
+        authDomain: FIREBASE_AUTH_DOMAIN,
+        projectId: FIREBASE_PROJECT_ID,
+        storageBucket: FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
+        appId: FIREBASE_APP_ID,
     };
 
     const app = initializeApp(firebaseConfig);
