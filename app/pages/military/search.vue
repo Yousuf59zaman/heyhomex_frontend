@@ -3,6 +3,9 @@ definePageMeta({
     layout: 'citizen',
 });
 
+// Hydration state - starts false, becomes true after client mount
+const hydrated = ref(false);
+
 // Active tab state
 const activeTab = ref('home');
 
@@ -90,38 +93,92 @@ const adConfig = ref({
     "vpaidcontrols": true,
     "autoplayadsmuted": false
 });
+
+// Set hydrated to true when component mounts on client
+onMounted(() => {
+    hydrated.value = true;
+});
 </script>
 
 <template>
     <div class="space-y-4 lg:space-y-6">
-        <!-- Tab Navigation -->
-        <div class="bg-white rounded-lg p-3 lg:p-4">
-            <div class="flex items-center gap-3">
-                <button
-                    @click="activeTab = 'home'"
-                    :class="[
-                        'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-                        activeTab === 'home'
-                            ? 'bg-gray-900 text-white'
-                            : 'text-gray-600 hover:text-gray-900',
-                    ]">
-                    Home
-                </button>
-                <button
-                    @click="activeTab = 'videos'"
-                    :class="[
-                        'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-                        activeTab === 'videos'
-                            ? 'bg-gray-900 text-white'
-                            : 'text-gray-600 hover:text-gray-900',
-                    ]">
-                    Videos
-                </button>
+        <!-- Skeleton BEFORE hydration -->
+        <template v-if="!hydrated">
+            <!-- Tab Navigation Skeleton -->
+            <div class="bg-white rounded-lg p-3 lg:p-4 animate-pulse">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-20 bg-gray-200 rounded-lg"></div>
+                    <div class="h-10 w-20 bg-gray-200 rounded-lg"></div>
+                </div>
             </div>
-        </div>
 
-        <!-- Content based on active tab -->
-        <SearchProperty v-if="activeTab === 'home'" segment="military" />
-        <SearchVideo v-else-if="activeTab === 'videos'" :videos="videos" :adConfig="adConfig" />
+            <!-- Search Filters Skeleton -->
+            <div class="bg-white rounded-lg p-4 lg:p-6 animate-pulse">
+                <div class="space-y-4">
+                    <!-- Search Input Skeleton -->
+                    <div class="h-12 bg-gray-200 rounded-lg w-full"></div>
+                    
+                    <!-- Filter Buttons Skeleton -->
+                    <div class="flex flex-wrap gap-3">
+                        <div class="h-10 w-24 bg-gray-200 rounded-lg"></div>
+                        <div class="h-10 w-28 bg-gray-200 rounded-lg"></div>
+                        <div class="h-10 w-32 bg-gray-200 rounded-lg"></div>
+                        <div class="h-10 w-24 bg-gray-200 rounded-lg"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Header Skeleton -->
+            <div class="bg-white rounded-lg p-4 lg:p-6 animate-pulse">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div class="h-6 w-48 bg-gray-200 rounded"></div>
+                    <div class="flex items-center gap-4">
+                        <div class="h-5 w-32 bg-gray-200 rounded"></div>
+                        <div class="flex gap-2">
+                            <div class="h-10 w-24 bg-gray-200 rounded-lg"></div>
+                            <div class="h-10 w-24 bg-gray-200 rounded-lg"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Cards Grid Skeleton -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                <CommonCitizenPropertyCardSkeleton v-for="n in 8" :key="n" />
+            </div>
+        </template>
+
+        <!-- Real content AFTER hydration -->
+        <template v-else>
+            <!-- Tab Navigation -->
+            <div class="bg-white rounded-lg p-3 lg:p-4">
+                <div class="flex items-center gap-3">
+                    <button
+                        @click="activeTab = 'home'"
+                        :class="[
+                            'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                            activeTab === 'home'
+                                ? 'bg-gray-900 text-white'
+                                : 'text-gray-600 hover:text-gray-900',
+                        ]">
+                        Home
+                    </button>
+                    <button
+                        @click="activeTab = 'videos'"
+                        :class="[
+                            'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                            activeTab === 'videos'
+                                ? 'bg-gray-900 text-white'
+                                : 'text-gray-600 hover:text-gray-900',
+                        ]">
+                        Videos
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content based on active tab -->
+            <SearchProperty v-if="activeTab === 'home'" segment="military" />
+            <SearchVideo v-else-if="activeTab === 'videos'" :videos="videos" :adConfig="adConfig" />
+        </template>
     </div>
 </template>
