@@ -77,6 +77,28 @@
         }
     ]);
 
+    // Ad configuration for VAST video advertising
+    const adConfig = ref({
+        "client": "vast",
+        "schedule": [
+            {
+                "offset": "pre",
+                "tag": "http://localhost:3000/ads/pre-roll-ad.xml",
+                "type": "linear"
+            },
+            {
+                "offset": "50%",
+                "tag": "http://localhost:3000/ads/mid-roll-ad.xml",
+                "type": "linear"
+            },
+            {
+                "offset": "post",
+                "tag": "http://localhost:3000/ads/post-roll-ad.xml",
+                "type": "linear"
+            }
+        ]
+    });
+
    
     const handleSearch = (query) => {
         console.log("Search:", query)
@@ -241,9 +263,10 @@
             @property-click="handlePropertyClick"
             @favorite-toggle="handleFavoriteToggle" />
 
-      
+
         <CommonCitizenVideoGrid
             :videos="videos"
+            :ad-config="adConfig"
             @see-all="handleSeeAllVideos"
             @video-click="handleVideoClick" />
     </div>
