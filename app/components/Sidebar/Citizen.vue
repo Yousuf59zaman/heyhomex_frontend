@@ -98,28 +98,28 @@
             label: "Videos",
             icon: "/svg/menubar/video.svg",
             iconType: "svg",
-            path: `${getBasePath.value}/videos`,
+            path: `#`,
         },
         {
             id: "favourites",
             label: "Favourites",
             icon: "/svg/menubar/favourite.svg",
             iconType: "svg",
-            path: `${getBasePath.value}/favourites`,
+            path: `#`,
         },
         {
             id: "reports",
             label: "Reports",
             icon: "/svg/menubar/search.svg",
             iconType: "svg",
-            path: `${getBasePath.value}/reports`,
+            path: `#`,
         },
         {
             id: "settings",
             label: "Settings",
             icon: "/svg/menubar/setting.svg",
             iconType: "svg",
-            path: `${getBasePath.value}/settings`,
+            path: `#`,
         },
     ])
 </script>
