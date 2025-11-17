@@ -104,6 +104,33 @@
         openVideo(video, videos.value);
     };
 
+    // Ad configuration for VAST video advertising
+    const adConfig = ref({
+        "client": "vast",
+        "schedule": [
+            {
+                "offset": "pre",
+                "tag": "http://localhost:3000/ads/pre-roll-ad.xml",
+                "type": "linear"
+            },
+            {
+                "offset": "50%",
+                "tag": "http://localhost:3000/ads/mid-roll-ad.xml",
+                "type": "linear"
+            },
+            {
+                "offset": "post",
+                "tag": "http://localhost:3000/ads/post-roll-ad.xml",
+                "type": "linear"
+            }
+        ],
+        "skipoffset": 5,
+        "admessage": "This ad will end in xx seconds",
+        "skipmessage": "Skip ad",
+        "vpaidcontrols": true,
+        "autoplayadsmuted": false
+    });
+
     // Tab content data
     const tabInsights = ref({
         title: "Insights",
@@ -522,6 +549,7 @@
 
             <!-- Right Column - Sidebar -->
             <div class="w-full lg:w-80 mt-6 lg:mt-0">
+                <!-- Videos Section -->
                 <div class="bg-white rounded-lg shadow-sm mb-6">
                     <div class="px-4 py-3 border-b border-gray-200">
                         <h3 class="text-lg font-semibold text-gray-900">
@@ -541,6 +569,7 @@
                                     :alt="video.title"
                                     class="w-full h-full object-cover rounded-md" />
 
+                                <!-- Duration Badge -->
                                 <div
                                     class="absolute bottom-2 right-2 bg-black/90 text-white px-2 py-1 rounded text-xs font-medium">
                                     {{ video.duration }}
@@ -660,6 +689,11 @@
                 </div>
             </div>
         </div>
+
+        <!-- Video Player Modal with Ads -->
+        <ClientOnly>
+            <VideoPlayerModal :adConfig="adConfig" />
+        </ClientOnly>
     </div>
 </template>
 

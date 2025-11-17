@@ -84,25 +84,30 @@
 
     // Ad configuration for VAST video advertising
     const adConfig = ref({
-        "client": "vast",
-        "schedule": [
-            {
-                "offset": "pre",
-                "tag": "http://localhost:3000/ads/pre-roll-ad.xml",
-                "type": "linear"
-            },
-            {
-                "offset": "50%",
-                "tag": "http://localhost:3000/ads/mid-roll-ad.xml",
-                "type": "linear"
-            },
-            {
-                "offset": "post",
-                "tag": "http://localhost:3000/ads/post-roll-ad.xml",
-                "type": "linear"
-            }
-        ]
-    });
+    "client": "vast",
+    "schedule": [
+        {
+            "offset": "pre",
+            "tag": "http://localhost:3000/ads/pre-roll-ad.xml",
+            "type": "linear"
+        },
+        {
+            "offset": "50%",
+            "tag": "http://localhost:3000/ads/mid-roll-ad.xml",
+            "type": "linear"
+        },
+        {
+            "offset": "post",
+            "tag": "http://localhost:3000/ads/post-roll-ad.xml",
+            "type": "linear"
+        }
+    ],
+    "skipoffset": 5,
+    "admessage": "This ad will end in xx seconds",
+    "skipmessage": "Skip ad",
+    "vpaidcontrols": true,
+    "autoplayadsmuted": false
+});
 
     // Event handlers
     const handleSearch = (query) => {
