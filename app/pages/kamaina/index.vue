@@ -2,6 +2,9 @@
     useHead({title: "Kamaina Panel"})
     definePageMeta({middleware: ["auth-citizen"], layout: "citizen"})
 
+    // Hydration state for SSR/CSR skeleton loading
+    const hydrated = ref(false)
+
     const demoVideoUrl = 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
     const {properties, pending, error, toggleFavorite} = useProperties()
 
@@ -202,11 +205,28 @@
     const handleSeeAllVideos = () => {
         console.log("See all videos")
     }
+
+    // Set hydrated to true after component is mounted on client
+    onMounted(() => {
+        hydrated.value = true
+    })
 </script>
 
 <template>
     <div class="space-y-6">
+        <!-- Search Filter Section Skeleton BEFORE hydration -->
+        <div v-if="!hydrated" class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1 h-12 bg-gray-200 rounded"></div>
+                <div class="w-full md:w-40 h-12 bg-gray-200 rounded"></div>
+                <div class="w-full md:w-40 h-12 bg-gray-200 rounded"></div>
+                <div class="w-full md:w-32 h-12 bg-gray-200 rounded"></div>
+            </div>
+        </div>
+
+        <!-- Real Search Filter AFTER hydration -->
         <CommonCitizenSearchFilterSection
+            v-else
             v-model="searchQuery"
             v-model:property-type="selectedPropertyType"
             v-model:price-range="selectedPriceRange"
@@ -214,15 +234,48 @@
             @map-search="handleMapSearch"
             @toggle-filters="handleToggleFilters" />
 
-      
+        <!-- Chart and Saved List Section -->
         <div class="flex flex-col lg:grid lg:grid-cols-11 gap-4 lg:gap-2">
+            <!-- Market Chart Skeleton/Real -->
             <div class="order-1 lg:order-1 lg:col-span-6">
+                <!-- Market Chart Skeleton BEFORE hydration -->
+                <div v-if="!hydrated" class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="h-6 w-40 bg-gray-200 rounded"></div>
+                        <div class="flex gap-2">
+                            <div class="h-8 w-20 bg-gray-200 rounded"></div>
+                            <div class="h-8 w-20 bg-gray-200 rounded"></div>
+                            <div class="h-8 w-20 bg-gray-200 rounded"></div>
+                        </div>
+                    </div>
+                    <div class="h-64 bg-gray-200 rounded"></div>
+                </div>
+
+                <!-- Real Market Chart AFTER hydration -->
                 <CommonCitizenMarketChart
+                    v-else
                     :initial-period="chartPeriod"
                     @period-change="handlePeriodChange" />
             </div>
+
+            <!-- Saved List Skeleton/Real -->
             <div class="order-2 lg:order-2 lg:col-span-5">
+                <!-- Saved List Skeleton BEFORE hydration -->
+                <div v-if="!hydrated" class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
+                    <div class="flex gap-2 mb-4">
+                        <div class="h-10 flex-1 bg-gray-200 rounded"></div>
+                        <div class="h-10 flex-1 bg-gray-200 rounded"></div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="h-20 bg-gray-200 rounded"></div>
+                        <div class="h-20 bg-gray-200 rounded"></div>
+                        <div class="h-20 bg-gray-200 rounded"></div>
+                    </div>
+                </div>
+
+                <!-- Real Saved List AFTER hydration -->
                 <CommonCitizenSavedList
+                    v-else
                     :home-items="savedHomeItems"
                     :video-items="savedVideoItems"
                     @tab-change="handleSavedTabChange"
@@ -232,9 +285,9 @@
             </div>
         </div>
 
-      
+        <!-- Skeleton BEFORE hydration (SSR/Initial Load) -->
         <div
-            v-if="pending"
+            v-if="!hydrated"
             class="space-y-4 md:space-y-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl md:text-2xl font-bold text-gray-900">
@@ -250,26 +303,67 @@
             </div>
         </div>
 
-     
-        <div
-            v-else-if="error"
-            class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-            <p class="text-red-600 mb-2">
-                Error loading properties. Please try again later.
-            </p>
-            <p class="text-sm text-red-500">{{ error.message }}</p>
+        <!-- Content AFTER hydration -->
+        <template v-else>
+            <!-- Loading State with Skeleton Loaders -->
+            <div
+                v-if="pending"
+                class="space-y-4 md:space-y-6">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-900">
+                        Homes in Your Favorite Areas
+                    </h2>
+                    <div class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                    <CommonCitizenPropertyCardSkeleton
+                        v-for="n in 3"
+                        :key="n" />
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div
+                v-else-if="error"
+                class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                <p class="text-red-600 mb-2">
+                    Error loading properties. Please try again later.
+                </p>
+                <p class="text-sm text-red-500">{{ error.message }}</p>
+            </div>
+
+            <!-- Properties Grid -->
+            <CommonCitizenPropertyGrid
+                v-else
+                :properties="properties"
+                @see-all="handleSeeAllProperties"
+                @property-click="handlePropertyClick"
+                @favorite-toggle="handleFavoriteToggle" />
+        </template>
+
+        <!-- Video Grid Skeleton BEFORE hydration -->
+        <div v-if="!hydrated" class="space-y-4 md:space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl md:text-2xl font-bold text-gray-900">
+                    Videos you might like!
+                </h2>
+                <div class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                <div v-for="n in 3" :key="n" class="bg-white rounded-lg shadow-sm overflow-hidden animate-pulse">
+                    <div class="aspect-video bg-gray-200"></div>
+                    <div class="p-4 space-y-3">
+                        <div class="h-5 bg-gray-200 rounded w-3/4"></div>
+                        <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-     
-        <CommonCitizenPropertyGrid
-            v-else
-            :properties="properties"
-            @see-all="handleSeeAllProperties"
-            @property-click="handlePropertyClick"
-            @favorite-toggle="handleFavoriteToggle" />
-
-
+        <!-- Real Video Grid AFTER hydration -->
         <CommonCitizenVideoGrid
+            v-else
             :videos="videos"
             :ad-config="adConfig"
             @see-all="handleSeeAllVideos"
