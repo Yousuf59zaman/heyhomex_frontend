@@ -16,6 +16,11 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
+    // Ad configuration for VAST video advertising
+    adConfig: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
 // Emits
@@ -58,6 +63,11 @@ const handleVideoClick = (video) => {
                 :video="video"
                 @click="handleVideoClick" />
         </div>
+
+        <!-- Video Player Modal with Ads -->
+        <ClientOnly>
+            <VideoPlayerModal :adConfig="adConfig" />
+        </ClientOnly>
     </div>
 </template>
 

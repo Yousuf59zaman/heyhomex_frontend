@@ -5,6 +5,9 @@
         layout: 'citizen',
     });
 
+    // Hydration state for SSR/CSR skeleton loading
+    const hydrated = ref(false)
+
     const demoVideoUrl = 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
 
     const { openVideo } = useVideoPlayer();
@@ -109,6 +112,33 @@
     const playSidebarVideo = (video) => {
         openVideo(video, videos.value);
     };
+
+    // Ad configuration for VAST video advertising
+    const adConfig = ref({
+        "client": "vast",
+        "schedule": [
+            {
+                "offset": "pre",
+                "tag": "http://localhost:3000/ads/pre-roll-ad.xml",
+                "type": "linear"
+            },
+            {
+                "offset": "50%",
+                "tag": "http://localhost:3000/ads/mid-roll-ad.xml",
+                "type": "linear"
+            },
+            {
+                "offset": "post",
+                "tag": "http://localhost:3000/ads/post-roll-ad.xml",
+                "type": "linear"
+            }
+        ],
+        "skipoffset": 5,
+        "admessage": "This ad will end in xx seconds",
+        "skipmessage": "Skip ad",
+        "vpaidcontrols": true,
+        "autoplayadsmuted": false
+    });
 
     // Tab content data
     const tabInsights = ref({
@@ -241,12 +271,114 @@
             description: '+ Solar partial',
         },
     ]);
+
+    // Set hydrated to true after component is mounted on client
+    onMounted(() => {
+        hydrated.value = true
+    })
 </script>
 
 <template>
     <div class="min-h-screen bg-gray-50">
-        <!-- Main Content -->
-        <div class="flex flex-col lg:flex-row mx-auto p-4 gap-6 max-w-7xl">
+        <!-- Skeleton BEFORE hydration -->
+        <div v-if="!hydrated" class="flex flex-col lg:flex-row mx-auto p-4 gap-6 max-w-7xl animate-pulse">
+            <div class="flex-1">
+                <!-- Property Images Skeleton -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+                    <div class="h-48 md:h-64 bg-gray-200 rounded-lg"></div>
+                    <div class="hidden md:grid grid-rows-2 gap-2">
+                        <div class="h-32 bg-gray-200 rounded-lg"></div>
+                        <div class="h-32 bg-gray-200 rounded-lg"></div>
+                    </div>
+                </div>
+
+                <!-- Property Info Skeleton -->
+                <div class="mb-6">
+                    <div class="flex items-start mb-4">
+                        <div class="h-4 w-2/3 bg-gray-200 rounded"></div>
+                    </div>
+                    <div class="flex justify-between mb-4">
+                        <div class="h-8 w-1/3 bg-gray-200 rounded"></div>
+                        <div class="h-8 w-24 bg-gray-200 rounded"></div>
+                    </div>
+                    <div class="h-6 w-full bg-gray-200 rounded mb-4"></div>
+                    <div class="bg-white rounded-lg p-4">
+                        <div class="flex justify-between gap-4 mb-4">
+                            <div class="flex-1 h-24 bg-gray-200 rounded-lg"></div>
+                            <div class="flex-1 h-24 bg-gray-200 rounded-lg"></div>
+                            <div class="flex-1 h-24 bg-gray-200 rounded-lg"></div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="h-4 w-full bg-gray-200 rounded"></div>
+                            <div class="h-4 w-full bg-gray-200 rounded"></div>
+                            <div class="h-4 w-3/4 bg-gray-200 rounded"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs Skeleton -->
+                <div class="pt-4">
+                    <div class="flex gap-4 bg-white rounded-lg p-3 mb-2">
+                        <div class="h-10 w-24 bg-gray-200 rounded"></div>
+                        <div class="h-10 w-24 bg-gray-200 rounded"></div>
+                        <div class="h-10 w-24 bg-gray-200 rounded"></div>
+                    </div>
+                    <div class="bg-white rounded-lg p-6 space-y-4">
+                        <div class="h-6 w-40 bg-gray-200 rounded"></div>
+                        <div class="h-4 w-full bg-gray-200 rounded"></div>
+                        <div class="h-4 w-full bg-gray-200 rounded"></div>
+                        <div class="h-4 w-2/3 bg-gray-200 rounded"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Skeleton -->
+            <div class="w-full lg:w-80">
+                <!-- Videos Skeleton -->
+                <div class="bg-white rounded-lg shadow-sm mb-6">
+                    <div class="px-4 py-3 border-b">
+                        <div class="h-6 w-40 bg-gray-200 rounded"></div>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div v-for="n in 3" :key="n">
+                            <div class="h-32 bg-gray-200 rounded mb-2"></div>
+                            <div class="h-4 w-full bg-gray-200 rounded mb-2"></div>
+                            <div class="h-3 w-3/4 bg-gray-200 rounded"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent Skeleton -->
+                <div class="bg-white rounded-lg shadow-sm mb-6">
+                    <div class="px-4 py-3 border-b">
+                        <div class="h-6 w-32 bg-gray-200 rounded"></div>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+                            <div class="h-4 w-24 bg-gray-200 rounded"></div>
+                        </div>
+                        <div class="h-10 bg-gray-200 rounded"></div>
+                        <div class="h-24 bg-gray-200 rounded"></div>
+                        <div class="h-10 bg-gray-200 rounded"></div>
+                    </div>
+                </div>
+
+                <!-- Tour Skeleton -->
+                <div class="bg-white rounded-lg shadow-sm">
+                    <div class="px-4 py-3 border-b">
+                        <div class="h-6 w-32 bg-gray-200 rounded"></div>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div class="h-4 w-full bg-gray-200 rounded"></div>
+                        <div class="h-10 bg-gray-200 rounded"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real content AFTER hydration -->
+        <div v-else class="flex flex-col lg:flex-row mx-auto p-4 gap-6 max-w-7xl">
             <!-- Left Column - Property Details -->
             <div class="flex-1">
                 <!-- Property Images Grid -->
@@ -689,6 +821,12 @@
             </div>
         </div>
     </div>
+
+        <!-- Video Player Modal with Ads -->
+        <ClientOnly>
+            <VideoPlayerModal :adConfig="adConfig" />
+        </ClientOnly>
+  
 </template>
 
 <style scoped>
