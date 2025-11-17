@@ -78,12 +78,12 @@
 
             console.log('API Response:', response)
 
-            // The API returns data inside response.data array
-            data.value = Array.isArray(response.data) ? response.data : []
-            permissions.value = response.permissions || {}
+            // The API returns data inside response.data.data array
+            data.value = Array.isArray(response.data?.data) ? response.data.data : []
+            permissions.value = response.data?.permissions || {}
 
-            // For pagination, pass the entire response object
-            paginationConfig.value.data = response
+            // For pagination, pass the meta object
+            paginationConfig.value.data = response.data?.meta || {}
 
             console.log('Data array:', data.value)
             console.log('Data length:', data.value.length)
