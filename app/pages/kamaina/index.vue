@@ -5,14 +5,28 @@
     // Hydration state for SSR/CSR skeleton loading
     const hydrated = ref(false)
 
-    const demoVideoUrl = 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
-    const {properties, pending, error, toggleFavorite} = useProperties()
+    
+
+    //state
+    const properties = ref([])
+    const pending = ref(false)
+    const error = ref(null)
+    const route = useRoute()
+    const paginationConfig = ref({
+        data: {},
+        lang: "en",
+        align: "center",
+        action: "",
+    })
+    const demoVideoUrl =
+        "https://content.jwplatform.com/manifests/yp34SRmf.m3u8"
 
     const searchQuery = ref("")
     const selectedPropertyType = ref("")
     const selectedPriceRange = ref("")
-
     const chartPeriod = ref("weekly")
+
+    
 
     const savedHomeItems = ref([
         {
@@ -52,64 +66,107 @@
         },
     ])
 
-  
     const videos = ref([
         {
             id: 1,
-            title: 'HAWAIIAN',
-            subtitle: 'AIRLINES',
-            thumbnail: '/images/dashboard/video/1.png',
-            duration: '3:45',
-            videoUrl: demoVideoUrl
+            title: "HAWAIIAN",
+            subtitle: "AIRLINES",
+            thumbnail: "/images/dashboard/video/1.png",
+            duration: "3:45",
+            videoUrl: demoVideoUrl,
         },
         {
             id: 2,
-            title: 'LIVESTRAND',
-            subtitle: 'HOUSE',
-            thumbnail: '/images/dashboard/video/2.png',
-            duration: '5:12',
-            videoUrl: demoVideoUrl
+            title: "LIVESTRAND",
+            subtitle: "HOUSE",
+            thumbnail: "/images/dashboard/video/2.png",
+            duration: "5:12",
+            videoUrl: demoVideoUrl,
         },
         {
             id: 3,
-            title: 'WHICH',
-            subtitle: 'ONE ARE YOU?',
-            thumbnail: '/images/dashboard/video/3.png',
-            duration: '2:58',
-            videoUrl: demoVideoUrl
-        }
-    ]);
+            title: "WHICH",
+            subtitle: "ONE ARE YOU?",
+            thumbnail: "/images/dashboard/video/3.png",
+            duration: "2:58",
+            videoUrl: demoVideoUrl,
+        },
+    ])
 
     // Ad configuration for VAST video advertising
     const adConfig = ref({
-    "client": "vast",
-    "schedule": [
-        {
-            "offset": "pre",
-            "tag": "http://localhost:3000/ads/pre-roll-ad.xml",
-            "type": "linear"
-        },
-        {
-            "offset": "50%",
-            "tag": "http://localhost:3000/ads/mid-roll-ad.xml",
-            "type": "linear"
-        },
-        {
-            "offset": "post",
-            "tag": "http://localhost:3000/ads/post-roll-ad.xml",
-            "type": "linear"
-        }
-    ],
-    "skipoffset": 5,
-    "admessage": "This ad will end in xx seconds",
-    "skipmessage": "Skip ad",
-    "vpaidcontrols": true,
-    "autoplayadsmuted": false
-});
+        client: "vast",
+        schedule: [
+            {
+                offset: "pre",
+                tag: "http://localhost:3000/ads/pre-roll-ad.xml",
+                type: "linear",
+            },
+            {
+                offset: "50%",
+                tag: "http://localhost:3000/ads/mid-roll-ad.xml",
+                type: "linear",
+            },
+            {
+                offset: "post",
+                tag: "http://localhost:3000/ads/post-roll-ad.xml",
+                type: "linear",
+            },
+        ],
+        skipoffset: 5,
+        admessage: "This ad will end in xx seconds",
+        skipmessage: "Skip ad",
+        vpaidcontrols: true,
+        autoplayadsmuted: false,
+    })
 
    
+    const loadData = async () => {
+        pending.value = true
+        error.value = null
+        try {
+            const response = await $fetchCMS("/property", {
+                method: "POST",
+                body: {
+                    paginate: true,
+                    page: route.query.page ? route.query.page : 1,
+                    length: 6,
+                    search: searchQuery.value,
+                },
+            })
+
+           
+            properties.value = response.data.data.map((property) => ({
+                id: property.id,
+                title: property.name,
+                address: property.address,
+                price: property.price,
+                beds: property.beds,
+                baths: property.baths,
+                sqft: property["square-feet"],
+                image: property.image,
+                isFavorited: false,
+                coordinates: property.coordinates
+                    ? [
+                          property.coordinates.latitude,
+                          property.coordinates.longitude,
+                      ]
+                    : null,
+            }))
+
+            paginationConfig.value.data = response.data.meta
+        } catch (e) {
+            console.log("Error loading properties:", e.message)
+            error.value = e
+            properties.value = []
+        } finally {
+            pending.value = false
+        }
+    }
+
     const handleSearch = (query) => {
         console.log("Search:", query)
+        loadData()
     }
 
     const handleMapSearch = () => {
@@ -191,7 +248,10 @@
     }
 
     const handleFavoriteToggle = (property) => {
-        toggleFavorite(property.id)
+        const prop = properties.value.find((p) => p.id === property.id)
+        if (prop) {
+            prop.isFavorited = !prop.isFavorited
+        }
     }
 
     const handleVideoClick = (video) => {
@@ -206,16 +266,29 @@
         console.log("See all videos")
     }
 
-    // Set hydrated to true after component is mounted on client
+    
     onMounted(() => {
         hydrated.value = true
+        loadData()
     })
+
+   
+    watch(
+        () => route.query,
+        () => {
+            if (hydrated.value) {
+                loadData()
+            }
+        }
+    )
 </script>
 
 <template>
     <div class="space-y-6">
         <!-- Search Filter Section Skeleton BEFORE hydration -->
-        <div v-if="!hydrated" class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
+        <div
+            v-if="!hydrated"
+            class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="flex-1 h-12 bg-gray-200 rounded"></div>
                 <div class="w-full md:w-40 h-12 bg-gray-200 rounded"></div>
@@ -235,11 +308,14 @@
             @toggle-filters="handleToggleFilters" />
 
         <!-- Chart and Saved List Section -->
-        <div class="flex flex-col lg:grid lg:grid-cols-11 2xl:grid-cols-12 gap-4 lg:gap-2 2xl:gap-6">
+        <div
+            class="flex flex-col lg:grid lg:grid-cols-11 2xl:grid-cols-12 gap-4 lg:gap-2 2xl:gap-6">
             <!-- Market Chart Skeleton/Real -->
             <div class="order-1 lg:order-1 lg:col-span-6 2xl:col-span-7">
                 <!-- Market Chart Skeleton BEFORE hydration -->
-                <div v-if="!hydrated" class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
+                <div
+                    v-if="!hydrated"
+                    class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
                     <div class="flex items-center justify-between mb-4">
                         <div class="h-6 w-40 bg-gray-200 rounded"></div>
                         <div class="flex gap-2">
@@ -261,7 +337,9 @@
             <!-- Saved List Skeleton/Real -->
             <div class="order-2 lg:order-2 lg:col-span-5 2xl:col-span-5">
                 <!-- Saved List Skeleton BEFORE hydration -->
-                <div v-if="!hydrated" class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
+                <div
+                    v-if="!hydrated"
+                    class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
                     <div class="flex gap-2 mb-4">
                         <div class="h-10 flex-1 bg-gray-200 rounded"></div>
                         <div class="h-10 flex-1 bg-gray-200 rounded"></div>
@@ -313,7 +391,8 @@
                     <h2 class="text-xl md:text-2xl font-bold text-gray-900">
                         Homes in Your Favorite Areas
                     </h2>
-                    <div class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
+                    <div
+                        class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
                 </div>
                 <div
                     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
@@ -340,18 +419,30 @@
                 @see-all="handleSeeAllProperties"
                 @property-click="handlePropertyClick"
                 @favorite-toggle="handleFavoriteToggle" />
+
+            <!-- Pagination -->
+            <LazyPagination
+                v-if="!pending && properties.length > 0"
+                class="px-4"
+                :config="paginationConfig" />
         </template>
 
         <!-- Video Grid Skeleton BEFORE hydration -->
-        <div v-if="!hydrated" class="space-y-4 md:space-y-6">
+        <div
+            v-if="!hydrated"
+            class="space-y-4 md:space-y-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl md:text-2xl font-bold text-gray-900">
                     Videos you might like!
                 </h2>
                 <div class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
-                <div v-for="n in 3" :key="n" class="bg-white rounded-lg shadow-sm overflow-hidden animate-pulse">
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
+                <div
+                    v-for="n in 3"
+                    :key="n"
+                    class="bg-white rounded-lg shadow-sm overflow-hidden animate-pulse">
                     <div class="aspect-video bg-gray-200"></div>
                     <div class="p-4 space-y-3">
                         <div class="h-5 bg-gray-200 rounded w-3/4"></div>
