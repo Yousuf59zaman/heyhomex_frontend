@@ -32,7 +32,7 @@ const {
 
 const playerRef = ref<any>(null);
 const showInfo = ref(true);
-const showPlaylist = ref(false);
+const showPlaylist = ref(true);
 const isSmallScreen = ref(false);
 
 /**
@@ -138,11 +138,11 @@ onBeforeUnmount(() => {
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm"
         @click="handleBackdropClick">
         <!-- Modal Container -->
-        <div class="relative w-full h-full flex flex-col lg:flex-row p-4 lg:p-6 gap-4">
+        <div class="relative w-full h-full flex flex-col lg:flex-row p-2 sm:p-4 md:p-5 lg:p-6 gap-2 sm:gap-3 md:gap-4 overflow-y-auto">
           <!-- Main Player Area -->
-          <div class="flex-1 flex flex-col">
+          <div class="w-full lg:flex-1 flex flex-col">
             <!-- Close Button -->
-            <div class="flex justify-between items-center mb-4">
+            <div class="flex justify-between items-center mb-2 sm:mb-3 md:mb-4 flex-shrink-0">
               <div class="flex items-center gap-3">
                 <button
                   @click="closeVideo"
@@ -155,15 +155,8 @@ onBeforeUnmount(() => {
                 </h2>
               </div>
 
-              <!-- Toggle Info & Playlist Buttons -->
+              <!-- Toggle Info Button -->
               <div class="flex items-center gap-2">
-                <button
-                  v-if="playlist.length > 0"
-                  @click="showPlaylist = !showPlaylist"
-                  class="text-white hover:text-red-500 transition-colors p-2 rounded-full hover:bg-white/10 lg:hidden"
-                  :aria-label="showPlaylist ? 'Hide playlist' : 'Show playlist'">
-                  <Icon name="lucide:list-video" class="w-5 h-5" />
-                </button>
                 <button
                   @click="showInfo = !showInfo"
                   class="text-white hover:text-red-500 transition-colors p-2 rounded-full hover:bg-white/10"
@@ -174,8 +167,9 @@ onBeforeUnmount(() => {
             </div>
 
             <!-- Player Container -->
-            <div class="flex-1 flex items-center justify-center">
-              <div class="w-full max-w-7xl aspect-video">
+            <div class="flex-shrink-0 w-full">
+              <div class="w-full max-w-full sm:max-w-7xl mx-auto">
+                <div class="w-full aspect-video">
                 <VideoJWPlayer
                   v-if="currentVideo"
                   ref="playerRef"
@@ -183,6 +177,7 @@ onBeforeUnmount(() => {
                   :autoplay="true"
                   :advertising="{ client: adConfig.client ?? '', ...adConfig }"
                   @complete="handleVideoComplete" />
+                </div>
               </div>
             </div>
 
@@ -190,9 +185,9 @@ onBeforeUnmount(() => {
             <Transition name="slide-up">
               <div
                 v-if="showInfo"
-                class="mt-4 bg-white/10 backdrop-blur-md rounded-lg p-4 text-white">
-                <h3 class="text-xl font-bold mb-2">{{ currentVideo.title }}</h3>
-                <div class="flex flex-wrap items-center gap-4 text-sm text-white/80 mb-3">
+                class="mt-2 sm:mt-3 md:mt-4 bg-white/10 backdrop-blur-md rounded-lg p-3 sm:p-4 text-white">
+                <h3 class="text-lg sm:text-xl font-bold mb-2">{{ currentVideo.title }}</h3>
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3 md:gap-4 text-xs sm:text-sm text-white/80 mb-2 sm:mb-3">
                   <span v-if="currentVideo.channel" class="flex items-center gap-1">
                     <Icon name="lucide:user" class="w-4 h-4" />
                     {{ currentVideo.channel }}
@@ -232,10 +227,12 @@ onBeforeUnmount(() => {
                 </div>
 
                 <!-- Keyboard Shortcuts Info -->
-                <div class="mt-4 pt-4 border-t border-white/20">
-                  <p class="text-xs text-white/60">
-                    <strong>Keyboard shortcuts:</strong>
-                    Space (play/pause) • F (fullscreen) • M (mute) • ←/→ (seek) • ↑/↓ (volume) • ESC (close)
+                <div class="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/20">
+                  <p class="text-[10px] sm:text-xs text-white/60 leading-relaxed">
+                    <strong class="block sm:inline mb-1 sm:mb-0">Keyboard shortcuts:</strong>
+                    <span class="block sm:inline">
+                      Space (play/pause) • F (fullscreen) • M (mute) • ←/→ (seek) • ↑/↓ (volume) • ESC (close)
+                    </span>
                   </p>
                 </div>
               </div>
@@ -243,35 +240,29 @@ onBeforeUnmount(() => {
           </div>
 
           <!-- Playlist Sidebar (Desktop) / Bottom Sheet (Mobile) -->
-          <Transition name="slide-left">
             <div
-              v-if="playlist.length > 0 && (showPlaylist || !isSmallScreen)"
-              class="w-full lg:w-96 bg-white/10 backdrop-blur-md rounded-lg p-4 overflow-hidden flex flex-col max-h-[40vh] lg:max-h-full">
-              <div class="flex items-center justify-between mb-3">
+              v-if="playlist.length > 0"
+              class="w-full lg:w-96 xl:w-[26rem] bg-white/10 backdrop-blur-md rounded-lg p-3 sm:p-4 flex flex-col flex-shrink-0">
+              <div class="flex items-center mb-3">
                 <h3 class="text-white font-semibold flex items-center gap-2">
                   <Icon name="lucide:list-video" class="w-5 h-5" />
                   Playlist ({{ playlist.length }})
                 </h3>
-                <button
-                  @click="showPlaylist = false"
-                  class="text-white hover:text-red-500 transition-colors lg:hidden">
-                  <Icon name="lucide:x" class="w-5 h-5" />
-                </button>
               </div>
 
-              <div class="flex-1 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent">
+              <div class="flex-1 overflow-y-auto space-y-1.5 sm:space-y-2 scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent">
                 <div
                   v-for="(video, index) in playlist"
                   :key="video.id"
                   @click="playFromPlaylist(video)"
                   :class="[
-                    'flex gap-3 p-2 rounded-lg cursor-pointer transition-all',
+                    'flex gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg cursor-pointer transition-all',
                     video.id === currentVideo.id
-                      ? 'bg-red-500/30 ring-2 ring-red-500'
+                      ? 'bg-red-500/30 ring-1 sm:ring-2 ring-red-500'
                       : 'hover:bg-white/10',
                   ]">
                   <!-- Thumbnail -->
-                  <div class="relative flex-shrink-0 w-32 h-20 rounded overflow-hidden">
+                  <div class="relative flex-shrink-0 w-24 h-16 sm:w-28 sm:h-18 md:w-32 md:h-20 rounded overflow-hidden">
                     <img
                       :src="video.thumbnail"
                       :alt="video.title"
@@ -288,13 +279,13 @@ onBeforeUnmount(() => {
 
                   <!-- Info -->
                   <div class="flex-1 min-w-0">
-                    <p class="text-white text-sm font-medium line-clamp-2 mb-1">
+                    <p class="text-white text-xs sm:text-sm font-medium line-clamp-2 mb-0.5 sm:mb-1">
                       {{ video.title }}
                     </p>
-                    <p class="text-white/60 text-xs line-clamp-1">
+                    <p class="text-white/60 text-[10px] sm:text-xs line-clamp-1">
                       {{ video.subtitle || video.channel }}
                     </p>
-                    <div class="flex items-center gap-2 text-white/50 text-xs mt-1">
+                    <div class="flex items-center gap-1 sm:gap-2 text-white/50 text-[10px] sm:text-xs mt-0.5 sm:mt-1">
                       <span v-if="video.views">{{ video.views }}</span>
                       <span v-if="video.uploadTime">• {{ video.uploadTime }}</span>
                     </div>
@@ -302,7 +293,6 @@ onBeforeUnmount(() => {
                 </div>
               </div>
             </div>
-          </Transition>
         </div>
       </div>
     </Transition>

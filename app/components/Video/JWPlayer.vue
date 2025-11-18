@@ -441,7 +441,19 @@ watch(
 
 <style scoped>
 .jwplayer-wrapper {
-    min-height: 300px;
+    min-height: 200px;
+}
+
+@media (min-width: 640px) {
+    .jwplayer-wrapper {
+        min-height: 300px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .jwplayer-wrapper {
+        min-height: 400px;
+    }
 }
 
 /* Ensure JW Player fills the container */
