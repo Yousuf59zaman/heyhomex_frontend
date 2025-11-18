@@ -382,7 +382,7 @@
                     </div>
 
                     <div
-                        class="hidden md:grid grid-rows-2 gap-2 h-full order-2">
+                        class="hidden md:grid grid-rows-2 gap-1 h-full order-2">
                         <div class="relative h-full">
                             <img
                                 src="/images/dashboard/2.png"
