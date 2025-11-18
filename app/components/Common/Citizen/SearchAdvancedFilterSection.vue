@@ -123,10 +123,10 @@
 
 <template>
     <div class="bg-white rounded-lg p-3 lg:p-4">
-        <div class="flex flex-col lg:flex-row gap-3">
+        <div class="flex flex-col lg:flex-row lg:items-start gap-3">
             <!-- Filters Row -->
             <div
-                class="flex flex-wrap lg:flex-nowrap items-center gap-2 flex-1">
+                class="flex flex-wrap items-center gap-2 flex-1">
                 <!-- Category Filter -->
                 <div class="relative w-full sm:w-auto sm:min-w-[140px]">
                     <select
