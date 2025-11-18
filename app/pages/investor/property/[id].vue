@@ -393,7 +393,7 @@
 
                     <!-- Right Side Images Grid - Hidden on mobile, shows on md+ -->
                     <div
-                        class="hidden md:grid grid-rows-2 gap-2 h-full order-2">
+                        class="hidden md:grid grid-rows-2 gap-1 h-full order-2">
                         <!-- Top Right Image -->
                         <div class="relative h-full">
                             <img
