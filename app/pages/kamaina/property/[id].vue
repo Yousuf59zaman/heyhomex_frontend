@@ -382,7 +382,7 @@
                     </div>
 
                     <div
-                        class="hidden md:grid grid-rows-2 gap-2 h-full order-2">
+                        class="hidden md:grid grid-rows-2 gap-1 h-full order-2">
                         <div class="relative h-full">
                             <img
                                 src="/images/dashboard/2.png"
@@ -662,14 +662,14 @@
                             Videos you might like!
                         </h3>
                     </div>
-                    <div class="p-4 space-y-4">
+                    <div class="p-4 space-y-4 md:grid md:grid-cols-2 md:gap-4 md:space-y-0 lg:flex lg:flex-col lg:space-y-4">
                         <div
                             v-for="video in videos"
                             :key="video.id"
                             class="group cursor-pointer"
                             @click="playSidebarVideo(video)">
                             <!-- Video Thumbnail -->
-                            <div class="relative w-full h-32 mb-3">
+                             <div class="relative w-full h-32 md:h-48 lg:h-32 mb-3">
                                 <img
                                     :src="video.thumbnail"
                                     :alt="video.title"

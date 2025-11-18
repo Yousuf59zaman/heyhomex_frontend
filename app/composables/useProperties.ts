@@ -55,11 +55,20 @@ export const useProperties = () => {
         'properties', // Cache key
         async () => {
             try {
-                const response = await $fetchCMS<PropertyApiResponse[]>('/property', {
+                const response = await $fetchCMS<any>('/property', {
                     method: 'GET',
                 })
 
-                if (Array.isArray(response)) {
+                // Handle nested API response structure
+                if (response?.data?.data && Array.isArray(response.data.data)) {
+                    return response.data.data
+                }
+                // Handle old format where data is directly an array
+                else if (response?.data && Array.isArray(response.data)) {
+                    return response.data
+                }
+                // Handle direct array response
+                else if (Array.isArray(response)) {
                     return response
                 } else {
                     console.error('Unexpected API response format:', response)
