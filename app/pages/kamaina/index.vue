@@ -235,9 +235,9 @@
             @toggle-filters="handleToggleFilters" />
 
         <!-- Chart and Saved List Section -->
-        <div class="flex flex-col lg:grid lg:grid-cols-11 gap-4 lg:gap-2">
+        <div class="flex flex-col lg:grid lg:grid-cols-11 2xl:grid-cols-12 gap-4 lg:gap-2 2xl:gap-6">
             <!-- Market Chart Skeleton/Real -->
-            <div class="order-1 lg:order-1 lg:col-span-6">
+            <div class="order-1 lg:order-1 lg:col-span-6 2xl:col-span-7">
                 <!-- Market Chart Skeleton BEFORE hydration -->
                 <div v-if="!hydrated" class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
                     <div class="flex items-center justify-between mb-4">
@@ -259,7 +259,7 @@
             </div>
 
             <!-- Saved List Skeleton/Real -->
-            <div class="order-2 lg:order-2 lg:col-span-5">
+            <div class="order-2 lg:order-2 lg:col-span-5 2xl:col-span-5">
                 <!-- Saved List Skeleton BEFORE hydration -->
                 <div v-if="!hydrated" class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
                     <div class="flex gap-2 mb-4">
@@ -296,7 +296,7 @@
                 <div class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
             </div>
             <div
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
                 <CommonCitizenPropertyCardSkeleton
                     v-for="n in 3"
                     :key="n" />
@@ -316,7 +316,7 @@
                     <div class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
                 </div>
                 <div
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
                     <CommonCitizenPropertyCardSkeleton
                         v-for="n in 3"
                         :key="n" />
@@ -350,7 +350,7 @@
                 </h2>
                 <div class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
                 <div v-for="n in 3" :key="n" class="bg-white rounded-lg shadow-sm overflow-hidden animate-pulse">
                     <div class="aspect-video bg-gray-200"></div>
                     <div class="p-4 space-y-3">
