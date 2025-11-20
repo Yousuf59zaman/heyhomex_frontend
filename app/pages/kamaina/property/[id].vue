@@ -6,7 +6,6 @@
     const {openVideo} = useVideoPlayer()
     definePageMeta({middleware: ["auth-citizen"], layout: "citizen"})
 
-    // Hydration state for SSR/CSR skeleton loading
     const hydrated = ref(false)
 
     const route = useRoute()
@@ -14,7 +13,6 @@
 
     const activeTab = ref("Insights")
 
-    // Property data state
     const propertyData = ref(null)
     const pending = ref(false)
     const error = ref(null)
@@ -32,7 +30,6 @@
 
     const tourTime = ref("Today 3:45")
 
-    // Load property detail data
     const loadPropertyDetail = async () => {
         pending.value = true
         error.value = null
@@ -43,7 +40,6 @@
 
             const data = response.data
 
-           
             propertyData.value = {
                 id: data.id,
                 title: data.title,
@@ -185,7 +181,6 @@
         autoplayadsmuted: false,
     })
 
-    
     const tabInsights = computed(() => {
         if (!propertyData.value?.insights) {
             return {
@@ -263,7 +258,6 @@
         title: "Location & Maps",
         placeholder: "Interactive map will be displayed here",
     })
-
 
     // Set hydrated to true after component is mounted on client
     onMounted(() => {

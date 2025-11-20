@@ -5,8 +5,6 @@
     // Hydration state for SSR/CSR skeleton loading
     const hydrated = ref(false)
 
-    
-
     //state
     const properties = ref([])
     const pending = ref(false)
@@ -25,8 +23,6 @@
     const selectedPropertyType = ref("")
     const selectedPriceRange = ref("")
     const chartPeriod = ref("weekly")
-
-    
 
     const savedHomeItems = ref([
         {
@@ -120,7 +116,6 @@
         autoplayadsmuted: false,
     })
 
-   
     const loadData = async () => {
         pending.value = true
         error.value = null
@@ -135,7 +130,6 @@
                 },
             })
 
-           
             properties.value = response.data.data.map((property) => ({
                 id: property.id,
                 title: property.name,
@@ -169,32 +163,22 @@
         loadData()
     }
 
+    const handlePeriodChange = (period) => {
+        chartPeriod.value = period
+        console.log("Period changed:", period)
+    }
+
     const handleMapSearch = () => {
         const query = {
             q: searchQuery.value || "",
-            view: "map",
+            view: "list",
         }
-        const propertyTypeMapping = {
-            "single-family": "Single Family",
-            condo: "Condo",
-            townhouse: "Townhouse",
+
+        if (selectedPropertyType.value) {
+            query.homeType = selectedPropertyType.value
         }
-        const priceRangeMapping = {
-            "under-500k": "$500,000",
-            "500k-1m": "$750,000",
-            "over-1m": "$1,000,000+",
-        }
-        if (
-            selectedPropertyType.value &&
-            propertyTypeMapping[selectedPropertyType.value]
-        ) {
-            query.homeType = propertyTypeMapping[selectedPropertyType.value]
-        }
-        if (
-            selectedPriceRange.value &&
-            priceRangeMapping[selectedPriceRange.value]
-        ) {
-            query.priceRange = priceRangeMapping[selectedPriceRange.value]
+        if (selectedPriceRange.value) {
+            query.priceRange = selectedPriceRange.value
         }
 
         navigateTo({
@@ -205,11 +189,6 @@
 
     const handleToggleFilters = () => {
         console.log("Toggle filters clicked")
-    }
-
-    const handlePeriodChange = (period) => {
-        chartPeriod.value = period
-        console.log("Period changed:", period)
     }
 
     const handleSavedTabChange = (tab) => {
@@ -266,13 +245,11 @@
         console.log("See all videos")
     }
 
-    
     onMounted(() => {
         hydrated.value = true
         loadData()
     })
 
-   
     watch(
         () => route.query,
         () => {
