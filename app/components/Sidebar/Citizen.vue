@@ -1,6 +1,8 @@
 <script setup>
     const {citizen_user} = citizenAuth()
 
+    defineEmits(["close-menu"])
+
     const props = defineProps({
         isMobile: {
             type: Boolean,
@@ -8,23 +10,7 @@
         },
     })
 
-    defineEmits(["close-menu"])
-
     const route = useRoute()
-
-    const sidebarBackgroundColor = computed(() => {
-        const currentPath = route.path
-
-        if (currentPath.includes("kamaina")) {
-            return "#FF6666"
-        } else if (currentPath.includes("military")) {
-            return "#6E9EF3"
-        } else if (currentPath.includes("investor")) {
-            return "#333365"
-        }
-
-        return "#FF6666"
-    })
 
     const getUserName = computed(() => {
         if (!citizen_user.value) return "User"
@@ -68,14 +54,23 @@
         return "Citizen"
     })
 
+    const sidebarColor = computed(() => {
+        const currentPath = route.path
+        if (currentPath.includes("kamaina")) {
+            return "#FF6666"
+        } else if (currentPath.includes("military")) {
+            return "#6E9EF3"
+        } else if (currentPath.includes("investor")) {
+            return "#333365"
+        }
+        return "#FF6666"
+    })
+
     const getBasePath = computed(() => {
-        if (!citizen_user.value || !citizen_user.value.data?.user_type)
-            return "/kamaina"
-
-        const userType = citizen_user.value.data.user_type[0]
-        const slug = userType?.slug || "kamaina"
-
-        return slug === "kamaaina" ? "/kamaina" : `/${slug}`
+        const currentPath = route.path
+        if (currentPath.includes("kamaina")) return "/kamaina"
+        else if (currentPath.includes("military")) return "/military"
+        else return "/investor"
     })
 
     const navigationItems = computed(() => [
@@ -129,7 +124,7 @@
     <aside
         v-if="!isMobile"
         class="h-full w-[69px] flex flex-col items-center py-7"
-        :style="{backgroundColor: sidebarBackgroundColor}">
+        :style="{backgroundColor: sidebarColor}">
         <div class="mb-8">
             <img
                 src="/svg/dashboard/home_logo.svg"
@@ -166,7 +161,7 @@
     <aside
         v-else
         class="h-full w-64 flex flex-col"
-        :style="{backgroundColor: sidebarBackgroundColor}">
+        :style="{backgroundColor: sidebarColor}">
         <div
             class="flex items-center justify-between p-4 border-b border-white/20">
             <div class="flex items-center space-x-3">
