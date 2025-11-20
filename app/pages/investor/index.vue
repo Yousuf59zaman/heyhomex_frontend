@@ -1,5 +1,5 @@
 <script setup>
-    useHead({title: "Kamaina Panel"})
+    useHead({title: "Investor Panel"})
     definePageMeta({middleware: ["auth-citizen"], layout: "citizen"})
 
     // Hydration state for SSR/CSR skeleton loading
@@ -198,7 +198,7 @@
         }
 
         navigateTo({
-            path: "/kamaina/search",
+            path: "/investor/search",
             query,
         })
     }
@@ -244,7 +244,7 @@
     }
 
     const handlePropertyClick = (property) => {
-        navigateTo(`/kamaina/property/${property.id}`)
+        navigateTo(`/investor/property/${property.id}`)
     }
 
     const handleFavoriteToggle = (property) => {

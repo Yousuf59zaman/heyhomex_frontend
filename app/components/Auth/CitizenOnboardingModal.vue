@@ -346,15 +346,21 @@
             }
 
             if (import.meta.client) {
-                // alert(response.message || "User onboarded successfully")
+               
             }
 
             emit("onboarding-complete", {...formData})
 
+            // const redirectSlug = response.data.user_type?.[0]?.slug || "kamaina"
+            // const targetPath =
+            //     redirectSlug === "kamaaina" ? "/kamaina/" : `/${redirectSlug}/`
+            // navigateTo(targetPath)
             const redirectSlug = response.data.user_type?.[0]?.slug || "kamaina"
-            const targetPath =
-                redirectSlug === "kamaaina" ? "/kamaina/" : `/${redirectSlug}/`
-            navigateTo(targetPath)
+                const targetPath =
+                    redirectSlug === "kamaaina"
+                        ? "/kamaina/"
+                        : `/${redirectSlug}/`
+                window.location.href = targetPath;
         } catch (error: any) {
             console.error("Onboarding save failed:", error)
 

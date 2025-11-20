@@ -1,4 +1,5 @@
 <script setup>
+   
     const props = defineProps({
         segment: {
             type: String,
@@ -8,18 +9,21 @@
         },
     })
 
+  
     const route = useRoute()
 
+  
     const searchQuery = ref(
         route.query.q || "123 Aloha Lane, Honolulu, HI 96818"
     )
-    const viewMode = ref(route.query.view === "list" ? "List View" : "Map View")
+    const viewMode = ref(route.query.view === "map" ? "Map View" : "List View")
     const selectedCategory = ref(route.query.category || "For Sell")
     const selectedPriceRange = ref(route.query.priceRange || "$250,000")
     const selectedHomeType = ref(route.query.homeType || "Beds & Baths")
     const selectedOthers = ref(route.query.others || "More")
     const selectedBedsAndBaths = ref(route.query.bedsAndBaths || "")
 
+   
     const map = ref(null)
     const mapContainer = ref(null)
     const markers = ref([])
@@ -27,6 +31,7 @@
     const popupPosition = ref({x: 0, y: 0})
     const showPopup = ref(false)
 
+   
     const properties = ref([])
     const pending = ref(false)
     const error = ref(null)
@@ -37,6 +42,7 @@
         action: "",
     })
 
+  
     const loadData = async () => {
         pending.value = true
         error.value = null
@@ -54,6 +60,7 @@
                 },
             })
 
+         
             properties.value = response.data.data.map((property) => ({
                 id: property.id,
                 title: property.name,
@@ -82,6 +89,7 @@
         }
     }
 
+   
     const propertiesWithCoordinates = computed(() => {
         return properties.value.filter(
             (property) => property.coordinates !== null
@@ -90,6 +98,7 @@
 
     const resultsFound = computed(() => properties.value.length)
 
+ 
     const toggleFavorite = (property) => {
         const prop = properties.value.find((p) => p.id === property.id)
         if (prop) {
@@ -111,43 +120,65 @@
         console.log("Saving search...")
     }
 
+
     const handleFilterChange = (filters) => {
         console.log("Filters changed:", filters)
         loadData()
     }
 
+    
     const initializeMap = async () => {
-        if (process.client && !map.value) {
-            const L = await import("leaflet")
-
-            delete L.Icon.Default.prototype._getIconUrl
-            L.Icon.Default.mergeOptions({
-                iconRetinaUrl: "/leaflet/marker-icon-2x.png",
-                iconUrl: "/leaflet/marker-icon.png",
-                shadowUrl: "/leaflet/marker-shadow.png",
-            })
-
-            const defaultCenter = [21.3099, -157.8581]
-            const defaultZoom = 8
-
-            map.value = L.map("property-map").setView(
-                defaultCenter,
-                defaultZoom
-            )
-
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                attribution: "© OpenStreetMap contributors",
-            }).addTo(map.value)
-
-            addPropertyMarkers(L)
-
-            setTimeout(() => fitBoundsToMarkers(), 100)
+        if (!process.client) return
+        
+        // Check if map container exists in DOM
+        const mapElement = document.getElementById("property-map")
+        if (!mapElement) return
+        
+        // Remove existing map if it exists
+        if (map.value) {
+            try {
+                map.value.remove()
+                map.value = null
+            } catch (e) {
+                console.log("Error removing map:", e)
+            }
         }
+           
+        const L = await import("leaflet")
+
+        
+        delete L.Icon.Default.prototype._getIconUrl
+        L.Icon.Default.mergeOptions({
+            iconRetinaUrl: "/leaflet/marker-icon-2x.png",
+            iconUrl: "/leaflet/marker-icon.png",
+            shadowUrl: "/leaflet/marker-shadow.png",
+        })
+
+      
+        const defaultCenter = [21.3099, -157.8581] 
+        const defaultZoom = 8
+
+        map.value = L.map("property-map").setView(
+            defaultCenter,
+            defaultZoom
+        )
+
+      
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "© OpenStreetMap contributors",
+        }).addTo(map.value)
+
+      
+        addPropertyMarkers(L)
+
+       
+        setTimeout(() => fitBoundsToMarkers(), 100)
     }
 
     const addPropertyMarkers = (L) => {
         if (!map.value || !L) return
 
+       
         markers.value.forEach((marker) => map.value.removeLayer(marker.marker))
         markers.value = []
 
@@ -170,6 +201,7 @@
                 icon: customIcon,
             }).addTo(map.value)
 
+          
             marker.on("mouseover", (e) => onMarkerHover(property, e))
             marker.on("mouseout", () => onMarkerLeave())
             marker.on("click", () => handlePropertyClick(property))
@@ -192,6 +224,7 @@
         hoveredProperty.value = property
         showPopup.value = true
 
+      
         const mapElement = document.getElementById("property-map")
         if (mapElement) {
             const rect = mapElement.getBoundingClientRect()
@@ -222,6 +255,7 @@
         })
     }
 
+   
     watch(
         () => route.query,
         (newQuery) => {
@@ -251,19 +285,27 @@
         }
     )
 
+  
     onMounted(() => {
         loadData()
-        if (viewMode.value === "Map View") {
-            nextTick(() => initializeMap())
-        }
     })
 
-    watch(viewMode, (newMode) => {
+    watch(viewMode, async (newMode) => {
         if (newMode === "Map View") {
-            nextTick(() => initializeMap())
+            await nextTick()
+            setTimeout(() => initializeMap(), 100)
         }
     })
 
+    watch(properties, async () => {
+        if (viewMode.value === "Map View" && map.value) {
+            const L = await import("leaflet")
+            addPropertyMarkers(L)
+            setTimeout(() => fitBoundsToMarkers(), 100)
+        }
+    })
+
+  
     onUnmounted(() => {
         if (map.value) {
             map.value.remove()
@@ -274,6 +316,7 @@
 
 <template>
     <div class="space-y-4 lg:space-y-6">
+       
         <CommonCitizenSearchAdvancedFilterSection
             v-model="searchQuery"
             v-model:category="selectedCategory"
@@ -285,6 +328,7 @@
             @save-search="saveSearch"
             @filter-change="handleFilterChange" />
 
+       
         <div
             class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-white rounded-lg p-4 lg:p-6">
             <div class="flex items-center gap-4">
@@ -324,7 +368,9 @@
             </div>
         </div>
 
+      
         <div v-if="pending">
+           
             <div
                 v-if="viewMode === 'Map View'"
                 class="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
@@ -340,7 +386,7 @@
                         class="h-96 lg:h-[600px] bg-gray-200 rounded-lg animate-pulse"></div>
                 </div>
             </div>
-
+         
             <div
                 v-else
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
@@ -350,6 +396,7 @@
             </div>
         </div>
 
+      
         <div
             v-else-if="error"
             class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
@@ -359,9 +406,11 @@
             <p class="text-sm text-red-500">{{ error.message }}</p>
         </div>
 
+     
         <div
             v-else-if="viewMode === 'Map View'"
             class="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
+           
             <div class="lg:col-span-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
                     <div
@@ -377,6 +426,7 @@
                 </div>
             </div>
 
+         
             <div class="lg:col-span-4">
                 <div
                     class="bg-white rounded-xl overflow-hidden h-96 lg:h-[600px] lg:sticky lg:top-6">
@@ -386,6 +436,7 @@
                             ref="mapContainer"
                             class="w-full h-full rounded-xl"></div>
 
+                      
                         <Teleport to="body">
                             <div
                                 v-if="showPopup && hoveredProperty"
@@ -404,6 +455,7 @@
             </div>
         </div>
 
+       
         <div
             v-else
             class="space-y-6">
@@ -417,6 +469,7 @@
                     @favorite="toggleFavorite" />
             </div>
 
+           
             <LazyPagination
                 v-if="!pending && properties.length > 0"
                 class="px-4"
@@ -462,6 +515,7 @@
         }
     }
 
+   
     #property-map {
         border-radius: 0.75rem;
     }

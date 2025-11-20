@@ -98,35 +98,49 @@ const clearSearch = () => {
 
 // Map related methods
 const initializeMap = async () => {
-    if (process.client && !map.value) {
-        // Dynamic import for client-side only
-        const L = await import('leaflet');
-
-        // Fix for default markers
-        delete L.Icon.Default.prototype._getIconUrl;
-        L.Icon.Default.mergeOptions({
-            iconRetinaUrl: '/leaflet/marker-icon-2x.png',
-            iconUrl: '/leaflet/marker-icon.png',
-            shadowUrl: '/leaflet/marker-shadow.png',
-        });
-
-        // Default coordinates for Hawaii
-        const defaultCenter = [21.3099, -157.8581]; // Honolulu coordinates
-        const defaultZoom = 8;
-
-        map.value = L.map('video-map').setView(defaultCenter, defaultZoom);
-
-        // Add tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map.value);
-
-        // Add markers for all videos
-        addVideoMarkers(L);
-
-        // Fit map to show all markers
-        setTimeout(() => fitBoundsToMarkers(), 100);
+    if (!process.client) return;
+    
+    // Check if map container exists in DOM
+    const mapElement = document.getElementById('video-map');
+    if (!mapElement) return;
+    
+    // Remove existing map if it exists
+    if (map.value) {
+        try {
+            map.value.remove();
+            map.value = null;
+        } catch (e) {
+            console.log('Error removing map:', e);
+        }
     }
+    
+    // Dynamic import for client-side only
+    const L = await import('leaflet');
+
+    // Fix for default markers
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+        iconRetinaUrl: '/leaflet/marker-icon-2x.png',
+        iconUrl: '/leaflet/marker-icon.png',
+        shadowUrl: '/leaflet/marker-shadow.png',
+    });
+
+    // Default coordinates for Hawaii
+    const defaultCenter = [21.3099, -157.8581]; // Honolulu coordinates
+    const defaultZoom = 8;
+
+    map.value = L.map('video-map').setView(defaultCenter, defaultZoom);
+
+    // Add tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map.value);
+
+    // Add markers for all videos
+    addVideoMarkers(L);
+
+    // Fit map to show all markers
+    setTimeout(() => fitBoundsToMarkers(), 100);
 };
 
 const addVideoMarkers = (L) => {
@@ -189,6 +203,24 @@ const onMarkerHover = (video, event) => {
 };
 
 const onMarkerLeave = () => {
+    setTimeout(() => {
+        if (!hoveredVideo.value?.isHoveringPopup) {
+            showPopup.value = false;
+            hoveredVideo.value = null;
+        }
+    }, 100);
+};
+
+const onPopupHover = () => {
+    if (hoveredVideo.value) {
+        hoveredVideo.value.isHoveringPopup = true;
+    }
+};
+
+const onPopupLeave = () => {
+    if (hoveredVideo.value) {
+        hoveredVideo.value.isHoveringPopup = false;
+    }
     showPopup.value = false;
     hoveredVideo.value = null;
 };
@@ -206,17 +238,25 @@ const onVideoCardLeave = () => {
     });
 };
 
-// Initialize map when component is mounted and in map view
+// Initialize map when component is mounted
 onMounted(() => {
-    if (viewMode.value === 'Map View') {
-        nextTick(() => initializeMap());
-    }
+    // Map will initialize when switching to Map View
 });
 
 // Watch view mode changes to initialize map
-watch(viewMode, (newMode) => {
+watch(viewMode, async (newMode, oldMode) => {
     if (newMode === 'Map View') {
-        nextTick(() => initializeMap());
+        await nextTick();
+        setTimeout(() => initializeMap(), 150);
+    } else if (oldMode === 'Map View' && map.value) {
+        // Clean up map when switching away from Map View
+        try {
+            map.value.remove();
+            map.value = null;
+            markers.value = [];
+        } catch (e) {
+            console.log('Error cleaning up map:', e);
+        }
     }
 });
 
@@ -425,11 +465,13 @@ onUnmounted(() => {
 
                         <!-- Popup overlay for video details on map hover -->
                         <Teleport to="body">
-                            <div v-if="showPopup && hoveredVideo" class="fixed z-[10000] pointer-events-none" :style="{
+                            <div v-if="showPopup && hoveredVideo" class="fixed z-[10000]" :style="{
                                 left: popupPosition.x + 'px',
                                 top: popupPosition.y + 'px',
                                 transform: 'translate(-50%, -100%)',
-                            }">
+                            }"
+                            @mouseenter="onPopupHover"
+                            @mouseleave="onPopupLeave">
                                 <CommonCitizenVideoPopup :video="hoveredVideo" />
                             </div>
                         </Teleport>
