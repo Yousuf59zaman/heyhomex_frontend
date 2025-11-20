@@ -15,6 +15,8 @@
         'update:modelValue': [value: boolean]
         'go-to-email': []
         'show-login': []
+        'show-account-type': [data: any]
+        'login-success': [needsOnboarding: boolean]
         'back': []
         'close': []
     }>()
@@ -40,19 +42,75 @@
         emit("go-to-email")
     }
 
+    const responseFormat = (response: any) => {
+        if (response?.status && response?.data) {
+            const userData = response.data
+
+            if (import.meta.client) {
+                const tokenCookie = useCookie("XCMS-TOKEN")
+                tokenCookie.value = userData.token
+
+                localStorage.setItem(
+                    "citizen_user_data",
+                    JSON.stringify(userData)
+                )
+                localStorage.setItem("citizen_user_id", userData.id.toString())
+
+                const onboardingStatusKey = `citizen_onboard_status_${userData.id}`
+                if (userData.user_onboard_profile_status !== undefined) {
+                    localStorage.setItem(
+                        onboardingStatusKey,
+                        userData.user_onboard_profile_status.toString()
+                    )
+                }
+
+                localStorage.removeItem("citizen_user_onboard_profile_status")
+                localStorage.removeItem("citizen_needs_onboarding")
+            }
+
+            const needsOnboarding = userData.user_onboard_profile_status === 0
+
+            if (!needsOnboarding && userData.user_type?.[0]?.slug) {
+                const redirectSlug = userData.user_type[0].slug
+                const targetPath =
+                    redirectSlug === "kamaaina"
+                        ? "/kamaina/"
+                        : `/${redirectSlug}/`
+                window.location.href = targetPath;
+            } else {
+                emit("login-success", needsOnboarding)
+            }
+        } else {
+            unauthorizedError.value =
+                response?.message ||
+                "Login failed. Please try again."
+        }
+    }
+
     const handleContinueWithApple = async (): Promise<void> => {
         isAppleLoadingSSO.value = true
         unauthorizedError.value = ""
         try {
             const response = await appleLogin()
-            console.log(response)
-            if (response) {
-                window.location.href = "/dashboard"
-                return
+            if (!response) {
+                throw new Error("No response from Apple login.")
+            }
+            const {status, data, ssoData} = response
+            if (status && data) {
+                if (data.user_role) {
+                    responseFormat(response)
+                } else {
+                    emit("show-account-type", ssoData)
+                }
+            } else {
+                throw new Error("Invalid Apple login response structure.")
             }
         } catch (error: any) {
             console.error('Apple login error:', error)
-            unauthorizedError.value = error?.message || error?.data?.errors || 'Failed to sign in with Apple. Please try again.'
+            unauthorizedError.value =
+                error?.message ||
+                error?.data?.errors ||
+                "Failed to sign in with Apple. Please try again."
         } finally {
             isAppleLoadingSSO.value = false
         }
@@ -63,14 +121,25 @@
         unauthorizedError.value = ""
         try {
             const response = await facebookLogin()
-            console.log(response)
-            if (response) {
-                window.location.href = "/dashboard"
-                return
+            if (!response) {
+                throw new Error("No response from Facebook login.")
+            }
+            const {status, data, ssoData} = response
+            if (status && data) {
+                if (data.user_role) {
+                    responseFormat(response)
+                } else {
+                    emit("show-account-type", ssoData)
+                }
+            } else {
+                throw new Error("Invalid Facebook login response.")
             }
         } catch (error: any) {
             console.error('Facebook login error:', error)
-            unauthorizedError.value = error?.message || error?.data?.errors || 'Failed to sign in with Facebook. Please try again.'
+            unauthorizedError.value =
+                error?.message ||
+                error?.data?.errors ||
+                "Failed to sign in with Facebook. Please try again."
         } finally {
             isFacebookLoadingSSO.value = false
         }
@@ -81,14 +150,25 @@
         unauthorizedError.value = ""
         try {
             const response = await googleLogin()
-            console.log(response)
-            if (response) {
-                window.location.href = "/dashboard"
-                return
+            if (!response) {
+                throw new Error("No response from Google login.")
+            }
+            const {status, data, ssoData} = response
+            if (status && data) {
+                if (data.user_role) {
+                    responseFormat(response)
+                } else {
+                    emit("show-account-type", ssoData)
+                }
+            } else {
+                throw new Error("Invalid Google login response.")
             }
         } catch (error: any) {
             console.error('Google login error:', error)
-            unauthorizedError.value = error?.message || error?.data?.errors || 'Failed to sign in with Google. Please try again.'
+            unauthorizedError.value =
+                error?.message ||
+                error?.data?.errors ||
+                "Failed to sign in with Google. Please try again."
         } finally {
             isGoogleLoadingSSO.value = false
         }
