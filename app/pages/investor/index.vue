@@ -19,7 +19,7 @@
         action: "",
     })
     const demoVideoUrl =
-        "https://eu2.contabostorage.com/beede22b78b34cd7b1c01987a4332d1b:meteka/111/index.m3u8"
+        "https://arprince.me/assets/video/cursor.mp4"
 
     const searchQuery = ref("")
     const selectedPropertyType = ref("")
