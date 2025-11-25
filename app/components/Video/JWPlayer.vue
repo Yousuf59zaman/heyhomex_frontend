@@ -4,10 +4,12 @@
  *
  * A Vue 3 wrapper around JW Player with YouTube-like features:
  * - Responsive video playback
+ * - Custom controls
  * - Quality selection
  * - Playback speed control
  * - Keyboard shortcuts
  * - Picture-in-picture support
+ * - Auto-quality selection
  *
  * @see https://developer.jwplayer.com/
  */
@@ -65,14 +67,11 @@ const emit = defineEmits<{
     adClick: [data: { tag: string }]; // Ad clicked
 }>();
 
-// Player refs
+// Unique player ID
 const playerId = ref(`jwplayer-${Math.random().toString(36).substr(2, 9)}`);
 const playerContainer = ref<HTMLDivElement | null>(null);
-const wrapperElement = ref<HTMLDivElement | null>(null);
 const playerInstance = ref<any>(null);
 const isReady = ref(false);
-const currentSource = ref('');
-let jwLibraryPromise: Promise<void> | null = null;
 
 // Player state
 const state = reactive({
@@ -85,74 +84,22 @@ const state = reactive({
     isFullscreen: false,
 });
 
-const runtimeConfig = useRuntimeConfig();
-
-const getJwScriptUrl = () => {
-    const rawDevMode = runtimeConfig.public.NUXT_PUBLIC_JWPLAYER_DEVMODE;
-    const isDevMode =
-        typeof rawDevMode === 'boolean'
-            ? rawDevMode
-            : String(rawDevMode ?? '').trim().toLowerCase() === 'true';
-
-    const demoLibraryUrl = String(runtimeConfig.public.NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL ?? '').trim();
-    const productionLibraryUrl = String(runtimeConfig.public.NUXT_PUBLIC_JWPLAYER_LIBRARY_URL ?? '').trim();
-    const fallbackDemoLibraryUrl = 'https://cdn.jwplayer.com/libraries/KB5zftYI.js';
-
-    return (isDevMode ? demoLibraryUrl : productionLibraryUrl) || fallbackDemoLibraryUrl;
-};
-
-const loadJwLibrary = () => {
-    if (typeof window === 'undefined') return Promise.resolve();
-    if (window.jwplayer) return Promise.resolve();
-    if (jwLibraryPromise) return jwLibraryPromise;
-
-    const scriptUrl = getJwScriptUrl();
-    jwLibraryPromise = new Promise<void>((resolve) => {
-        // Avoid duplicating the script tag
-        if (document.getElementById('jwplayer-cdn-script')) {
-            resolve();
-            return;
-        }
-
-        const script = document.createElement('script');
-        script.id = 'jwplayer-cdn-script';
-        script.src = scriptUrl;
-        script.async = true;
-        script.onload = () => {
-            const jwplayerKey = runtimeConfig.public.NUXT_PUBLIC_JWPLAYER_KEY;
-            if (jwplayerKey && String(jwplayerKey).trim() !== '') {
-                try {
-                    (window as any).jwplayer.key = jwplayerKey;
-                } catch {
-                    // ignore key set errors
-                }
-            }
-            resolve();
-        };
-        script.onerror = () => resolve();
-        document.head.appendChild(script);
-    });
-
-    return jwLibraryPromise;
-};
-
-const safePlay = () => playerInstance.value?.play();
-
 /**
  * Initialize JW Player
  */
 const initializePlayer = () => {
+    if (typeof window === 'undefined' || !(window as any).jwplayer) {
+        console.error('[JWPlayer] Library not loaded');
+        return;
+    }
+
     try {
+        const jwplayer = (window as any).jwplayer;
+
+        // Get video source
         const videoSource = props.video.videoUrl || 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
-        currentSource.value = videoSource;
 
-        const jwplayer = typeof window !== 'undefined' ? (window as any).jwplayer : null;
-        if (!jwplayer) {
-            const error = new Error('[JWPlayer] Library not loaded');
-            emit('error', error);
-            return;
-        }
-
+        // Setup player configuration
         const config: any = {
             file: videoSource,
             image: props.video.thumbnail,
@@ -169,9 +116,15 @@ const initializePlayer = () => {
             stretching: 'uniform',
             preload: 'metadata',
             primary: 'html5',
+
+            // YouTube-like features
             displaytitle: true,
             displaydescription: true,
+
+            // Responsive
             responsive: true,
+
+            // Quality levels (will be populated from adaptive streaming)
             qualityLabels: {
                 0: 'Auto',
                 360: '360p',
@@ -181,15 +134,20 @@ const initializePlayer = () => {
                 1440: '1440p QHD',
                 2160: '4K UHD',
             },
+
+            // Skin customization for YouTube-like appearance
             skin: {
                 name: 'heyhomex',
             },
+
+            // Related videos plugin (can be configured later)
             related: {
                 displayMode: 'shelf',
                 oncomplete: 'show',
             },
         };
 
+        // Add advertising configuration if provided
         if (props.advertising) {
             config.advertising = {
                 client: props.advertising.client || 'vast',
@@ -198,19 +156,19 @@ const initializePlayer = () => {
                 admessage: props.advertising.admessage || 'Ad will end in xx seconds',
                 skipmessage: props.advertising.skipmessage || 'Skip ad',
                 vpaidcontrols: props.advertising.vpaidcontrols !== undefined ? props.advertising.vpaidcontrols : true,
-                autoplayadsmuted:
-                    props.advertising.autoplayadsmuted !== undefined
-                        ? props.advertising.autoplayadsmuted
-                        : props.muted,
+                autoplayadsmuted: props.advertising.autoplayadsmuted !== undefined ? props.advertising.autoplayadsmuted : props.muted,
             };
         }
 
+        // Initialize player
         playerInstance.value = jwplayer(playerId.value).setup(config);
 
+        // Set initial playback rate
         if (props.playbackRate !== 1) {
             playerInstance.value.setPlaybackRate(props.playbackRate);
         }
 
+        // Bind events
         bindPlayerEvents();
 
         console.log('[JWPlayer] Player initialized successfully');
@@ -228,83 +186,103 @@ const bindPlayerEvents = () => {
 
     const player = playerInstance.value;
 
+    // Ready event
     player.on('ready', () => {
         isReady.value = true;
         state.duration = player.getDuration();
         emit('ready');
     });
 
+    // Play event
     player.on('play', () => {
         state.isPlaying = true;
         emit('play');
     });
 
+    // Pause event
     player.on('pause', () => {
         state.isPlaying = false;
         emit('pause');
     });
 
+    // Time update
     player.on('time', (data: any) => {
         state.currentTime = data.position;
         state.duration = data.duration;
         emit('time', { position: data.position, duration: data.duration });
     });
 
+    // Seek event
     player.on('seek', (data: any) => {
         emit('seek', { offset: data.offset });
     });
 
+    // Buffer event
     player.on('buffer', (data: any) => {
         state.buffered = data.percentage || 0;
         emit('buffer', { percentage: data.percentage || 0 });
     });
 
+    // Complete event (video ended)
     player.on('complete', () => {
         state.isPlaying = false;
         emit('complete');
     });
 
+    // Error event
     player.on('error', (error: any) => {
         console.error('[JWPlayer] Playback error:', error);
         emit('error', error);
     });
 
+    // Fullscreen event
     player.on('fullscreen', (data: any) => {
         state.isFullscreen = data.fullscreen;
         emit('fullscreen', data.fullscreen);
     });
 
+    // Volume change
     player.on('volume', (data: any) => {
         state.volume = data.volume;
     });
 
+    // Mute change
     player.on('mute', (data: any) => {
         state.isMuted = data.mute;
     });
 
+    // Advertising events
     player.on('adImpression', (data: any) => {
+        console.log('[JWPlayer] Ad impression:', data);
         emit('adImpression', { tag: data.tag || data.adtitle || 'unknown' });
     });
 
     player.on('adComplete', (data: any) => {
+        console.log('[JWPlayer] Ad complete:', data);
         emit('adComplete', { tag: data.tag || data.adtitle || 'unknown' });
     });
 
     player.on('adSkipped', (data: any) => {
+        console.log('[JWPlayer] Ad skipped:', data);
         emit('adSkipped', { tag: data.tag || data.adtitle || 'unknown' });
     });
 
     player.on('adError', (error: any) => {
+        console.error('[JWPlayer] Ad error:', error);
         emit('adError', error);
     });
 
     player.on('adClick', (data: any) => {
+        console.log('[JWPlayer] Ad clicked:', data);
         emit('adClick', { tag: data.tag || data.adtitle || 'unknown' });
     });
 };
 
+/**
+ * Public methods for external control
+ */
 const play = () => {
-    safePlay();
+    playerInstance.value?.play();
 };
 
 const pause = () => {
@@ -348,24 +326,21 @@ const getState = () => {
 };
 
 // Expose methods for parent components
-configureExpose();
-function configureExpose() {
-    defineExpose({
-        play,
-        pause,
-        stop,
-        seek,
-        setVolume,
-        setMute,
-        setPlaybackRate,
-        toggleFullscreen,
-        getPosition,
-        getDuration,
-        getState,
-        playerInstance,
-        state,
-    });
-}
+defineExpose({
+    play,
+    pause,
+    stop,
+    seek,
+    setVolume,
+    setMute,
+    setPlaybackRate,
+    toggleFullscreen,
+    getPosition,
+    getDuration,
+    getState,
+    playerInstance,
+    state,
+});
 
 /**
  * Cleanup and remove player instance
@@ -373,23 +348,24 @@ function configureExpose() {
 const cleanupPlayer = () => {
     if (playerInstance.value) {
         try {
+            // Stop any playing content or ads
             playerInstance.value.stop();
+
+            // Remove the player instance
             playerInstance.value.remove();
+            playerInstance.value = null;
+            isReady.value = false;
+
+            console.log('[JWPlayer] Player cleaned up successfully');
         } catch (error) {
             console.error('[JWPlayer] Cleanup error:', error);
         }
-    }
-    playerInstance.value = null;
-    isReady.value = false;
-    state.isPlaying = false;
-    state.buffered = 0;
-    if (playerContainer.value) {
-        playerContainer.value.innerHTML = '';
     }
 };
 
 /**
  * Reload player with new video
+ * This completely recreates the player instance to avoid ad-related issues
  */
 const reloadPlayerWithNewVideo = (newVideo: any) => {
     if (!newVideo || !newVideo.videoUrl) {
@@ -398,12 +374,15 @@ const reloadPlayerWithNewVideo = (newVideo: any) => {
     }
 
     try {
+        // Cleanup existing player completely
         cleanupPlayer();
-        loadJwLibrary().then(() => {
-            setTimeout(() => {
-                initializePlayer();
-            }, 100);
-        });
+
+        // Small delay to ensure cleanup is complete
+        setTimeout(() => {
+            // Reinitialize with new video
+            initializePlayer();
+            console.log('[JWPlayer] Player reloaded with new video');
+        }, 100);
     } catch (error) {
         console.error('[JWPlayer] Error reloading player:', error);
     }
@@ -411,12 +390,20 @@ const reloadPlayerWithNewVideo = (newVideo: any) => {
 
 // Lifecycle hooks
 onMounted(() => {
-    loadJwLibrary().then(() => {
-        initializePlayer();
-    });
+    // Wait for JW Player library to be loaded
+    const checkAndInit = () => {
+        if (typeof window !== 'undefined' && (window as any).jwplayer) {
+            initializePlayer();
+        } else {
+            // Retry after a short delay
+            setTimeout(checkAndInit, 100);
+        }
+    };
+    checkAndInit();
 });
 
 onBeforeUnmount(() => {
+    // Cleanup player instance
     cleanupPlayer();
 });
 
@@ -424,7 +411,9 @@ onBeforeUnmount(() => {
 watch(
     () => props.video,
     (newVideo, oldVideo) => {
+        // Only reload if the video has actually changed
         if (newVideo && oldVideo && newVideo.id !== oldVideo.id) {
+            console.log('[JWPlayer] Video changed, reloading player...');
             reloadPlayerWithNewVideo(newVideo);
         }
     }
@@ -432,15 +421,13 @@ watch(
 </script>
 
 <template>
-    <div
-        ref="wrapperElement"
-        class="jwplayer-wrapper relative w-full h-full bg-black rounded-lg overflow-hidden"
-    >
+    <div class="jwplayer-wrapper relative w-full h-full bg-black rounded-lg overflow-hidden">
         <!-- JW Player Container -->
         <div :id="playerId" ref="playerContainer" class="absolute inset-0"></div>
 
         <!-- Loading State -->
-        <div v-if="!isReady" class="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-10">
+        <div v-if="!isReady"
+            class="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-10">
             <div class="text-center text-white">
                 <Icon name="lucide:loader-2" class="w-12 h-12 animate-spin mx-auto mb-2" />
                 <p class="text-sm">Loading player...</p>
@@ -469,15 +456,7 @@ watch(
     }
 }
 
-:deep(.jwplayer-wrapper:fullscreen),
-.jwplayer-wrapper:fullscreen {
-    width: 100vw !important;
-    height: 100vh !important;
-    max-width: 100vw !important;
-    max-height: 100vh !important;
-    border-radius: 0 !important;
-}
-
+/* Ensure JW Player fills the container */
 :deep(.jw-wrapper) {
     border-radius: 0.5rem;
 }
