@@ -9,7 +9,11 @@
             type: String,
             default: '',
         },
-        propertyType: {
+        category: {
+            type: String,
+            default: '',
+        },
+        homeType: {
             type: String,
             default: '',
         },
@@ -22,8 +26,9 @@
     // Emits
     const emit = defineEmits([
         'update:modelValue',
-        'update:propertyType',
-        'update:priceRange',
+        'update:category',
+        'update:home-type',
+        'update:price-range',
         'search',
         'map-search',
         'toggle-filters',
@@ -31,7 +36,8 @@
 
     // Local reactive state
     const searchQuery = ref(props.modelValue);
-    const selectedPropertyType = ref(props.propertyType);
+    const selectedCategory = ref(props.category);
+    const selectedHomeType = ref(props.homeType);
     const selectedPriceRange = ref(props.priceRange);
 
     // Watch for prop changes
@@ -43,9 +49,16 @@
     );
 
     watch(
-        () => props.propertyType,
+        () => props.category,
         (newValue) => {
-            selectedPropertyType.value = newValue;
+            selectedCategory.value = newValue;
+        }
+    );
+
+    watch(
+        () => props.homeType,
+        (newValue) => {
+            selectedHomeType.value = newValue;
         }
     );
 
@@ -62,12 +75,16 @@
         emit('search', searchQuery.value);
     };
 
-    const handlePropertyTypeChange = () => {
-        emit('update:propertyType', selectedPropertyType.value);
+    const handleCategoryChange = () => {
+        emit('update:category', selectedCategory.value);
+    };
+
+    const handleHomeTypeChange = () => {
+        emit('update:home-type', selectedHomeType.value);
     };
 
     const handlePriceRangeChange = () => {
-        emit('update:priceRange', selectedPriceRange.value);
+        emit('update:price-range', selectedPriceRange.value);
     };
 </script>
 
@@ -132,15 +149,27 @@
 
             <!-- Right side - Filters -->
             <div class="flex items-center gap-3">
-                <!-- Property Type Filter -->
+                <!-- Category Filter -->
                 <select
-                    v-model="selectedPropertyType"
-                    @change="handlePropertyTypeChange"
+                    v-model="selectedCategory"
+                    @change="handleCategoryChange"
                     class="border border-gray-300 rounded-lg px-5 py-2 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Property Type: All</option>
-                    <option value="single-family">Single Family</option>
-                    <option value="condo">Condo</option>
-                    <option value="townhouse">Townhouse</option>
+                    <option value="" disabled selected>Category: All</option>
+                    <option value="for_sale">For Sale</option>
+                    <option value="for_rent">For Rent</option>
+                    <option value="sold">Sold</option>
+                </select>
+
+                <!-- Home Type Filter -->
+                <select
+                    v-model="selectedHomeType"
+                    @change="handleHomeTypeChange"
+                    class="border border-gray-300 rounded-lg px-5 py-2 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="" disabled selected>Home Type: All</option>
+                    <option value="studio">Studio</option>
+                    <option value="one_bed">1 Bed</option>
+                    <option value="two_bed">2 Bed</option>
+                    <option value="three_plus_bed">3+ Bed</option>
                 </select>
 
                 <!-- Price Range Filter -->
@@ -148,10 +177,11 @@
                     v-model="selectedPriceRange"
                     @change="handlePriceRangeChange"
                     class="border border-gray-300 rounded-lg px-5 py-2 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Price Range: All</option>
-                    <option value="under-500k">Under $500K</option>
-                    <option value="500k-1m">$500K - $1M</option>
-                    <option value="over-1m">Over $1M</option>
+                    <option value="" disabled selected>Price Range: All</option>
+                    <option value="250000">Under $250,000</option>
+                    <option value="500000">Under $500,000</option>
+                    <option value="750000">Under $750,000</option>
+                    <option value="1000000_plus">$1,000,000+</option>
                 </select>
             </div>
         </div>

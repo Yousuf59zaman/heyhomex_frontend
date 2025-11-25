@@ -17,9 +17,9 @@
         route.query.q || "123 Aloha Lane, Honolulu, HI 96818"
     )
     const viewMode = ref(route.query.view === "map" ? "Map View" : "List View")
-    const selectedCategory = ref(route.query.category || "For Sell")
-    const selectedPriceRange = ref(route.query.priceRange || "$250,000")
-    const selectedHomeType = ref(route.query.homeType || "Beds & Baths")
+    const selectedCategory = ref(route.query.category || "")
+    const selectedPriceRange = ref(route.query.priceRange || "")
+    const selectedHomeType = ref(route.query.homeType || "")
     const selectedOthers = ref(route.query.others || "More")
     const selectedBedsAndBaths = ref(route.query.bedsAndBaths || "")
 
@@ -47,17 +47,27 @@
         pending.value = true
         error.value = null
         try {
+            const body = {
+                paginate: true,
+                page: route.query.page ? route.query.page : 1,
+                length: 8,
+                search: searchQuery.value,
+            }
+
+            // Only add filter params if they have values
+            if (selectedCategory.value) {
+                body.category = selectedCategory.value
+            }
+            if (selectedPriceRange.value) {
+                body.price_range = selectedPriceRange.value
+            }
+            if (selectedHomeType.value) {
+                body.home_type = selectedHomeType.value
+            }
+
             const response = await $fetchCMS("/property", {
                 method: "POST",
-                body: {
-                    paginate: true,
-                    page: route.query.page ? route.query.page : 1,
-                    length: 8,
-                    search: searchQuery.value,
-                    category: selectedCategory.value,
-                    price_range: selectedPriceRange.value,
-                    home_type: selectedHomeType.value,
-                },
+                body,
             })
 
          
