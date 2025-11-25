@@ -20,7 +20,8 @@
         "https://content.jwplatform.com/manifests/yp34SRmf.m3u8"
 
     const searchQuery = ref("")
-    const selectedPropertyType = ref("")
+    const selectedCategory = ref("")
+    const selectedHomeType = ref("")
     const selectedPriceRange = ref("")
     const chartPeriod = ref("weekly")
 
@@ -120,14 +121,27 @@
         pending.value = true
         error.value = null
         try {
+            const body = {
+                paginate: true,
+                page: route.query.page ? route.query.page : 1,
+                length: 6,
+                search: searchQuery.value,
+            }
+
+            // Only add filter params if they have values
+            if (selectedCategory.value) {
+                body.category = selectedCategory.value
+            }
+            if (selectedHomeType.value) {
+                body.home_type = selectedHomeType.value
+            }
+            if (selectedPriceRange.value) {
+                body.price_range = selectedPriceRange.value
+            }
+
             const response = await $fetchCMS("/property", {
                 method: "POST",
-                body: {
-                    paginate: true,
-                    page: route.query.page ? route.query.page : 1,
-                    length: 6,
-                    search: searchQuery.value,
-                },
+                body,
             })
 
             properties.value = response.data.data.map((property) => ({
@@ -174,8 +188,11 @@
             view: "list",
         }
 
-        if (selectedPropertyType.value) {
-            query.homeType = selectedPropertyType.value
+        if (selectedCategory.value) {
+            query.category = selectedCategory.value
+        }
+        if (selectedHomeType.value) {
+            query.homeType = selectedHomeType.value
         }
         if (selectedPriceRange.value) {
             query.priceRange = selectedPriceRange.value
@@ -278,7 +295,8 @@
         <CommonCitizenSearchFilterSection
             v-else
             v-model="searchQuery"
-            v-model:property-type="selectedPropertyType"
+            v-model:category="selectedCategory"
+            v-model:home-type="selectedHomeType"
             v-model:price-range="selectedPriceRange"
             @search="handleSearch"
             @map-search="handleMapSearch"

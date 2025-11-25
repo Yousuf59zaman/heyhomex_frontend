@@ -121,15 +121,28 @@
 
             const needsOnboarding = userData.user_onboard_profile_status === 0
 
+            // Check for user role (agent, advisor) first
+            if (userData.user_role) {
+                const roleRouteMap: Record<string, string> = {
+                    'agent': '/agent/',
+                    'advisor': '/advisor/'
+                }
+                
+                const targetPath = roleRouteMap[userData.user_role]
+                if (targetPath) {
+                    window.location.href = targetPath
+                    return
+                }
+            }
+
+            // Then check for citizen user type
             if (!needsOnboarding && userData.user_type?.[0]?.slug) {
-                // window.location.href = '/admin-panel';
                 const redirectSlug = userData.user_type[0].slug
                 const targetPath =
                     redirectSlug === "kamaaina"
                         ? "/kamaina/"
                         : `/${redirectSlug}/`
-                // navigateTo(targetPath)
-                window.location.href = targetPath;
+                window.location.href = targetPath
             } else {
                 emit("login-success", needsOnboarding)
             }
@@ -244,14 +257,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-login-modal"
-        :style="{width: 'min(32rem, 95vw)', maxWidth: '95vw'}"
-        :pt="{
-            root: 'border-0 rounded-2xl shadow-2xl m-4',
-            header: 'border-0 pb-0',
-            content: 'border-0 pt-0 pb-6',
-            closeButton:
-                'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-sm transition-colors duration-200',
-        }">
+        :style="{width: 'min(32rem, 95vw)', maxWidth: '95vw'}">
         <template #header>
             <div
                 class="w-full text-center px-4 sm:px-6 pt-6 sm:pt-4 pb-4 sm:pb-6">
@@ -287,9 +293,7 @@
                             placeholder="Enter your email"
                             required
                             autocomplete="off"
-                            :pt="{
-                                root: 'w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
-                            }" />
+                            class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                     </div>
                 </div>
 
@@ -309,9 +313,7 @@
                             placeholder="Enter your password"
                             required
                             autocomplete="current-password"
-                            :pt="{
-                                root: 'w-full pl-12 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
-                            }" />
+                            class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                         <button
                             type="button"
                             @click="password_view_status(!password_open)"
@@ -355,10 +357,7 @@
                     :disabled="loading"
                     :loading="loading"
                     loadingIcon="pi pi-spin pi-spinner"
-                    class="w-full"
-                    :pt="{
-                        root: 'w-full px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
-                    }">
+                    class="w-full px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
                     {{ loading ? "Signing In..." : "Sign In" }}
                 </Button>
 
@@ -458,18 +457,34 @@
 </template>
 
 <style scoped>
-    .citizen-login-modal .p-dialog {
+    .citizen-login-modal :deep(.p-dialog) {
+        border: 0;
         border-radius: 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        margin: 1rem;
     }
 
-    .citizen-login-modal .p-dialog-header {
+    .citizen-login-modal :deep(.p-dialog-header) {
         border: none;
         padding-bottom: 0;
     }
 
-    .citizen-login-modal .p-dialog-content {
+    .citizen-login-modal :deep(.p-dialog-content) {
         border: none;
         padding-top: 0;
-        padding-bottom: 1rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .citizen-login-modal :deep(.p-dialog-header-close) {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.5rem;
+        transition: background-color 0.2s;
+    }
+
+    .citizen-login-modal :deep(.p-dialog-header-close:hover) {
+        background-color: #f3f4f6;
+        border-radius: 0.125rem;
     }
 </style>
