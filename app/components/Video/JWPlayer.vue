@@ -14,6 +14,7 @@
  * @see https://developer.jwplayer.com/
  */
 
+import Hls from 'hls.js';
 import type { Video } from '~/composables/useVideoPlayer';
 
 interface AdSchedule {
@@ -72,6 +73,13 @@ const playerId = ref(`jwplayer-${Math.random().toString(36).substr(2, 9)}`);
 const playerContainer = ref<HTMLDivElement | null>(null);
 const playerInstance = ref<any>(null);
 const isReady = ref(false);
+const currentSource = ref('');
+const usingHlsFallback = ref(false);
+const hlsInstance = ref<Hls | null>(null);
+const hlsVideoEl = ref<HTMLVideoElement | null>(null);
+const fallbackEventCleanups: Array<() => void> = [];
+let pendingPlayPromise: Promise<void> | null = null;
+let attemptedFallbackFromError = false;
 
 // Player state
 const state = reactive({
@@ -84,20 +92,54 @@ const state = reactive({
     isFullscreen: false,
 });
 
+const isHlsSource = (src: string) => src?.toLowerCase().includes('.m3u8');
+
+const canPlayHlsNatively = () => {
+    if (typeof document === 'undefined') return false;
+    const video = document.createElement('video');
+    return Boolean(video.canPlayType('application/vnd.apple.mpegurl') || video.canPlayType('application/x-mpegURL'));
+};
+
+/**
+ * Safe play helper to avoid unhandled AbortError when pausing during pending play()
+ */
+const safePlay = () => {
+    if (usingHlsFallback.value && hlsVideoEl.value) {
+        if (pendingPlayPromise) return pendingPlayPromise;
+        const attempt = hlsVideoEl.value.play();
+        if (attempt && typeof attempt.catch === 'function') {
+            pendingPlayPromise = attempt
+                .catch((err) => {
+                    if (!err || err.name === 'AbortError') return;
+                    console.error('[HLS Fallback] Playback start failed:', err);
+                })
+                .finally(() => {
+                    pendingPlayPromise = null;
+                });
+        }
+        return attempt;
+    }
+
+    return playerInstance.value?.play();
+};
+
 /**
  * Initialize JW Player
  */
 const initializePlayer = () => {
-    if (typeof window === 'undefined' || !(window as any).jwplayer) {
-        console.error('[JWPlayer] Library not loaded');
-        return;
-    }
-
     try {
-        const jwplayer = (window as any).jwplayer;
-
         // Get video source
         const videoSource = props.video.videoUrl || 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
+        currentSource.value = videoSource;
+        attemptedFallbackFromError = false;
+
+        const jwplayer = typeof window !== 'undefined' ? (window as any).jwplayer : null;
+        const sourceIsHls = isHlsSource(videoSource);
+        if (!jwplayer) {
+            console.warn('[JWPlayer] Library not loaded, using HLS.js/native fallback');
+            setupHlsFallback(videoSource);
+            return;
+        }
 
         // Setup player configuration
         const config: any = {
@@ -174,6 +216,11 @@ const initializePlayer = () => {
         console.log('[JWPlayer] Player initialized successfully');
     } catch (error) {
         console.error('[JWPlayer] Initialization error:', error);
+        if (isHlsSource(currentSource.value)) {
+            console.warn('[JWPlayer] Switching to HLS.js fallback after init error');
+            setupHlsFallback(currentSource.value);
+            return;
+        }
         emit('error', error);
     }
 };
@@ -232,6 +279,13 @@ const bindPlayerEvents = () => {
     // Error event
     player.on('error', (error: any) => {
         console.error('[JWPlayer] Playback error:', error);
+        if (isHlsSource(currentSource.value) && !attemptedFallbackFromError) {
+            attemptedFallbackFromError = true;
+            console.warn('[JWPlayer] Falling back to HLS.js after playback error');
+            cleanupPlayer();
+            setupHlsFallback(currentSource.value);
+            return;
+        }
         emit('error', error);
     });
 
@@ -278,50 +332,250 @@ const bindPlayerEvents = () => {
     });
 };
 
+const teardownHlsFallback = () => {
+    if (hlsInstance.value) {
+        hlsInstance.value.destroy();
+        hlsInstance.value = null;
+    }
+
+    if (fallbackEventCleanups.length) {
+        fallbackEventCleanups.splice(0).forEach((cleanup) => cleanup());
+    }
+
+    if (hlsVideoEl.value) {
+        try {
+            hlsVideoEl.value.pause();
+            hlsVideoEl.value.removeAttribute('src');
+            hlsVideoEl.value.load();
+            hlsVideoEl.value.remove();
+        } catch (err) {
+            console.error('[HLS Fallback] Error cleaning up video element:', err);
+        }
+        hlsVideoEl.value = null;
+    }
+
+    usingHlsFallback.value = false;
+    pendingPlayPromise = null;
+};
+
+const setupHlsFallback = (source: string) => {
+    if (!playerContainer.value) return;
+
+    teardownHlsFallback();
+    usingHlsFallback.value = true;
+    isReady.value = false;
+    state.isPlaying = false;
+    state.buffered = 0;
+    state.currentTime = 0;
+    state.duration = 0;
+
+    // Build a simple HTML5 video element that mirrors the JW API surface used above
+    playerContainer.value.innerHTML = '';
+    const video = document.createElement('video');
+    const sourceIsHls = isHlsSource(source);
+    video.className = 'hls-fallback-player';
+    video.playsInline = true;
+    video.controls = props.controls ?? true;
+    video.autoplay = props.autoplay ?? false;
+    video.muted = props.muted ?? false;
+    video.preload = 'metadata';
+    video.poster = props.video.thumbnail || '';
+    video.style.width = '100%';
+    video.style.height = '100%';
+    video.style.objectFit = 'cover';
+    video.volume = (state.volume ?? 100) / 100;
+
+    playerContainer.value.appendChild(video);
+    hlsVideoEl.value = video;
+
+    const addListener = (event: keyof HTMLVideoElementEventMap, handler: EventListener) => {
+        video.addEventListener(event, handler);
+        fallbackEventCleanups.push(() => video.removeEventListener(event, handler));
+    };
+
+    const updateBuffered = () => {
+        if (!video.duration) return;
+        const buffered = video.buffered;
+        if (!buffered || buffered.length === 0) return;
+        const end = buffered.end(buffered.length - 1);
+        const percentage = Math.min(100, (end / video.duration) * 100);
+        state.buffered = percentage;
+        emit('buffer', { percentage });
+    };
+
+    addListener('timeupdate', () => {
+        state.currentTime = video.currentTime;
+        state.duration = video.duration || state.duration;
+        emit('time', { position: video.currentTime, duration: video.duration || state.duration });
+    });
+
+    addListener('progress', updateBuffered);
+
+    addListener('seeking', () => emit('seek', { offset: video.currentTime }));
+    addListener('play', () => {
+        state.isPlaying = true;
+        emit('play');
+    });
+    addListener('pause', () => {
+        state.isPlaying = false;
+        emit('pause');
+    });
+    addListener('ended', () => {
+        state.isPlaying = false;
+        emit('complete');
+    });
+    addListener('loadedmetadata', () => {
+        state.duration = video.duration || 0;
+        isReady.value = true;
+        emit('ready');
+        updateBuffered();
+    });
+    addListener('volumechange', () => {
+        state.volume = Math.round(video.volume * 100);
+        state.isMuted = video.muted;
+    });
+    addListener('error', (event: Event) => {
+        console.error('[HLS Fallback] Video error:', video.error || event);
+        emit('error', video.error || event);
+    });
+
+    const onFullscreenChange = () => {
+        const full = Boolean(document.fullscreenElement);
+        state.isFullscreen = full;
+        emit('fullscreen', full);
+    };
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    fallbackEventCleanups.push(() => document.removeEventListener('fullscreenchange', onFullscreenChange));
+
+    if (sourceIsHls && Hls.isSupported()) {
+        const hls = new Hls({
+            enableWorker: true,
+            lowLatencyMode: false,
+            backBufferLength: 90,
+        });
+        hls.loadSource(source);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            isReady.value = true;
+            emit('ready');
+        });
+        hls.on(Hls.Events.ERROR, (_event, data) => {
+            if (data?.fatal) {
+                console.error('[HLS Fallback] Fatal HLS error:', data);
+                emit('error', data);
+            } else {
+                console.warn('[HLS Fallback] Non-fatal HLS error:', data);
+            }
+        });
+        hlsInstance.value = hls;
+    } else if (sourceIsHls && video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = source;
+    } else {
+        // Last-resort: fall back to direct assignment (may not play but avoids crash)
+        video.src = source;
+    }
+
+    if (video.autoplay) {
+        safePlay();
+    }
+};
+
 /**
  * Public methods for external control
  */
 const play = () => {
-    playerInstance.value?.play();
+    safePlay();
 };
 
 const pause = () => {
-    playerInstance.value?.pause();
+    if (usingHlsFallback.value) {
+        hlsVideoEl.value?.pause();
+    } else {
+        playerInstance.value?.pause();
+    }
 };
 
 const stop = () => {
-    playerInstance.value?.stop();
+    if (usingHlsFallback.value) {
+        hlsVideoEl.value?.pause();
+        if (hlsVideoEl.value) {
+            hlsVideoEl.value.currentTime = 0;
+        }
+    } else {
+        playerInstance.value?.stop();
+    }
 };
 
 const seek = (position: number) => {
-    playerInstance.value?.seek(position);
+    if (usingHlsFallback.value && hlsVideoEl.value) {
+        hlsVideoEl.value.currentTime = Math.max(0, position);
+    } else {
+        playerInstance.value?.seek(position);
+    }
 };
 
 const setVolume = (volume: number) => {
-    playerInstance.value?.setVolume(volume);
+    if (usingHlsFallback.value && hlsVideoEl.value) {
+        const clamped = Math.max(0, Math.min(100, volume));
+        hlsVideoEl.value.volume = clamped / 100;
+        state.volume = clamped;
+    } else {
+        playerInstance.value?.setVolume(volume);
+    }
 };
 
 const setMute = (muted: boolean) => {
-    playerInstance.value?.setMute(muted);
+    if (usingHlsFallback.value && hlsVideoEl.value) {
+        hlsVideoEl.value.muted = muted;
+        state.isMuted = muted;
+    } else {
+        playerInstance.value?.setMute(muted);
+    }
 };
 
 const setPlaybackRate = (rate: number) => {
-    playerInstance.value?.setPlaybackRate(rate);
+    if (usingHlsFallback.value && hlsVideoEl.value) {
+        hlsVideoEl.value.playbackRate = rate;
+    } else {
+        playerInstance.value?.setPlaybackRate(rate);
+    }
 };
 
 const toggleFullscreen = () => {
-    playerInstance.value?.setFullscreen(!state.isFullscreen);
+    if (usingHlsFallback.value && playerContainer.value) {
+        if (!document.fullscreenElement) {
+            playerContainer.value.requestFullscreen?.();
+            state.isFullscreen = true;
+            emit('fullscreen', true);
+        } else {
+            document.exitFullscreen?.();
+            state.isFullscreen = false;
+            emit('fullscreen', false);
+        }
+    } else {
+        playerInstance.value?.setFullscreen(!state.isFullscreen);
+    }
 };
 
 const getPosition = () => {
+    if (usingHlsFallback.value && hlsVideoEl.value) {
+        return hlsVideoEl.value.currentTime || 0;
+    }
     return playerInstance.value?.getPosition() || 0;
 };
 
 const getDuration = () => {
+    if (usingHlsFallback.value && hlsVideoEl.value) {
+        return hlsVideoEl.value.duration || 0;
+    }
     return playerInstance.value?.getDuration() || 0;
 };
 
 const getState = () => {
+    if (usingHlsFallback.value && hlsVideoEl.value) {
+        if (hlsVideoEl.value.paused) return 'paused';
+        return 'playing';
+    }
     return playerInstance.value?.getState() || 'idle';
 };
 
@@ -346,6 +600,8 @@ defineExpose({
  * Cleanup and remove player instance
  */
 const cleanupPlayer = () => {
+    teardownHlsFallback();
+
     if (playerInstance.value) {
         try {
             // Stop any playing content or ads
@@ -355,6 +611,11 @@ const cleanupPlayer = () => {
             playerInstance.value.remove();
             playerInstance.value = null;
             isReady.value = false;
+            state.isPlaying = false;
+            state.buffered = 0;
+            if (playerContainer.value) {
+                playerContainer.value.innerHTML = '';
+            }
 
             console.log('[JWPlayer] Player cleaned up successfully');
         } catch (error) {
@@ -391,10 +652,14 @@ const reloadPlayerWithNewVideo = (newVideo: any) => {
 // Lifecycle hooks
 onMounted(() => {
     // Wait for JW Player library to be loaded
+    let jwLoadAttempts = 0;
+    const maxJwLoadAttempts = 30;
     const checkAndInit = () => {
-        if (typeof window !== 'undefined' && (window as any).jwplayer) {
+        const jwAvailable = typeof window !== 'undefined' && (window as any).jwplayer;
+        if (jwAvailable || jwLoadAttempts >= maxJwLoadAttempts) {
             initializePlayer();
         } else {
+            jwLoadAttempts += 1;
             // Retry after a short delay
             setTimeout(checkAndInit, 100);
         }
@@ -459,6 +724,10 @@ watch(
 /* Ensure JW Player fills the container */
 :deep(.jw-wrapper) {
     border-radius: 0.5rem;
+}
+
+:deep(.hls-fallback-player) {
+    background: #000;
 }
 
 /* YouTube-like skin customization */
