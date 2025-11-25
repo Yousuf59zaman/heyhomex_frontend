@@ -11,15 +11,15 @@
         },
         category: {
             type: String,
-            default: 'For Sell',
+            default: '',
         },
         priceRange: {
             type: String,
-            default: '$250,000',
+            default: '',
         },
         homeType: {
             type: String,
-            default: 'Beds & Baths',
+            default: '',
         },
         others: {
             type: String,
@@ -44,10 +44,24 @@
         'filter-change',
     ]);
 
-    // Static filter options
-    const categories = ['For Sell', 'For Rent', 'Sold'];
-    const priceRanges = ['$250,000', '$500,000', '$750,000', '$1,000,000+'];
-    const homeTypes = ['Beds & Baths', 'Studio', '1 Bed', '2 Beds', '3+ Beds'];
+    // Static filter options with API values
+    const categories = [
+        { label: 'For Sale', value: 'for_sale' },
+        { label: 'For Rent', value: 'for_rent' },
+        { label: 'Sold', value: 'sold' }
+    ];
+    const priceRanges = [
+        { label: 'Under $250,000', value: '250000' },
+        { label: 'Under $500,000', value: '500000' },
+        { label: 'Under $750,000', value: '750000' },
+        { label: '$1,000,000+', value: '1000000_plus' }
+    ];
+    const homeTypes = [
+        { label: 'Studio', value: 'studio' },
+        { label: '1 Bed', value: 'one_bed' },
+        { label: '2 Bed', value: 'two_bed' },
+        { label: '3+ Bed', value: 'three_plus_bed' }
+    ];
     const othersOptions = [
         'More',
         'New Construction',
@@ -133,11 +147,12 @@
                         v-model="selectedCategory"
                         @change="handleFilterChange"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
+                        <option value="" disabled selected>Category: All</option>
                         <option
                             v-for="category in categories"
-                            :key="category"
-                            :value="category">
-                            {{ category }}
+                            :key="category.value"
+                            :value="category.value">
+                            {{ category.label }}
                         </option>
                     </select>
                     <Icon
@@ -151,11 +166,12 @@
                         v-model="selectedPriceRange"
                         @change="handleFilterChange"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
+                        <option value="" disabled selected>Price Range: All</option>
                         <option
                             v-for="range in priceRanges"
-                            :key="range"
-                            :value="range">
-                            {{ range }}
+                            :key="range.value"
+                            :value="range.value">
+                            {{ range.label }}
                         </option>
                     </select>
                     <Icon
@@ -188,11 +204,12 @@
                         v-model="selectedHomeType"
                         @change="handleFilterChange"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
+                        <option value="" disabled selected>Home Type: All</option>
                         <option
                             v-for="type in homeTypes"
-                            :key="type"
-                            :value="type">
-                            {{ type }}
+                            :key="type.value"
+                            :value="type.value">
+                            {{ type.label }}
                         </option>
                     </select>
                     <Icon

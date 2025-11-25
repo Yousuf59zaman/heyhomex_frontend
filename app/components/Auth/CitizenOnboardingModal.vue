@@ -419,11 +419,7 @@
                     {{ getCurrentStepConfig().title }}
                 </h1>
 
-                <p
-                    v-if="getCurrentStepConfig().subtitle"
-                    class="text-sm text-[#121A22] whitespace-pre-line">
-                    {{ getCurrentStepConfig().subtitle }}
-                </p>
+                
             </div>
         </template>
 
@@ -458,6 +454,11 @@
             <div
                 v-if="currentStep === 'motivation'"
                 class="space-y-6">
+                <p
+                    v-if="getCurrentStepConfig().subtitle"
+                    class="text-xl text-[#121A22] whitespace-pre-line">
+                    {{ getCurrentStepConfig().subtitle }}
+                </p>
                 <div
                     v-if="questionsLoading"
                     class="space-y-3">
@@ -476,13 +477,13 @@
                 </div>
                 <div
                     v-else
-                    class="space-y-3">
+                    class="space-y-3 space-x-3">
                     <div
                         v-for="option in motivationOptions"
                         :key="option.value"
                         @click="formData.motivation = option.value"
                         :class="[
-                            'p-4 border-2 rounded-full cursor-pointer transition-all duration-200',
+                            'inline-flex py-3 px-5 border-2 rounded-full cursor-pointer transition-all duration-200',
                             formData.motivation === option.value
                                 ? 'bg-black text-white'
                                 : 'border-gray-200 hover:border-gray-300',
@@ -495,13 +496,13 @@
 
                 <div class="flex flex-col sm:flex-row gap-3">
                     <Button
-                        @click="closeModal"
+                        @click="handleNext"
                         outlined
                         class="flex-1 order-2 sm:order-1"
                         :pt="{
                             root: 'flex-1 px-4 sm:px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
                         }">
-                        Skip for Now
+                        Start Over
                     </Button>
 
                     <Button
@@ -509,10 +510,8 @@
                         :disabled="!formData.motivation || loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1 order-1 sm:order-2"
-                        :pt="{
-                            root: 'flex-1 px-4 sm:px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
-                        }">
+                        class="flex-1 order-1 sm:order-2 w-full px-6 py-3.5 font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 bg-[#1E293B] hover:bg-[#0F172A] text-white"
+                        >
                         Next
                     </Button>
                 </div>
@@ -522,11 +521,16 @@
             <div
                 v-else-if="currentStep === 'budget'"
                 class="space-y-6">
+                 <p
+                    v-if="getCurrentStepConfig().subtitle"
+                    class="text-xl text-[#121A22] whitespace-pre-line">
+                    {{ getCurrentStepConfig().subtitle }}
+                </p>
                 <div
                     v-if="questionsLoading"
                     class="space-y-3">
                     <div
-                        class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                        class=" p-4 border-2 border-gray-200 rounded-full animate-pulse">
                         <div class="h-4 bg-gray-200 rounded w-3/4"></div>
                     </div>
                     <div
@@ -540,13 +544,13 @@
                 </div>
                 <div
                     v-else
-                    class="space-y-3">
+                    class="space-y-3 space-x-3">
                     <div
                         v-for="option in budgetOptions"
                         :key="option.value"
                         @click="formData.budget = option.value"
                         :class="[
-                            'p-4 border-2 rounded-full cursor-pointer transition-all duration-200',
+                            'inline-flex py-3 px-5 border-2 rounded-full cursor-pointer transition-all duration-200',
                             formData.budget === option.value
                                 ? 'bg-black text-white'
                                 : 'border-gray-200 hover:border-gray-300',
@@ -586,6 +590,11 @@
             <div
                 v-else-if="currentStep === 'location'"
                 class="space-y-6">
+                 <p
+                    v-if="getCurrentStepConfig().subtitle"
+                    class="text-xl text-[#121A22] whitespace-pre-line">
+                    {{ getCurrentStepConfig().subtitle }}
+                </p>
                 <div
                     v-if="questionsLoading"
                     class="space-y-3">
@@ -604,13 +613,13 @@
                 </div>
                 <div
                     v-else
-                    class="space-y-3">
+                    class="space-y-3 space-x-3">
                     <div
                         v-for="option in locationTypeOptions"
                         :key="option.value"
                         @click="formData.locationType = option.value"
                         :class="[
-                            'p-4 border-2 rounded-full cursor-pointer transition-all duration-200',
+                            'inline-flex py-3 px-5 border-2 rounded-full cursor-pointer transition-all duration-200',
                             formData.locationType === option.value
                                 ? 'bg-black text-white'
                                 : 'border-gray-200 hover:border-gray-300',
