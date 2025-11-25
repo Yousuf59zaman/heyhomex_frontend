@@ -18,10 +18,7 @@ export default defineNuxtPlugin(() => {
 
     const demoLibraryUrl = String(config.public.NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL ?? '').trim();
     const productionLibraryUrl = String(config.public.NUXT_PUBLIC_JWPLAYER_LIBRARY_URL ?? '').trim();
-
-    // Use a known JW Player demo library as a safe fallback for local/dev when no URL is provided.
-    const fallbackDemoLibraryUrl = 'https://cdn.jwplayer.com/libraries/KB5zftYI.js';
-    const scriptUrl = (isDevMode ? demoLibraryUrl : productionLibraryUrl) || fallbackDemoLibraryUrl;
+    const scriptUrl = isDevMode ? demoLibraryUrl : productionLibraryUrl;
 
     return new Promise<void>((resolve) => {
         if (!scriptUrl) {
