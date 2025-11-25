@@ -2,6 +2,10 @@
     import {LockClosedIcon, UserIcon} from "@heroicons/vue/24/outline"
     const {login, googleLogin, facebookLogin, appleLogin} = citizenAuth()
 
+    const closeHandler = () => {
+        emit("close")
+    }
+
     const props = defineProps<{modelValue: boolean}>()
     const visible = ref(props.modelValue)
     watch(
@@ -124,10 +128,10 @@
             // Check for user role (agent, advisor) first
             if (userData.user_role) {
                 const roleRouteMap: Record<string, string> = {
-                    'agent': '/agent/',
-                    'advisor': '/advisor/'
+                    agent: "/agent/",
+                    advisor: "/advisor/",
                 }
-                
+
                 const targetPath = roleRouteMap[userData.user_role]
                 if (targetPath) {
                     window.location.href = targetPath
@@ -253,12 +257,19 @@
     <Dialog
         v-model:visible="visible"
         modal
-        :closable="true"
+        :closable="false"
         :draggable="false"
         :resizable="false"
         class="citizen-login-modal"
         :style="{width: 'min(32rem, 95vw)', maxWidth: '95vw'}">
         <template #header>
+            <div class="absolute right-[-1px] top-[-1px] z-50">
+                <button
+                    @click="closeHandler"
+                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[15px] transition-all duration-300 focus:outline-none">
+                    <i class="pi pi-times text-xl"></i>
+                </button>
+            </div>
             <div
                 class="w-full text-center px-4 sm:px-6 pt-6 sm:pt-4 pb-4 sm:pb-6">
                 <h1
@@ -286,7 +297,7 @@
                     <div class="relative">
                         <UserIcon
                             class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <InputText
+                        <LazyInputText
                             id="email"
                             v-model="formData.email"
                             type="email"
@@ -306,7 +317,7 @@
                     <div class="relative">
                         <LockClosedIcon
                             class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <InputText
+                        <LazyInputText
                             id="password"
                             v-model="formData.password"
                             :type="password_open ? 'text' : 'password'"
@@ -352,14 +363,14 @@
                     <p class="text-sm text-red-800">{{ validations_errors }}</p>
                 </div>
 
-                <Button
+                <button
                     type="submit"
                     :disabled="loading"
                     :loading="loading"
                     loadingIcon="pi pi-spin pi-spinner"
-                    class="w-full px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
+                    class="w-full px-6 py-3 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
                     {{ loading ? "Signing In..." : "Sign In" }}
-                </Button>
+                </button>
 
                 <div class="relative flex items-center justify-center">
                     <div class="absolute inset-0 flex items-center">
@@ -483,8 +494,30 @@
         transition: background-color 0.2s;
     }
 
-    .citizen-login-modal :deep(.p-dialog-header-close:hover) {
+    .citizen-login-modal :deep(.p-dialog-close-button:hover) {
         background-color: #f3f4f6;
         border-radius: 0.125rem;
+    }
+
+    .citizen-login-modal :deep(.p-dialog-close-button) {
+        position: absolute;
+        left: -2px;
+        top: -2px;
+        width: 32px;
+        height: 32px;
+        background: white;
+        border-radius: 9999px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .citizen-login-modal :deep(.p-dialog-close-button:hover) {
+        background: #f9fafb;
+        transform: scale(1.12);
     }
 </style>

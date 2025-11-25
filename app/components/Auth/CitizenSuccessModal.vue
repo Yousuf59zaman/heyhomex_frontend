@@ -1,22 +1,26 @@
 <script setup>
-const props = defineProps({
-    modelValue: Boolean,
-})
+    const props = defineProps({
+        modelValue: Boolean,
+    })
 
-const emit = defineEmits(["update:modelValue", "next", "close"])
+    const emit = defineEmits(["update:modelValue", "next", "close"])
 
-const isOpen = computed({
-    get: () => props.modelValue,
-    set: (value) => emit("update:modelValue", value),
-})
+    const isOpen = computed({
+        get: () => props.modelValue,
+        set: (value) => emit("update:modelValue", value),
+    })
 
-const handleNext = () => {
-    emit("next")
-}
+    const handleNext = () => {
+        emit("next")
+    }
 
-const handleClose = () => {
-    emit("close")
-}
+    const closeHandler = () => {
+        emit("close")
+    }
+
+    const handleClose = () => {
+        emit("close")
+    }
 </script>
 
 <template>
@@ -26,7 +30,7 @@ const handleClose = () => {
         :draggable="false"
         :closable="false"
         class="auth-modal"
-        :style="{ width: '28rem' }">
+        :style="{width: '28rem'}">
         <template #header>
             <div class="flex items-center justify-between w-full">
                 <div class="w-6"></div>
@@ -50,9 +54,7 @@ const handleClose = () => {
 
             <!-- Success Message -->
             <div class="space-y-2">
-                <h2 class="text-2xl font-semibold text-gray-900">
-                    Success!
-                </h2>
+                <h2 class="text-2xl font-semibold text-gray-900">Success!</h2>
                 <p class="text-gray-600">
                     You have successfully created your account!
                 </p>

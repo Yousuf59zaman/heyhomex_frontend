@@ -87,6 +87,10 @@
         }
     }
 
+    const closeHandler = () => {
+        emit("close")
+    }
+
     const handleContinueWithApple = async (): Promise<void> => {
         isAppleLoadingSSO.value = true
         unauthorizedError.value = ""
@@ -179,7 +183,7 @@
     <Dialog
         v-model:visible="visible"
         modal
-        :closable="true"
+        :closable="false"
         :draggable="false"
         :resizable="false"
         class="citizen-get-started-modal"
@@ -192,6 +196,13 @@
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200',
         }">
         <template #header>
+            <div class="absolute right-[0px] top-[0] z-50">
+                <button
+                    @click="closeHandler"
+                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[15px] transition-all duration-300 focus:outline-none">
+                    <i class="pi pi-times text-xl"></i>
+                </button>
+            </div>
             <div class="w-full px-6 pt-6 pb-2">
                 <div class="flex items-center justify-center relative">
                     <!-- Back Button -->

@@ -279,6 +279,10 @@
         }
     }
 
+    const closeHandler = () => {
+        emit("close")
+    }
+
     const handleComplete = async () => {
         loading.value = true
 
@@ -399,11 +403,11 @@
     <Dialog
         v-model:visible="visible"
         modal
-        :closable="true"
+        :closable="false"
         :draggable="false"
         :resizable="false"
         class="citizen-onboarding-modal"
-        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: 'min(32rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-2xl shadow-2xl m-4',
             header: 'border-0 pb-0',
@@ -412,6 +416,13 @@
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-sm transition-colors duration-200',
         }">
         <template #header>
+            <div class="absolute right-[0px] top-[0px] z-50">
+                <button
+                    @click="closeHandler"
+                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[15px] transition-all duration-300 focus:outline-none">
+                    <i class="pi pi-times text-xl"></i>
+                </button>
+            </div>
             <div
                 class="w-full text-center px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
                 <h1
@@ -684,7 +695,7 @@
                         loadingIcon="pi pi-spin pi-spinner"
                         class="w-full"
                         :pt="{
-                            root: 'flex-1 px-4 sm:px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
+                            root: 'flex-1 px-4 sm:px-6 py-3 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
                         }">
                         {{ loading ? "Saving..." : "Continue to Dashboard" }}
                     </Button>
