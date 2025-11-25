@@ -14,6 +14,7 @@
 
 import Hls from 'hls.js';
 import type { Video } from '~/composables/useVideoPlayer';
+import { useHlsPlayerAds, type ParsedAd, type AdPlaybackState } from '~/composables/useHlsPlayerAds';
 
 interface AdSchedule {
     offset: string; // 'pre', 'post', '50%', or time in seconds
@@ -71,9 +72,25 @@ const wrapperElement = ref<HTMLDivElement | null>(null);
 const isReady = ref(false);
 const hlsInstance = ref<Hls | null>(null);
 const hlsVideoEl = ref<HTMLVideoElement | null>(null);
+const adVideoEl = ref<HTMLVideoElement | null>(null);
 const fallbackEventCleanups: Array<() => void> = [];
 let pendingPlayPromise: Promise<void> | null = null;
 let fullscreenControlsTimeout: NodeJS.Timeout | null = null;
+
+// Ad-related state
+const parsedAds = ref<ParsedAd[]>([]);
+const adState = reactive<AdPlaybackState>({
+    isPlayingAd: false,
+    currentAd: null,
+    adCurrentTime: 0,
+    adDuration: 0,
+    canSkip: false,
+    skipTimeRemaining: 0,
+});
+let adCheckInterval: NodeJS.Timeout | null = null;
+let preRollPlayed = false;
+let contentWasPausedForAd = false;
+const adEventCleanups: Array<() => void> = [];
 
 // HLS Fallback UI state
 const hlsFallbackState = reactive({
@@ -102,6 +119,15 @@ const state = reactive({
 
 const isHlsSource = (src: string) => src?.toLowerCase().includes('.m3u8');
 
+// Initialize ad utilities
+const {
+    processAdSchedule,
+    findAdToPlay,
+    convertOffsetToSeconds,
+    trackImpression,
+    trackEvent,
+} = useHlsPlayerAds();
+
 /**
  * Safe play helper to avoid unhandled AbortError when pausing during pending play()
  */
@@ -123,7 +149,284 @@ const safePlay = () => {
     return attempt;
 };
 
+/**
+ * Ad Management Functions
+ */
+const setupAdVideoElement = () => {
+    if (!playerContainer.value || adVideoEl.value) return;
+
+    const adVideo = document.createElement('video');
+    adVideo.className = 'hls-ad-player';
+    adVideo.playsInline = true;
+    adVideo.controls = false;
+    adVideo.muted = props.muted ?? false;
+    adVideo.style.position = 'absolute';
+    adVideo.style.top = '0';
+    adVideo.style.left = '0';
+    adVideo.style.width = '100%';
+    adVideo.style.height = '100%';
+    adVideo.style.objectFit = 'contain';
+    adVideo.style.zIndex = '30';
+    adVideo.style.display = 'none';
+    adVideo.style.backgroundColor = '#000';
+
+    playerContainer.value.appendChild(adVideo);
+    adVideoEl.value = adVideo;
+
+    // Ad video event listeners
+    const addAdListener = (event: keyof HTMLVideoElementEventMap, handler: EventListener) => {
+        adVideo.addEventListener(event, handler);
+        adEventCleanups.push(() => adVideo.removeEventListener(event, handler));
+    };
+
+    addAdListener('timeupdate', () => {
+        if (!adState.currentAd) return;
+
+        adState.adCurrentTime = adVideo.currentTime;
+        adState.adDuration = adVideo.duration || adState.currentAd.duration || 0;
+
+        // Update skip button state
+        const skipOffset = adState.currentAd.skipOffset || 0;
+        if (adVideo.currentTime >= skipOffset) {
+            adState.canSkip = true;
+            adState.skipTimeRemaining = 0;
+        } else {
+            adState.canSkip = false;
+            adState.skipTimeRemaining = Math.ceil(skipOffset - adVideo.currentTime);
+        }
+    });
+
+    addAdListener('ended', () => {
+        handleAdComplete();
+    });
+
+    addAdListener('error', (event: Event) => {
+        console.error('[HLS Ads] Ad playback error:', event);
+        emit('adError', adVideo.error || event);
+        handleAdComplete();
+    });
+};
+
+const playAd = async (ad: ParsedAd) => {
+    if (!adVideoEl.value || !hlsVideoEl.value || !ad.mediaFileUrl) return;
+
+    try {
+        console.log('[HLS Ads] Playing ad:', ad);
+
+        // Mark ad as played
+        ad.hasBeenPlayed = true;
+
+        // Pause main content
+        contentWasPausedForAd = !state.isPlaying;
+        if (hlsVideoEl.value && !hlsVideoEl.value.paused) {
+            hlsVideoEl.value.pause();
+        }
+
+        // Set ad state
+        adState.isPlayingAd = true;
+        adState.currentAd = ad;
+        adState.adCurrentTime = 0;
+        adState.adDuration = ad.duration || 0;
+        adState.canSkip = false;
+        adState.skipTimeRemaining = ad.skipOffset || 0;
+
+        // Show ad video element
+        adVideoEl.value.style.display = 'block';
+
+        // Load and play ad
+        adVideoEl.value.src = ad.mediaFileUrl;
+        await adVideoEl.value.play();
+
+        // Track impression
+        if (ad.vastResponse) {
+            trackImpression(ad.vastResponse);
+            trackEvent(ad.vastResponse, 'start');
+        }
+
+        emit('adImpression', { tag: ad.vastTag });
+    } catch (error) {
+        console.error('[HLS Ads] Error playing ad:', error);
+        emit('adError', error);
+        handleAdComplete();
+    }
+};
+
+const skipAd = () => {
+    if (!adState.canSkip || !adState.currentAd) return;
+
+    console.log('[HLS Ads] Ad skipped');
+
+    // Track skip event
+    if (adState.currentAd.vastResponse) {
+        trackEvent(adState.currentAd.vastResponse, 'skip');
+    }
+
+    emit('adSkipped', { tag: adState.currentAd.vastTag });
+    handleAdComplete();
+};
+
+const handleAdComplete = () => {
+    if (!adVideoEl.value || !hlsVideoEl.value) return;
+
+    const completedAd = adState.currentAd;
+
+    // Track complete event
+    if (completedAd?.vastResponse && adVideoEl.value.currentTime >= (adState.adDuration - 1)) {
+        trackEvent(completedAd.vastResponse, 'complete');
+        emit('adComplete', { tag: completedAd.vastTag });
+    }
+
+    // Hide ad video
+    adVideoEl.value.style.display = 'none';
+    adVideoEl.value.pause();
+    adVideoEl.value.src = '';
+
+    // Reset ad state
+    adState.isPlayingAd = false;
+    adState.currentAd = null;
+    adState.adCurrentTime = 0;
+    adState.adDuration = 0;
+    adState.canSkip = false;
+    adState.skipTimeRemaining = 0;
+
+    // Resume main content if it was playing before
+    if (!contentWasPausedForAd && hlsVideoEl.value.paused) {
+        safePlay();
+    }
+};
+
+const handleAdClick = () => {
+    if (!adState.currentAd?.clickThroughUrl) return;
+
+    console.log('[HLS Ads] Ad clicked:', adState.currentAd.clickThroughUrl);
+
+    // Track click event
+    if (adState.currentAd.vastResponse) {
+        trackEvent(adState.currentAd.vastResponse, 'clickTracking');
+    }
+
+    emit('adClick', { tag: adState.currentAd.vastTag });
+
+    // Open click-through URL in new tab
+    if (typeof window !== 'undefined') {
+        window.open(adState.currentAd.clickThroughUrl, '_blank', 'noopener,noreferrer');
+    }
+};
+
+const toggleAdPlayPause = () => {
+    if (!adVideoEl.value || !adState.isPlayingAd) return;
+
+    if (adVideoEl.value.paused) {
+        adVideoEl.value.play();
+        console.log('[HLS Ads] Ad resumed');
+    } else {
+        adVideoEl.value.pause();
+        console.log('[HLS Ads] Ad paused');
+    }
+};
+
+const checkForAds = () => {
+    if (!hlsVideoEl.value || adState.isPlayingAd || parsedAds.value.length === 0) return;
+
+    const currentTime = hlsVideoEl.value.currentTime;
+    const duration = hlsVideoEl.value.duration;
+
+    // Check for mid-roll ads
+    const adToPlay = findAdToPlay(parsedAds.value, currentTime, duration, false, false);
+
+    if (adToPlay) {
+        playAd(adToPlay);
+    }
+};
+
+const initializeAds = async () => {
+    if (!props.advertising || !props.advertising.schedule) return;
+
+    try {
+        console.log('[HLS Ads] Initializing ads...');
+
+        // Process ad schedule
+        const ads = await processAdSchedule(
+            props.advertising.schedule,
+            props.advertising.skipoffset || 5
+        );
+
+        parsedAds.value = ads;
+
+        console.log('[HLS Ads] Parsed ads:', ads);
+
+        // Setup ad video element
+        setupAdVideoElement();
+
+        // Start ad check interval for mid-roll ads
+        if (adCheckInterval) {
+            clearInterval(adCheckInterval);
+        }
+        adCheckInterval = setInterval(checkForAds, 1000);
+    } catch (error) {
+        console.error('[HLS Ads] Error initializing ads:', error);
+    }
+};
+
+const playPreRollAd = () => {
+    if (preRollPlayed || adState.isPlayingAd || parsedAds.value.length === 0) return;
+
+    const duration = hlsVideoEl.value?.duration || 0;
+    const preRollAd = findAdToPlay(parsedAds.value, 0, duration, true, false);
+
+    if (preRollAd) {
+        preRollPlayed = true;
+        playAd(preRollAd);
+    }
+};
+
+const playPostRollAd = () => {
+    if (adState.isPlayingAd || parsedAds.value.length === 0) return;
+
+    const duration = hlsVideoEl.value?.duration || 0;
+    const postRollAd = findAdToPlay(parsedAds.value, 0, duration, false, true);
+
+    if (postRollAd) {
+        playAd(postRollAd);
+    }
+};
+
+const cleanupAds = () => {
+    // Clear ad check interval
+    if (adCheckInterval) {
+        clearInterval(adCheckInterval);
+        adCheckInterval = null;
+    }
+
+    // Cleanup ad event listeners
+    if (adEventCleanups.length) {
+        adEventCleanups.splice(0).forEach((cleanup) => cleanup());
+    }
+
+    // Remove ad video element
+    if (adVideoEl.value) {
+        try {
+            adVideoEl.value.pause();
+            adVideoEl.value.removeAttribute('src');
+            adVideoEl.value.load();
+            adVideoEl.value.remove();
+        } catch (err) {
+            console.error('[HLS Ads] Error cleaning up ad video element:', err);
+        }
+        adVideoEl.value = null;
+    }
+
+    // Reset ad state
+    parsedAds.value = [];
+    adState.isPlayingAd = false;
+    adState.currentAd = null;
+    preRollPlayed = false;
+};
+
 const teardownHlsFallback = () => {
+    // Cleanup ads first
+    cleanupAds();
+
     if (hlsInstance.value) {
         hlsInstance.value.destroy();
         hlsInstance.value = null;
@@ -291,6 +594,10 @@ const setupHlsFallback = (source: string) => {
     });
     addListener('ended', () => {
         state.isPlaying = false;
+
+        // Play post-roll ad if available
+        playPostRollAd();
+
         emit('complete');
     });
     addListener('loadedmetadata', () => {
@@ -298,6 +605,16 @@ const setupHlsFallback = (source: string) => {
         isReady.value = true;
         emit('ready');
         updateBuffered();
+
+        // Initialize ads after video is loaded
+        if (props.advertising) {
+            initializeAds().then(() => {
+                // Play pre-roll ad if available and autoplay is enabled
+                if (props.autoplay) {
+                    playPreRollAd();
+                }
+            });
+        }
     });
     addListener('volumechange', () => {
         state.volume = Math.round(video.volume * 100);
@@ -382,7 +699,12 @@ const setupHlsFallback = (source: string) => {
  * Public methods for external control
  */
 const play = () => {
-    safePlay();
+    // Check for pre-roll ad on first play
+    if (!preRollPlayed && parsedAds.value.length > 0) {
+        playPreRollAd();
+    } else {
+        safePlay();
+    }
 };
 
 const pause = () => {
@@ -574,6 +896,7 @@ defineExpose({
  * Cleanup and remove player instance
  */
 const cleanupPlayer = () => {
+    cleanupAds();
     teardownHlsFallback();
     isReady.value = false;
 };
@@ -642,8 +965,36 @@ watch(
             </div>
         </div>
 
+        <!-- Ad Overlay -->
+        <div v-if="adState.isPlayingAd" class="hls-ad-overlay" @click="toggleAdPlayPause">
+            <!-- Ad Controls (Bottom) -->
+            <div class="hls-ad-controls" @click.stop>
+                <!-- Ad Message -->
+                <div class="hls-ad-message">
+                    This ad will end in {{ Math.ceil(Math.max(0, adState.adDuration - adState.adCurrentTime)) }} seconds
+                </div>
+
+                <!-- Skip Button (Bottom Right) -->
+                <button
+                    v-if="adState.canSkip"
+                    @click="skipAd"
+                    class="hls-ad-skip-button"
+                >
+                    <span>Skip Ad</span>
+                </button>
+            </div>
+
+            <!-- Ad Progress Bar -->
+            <div class="hls-ad-progress-bar">
+                <div
+                    class="hls-ad-progress-fill"
+                    :style="{ width: (adState.adCurrentTime / (adState.adDuration || 1)) * 100 + '%' }"
+                ></div>
+            </div>
+        </div>
+
         <!-- HLS Fallback Custom Controls -->
-        <div v-if="isReady"
+        <div v-if="isReady && !adState.isPlayingAd"
             :class="['hls-custom-controls', { 'show': hlsFallbackState.showControls }]">
 
             <!-- Progress Bar -->
@@ -1305,6 +1656,99 @@ watch(
 
 :deep(.jw-knob) {
     background-color: #ef4444 !important;
+}
+
+/* Ad Overlay Styles */
+.hls-ad-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.hls-ad-controls {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 16px 20px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.hls-ad-message {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    opacity: 0.95;
+    pointer-events: none;
+}
+
+.hls-ad-skip-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.85);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    pointer-events: auto;
+    letter-spacing: 0.3px;
+}
+
+.hls-ad-skip-button:hover {
+    background: rgba(0, 0, 0, 0.95);
+    border-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-1px);
+}
+
+.hls-ad-skip-button:active {
+    transform: translateY(0);
+}
+
+.hls-ad-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    z-index: 3;
+}
+
+.hls-ad-progress-fill {
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    transition: width 0.2s linear;
+}
+
+/* Responsive Ad Overlay */
+@media (max-width: 640px) {
+    .hls-ad-controls {
+        padding: 12px 16px;
+    }
+
+    .hls-ad-message {
+        font-size: 12px;
+    }
+
+    .hls-ad-skip-button {
+        font-size: 12px;
+        padding: 7px 16px;
+    }
 }
 </style>
 

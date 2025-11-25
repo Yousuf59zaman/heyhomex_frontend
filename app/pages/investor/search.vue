@@ -22,7 +22,7 @@ const videos = ref([
         category: 'Investment',
         location: 'Waikiki',
         coordinates: [21.2793, -157.8293],
-        videoUrl: 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8',
+        videoUrl: 'https://eu2.contabostorage.com/beede22b78b34cd7b1c01987a4332d1b:meteka/111/index.m3u8',
     },
     {
         id: 2,
@@ -36,7 +36,7 @@ const videos = ref([
         isFavorite: false,
         location: 'Honolulu',
         coordinates: [21.3099, -157.8581],
-        videoUrl: 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8',
+        videoUrl: 'https://eu2.contabostorage.com/beede22b78b34cd7b1c01987a4332d1b:meteka/111/index.m3u8',
     },
     {
         id: 3,
@@ -50,7 +50,7 @@ const videos = ref([
         isFavorite: false,
         location: 'Kihei',
         coordinates: [20.7642, -156.4500],
-        videoUrl: 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8',
+        videoUrl: 'https://eu2.contabostorage.com/beede22b78b34cd7b1c01987a4332d1b:meteka/111/index.m3u8',
     },
     {
         id: 4,
@@ -64,7 +64,7 @@ const videos = ref([
         isFavorite: false,
         location: 'Kapolei',
         coordinates: [21.3354, -158.0583],
-        videoUrl: 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8',
+        videoUrl: 'https://eu2.contabostorage.com/beede22b78b34cd7b1c01987a4332d1b:meteka/111/index.m3u8',
     },
 ]);
 

@@ -170,13 +170,20 @@ onBeforeUnmount(() => {
             <div class="flex-shrink-0 w-full">
               <div class="w-full max-w-full sm:max-w-7xl mx-auto">
                 <div class="w-full aspect-video">
-                <VideoJWPlayer
+                <VideoHlsJsPlayer
                   v-if="currentVideo"
                   ref="playerRef"
                   :video="currentVideo"
                   :autoplay="true"
                   :advertising="{ client: adConfig.client ?? '', ...adConfig }"
                   @complete="handleVideoComplete" />
+                <!-- <VideoJWPlayer
+                  v-if="currentVideo"
+                  ref="playerRef"
+                  :video="currentVideo"
+                  :autoplay="true"
+                  :advertising="{ client: adConfig.client ?? '', ...adConfig }"
+                  @complete="handleVideoComplete" /> -->
                 </div>
               </div>
             </div>
