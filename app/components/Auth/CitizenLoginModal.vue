@@ -286,7 +286,7 @@
                     <div class="relative">
                         <UserIcon
                             class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <InputText
+                        <LazyInputText
                             id="email"
                             v-model="formData.email"
                             type="email"
@@ -306,7 +306,7 @@
                     <div class="relative">
                         <LockClosedIcon
                             class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <InputText
+                        <LazyInputText
                             id="password"
                             v-model="formData.password"
                             :type="password_open ? 'text' : 'password'"
