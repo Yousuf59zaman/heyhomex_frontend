@@ -87,6 +87,10 @@ const adState = reactive<AdPlaybackState>({
     canSkip: false,
     skipTimeRemaining: 0,
 });
+const adUiState = reactive({
+    isPaused: false,
+    isMuted: props.muted ?? false,
+});
 let adCheckInterval: NodeJS.Timeout | null = null;
 let preRollPlayed = false;
 let contentWasPausedForAd = false;
@@ -105,6 +109,9 @@ const hlsFallbackState = reactive({
     showPlayPauseEffect: false,
     playPauseEffectIcon: 'play' as 'play' | 'pause',
 });
+
+// Track the last non-zero volume so mute/unmute keeps the slider aligned with actual audio state
+const lastVolumeBeforeMute = ref(100);
 
 // Player state
 const state = reactive({
@@ -169,6 +176,8 @@ const setupAdVideoElement = () => {
     adVideo.style.zIndex = '30';
     adVideo.style.display = 'none';
     adVideo.style.backgroundColor = '#000';
+    adUiState.isMuted = adVideo.muted;
+    adUiState.isPaused = adVideo.paused;
 
     playerContainer.value.appendChild(adVideo);
     adVideoEl.value = adVideo;
@@ -200,6 +209,18 @@ const setupAdVideoElement = () => {
         handleAdComplete();
     });
 
+    addAdListener('play', () => {
+        adUiState.isPaused = false;
+    });
+
+    addAdListener('pause', () => {
+        adUiState.isPaused = true;
+    });
+
+    addAdListener('volumechange', () => {
+        adUiState.isMuted = adVideo.muted;
+    });
+
     addAdListener('error', (event: Event) => {
         console.error('[HLS Ads] Ad playback error:', event);
         emit('adError', adVideo.error || event);
@@ -229,6 +250,10 @@ const playAd = async (ad: ParsedAd) => {
         adState.adDuration = ad.duration || 0;
         adState.canSkip = false;
         adState.skipTimeRemaining = ad.skipOffset || 0;
+        if (adVideoEl.value) {
+            adVideoEl.value.muted = adUiState.isMuted;
+        }
+        adUiState.isPaused = false;
 
         // Show ad video element
         adVideoEl.value.style.display = 'block';
@@ -288,6 +313,8 @@ const handleAdComplete = () => {
     adState.adDuration = 0;
     adState.canSkip = false;
     adState.skipTimeRemaining = 0;
+    adUiState.isPaused = false;
+    adUiState.isMuted = adVideoEl.value ? adVideoEl.value.muted : adUiState.isMuted;
 
     // Resume main content if it was playing before
     if (!contentWasPausedForAd && hlsVideoEl.value.paused) {
@@ -319,10 +346,19 @@ const toggleAdPlayPause = () => {
     if (adVideoEl.value.paused) {
         adVideoEl.value.play();
         console.log('[HLS Ads] Ad resumed');
+        adUiState.isPaused = false;
     } else {
         adVideoEl.value.pause();
         console.log('[HLS Ads] Ad paused');
+        adUiState.isPaused = true;
     }
+};
+
+const toggleAdMute = () => {
+    if (!adVideoEl.value || !adState.isPlayingAd) return;
+
+    adVideoEl.value.muted = !adVideoEl.value.muted;
+    adUiState.isMuted = adVideoEl.value.muted;
 };
 
 const checkForAds = () => {
@@ -792,12 +828,20 @@ const setHlsFallbackSpeed = (speed: number) => {
 };
 
 const toggleHlsFallbackPlay = () => {
-    if (!hlsVideoEl.value) return;
+    // If an ad is playing, delegate play/pause to the ad controls
+    if (adState.isPlayingAd && adVideoEl.value) {
+        toggleAdPlayPause();
+        return;
+    }
 
-    if (state.isPlaying) {
-        pause();
-    } else {
+    const videoEl = hlsVideoEl.value;
+    if (!videoEl) return;
+
+    // Use the video element's paused state to avoid any reactive desync
+    if (videoEl.paused) {
         play();
+    } else {
+        pause();
     }
 };
 
@@ -809,13 +853,28 @@ const formatTime = (seconds: number): string => {
 };
 
 const toggleHlsFallbackMute = () => {
-    const newMutedState = !state.isMuted;
-    setMute(newMutedState);
+    if (state.isMuted) {
+        const restoreVolume = lastVolumeBeforeMute.value > 0 ? lastVolumeBeforeMute.value : 100;
+        setMute(false);
+        setHlsFallbackVolume(restoreVolume);
+    } else {
+        const currentVolume = state.volume > 0 ? state.volume : hlsFallbackState.volume || 100;
+        lastVolumeBeforeMute.value = currentVolume || 100;
+        setHlsFallbackVolume(0);
+        setMute(true);
+    }
 };
 
 const setHlsFallbackVolume = (volume: number) => {
-    setVolume(volume);
-    hlsFallbackState.volume = volume;
+    const clamped = Math.max(0, Math.min(100, volume));
+    if (!state.isMuted && clamped > 0) {
+        lastVolumeBeforeMute.value = clamped;
+    }
+    setVolume(clamped);
+    hlsFallbackState.volume = clamped;
+    if (clamped > 0 && state.isMuted) {
+        setMute(false);
+    }
 };
 
 // Mouse event handlers for controls visibility
@@ -969,9 +1028,29 @@ watch(
         <div v-if="adState.isPlayingAd" class="hls-ad-overlay" @click="toggleAdPlayPause">
             <!-- Ad Controls (Bottom) -->
             <div class="hls-ad-controls" @click.stop>
-                <!-- Ad Message -->
-                <div class="hls-ad-message">
-                    This ad will end in {{ Math.ceil(Math.max(0, adState.adDuration - adState.adCurrentTime)) }} seconds
+                <div class="hls-ad-left">
+                    <button
+                        type="button"
+                        class="hls-ad-icon-btn"
+                        :aria-label="adUiState.isPaused ? 'Play ad' : 'Pause ad'"
+                        @click="toggleAdPlayPause"
+                    >
+                        <Icon v-if="adUiState.isPaused" name="lucide:play" class="w-5 h-5" />
+                        <Icon v-else name="lucide:pause" class="w-5 h-5" />
+                    </button>
+                    <button
+                        type="button"
+                        class="hls-ad-icon-btn"
+                        :aria-label="adUiState.isMuted ? 'Unmute ad' : 'Mute ad'"
+                        @click="toggleAdMute"
+                    >
+                        <Icon v-if="adUiState.isMuted" name="lucide:volume-x" class="w-5 h-5" />
+                        <Icon v-else name="lucide:volume-2" class="w-5 h-5" />
+                    </button>
+                    <!-- Ad Message -->
+                    <div class="hls-ad-message">
+                        This ad will end in {{ Math.ceil(Math.max(0, adState.adDuration - adState.adCurrentTime)) }} seconds
+                    </div>
                 </div>
 
                 <!-- Skip Button (Bottom Right) -->
@@ -1685,6 +1764,42 @@ watch(
     background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
     z-index: 2;
     pointer-events: none;
+}
+
+.hls-ad-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+    pointer-events: auto;
+}
+
+.hls-ad-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    pointer-events: auto;
+}
+
+.hls-ad-icon-btn:hover {
+    background: rgba(0, 0, 0, 0.85);
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.hls-ad-icon-btn:active {
+    transform: translateY(0);
 }
 
 .hls-ad-message {
