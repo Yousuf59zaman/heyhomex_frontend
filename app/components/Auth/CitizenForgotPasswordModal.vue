@@ -126,7 +126,7 @@
     <Dialog
         v-model:visible="visible"
         modal
-        :closable="true"
+        :closable="false"
         :draggable="false"
         :resizable="false"
         class="citizen-forgot-password-modal"

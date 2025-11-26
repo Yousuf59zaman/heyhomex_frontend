@@ -266,7 +266,7 @@
             <div class="absolute right-[-1px] top-[-1px] z-50">
                 <button
                     @click="closeHandler"
-                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[15px] transition-all duration-300 focus:outline-none">
+                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[11px] transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-xl"></i>
                 </button>
             </div>
