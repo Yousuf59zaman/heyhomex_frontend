@@ -139,7 +139,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-send-otp-modal"
-        :style="{width: 'min(32rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-2xl shadow-2xl m-4',
             header: 'border-0 pb-4',

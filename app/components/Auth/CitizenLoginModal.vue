@@ -261,7 +261,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-login-modal"
-        :style="{width: 'min(32rem, 95vw)', maxWidth: '95vw'}">
+        :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}">
         <template #header>
             <div class="absolute right-[-1px] top-[-1px] z-50">
                 <button

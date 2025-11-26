@@ -259,7 +259,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-register-modal"
-        :style="{width: 'min(32rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-2xl shadow-2xl m-4',
             header: 'border-0 pb-0',
@@ -625,17 +625,15 @@
                     </div>
                 </div>
 
-                <Button
+                <button
                     type="submit"
                     :disabled="loading || !allPasswordValidationsPassed"
                     :loading="loading"
                     loadingIcon="pi pi-spin pi-spinner"
-                    class="w-full"
-                    :pt="{
-                        root: 'w-full mb-3 px-6 py-3 bg-[#1E293B] hover:bg-[#1E293B] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
-                    }">
+                    class="w-full px-6 py-3 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center"
+                    >
                     {{ loading ? "Processing..." : "Next" }}
-                </Button>
+                </button>
 
                 <div class="text-center">
                     <p class="text-sm text-gray-600">
