@@ -261,12 +261,12 @@
         :draggable="false"
         :resizable="false"
         class="citizen-login-modal"
-        :style="{width: 'min(32rem, 95vw)', maxWidth: '95vw'}">
+        :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}">
         <template #header>
             <div class="absolute right-[-1px] top-[-1px] z-50">
                 <button
                     @click="closeHandler"
-                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[15px] transition-all duration-300 focus:outline-none">
+                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[11px] transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-xl"></i>
                 </button>
             </div>

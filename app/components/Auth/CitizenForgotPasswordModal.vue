@@ -126,11 +126,11 @@
     <Dialog
         v-model:visible="visible"
         modal
-        :closable="true"
+        :closable="false"
         :draggable="false"
         :resizable="false"
         class="citizen-forgot-password-modal"
-        :style="{width: 'min(32rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-2xl shadow-2xl m-4',
             header: 'border-0 pb-4',

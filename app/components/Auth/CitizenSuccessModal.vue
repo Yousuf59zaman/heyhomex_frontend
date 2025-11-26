@@ -30,7 +30,7 @@
         :draggable="false"
         :closable="false"
         class="auth-modal"
-        :style="{width: '28rem'}">
+        :style="{width: '38rem'}">
         <template #header>
             <div class="flex items-center justify-between w-full">
                 <div class="w-6"></div>
@@ -61,11 +61,12 @@
             </div>
 
             <!-- Continue Button -->
-            <Button
+            <button
                 @click="handleNext"
-                label="Continue to login"
-                class="w-full px-6 py-3.5 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center"
-                size="large" />
+                class="w-full px-6 py-3 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center"
+                size="large">
+                Continue to login
+            </button>
         </div>
     </Dialog>
 </template>

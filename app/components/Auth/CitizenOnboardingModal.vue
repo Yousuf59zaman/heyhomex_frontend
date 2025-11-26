@@ -350,7 +350,6 @@
             }
 
             if (import.meta.client) {
-               
             }
 
             emit("onboarding-complete", {...formData})
@@ -360,11 +359,9 @@
             //     redirectSlug === "kamaaina" ? "/kamaina/" : `/${redirectSlug}/`
             // navigateTo(targetPath)
             const redirectSlug = response.data.user_type?.[0]?.slug || "kamaina"
-                const targetPath =
-                    redirectSlug === "kamaaina"
-                        ? "/kamaina/"
-                        : `/${redirectSlug}/`
-                window.location.href = targetPath;
+            const targetPath =
+                redirectSlug === "kamaaina" ? "/kamaina/" : `/${redirectSlug}/`
+            window.location.href = targetPath
         } catch (error: any) {
             console.error("Onboarding save failed:", error)
 
@@ -407,7 +404,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-onboarding-modal"
-        :style="{width: 'min(32rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-2xl shadow-2xl m-4',
             header: 'border-0 pb-0',
@@ -426,16 +423,14 @@
             <div
                 class="w-full text-center px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
                 <h1
-                    class="text-2xl sm:text-3xl max-w-sm mx-auto font-semibold text-[#121A22] mb-2 leading-tight">
+                    class="text-2xl sm:text-3xl max-w-sm mx-auto  text-[#121A22] mb-2 leading-tight" style="font-family: sf-pro-Medium;">
                     {{ getCurrentStepConfig().title }}
                 </h1>
-
-                
             </div>
         </template>
 
         <!-- Content -->
-        <div class="px-4 sm:px-6 pb-6">
+        <div class="px-2 sm:px-2 pb-6">
             <div
                 class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-3 sm:space-y-0">
                 <div
@@ -467,7 +462,7 @@
                 class="space-y-6">
                 <p
                     v-if="getCurrentStepConfig().subtitle"
-                    class="text-xl text-[#121A22] whitespace-pre-line">
+                    class="text-2xl text-[#121A22] whitespace-pre-line" style="font-family: sf-pro-Medium;">
                     {{ getCurrentStepConfig().subtitle }}
                 </p>
                 <div
@@ -488,16 +483,16 @@
                 </div>
                 <div
                     v-else
-                    class="space-y-3 space-x-3">
+                    class="space-y-3 space-x-2">
                     <div
                         v-for="option in motivationOptions"
                         :key="option.value"
                         @click="formData.motivation = option.value"
                         :class="[
-                            'inline-flex py-3 px-5 border-2 rounded-full cursor-pointer transition-all duration-200',
+                            'inline-flex py-3 px-4  rounded-full cursor-pointer transition-all duration-200',
                             formData.motivation === option.value
                                 ? 'bg-black text-white'
-                                : 'border-gray-200 hover:border-gray-300',
+                                : 'bg-[#F0F1F3] hover:bg-[#e3e4e6]',
                         ]">
                         <p class="text-sm font-medium">
                             {{ option.label }}
@@ -506,25 +501,21 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <Button
+                    <button
                         @click="handleNext"
                         outlined
-                        class="flex-1 order-2 sm:order-1"
-                        :pt="{
-                            root: 'flex-1 px-4 sm:px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
-                        }">
+                        class="flex-1 order-2 sm:order-1 w-full px-6 py-3 bg-[#F0F1F3] hover:bg-[#e3e4e6] disabled:bg-gray-400 text-black font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
                         Start Over
-                    </Button>
+                    </button>
 
-                    <Button
+                    <button
                         @click="handleNext"
                         :disabled="!formData.motivation || loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1 order-1 sm:order-2 w-full px-6 py-3.5 font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 bg-[#1E293B] hover:bg-[#0F172A] text-white"
-                        >
+                        class="flex-1 order-1 sm:order-2 w-full px-6 py-3.5 font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 bg-[#1E293B] hover:bg-[#0F172A] text-white">
                         Next
-                    </Button>
+                    </button>
                 </div>
             </div>
 
@@ -532,16 +523,16 @@
             <div
                 v-else-if="currentStep === 'budget'"
                 class="space-y-6">
-                 <p
+                <p
                     v-if="getCurrentStepConfig().subtitle"
-                    class="text-xl text-[#121A22] whitespace-pre-line">
+                    class="text-2xl  text-[#121A22] whitespace-pre-line" style="font-family: sf-pro-Medium;">
                     {{ getCurrentStepConfig().subtitle }}
                 </p>
                 <div
                     v-if="questionsLoading"
                     class="space-y-3">
                     <div
-                        class=" p-4 border-2 border-gray-200 rounded-full animate-pulse">
+                        class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
                         <div class="h-4 bg-gray-200 rounded w-3/4"></div>
                     </div>
                     <div
@@ -561,10 +552,10 @@
                         :key="option.value"
                         @click="formData.budget = option.value"
                         :class="[
-                            'inline-flex py-3 px-5 border-2 rounded-full cursor-pointer transition-all duration-200',
+                            'inline-flex py-3 px-5  rounded-full cursor-pointer transition-all duration-200',
                             formData.budget === option.value
                                 ? 'bg-black text-white'
-                                : 'border-gray-200 hover:border-gray-300',
+                                : 'bg-[#F0F1F3] hover:bg-[#e3e4e6]',
                         ]">
                         <p class="text-sm font-medium">
                             {{ option.label }}
@@ -573,27 +564,21 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <Button
+                    <button
                         @click="handlePrev"
                         outlined
-                        class="flex-1 order-2 sm:order-1"
-                        :pt="{
-                            root: 'flex-1 px-4 sm:px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
-                        }">
+                        class="flex-1 order-2 sm:order-1 w-full px-6 py-3 bg-[#F0F1F3] hover:bg-[#e3e4e6] disabled:bg-gray-400 text-black font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
                         Back
-                    </Button>
+                    </button>
 
-                    <Button
+                    <button
                         @click="handleNext"
                         :disabled="!formData.budget || loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1 order-1 sm:order-2"
-                        :pt="{
-                            root: 'flex-1 px-4 sm:px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
-                        }">
+                        class="flex-1 order-1 sm:order-2 w-full px-6 py-3.5 font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 bg-[#1E293B] hover:bg-[#0F172A] text-white">
                         Next
-                    </Button>
+                    </button>
                 </div>
             </div>
 
@@ -601,9 +586,9 @@
             <div
                 v-else-if="currentStep === 'location'"
                 class="space-y-6">
-                 <p
+                <p
                     v-if="getCurrentStepConfig().subtitle"
-                    class="text-xl text-[#121A22] whitespace-pre-line">
+                    class="text-2xl  text-[#121A22] whitespace-pre-line" style="font-family: sf-pro-Medium;">
                     {{ getCurrentStepConfig().subtitle }}
                 </p>
                 <div
@@ -630,10 +615,10 @@
                         :key="option.value"
                         @click="formData.locationType = option.value"
                         :class="[
-                            'inline-flex py-3 px-5 border-2 rounded-full cursor-pointer transition-all duration-200',
+                            'inline-flex py-3 px-5 rounded-full cursor-pointer transition-all duration-200',
                             formData.locationType === option.value
                                 ? 'bg-black text-white'
-                                : 'border-gray-200 hover:border-gray-300',
+                                : 'bg-[#F0F1F3] hover:bg-[#e3e4e6]',
                         ]">
                         <p class="text-sm font-medium">
                             {{ option.label }}
@@ -642,27 +627,21 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <Button
+                    <button
                         @click="handlePrev"
                         outlined
-                        class="flex-1 order-2 sm:order-1"
-                        :pt="{
-                            root: 'flex-1 px-4 sm:px-6 py-3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors duration-200',
-                        }">
+                        class="flex-1 order-2 sm:order-1 w-full px-6 py-3 bg-[#F0F1F3] hover:bg-[#e3e4e6] disabled:bg-gray-400 text-black font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
                         Back
-                    </Button>
+                    </button>
 
-                    <Button
+                    <button
                         @click="handleNext"
                         :disabled="!formData.locationType || loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1 order-1 sm:order-2"
-                        :pt="{
-                            root: 'flex-1 px-4 sm:px-6 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
-                        }">
+                        class="flex-1 order-1 sm:order-2 w-full px-6 py-3.5 font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 bg-[#1E293B] hover:bg-[#0F172A] text-white">
                         Next
-                    </Button>
+                    </button>
                 </div>
             </div>
 
@@ -688,17 +667,14 @@
                 </div>
 
                 <div class="space-y-3">
-                    <Button
+                    <button
                         @click="handleComplete"
                         :disabled="loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="w-full"
-                        :pt="{
-                            root: 'flex-1 px-4 sm:px-6 py-3 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center',
-                        }">
+                        class="w-full px-6 py-3 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
                         {{ loading ? "Saving..." : "Continue to Dashboard" }}
-                    </Button>
+                    </button>
                 </div>
             </div>
         </div>
