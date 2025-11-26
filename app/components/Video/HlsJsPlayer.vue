@@ -139,14 +139,21 @@ const {
  * Safe play helper to avoid unhandled AbortError when pausing during pending play()
  */
 const safePlay = () => {
-    if (!hlsVideoEl.value) return;
+    if (!hlsVideoEl.value) {
+        return;
+    }
 
-    if (pendingPlayPromise) return pendingPlayPromise;
+    if (pendingPlayPromise) {
+        return pendingPlayPromise;
+    }
+
     const attempt = hlsVideoEl.value.play();
     if (attempt && typeof attempt.catch === 'function') {
         pendingPlayPromise = attempt
             .catch((err) => {
-                if (!err || err.name === 'AbortError') return;
+                if (!err || err.name === 'AbortError') {
+                    return;
+                }
                 console.error('[HLS Fallback] Playback start failed:', err);
             })
             .finally(() => {
@@ -222,9 +229,13 @@ const setupAdVideoElement = () => {
     });
 
     addAdListener('error', (event: Event) => {
-        console.error('[HLS Ads] Ad playback error:', event);
-        emit('adError', adVideo.error || event);
-        handleAdComplete();
+        // Only handle errors when an ad is actually playing
+        // Ignore errors from empty src during cleanup
+        if (adState.isPlayingAd && adVideoEl.value?.src) {
+            console.error('[HLS Ads] Ad playback error:', event);
+            emit('adError', adVideo.error || event);
+            handleAdComplete();
+        }
     });
 };
 
@@ -301,10 +312,12 @@ const handleAdComplete = () => {
         emit('adComplete', { tag: completedAd.vastTag });
     }
 
-    // Hide ad video
-    adVideoEl.value.style.display = 'none';
+    // Hide ad video and cleanup
     adVideoEl.value.pause();
-    adVideoEl.value.src = '';
+    adVideoEl.value.style.display = 'none';
+    // Use removeAttribute instead of empty string to avoid triggering error event
+    adVideoEl.value.removeAttribute('src');
+    adVideoEl.value.load(); // Reset the media element state
 
     // Reset ad state
     adState.isPlayingAd = false;
@@ -341,7 +354,9 @@ const handleAdClick = () => {
 };
 
 const toggleAdPlayPause = () => {
-    if (!adVideoEl.value || !adState.isPlayingAd) return;
+    if (!adVideoEl.value || !adState.isPlayingAd) {
+        return;
+    }
 
     if (adVideoEl.value.paused) {
         adVideoEl.value.play();
@@ -520,22 +535,6 @@ const setupHlsFallback = (source: string) => {
 
     playerContainer.value.appendChild(video);
     hlsVideoEl.value = video;
-
-    // Add click-to-play/pause functionality with visual effect
-    const videoClickHandler = () => {
-        // Show play/pause effect
-        hlsFallbackState.playPauseEffectIcon = state.isPlaying ? 'pause' : 'play';
-        hlsFallbackState.showPlayPauseEffect = true;
-
-        toggleHlsFallbackPlay();
-
-        // Hide effect after animation
-        setTimeout(() => {
-            hlsFallbackState.showPlayPauseEffect = false;
-        }, 500);
-    };
-    video.addEventListener('click', videoClickHandler);
-    fallbackEventCleanups.push(() => video.removeEventListener('click', videoClickHandler));
 
     // Add keyboard controls
     let volumeBarTimeout: NodeJS.Timeout | null = null;
@@ -735,15 +734,29 @@ const setupHlsFallback = (source: string) => {
  * Public methods for external control
  */
 const play = () => {
-    // Check for pre-roll ad on first play
-    if (!preRollPlayed && parsedAds.value.length > 0) {
-        playPreRollAd();
-    } else {
-        safePlay();
+    // If an ad is currently playing, resume the ad
+    if (adState.isPlayingAd && adVideoEl.value) {
+        if (adVideoEl.value.paused) {
+            adVideoEl.value.play();
+            adUiState.isPaused = false;
+        }
+        return;
     }
+
+    // Always play the main video when user manually clicks play
+    // Pre-roll ads should only play automatically (via autoplay), not on manual user interaction
+    safePlay();
 };
 
 const pause = () => {
+    // If an ad is currently playing, pause the ad
+    if (adState.isPlayingAd && adVideoEl.value) {
+        adVideoEl.value.pause();
+        adUiState.isPaused = true;
+        return;
+    }
+
+    // Pause the main video
     hlsVideoEl.value?.pause();
 };
 
@@ -835,7 +848,9 @@ const toggleHlsFallbackPlay = () => {
     }
 
     const videoEl = hlsVideoEl.value;
-    if (!videoEl) return;
+    if (!videoEl) {
+        return;
+    }
 
     // Use the video element's paused state to avoid any reactive desync
     if (videoEl.paused) {
@@ -843,6 +858,20 @@ const toggleHlsFallbackPlay = () => {
     } else {
         pause();
     }
+};
+
+const handleVideoHitareaClick = () => {
+    // Show play/pause effect based on current state
+    hlsFallbackState.playPauseEffectIcon = state.isPlaying ? 'pause' : 'play';
+    hlsFallbackState.showPlayPauseEffect = true;
+
+    // Toggle play/pause
+    toggleHlsFallbackPlay();
+
+    // Hide effect after animation
+    setTimeout(() => {
+        hlsFallbackState.showPlayPauseEffect = false;
+    }, 500);
 };
 
 const formatTime = (seconds: number): string => {
@@ -1023,6 +1052,9 @@ watch(
                 <Icon v-else name="lucide:pause" class="w-6 h-6" />
             </div>
         </div>
+
+        <!-- Video Click Hitarea (when no ad is playing) -->
+        <div v-if="isReady && !adState.isPlayingAd" class="hls-video-hitarea" @click="handleVideoHitareaClick"></div>
 
         <!-- Ad Overlay -->
         <div v-if="adState.isPlayingAd" class="hls-ad-overlay" @click="toggleAdPlayPause">
@@ -1739,6 +1771,18 @@ watch(
 
 :deep(.jw-knob) {
     background-color: #ef4444 !important;
+}
+
+/* Video Hitarea Styles (for main video click-to-play) */
+.hls-video-hitarea {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 35;
+    cursor: pointer;
+    pointer-events: auto;
 }
 
 /* Ad Overlay Styles */
