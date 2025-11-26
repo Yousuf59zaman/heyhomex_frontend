@@ -1270,25 +1270,27 @@ watch(
 .hls-progress-wrapper {
     position: relative;
     width: 100%;
-    height: 5px;
+    height: 18px;
     cursor: pointer;
 }
 
 .hls-progress-track {
     position: absolute;
-    top: 0;
+    top: 50%;
+    transform: translateY(-50%);
     left: 0;
     width: 100%;
-    height: 5px;
+    height: 6px;
     background: rgba(255, 255, 255, 0.2);
     border-radius: 3px;
 }
 
 .hls-progress-buffered {
     position: absolute;
-    top: 0;
+    top: 50%;
+    transform: translateY(-50%);
     left: 0;
-    height: 5px;
+    height: 6px;
     background: rgba(255, 255, 255, 0.4);
     border-radius: 3px;
     transition: width 0.3s ease;
@@ -1297,9 +1299,10 @@ watch(
 
 .hls-progress-played {
     position: absolute;
-    top: 0;
+    top: 50%;
+    transform: translateY(-50%);
     left: 0;
-    height: 5px;
+    height: 6px;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 3px;
     transition: width 0.1s linear;
@@ -1308,10 +1311,11 @@ watch(
 
 .hls-progress-bar {
     position: absolute;
-    top: 0;
+    top: 50%;
     left: 0;
     width: 100%;
-    height: 5px;
+    height: 18px;
+    transform: translateY(-50%);
     -webkit-appearance: none;
     appearance: none;
     background: transparent;
@@ -1322,7 +1326,7 @@ watch(
 
 .hls-progress-bar::-webkit-slider-runnable-track {
     width: 100%;
-    height: 5px;
+    height: 6px;
     background: transparent;
     border-radius: 3px;
 }
@@ -1335,7 +1339,7 @@ watch(
     background: #FF6C00;
     border-radius: 50%;
     cursor: pointer;
-    margin-top: -4.5px;
+    margin-top: -4px;
     box-shadow: 0 2px 6px rgba(255, 108, 0, 0.5);
     transition: transform 0.2s ease;
 }
@@ -1346,7 +1350,7 @@ watch(
 
 .hls-progress-bar::-moz-range-track {
     width: 100%;
-    height: 5px;
+    height: 6px;
     background: transparent;
     border-radius: 3px;
 }
@@ -1368,7 +1372,7 @@ watch(
 
 .hls-progress-bar::-moz-range-progress {
     background: transparent;
-    height: 5px;
+    height: 6px;
     border-radius: 3px;
 }
 
@@ -1416,8 +1420,8 @@ watch(
 }
 
 .hls-volume-slider {
-    width: 80px;
-    height: 4px;
+    width: 120px;
+    height: 18px;
     -webkit-appearance: none;
     appearance: none;
     background: transparent;
@@ -1427,16 +1431,16 @@ watch(
 
 .hls-volume-slider::-webkit-slider-runnable-track {
     width: 100%;
-    height: 4px;
+    height: 6px;
     background: rgba(255, 255, 255, 0.3);
-    border-radius: 2px;
+    border-radius: 3px;
 }
 
 .hls-volume-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     background: #FF6C00;
     border-radius: 50%;
     cursor: pointer;
@@ -1445,14 +1449,14 @@ watch(
 
 .hls-volume-slider::-moz-range-track {
     width: 100%;
-    height: 4px;
+    height: 6px;
     background: rgba(255, 255, 255, 0.3);
-    border-radius: 2px;
+    border-radius: 3px;
 }
 
 .hls-volume-slider::-moz-range-thumb {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     background: #FF6C00;
     border: none;
     border-radius: 50%;
