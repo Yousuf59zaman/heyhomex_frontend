@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@dailymotion/vast-client':
+        specifier: ^6.4.2
+        version: 6.4.2
       '@headlessui/vue':
         specifier: ^1.7.23
         version: 1.7.23(vue@3.5.22)
@@ -41,6 +44,9 @@ importers:
       firebase:
         specifier: ^12.5.0
         version: 12.5.0
+      hls.js:
+        specifier: ^1.6.15
+        version: 1.6.15
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4
@@ -238,6 +244,10 @@ packages:
     engines: {node: '>=18'}
     peerDependencies:
       postcss-selector-parser: ^7.0.0
+
+  '@dailymotion/vast-client@6.4.2':
+    resolution: {integrity: sha512-oHGZr0c59zcxWYhLav2Z2VFeytoHSV8f5TTAVegxnMGu01xL7IUTJ2SLfrCZ/kCgBC1Yp/7DjKV4uhH/NGrEVQ==}
+    engines: {node: '>=12.22.1'}
 
   '@emnapi/core@1.5.0':
     resolution: {integrity: sha512-sbP8GzB1WDzacS8fgNPpHlp6C9VZe+SJP3F90W9rLemaQj2PzIuTEl1qDOYQf58YIpyjViI24y9aPWCjEzY2cg==}
@@ -1582,6 +1592,10 @@ packages:
   '@vue/shared@3.5.22':
     resolution: {integrity: sha512-F4yc6palwq3TT0u+FYf0Ns4Tfl9GRFURDN2gWG7L1ecIaS/4fCIuFOjMTnCyjsu/OK6vaDKLCrGAa+KvvH+h4w==}
 
+  '@xmldom/xmldom@0.8.11':
+    resolution: {integrity: sha512-cQzWCtO6C8TQiYl1ruKNn2U6Ao4o4WBBcbL61yJl84x+j5sOWWFU9X7DpND8XZG3daDppSsigMdfAIl2upQBRw==}
+    engines: {node: '>=10.0.0'}
+
   abbrev@3.0.1:
     resolution: {integrity: sha512-AO2ac6pjRB3SJmGJo+v5/aK6Omggp6fsLrs6wN9bd35ulu4cCwaAU9+7ZhXjeqHVkaHThLuzH0nZr0YpCDhygg==}
     engines: {node: ^18.17.0 || >=20.5.0}
@@ -2481,6 +2495,9 @@ packages:
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
+
+  hls.js@1.6.15:
+    resolution: {integrity: sha512-E3a5VwgXimGHwpRGV+WxRTKeSp2DW5DI5MWv34ulL3t5UNmyJWCQ1KmLEHbYzcfThfXG8amBL+fCYPneGHC4VA==}
 
   hookable@5.5.3:
     resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
@@ -4655,6 +4672,10 @@ snapshots:
     dependencies:
       postcss-selector-parser: 7.1.0
 
+  '@dailymotion/vast-client@6.4.2':
+    dependencies:
+      '@xmldom/xmldom': 0.8.11
+
   '@emnapi/core@1.5.0':
     dependencies:
       '@emnapi/wasi-threads': 1.1.0
@@ -6255,6 +6276,8 @@ snapshots:
 
   '@vue/shared@3.5.22': {}
 
+  '@xmldom/xmldom@0.8.11': {}
+
   abbrev@3.0.1: {}
 
   abort-controller@3.0.0:
@@ -7181,6 +7204,8 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
+
+  hls.js@1.6.15: {}
 
   hookable@5.5.3: {}
 

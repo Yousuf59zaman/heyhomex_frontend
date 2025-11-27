@@ -11,6 +11,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@dailymotion/vast-client": "^6.4.2",
     "@headlessui/vue": "^1.7.23",
     "@heroicons/vue": "^2.2.0",
     "@nuxt/image": "^1.11.0",
@@ -22,6 +23,7 @@
     "chart.js": "^4.5.0",
     "date-fns": "^4.1.0",
     "firebase": "^12.5.0",
+    "hls.js": "^1.6.15",
     "leaflet": "^1.9.4",
     "nuxt": "^4.1.2",
     "nuxt-marquee": "^1.0.4",

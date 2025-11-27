@@ -19,7 +19,7 @@
         action: "",
     })
     const demoVideoUrl =
-        "https://content.jwplatform.com/manifests/yp34SRmf.m3u8"
+        "https://arprince.me/assets/video/cursor.mp4"
 
     const searchQuery = ref("")
     const selectedPropertyType = ref("")
