@@ -259,22 +259,15 @@
         :draggable="false"
         :resizable="false"
         class="citizen-register-modal"
-        :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
-            root: 'border-0 rounded-2xl shadow-2xl m-4',
+            root: 'border-0 rounded-[10px] shadow-2xl m-4',
             header: 'border-0 pb-0',
-            content: 'border-0 pt-0 pb-6',
+            content: 'border-0 pt-0 pb-8',
             closeButton:
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-sm transition-colors duration-200',
         }">
         <template #header>
-            <div class="absolute right-[0px] top-[0px] z-50">
-                <button
-                    @click="closeHandler"
-                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[15px] transition-all duration-300 focus:outline-none">
-                    <i class="pi pi-times text-xl"></i>
-                </button>
-            </div>
             <div class="w-full px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
                 <div class="flex items-center justify-center relative">
                     
@@ -297,7 +290,7 @@
                     </button>
 
                     
-                    <h1 class="text-2xl font-semibold text-[#121A22]">
+                    <h1 class="text-[32px] leading-[40px] font-medium text-[#121A22]">
                         Set up profile
                     </h1>
                 </div>
@@ -305,16 +298,16 @@
         </template>
 
         <!-- Content -->
-        <div class="px-4 sm:px-6 pb-6">
+        <div class="px-4 sm:px-6 pb-8">
             <form
                 @submit.prevent="handleRegister"
                 autocomplete="off"
-                class="space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="flex flex-col gap-2">
+                class="space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="flex flex-col gap-3">
                         <label
                             for="firstName"
-                            class="text-sm font-medium text-gray-700"
+                            class="text-base font-medium text-[#121A22]"
                             >First name</label
                         >
                         <InputText
@@ -324,7 +317,7 @@
                             required
                             autocomplete="off"
                             :pt="{
-                                root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                                root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-[8px] text-[16px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                             }" />
                         <span
                             v-if="validationErrors.first_name"
@@ -333,10 +326,10 @@
                         </span>
                     </div>
 
-                    <div class="flex flex-col gap-2">
+                    <div class="flex flex-col gap-3">
                         <label
                             for="lastName"
-                            class="text-sm font-medium text-gray-700"
+                            class="text-base font-medium text-[#121A22]"
                             >Last name</label
                         >
                         <InputText
@@ -346,7 +339,7 @@
                             required
                             autocomplete="off"
                             :pt="{
-                                root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                                root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-[8px] text-[16px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                             }" />
                         <span
                             v-if="validationErrors.last_name"
@@ -356,10 +349,10 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-3">
                     <label
                         for="password"
-                        class="text-sm font-medium text-gray-700"
+                        class="text-base font-medium text-[#121A22]"
                         >Password</label
                     >
                     <div class="relative">
@@ -372,7 +365,7 @@
                             autocomplete="new-password"
                             @blur="validatePasswords"
                             :pt="{
-                                root: 'w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                                root: 'w-full h-14 px-4 pr-12 border border-[#cfdbe8] rounded-[8px] text-[16px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                             }" />
                         <button
                             type="button"
@@ -425,10 +418,10 @@
                     </span>
                 </div>
 
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-3">
                     <label
                         for="confirmPassword"
-                        class="text-sm font-medium text-gray-700"
+                        class="text-base font-medium text-[#121A22]"
                         >Confirm password</label
                     >
                     <div class="relative">
@@ -441,7 +434,7 @@
                             autocomplete="new-password"
                             @blur="validatePasswords"
                             :pt="{
-                                root: 'w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                                root: 'w-full h-14 px-4 pr-12 border border-[#cfdbe8] rounded-[8px] text-[16px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                             }" />
                         <button
                             type="button"
@@ -499,7 +492,7 @@
                     </span>
                 </div>
 
-                <div class="text-xs text-gray-600 space-y-2.5 mt-2">
+                <div class="text-sm text-[#121A22] space-y-2.5 mt-2">
                     <!-- Minimum 8 characters validation -->
                     <div class="flex items-center gap-2.5">
                         <span
@@ -630,23 +623,23 @@
                     :disabled="loading || !allPasswordValidationsPassed"
                     :loading="loading"
                     loadingIcon="pi pi-spin pi-spinner"
-                    class="w-full px-6 py-3 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center"
+                    class="w-full h-[52px] px-6 bg-[#18222c] hover:bg-[#101822] disabled:bg-gray-400 text-white font-bold rounded-[12px] transition-colors duration-200 flex items-center justify-center"
                     >
                     {{ loading ? "Processing..." : "Next" }}
                 </button>
 
                 <div class="text-center">
-                    <p class="text-sm text-gray-600">
+                    <p class="text-base font-medium text-[#121A22]">
                         By using heyhomex, you agree to the
                         <a
                             href="/terms"
-                            class="text-gray-900 font-medium"
+                            class="text-[#121A22] font-bold hover:underline"
                             >Terms</a
                         >
                         and
                         <a
                             href="/privacy"
-                            class="text-gray-900 font-medium"
+                            class="text-[#121A22] font-bold hover:underline"
                             >Privacy Policy</a
                         >.
                     </p>
@@ -658,7 +651,7 @@
 
 <style scoped>
     .citizen-register-modal .p-dialog {
-        border-radius: 1rem;
+        border-radius: 10px;
     }
 
     .citizen-register-modal .p-dialog-header {
