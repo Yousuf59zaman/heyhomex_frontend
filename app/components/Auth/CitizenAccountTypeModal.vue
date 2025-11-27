@@ -115,23 +115,14 @@
         :draggable="false"
         :resizable="false"
         class="citizen-account-type-modal"
-        :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
-            root: 'border-0 rounded-2xl shadow-2xl m-4',
-            header: 'border-0 pb-4',
-            content: 'border-0 pt-0 pb-6',
-            closeButton:
-                'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200',
+            root: 'border-0 rounded-[10px] shadow-2xl m-4',
+            header: 'border-0 pb-0',
+            content: 'border-0 pt-0 pb-8',
         }">
         <template #header>
-            <div class="absolute right-[0px] top-[0px] z-50">
-                <button
-                    @click="closeHandler"
-                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[15px] transition-all duration-300 focus:outline-none">
-                    <i class="pi pi-times text-xl"></i>
-                </button>
-            </div>
-            <div class="w-full px-6 pt-6 pb-2">
+            <div class="w-full px-6 pt-8">
                 <div class="flex items-center justify-center relative">
                     <button
                         @click="handleBack"
@@ -144,14 +135,14 @@
                             stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M15 19l-7-7 7-7" />
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
 
-                    <h2 class="text-xl font-semibold text-[#121A22]">
+                    <h2 class="text-[32px] leading-[40px] font-medium text-[#121A22]">
                         Select account type
                     </h2>
                 </div>
@@ -159,16 +150,16 @@
         </template>
 
         <!-- Content -->
-        <div class="px-6 pb-6 space-y-6">
-            <div class="grid grid-cols-3 gap-3">
+        <div class="px-6 pt-8 pb-6 space-y-10">
+            <div class="grid grid-cols-3 gap-5">
                 <button
                     @click="selectAccountType(3)"
                     type="button"
                     :class="[
-                        'px-4 py-3.5 rounded-lg font-medium transition-all duration-200',
+                        'h-[92px] px-5 py-[14px] rounded-[12px] text-[16px] font-bold transition-all duration-200',
                         selectedAccountType === 3
-                            ? 'bg-[#1E293B] text-white'
-                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50',
+                            ? 'bg-[#18222c] text-white'
+                            : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
                     ]">
                     I am a Buyer
                 </button>
@@ -177,10 +168,10 @@
                     @click="selectAccountType(2)"
                     type="button"
                     :class="[
-                        'px-4 py-3.5 rounded-lg font-medium transition-all duration-200',
+                        'h-[92px] px-5 py-[14px] rounded-[12px] text-[16px] font-bold transition-all duration-200',
                         selectedAccountType === 2
-                            ? 'bg-[#1E293B] text-white'
-                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50',
+                            ? 'bg-[#18222c] text-white'
+                            : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
                     ]">
                     I am an Agent
                 </button>
@@ -189,10 +180,10 @@
                     @click="selectAccountType(1)"
                     type="button"
                     :class="[
-                        'px-4 py-3.5 rounded-lg font-medium transition-all duration-200',
+                        'h-[92px] px-5 py-[14px] rounded-[12px] text-[16px] font-bold transition-all duration-200',
                         selectedAccountType === 1
-                            ? 'bg-[#1E293B] text-white'
-                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50',
+                            ? 'bg-[#18222c] text-white'
+                            : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
                     ]">
                     I am an Advertiser
                 </button>
@@ -201,22 +192,22 @@
             <button
                 @click="handleNext"
                 type="button"
-                class="w-full px-6 py-3.5 bg-[#1E293B] hover:bg-[#0F172A] text-white font-medium rounded-lg transition-colors duration-200">
+                class="w-full h-[52px] px-6 bg-[#18222c] hover:bg-[#101822] text-white font-bold rounded-[12px] transition-colors duration-200">
                 Next
             </button>
 
-            <div class="text-center pt-2">
-                <p class="text-xs text-gray-600">
+            <div class="text-center">
+                <p class="text-base font-medium text-[#121A22]">
                     By using heyhomex, you agree to the
                     <a
                         href="/terms"
-                        class="text-gray-900 font-medium hover:underline"
+                        class="text-[#121A22] font-bold hover:underline"
                         >Terms</a
                     >
                     and
                     <a
                         href="/privacy"
-                        class="text-gray-900 font-medium hover:underline"
+                        class="text-[#121A22] font-bold hover:underline"
                         >Privacy Policy</a
                     >.
                 </p>
@@ -227,7 +218,7 @@
 
 <style scoped>
     .citizen-account-type-modal .p-dialog {
-        border-radius: 1rem;
+        border-radius: 10px;
     }
 
     .citizen-account-type-modal .p-dialog-header {
