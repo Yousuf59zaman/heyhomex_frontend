@@ -16,11 +16,9 @@
  */
 
 import { VASTClient } from '@dailymotion/vast-client';
-import type { Ref } from 'vue';
 
 // Types for VAST responses
 type VASTResponse = any;
-type VASTAd = any;
 
 export interface Hls {
     offset: string; // 'pre', 'post', '50%', or time in seconds

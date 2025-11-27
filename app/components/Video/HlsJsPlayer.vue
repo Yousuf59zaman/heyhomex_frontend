@@ -14,23 +14,7 @@
 
 import Hls from 'hls.js';
 import type { Video } from '~/composables/useVideoPlayer';
-import { useHlsPlayerAds, type ParsedAd } from '~/composables/useHlsPlayerAds';
-
-interface AdScheduleHls {
-    offset: string; // 'pre', 'post', '50%', or time in seconds
-    tag: string; // VAST tag URL
-    type?: 'linear' | 'nonlinear'; // Ad type (default: linear)
-}
-
-interface AdvertisingConfigHls {
-    client: 'vast' | 'googima'; // Ad client type
-    schedule?: AdScheduleHls[]; // Ad schedule (pre-roll, mid-roll, post-roll)
-    skipoffset?: number; // Seconds before skip button appears
-    admessage?: string; // Custom ad message
-    skipmessage?: string; // Custom skip message
-    vpaidcontrols?: boolean; // Show controls during VPAID ads
-    autoplayadsmuted?: boolean; // Auto-play ads muted
-}
+import { useHlsPlayerAds, type ParsedAd, type AdvertisingConfigHls } from '~/composables/useHlsPlayerAds';
 interface AdPlaybackState {
     isPlayingAd: boolean;
     currentAd: ParsedAd | null;
