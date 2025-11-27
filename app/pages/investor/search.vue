@@ -22,7 +22,7 @@ const videos = ref([
         category: 'Investment',
         location: 'Waikiki',
         coordinates: [21.2793, -157.8293],
-        videoUrl: 'https://eu2.contabostorage.com/beede22b78b34cd7b1c01987a4332d1b:meteka/111/index.m3u8',
+        videoUrl: 'https://eu2.contabostorage.com/beede22b78b34cd7b1c01987a4332d1b:meteka/16/index.m3u8',
     },
     {
         id: 2,

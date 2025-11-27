@@ -139,24 +139,14 @@
         :draggable="false"
         :resizable="false"
         class="citizen-send-otp-modal"
-        :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
-            root: 'border-0 rounded-2xl shadow-2xl m-4',
-            header: 'border-0 pb-4',
-            content: 'border-0 pt-0 pb-6',
-            closeButton:
-                'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200',
+            root: 'border-0 rounded-[10px] shadow-2xl m-4',
+            header: 'border-0 pb-0',
+            content: 'border-0 pt-0 pb-8',
         }">
         <template #header>
-            
-            <div class="absolute right-[0px] top-[0px] z-50">
-                <button
-                    @click="closeHandler"
-                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[15px] transition-all duration-300 focus:outline-none">
-                    <i class="pi pi-times text-xl"></i>
-                </button>
-            </div>
-            <div class="w-full px-6 pt-6 pb-2">
+            <div class="w-full px-6 pt-4">
                 <div class="flex items-center justify-center relative">
                     <button
                         @click="handleBack"
@@ -172,11 +162,11 @@
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
                                 stroke-width="2"
-                                d="M15 19l-7-7 7-7" />
+                            d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
 
-                    <h2 class="text-xl font-semibold text-[#121A22]">
+                    <h2 class="text-[32px] leading-[40px] font-medium text-[#121A22]">
                         Add your email
                     </h2>
                 </div>
@@ -184,11 +174,11 @@
         </template>
 
         <!-- Content -->
-        <div class="px-6 pb-6 space-y-4">
+        <div class="px-6 pt-8 pb-2 space-y-12">
             <div class="flex flex-col gap-2">
                 <label
                     for="email"
-                    class="text-sm font-medium text-gray-700"
+                    class="text-base font-medium text-[#121A22]"
                     >Email Address</label
                 >
                 <InputText
@@ -198,7 +188,7 @@
                     placeholder="Enter your email address"
                     @keyup.enter="handleSubmit"
                     :pt="{
-                        root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                        root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-[8px] text-[16px] text-[#566573] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                     }" />
                 <span
                     v-if="validations_errors.email"
@@ -211,11 +201,11 @@
                 @click="handleSubmit"
                 :disabled="isLoading"
                 type="button"
-                class="w-full px-6 py-3.5 font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                class="w-full h-[52px] px-6 font-bold rounded-[12px] transition-colors duration-200 flex items-center justify-center gap-2"
                 :class="
                     isLoading
                         ? 'bg-[#606e83] text-white cursor-not-allowed'
-                        : 'bg-[#1E293B] hover:bg-[#0F172A] text-white'
+                        : 'bg-[#18222c] hover:bg-[#101822] text-white'
                 ">
                 <svg
                     v-if="isLoading"
@@ -238,18 +228,18 @@
                 {{ isLoading ? "Loading..." : "Next" }}
             </button>
 
-            <div class="text-center pt-2">
-                <p class="text-xs text-gray-600">
+            <div class="text-center">
+                <p class="text-base font-medium text-[#121A22]">
                     By using heyhomex, you agree to the
                     <a
                         href="/terms"
-                        class="text-gray-900 font-medium hover:underline"
+                        class="text-[#121A22] font-bold hover:underline"
                         >Terms</a
                     >
                     and
                     <a
                         href="/privacy"
-                        class="text-gray-900 font-medium hover:underline"
+                        class="text-[#121A22] font-bold hover:underline"
                         >Privacy Policy</a
                     >.
                 </p>
@@ -260,7 +250,7 @@
 
 <style scoped>
     .citizen-send-otp-modal .p-dialog {
-        border-radius: 1rem;
+        border-radius: 10px;
     }
 
     .citizen-send-otp-modal .p-dialog-header {
