@@ -185,8 +185,9 @@ const createHandler = async () => {
         </template>
         <div class="grid grid-cols-1 gap-4">
             <div class="flex items-center gap-4">
-                <label class="font-semibold w-24">Title</label>
+               
                 <div class="flex-auto">
+                    <label class="font-semibold w-24">Title <span class="text-red-600"> *</span></label>
                     <InputText v-model="formData.title" class="w-full" placeholder="i.e. Tutorials"
                         :class="validations_errors.title ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.title = ''" />
@@ -195,8 +196,9 @@ const createHandler = async () => {
             </div>
 
             <div class="flex items-center gap-4">
-                <label class="font-semibold w-24">Slug</label>
+                
                 <div class="flex-auto">
+                    <label class="font-semibold w-24">Slug <span class="text-red-600"> *</span></label>
                     <InputText v-model="formData.slug" class="w-full" placeholder="i.e. slug-tutorials"
                         :class="validations_errors.slug ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.slug = ''" />
@@ -205,8 +207,9 @@ const createHandler = async () => {
             </div>
 
             <div class="flex items-center gap-4">
-                <label class="font-semibold w-24">Parent Category</label>
+               
                 <div class="flex-auto">
+                     <label class="font-semibold w-24">Parent Category</label>
                     <Select v-model="formData.parent_id" :options="parentOptions" optionLabel="title" placeholder="Select" optionValue="id"
                         class="w-full" @focus="validations_errors.parent_id = ''" />
                     <InputError class="text-sm mt-1" :message="validations_errors.parent_id" />

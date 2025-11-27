@@ -324,8 +324,9 @@ const handleSEOChange = () => {
             <!-- <pre>{{ formData }}</pre> -->
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
-                    <label class="font-semibold">Banner Image</label>
+                    
                     <div class="w-full ">
+                        <label class="font-semibold w-28">Banner Image <span class="text-red-600"> *</span></label>
                         <PhotoBlockPhoto :getPhoto="formData.photo" @set_photo="(photo) => setImage('photo', photo)" />
                     </div>
                     <InputError class="text-sm mt-1" :message="validations_errors.photo" />
@@ -333,8 +334,9 @@ const handleSEOChange = () => {
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
-                    <label class="font-semibold">Thumbnail Image</label>
+                   
                     <div class="w-full ">
+                        <label class="font-semibold w-28">Thumbnail Image <span class="text-red-600"> *</span></label>
                         <PhotoBlockPhoto :getPhoto="formData.thumbnail_image" @set_photo="(photo) => setImage('thumbnail_image', photo)" />
                     </div>
                     <InputError class="text-sm mt-1" :message="validations_errors.thumbnail_image" />
@@ -343,7 +345,7 @@ const handleSEOChange = () => {
             <div></div>
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
-                    <label class="font-semibold">Title</label>
+                    <label class="font-semibold w-28">Title <span class="text-red-600"> *</span></label>
                     <InputText v-model="formData.title" class="w-full"
                         :class="validations_errors.title ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.title = ''" Placeholder="i.e How to use this website?" />

@@ -82,31 +82,35 @@ const reset = () => {
                 </div>
             </template>
             <div class="flex items-center gap-4 mb-4">
-                <label for="username" class="font-semibold w-24">Name</label>
+               
                 <div class="flex-auto">
-                    <LazyInputText v-model="form.node_name" class="w-full" :class="validations_errors.node_name ? 'border-[#f44336!important]' : ''" autocomplete="off" @focus="validations_errors.node_name = ''" placeholder="i.e. Portfolio Categories"/>
+                    <label for="username" class="font-semibold w-24">Name <span class="text-red-600"> *</span></label>
+                    <InputText v-model="form.node_name" class="w-full" :class="validations_errors.node_name ? 'border-[#f44336!important]' : ''" autocomplete="off" @focus="validations_errors.node_name = ''" placeholder="i.e. Portfolio Categories"/>
                     <LazyInputError class="text-sm mt-1" :message="validations_errors.node_name" :text_size="'text-sm'" />
                 </div>
             </div>
             <div class="flex items-center gap-4 mb-4">
-                <label for="username" class="font-semibold w-24">Route</label>
+                
                 <div class="flex-auto">
-                    <LazyInputText v-model="form.route_name" class="w-full" :class="validations_errors.route_name ? 'border-[#f44336!important]' : ''" autocomplete="off" @focus="validations_errors.route_name = ''" placeholder="i.e. /admin-panel/portfolio-categories"/>
+                    <label for="username" class="font-semibold w-24">Route </label>
+                    <InputText v-model="form.route_name" class="w-full" :class="validations_errors.route_name ? 'border-[#f44336!important]' : ''" autocomplete="off" @focus="validations_errors.route_name = ''" placeholder="i.e. /admin-panel/portfolio-categories"/>
                     <LazyInputError class="text-sm mt-1" :message="validations_errors.route_name" :text_size="'text-sm'" />
                 </div>
             </div>
             <div class="flex items-center gap-4 mb-4">
-                <label for="username" class="font-semibold w-24">Api Route Permission</label>
+                
                 <div class="flex-auto">
-                    <LazyInputText v-model="form.route_location" class="w-full" :class="validations_errors.route_location ? 'border-[#f44336!important]' : ''" autocomplete="off" @focus="validations_errors.route_location = ''" placeholder="i.e. portfolio-categories"/>
+                    <label for="username" class="font-semibold w-24">Api Route Permission</label>
+                    <InputText v-model="form.route_location" class="w-full" :class="validations_errors.route_location ? 'border-[#f44336!important]' : ''" autocomplete="off" @focus="validations_errors.route_location = ''" placeholder="i.e. portfolio-categories"/>
                     <LazyInputError class="text-sm mt-1" :message="validations_errors.route_location" :text_size="'text-sm'" />
                 </div>
             </div>
             <div class="flex items-center gap-4 mb-4">
-                <label for="username" class="font-semibold w-24">Icon</label>
+                
                 <div class="flex-auto">
+                        <label for="username" class="font-semibold w-24">Icon</label>
                     <div class="flex items-center gap-2">
-                        <LazyInputText v-model="form.icon" :class="validations_errors.icon ? 'border-[#f44336!important]' : ''" class="w-full" autocomplete="off" disabled @focus="validations_errors.icon = ''"/>
+                        <InputText v-model="form.icon" :class="validations_errors.icon ? 'border-[#f44336!important]' : ''" class="w-full" autocomplete="off" disabled @focus="validations_errors.icon = ''"/>
                         <i :class="form.icon" class="text-[25px] cursor-pointer text-[#f88900ef]" @click="OpenPicker"></i>
                     </div>
                     <LazyInputError class="text-sm mt-1" :message="validations_errors.icon" :text_size="'text-sm'" />

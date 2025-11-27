@@ -177,8 +177,9 @@ const createHandler = async () => {
         </template>
         <div class="grid grid-cols-1 gap-4">
             <div class="flex items-center gap-4">
-                <label class="font-semibold w-28">Name</label>
+                
                 <div class="flex-auto">
+                    <label class="font-semibold w-28">Name <span class="text-red-600"> *</span></label>
                     <InputText v-model="formData.name" class="w-full" placeholder="i.e. Welcome"
                         :class="validations_errors.name ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.name = ''" />
@@ -186,8 +187,9 @@ const createHandler = async () => {
                 </div>
             </div>
             <div class="flex items-center gap-4">
-                <label class="font-semibold w-28">Slug</label>
+               
                 <div class="flex-auto">
+                    <label class="font-semibold w-28">Slug <span class="text-red-600"> *</span></label>
                     <InputText v-model="formData.slug" class="w-full" placeholder="i.e. example-slug"
                         :class="validations_errors.slug ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.slug = ''" />
@@ -195,8 +197,9 @@ const createHandler = async () => {
                 </div>
             </div>
             <div class="flex items-center gap-4">
-                <label class="font-semibold w-28">Sms Body</label>
+                
                 <div class="flex-auto">
+                    <label class="font-semibold w-28">Sms Body <span class="text-red-600"> *</span></label>
                     <Textarea v-model="formData.sms_body" class="w-full" rows="3" cols="30" placeholder="i.e. Welcome to our platform"
                         :class="validations_errors.sms_body ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.sms_body = ''" />
