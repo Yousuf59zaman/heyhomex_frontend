@@ -171,8 +171,9 @@ const createHandler = async () => {
         </template>
         <div class="grid grid-cols-1 gap-4">
             <div class="flex items-center gap-4">
-                <label class="font-semibold w-24">Name</label>
+                
                 <div class="flex-auto">
+                    <label class="font-semibold w-24">Name <span class="text-red-600"> *</span></label>
                     <InputText v-model="formData.language_name" class="w-full" placeholder="i.e. English"
                         :class="validations_errors.language_name ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.language_name = ''" />

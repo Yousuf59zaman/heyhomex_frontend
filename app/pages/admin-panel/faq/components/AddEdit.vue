@@ -268,8 +268,9 @@ const handleType = () => {
         <div class="grid grid-cols-1 gap-4">
             <!-- <pre>{{ formData }}</pre> -->
             <div class="flex items-center gap-4">
-                <label class="font-semibold w-32">Title</label>
+               
                 <div class="flex-auto">
+                    <label class="font-semibold w-32">Title <span class="text-red-600"> *</span></label>
                     <InputText v-model="formData.title" class="w-full"
                         :class="validations_errors.title ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.title = ''" Placeholder="i.e How to use this website?" />
@@ -278,8 +279,9 @@ const handleType = () => {
             </div>
 
             <div class="flex items-center gap-4">
-                <label class="font-semibold w-32">Category</label>
+                
                 <div class="flex-auto">
+                    <label class="font-semibold w-32">Category <span class="text-red-600"> *</span></label>
                     <Select v-model="formData.cat_id" :options="data" optionLabel="title" placeholder="Select Category"
                         optionValue="id" class="w-full" @focus="validations_errors.cat_id" />
                     <InputError class="text-sm mt-1" :message="validations_errors.cat_id" />
@@ -287,8 +289,9 @@ const handleType = () => {
             </div>
 
             <div class="flex items-center gap-4">
-                <label class="font-semibold w-32">Type</label>
+                
                 <div class="flex-auto">
+                    <label class="font-semibold w-32">Type <span class="text-red-600"> *</span></label>
                     <Select v-model="formData.type" :options="typetList" optionLabel="name" placeholder="Select Type"
                         optionValue="id" class="w-full" @focus="validations_errors.type" @change="handleType" />
                     <InputError class="text-sm mt-1" :message="validations_errors.type" />
@@ -296,15 +299,16 @@ const handleType = () => {
             </div>
 
             <div v-if="formData.type == 1" class="flex items-center gap-4">
-                <label class="font-semibold w-32">Description</label>
+                
                 <div class="flex-auto">
+                    <label class="font-semibold w-32">Description <span class="text-red-600"> *</span></label>
                     <Editor v-model="formData.description" class="w-full" editorStyle="height: 200px" rows="5"
                         cols="30" />
                     <InputError class="text-sm mt-1" :message="validations_errors.description" />
                 </div>
             </div>
             <div v-if="formData.type == 2" class="flex items-center gap-4">
-                <label class="font-semibold w-32">Upload Image</label>
+                <label class="font-semibold w-32">Image Upload</label>
                 <div class="flex-auto">
                     <div class="w-[250px] ">
                         <PhotoBlockPhoto :getPhoto="formData.attachment" @set_photo="setPhoto" />

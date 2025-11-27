@@ -169,9 +169,10 @@ const createHandler = async () => {
             </div>
         </template>
         <div class="flex items-center gap-4 mb-4">
-            <label for="username" class="font-semibold w-24">Name</label>
+           
             <div class="flex-auto">
-                <InputText v-model="formData.role_name" class="flex-auto" placeholder="i.e. Admin"
+                <label for="username" class="font-semibold">Name <span class="text-red-600"> *</span></label>
+                <InputText v-model="formData.role_name" class="w-full" placeholder="i.e. Admin"
                     :class="validations_errors.role_name ? 'border-[#f44336!important]' : ''" autocomplete="off"
                     @focus="validations_errors.role_name = ''" />
                 <InputError class="text-sm mt-1" :message="validations_errors.role_name" :text_size="'text-sm'" />
