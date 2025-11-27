@@ -1,31 +1,10 @@
-/**
- * HLS Player Advertising Composable
- *
- * Provides VAST ad integration utilities for HLS.js player.
- * Handles ad parsing, playback, and event tracking for HlsJsPlayer component.
- *
- * Features:
- * - VAST 2.0/3.0/4.0 support via @dailymotion/vast-client
- * - Pre-roll, mid-roll, and post-roll ads
- * - Time-based and percentage-based ad scheduling
- * - Ad skip functionality
- * - Clickthrough handling
- * - Comprehensive event tracking
- *
- * @see https://github.com/dailymotion/vast-client-js
- */
-
 import { VASTClient } from '@dailymotion/vast-client';
-
-// Types for VAST responses
 type VASTResponse = any;
-
 export interface Hls {
-    offset: string; // 'pre', 'post', '50%', or time in seconds
-    tag: string; // VAST tag URL
+    offset: string;
+    tag: string;
     type?: 'linear' | 'nonlinear';
 }
-
 export interface AdvertisingConfigHls {
     client: 'vast' | 'googima';
     schedule?: Hls[];
@@ -35,10 +14,9 @@ export interface AdvertisingConfigHls {
     vpaidcontrols?: boolean;
     autoplayadsmuted?: boolean;
 }
-
 export interface ParsedAd {
     id: string;
-    offset: string | number; // 'pre', 'post', or seconds (number or percentage string)
+    offset: string | number;
     vastTag: string;
     vastResponse?: VASTResponse;
     mediaFileUrl?: string;
@@ -49,11 +27,6 @@ export interface ParsedAd {
 }
 
 export const useHlsPlayerAds = () => {
-    /**
-     * Parse VAST XML from a tag URL
-     * @param tagUrl - VAST tag URL
-     * @returns Promise with parsed VAST response
-     */
     const parseVastTag = async (tagUrl: string): Promise<VASTResponse | undefined> => {
         try {
             const vastClient = new VASTClient();
@@ -64,11 +37,6 @@ export const useHlsPlayerAds = () => {
             return undefined;
         }
     };
-
-    /**
-     * Extract media file URL from VAST response
-     * Prefers MP4 format, falls back to other formats
-     */
     const extractMediaFile = (vastResponse: VASTResponse): string | undefined => {
         try {
             if (!vastResponse.ads || vastResponse.ads.length === 0) {
@@ -97,10 +65,6 @@ export const useHlsPlayerAds = () => {
             return undefined;
         }
     };
-
-    /**
-     * Extract click-through URL from VAST response
-     */
     const extractClickThrough = (vastResponse: VASTResponse): string | undefined => {
         try {
             if (!vastResponse.ads || vastResponse.ads.length === 0) {
@@ -121,10 +85,6 @@ export const useHlsPlayerAds = () => {
             return undefined;
         }
     };
-
-    /**
-     * Get ad duration from VAST response
-     */
     const getAdDuration = (vastResponse: VASTResponse): number => {
         try {
             if (!vastResponse.ads || vastResponse.ads.length === 0) {
@@ -145,13 +105,6 @@ export const useHlsPlayerAds = () => {
             return 0;
         }
     };
-
-    /**
-     * Process ad schedule and parse VAST tags
-     * @param schedule - Array of ad schedules
-     * @param skipOffset - Default skip offset in seconds
-     * @returns Array of parsed ads ready for playback
-     */
     const processAdSchedule = async (
         schedule: Hls[],
         skipOffset: number = 5
@@ -194,13 +147,6 @@ export const useHlsPlayerAds = () => {
 
         return parsedAds;
     };
-
-    /**
-     * Convert offset to seconds
-     * @param offset - Offset string ('pre', 'post', '50%', or time in seconds)
-     * @param videoDuration - Total video duration in seconds
-     * @returns Offset in seconds, or -1 for pre-roll, or Infinity for post-roll
-     */
     const convertOffsetToSeconds = (offset: string | number, videoDuration: number): number => {
         if (typeof offset === 'number') {
             return offset;
@@ -209,11 +155,11 @@ export const useHlsPlayerAds = () => {
         const offsetStr = offset.toString().toLowerCase();
 
         if (offsetStr === 'pre') {
-            return -1; // Pre-roll indicator
+            return -1;
         }
 
         if (offsetStr === 'post') {
-            return Infinity; // Post-roll indicator
+            return Infinity;
         }
 
         if (offsetStr.endsWith('%')) {
@@ -223,16 +169,6 @@ export const useHlsPlayerAds = () => {
 
         return parseFloat(offsetStr) || 0;
     };
-
-    /**
-     * Find ad to play at current time
-     * @param parsedAds - Array of parsed ads
-     * @param currentTime - Current video playback time
-     * @param videoDuration - Total video duration
-     * @param isPreRoll - Whether to check for pre-roll
-     * @param isPostRoll - Whether to check for post-roll
-     * @returns Ad to play, or undefined
-     */
     const findAdToPlay = (
         parsedAds: ParsedAd[],
         currentTime: number,
@@ -278,7 +214,6 @@ export const useHlsPlayerAds = () => {
             impressions.forEach((impression: any) => {
                 const url = impression.url || impression;
                 if (url) {
-                    // Fire impression tracking pixel
                     if (typeof window !== 'undefined' && typeof Image !== 'undefined') {
                         const img = new Image();
                         img.src = url;
@@ -313,7 +248,6 @@ export const useHlsPlayerAds = () => {
             eventUrls.forEach((tracking: any) => {
                 const url = tracking.url || tracking;
                 if (url) {
-                    // Fire tracking pixel
                     if (typeof window !== 'undefined' && typeof Image !== 'undefined') {
                         const img = new Image();
                         img.src = url;
@@ -326,14 +260,12 @@ export const useHlsPlayerAds = () => {
     };
 
     return {
-        // VAST parsing utilities
         parseVastTag,
         extractMediaFile,
         extractClickThrough,
         getAdDuration,
         processAdSchedule,
         findAdToPlay,
-        // Tracking utilities
         trackImpression,
         trackEvent
     };

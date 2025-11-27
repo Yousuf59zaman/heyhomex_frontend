@@ -66,23 +66,12 @@ const sortByOptions = ref([
 ]);
 
 const resultsFound = computed(() => props.videos.length);
-
-// Methods
 const toggleFavorite = (videoId) => {
     const video = props.videos.find((v) => v.id === videoId);
     if (video) {
         video.isFavorite = !video.isFavorite;
     }
 };
-
-const handleSearch = () => {
-    console.log('Searching for:', searchQuery.value);
-};
-
-const saveSearch = () => {
-    console.log('Saving search...');
-};
-
 const playVideo = (videoId) => {
     const video = props.videos.find((item) => item.id === videoId);
     if (!video) {
@@ -91,20 +80,15 @@ const playVideo = (videoId) => {
 
     openVideo(video, props.videos);
 };
-
 const clearSearch = () => {
     searchQuery.value = '';
 };
 
-// Map related methods
+
 const initializeMap = async () => {
     if (!process.client) return;
-    
-    // Check if map container exists in DOM
     const mapElement = document.getElementById('video-map');
     if (!mapElement) return;
-    
-    // Remove existing map if it exists
     if (map.value) {
         try {
             map.value.remove();
@@ -114,39 +98,27 @@ const initializeMap = async () => {
         }
     }
     
-    // Dynamic import for client-side only
     const L = await import('leaflet');
-
-    // Fix for default markers
     delete L.Icon.Default.prototype._getIconUrl;
     L.Icon.Default.mergeOptions({
         iconRetinaUrl: '/leaflet/marker-icon-2x.png',
         iconUrl: '/leaflet/marker-icon.png',
         shadowUrl: '/leaflet/marker-shadow.png',
     });
-
-    // Default coordinates for Hawaii
-    const defaultCenter = [21.3099, -157.8581]; // Honolulu coordinates
+    const defaultCenter = [21.3099, -157.8581];
     const defaultZoom = 8;
 
     map.value = L.map('video-map').setView(defaultCenter, defaultZoom);
-
-    // Add tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map.value);
 
-    // Add markers for all videos
     addVideoMarkers(L);
-
-    // Fit map to show all markers
     setTimeout(() => fitBoundsToMarkers(), 100);
 };
 
 const addVideoMarkers = (L) => {
     if (!map.value || !L) return;
-
-    // Clear existing markers
     markers.value.forEach(marker => map.value.removeLayer(marker.marker));
     markers.value = [];
 
@@ -169,8 +141,6 @@ const addVideoMarkers = (L) => {
         });
 
         const marker = L.marker(video.coordinates, { icon: customIcon }).addTo(map.value);
-
-        // Add event listeners
         marker.on('mouseover', (e) => onMarkerHover(video, e));
         marker.on('mouseout', () => onMarkerLeave());
         marker.on('click', () => playVideo(video.id));
@@ -190,8 +160,6 @@ const fitBoundsToMarkers = async () => {
 const onMarkerHover = (video, event) => {
     hoveredVideo.value = video;
     showPopup.value = true;
-
-    // Calculate popup position
     const mapElement = document.getElementById('video-map');
     if (mapElement) {
         const rect = mapElement.getBoundingClientRect();
@@ -237,19 +205,11 @@ const onVideoCardLeave = () => {
         marker.getElement().classList.remove('highlighted');
     });
 };
-
-// Initialize map when component is mounted
-onMounted(() => {
-    // Map will initialize when switching to Map View
-});
-
-// Watch view mode changes to initialize map
 watch(viewMode, async (newMode, oldMode) => {
     if (newMode === 'Map View') {
         await nextTick();
         setTimeout(() => initializeMap(), 150);
     } else if (oldMode === 'Map View' && map.value) {
-        // Clean up map when switching away from Map View
         try {
             map.value.remove();
             map.value = null;
@@ -259,8 +219,6 @@ watch(viewMode, async (newMode, oldMode) => {
         }
     }
 });
-
-// Cleanup map on unmount
 onUnmounted(() => {
     if (map.value) {
         map.value.remove();
@@ -271,12 +229,9 @@ onUnmounted(() => {
 
 <template>
     <div class="space-y-4 lg:space-y-6">
-        <!-- Filters and Search Section -->
         <div class="bg-white rounded-lg p-3 lg:p-4">
             <div class="flex flex-col lg:flex-row gap-3">
-                <!-- Filters Row -->
                 <div class="flex flex-wrap lg:flex-nowrap items-center gap-2 flex-1">
-                    <!-- Category Filter -->
                     <div class="relative w-full sm:w-auto sm:min-w-[140px]">
                         <select v-model="selectedCategory"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
@@ -287,8 +242,6 @@ onUnmounted(() => {
                         <Icon name="lucide:chevron-down"
                             class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                     </div>
-
-                    <!-- Duration Filter -->
                     <div class="relative w-full sm:w-auto sm:min-w-[140px]">
                         <select v-model="selectedDuration"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
@@ -299,8 +252,6 @@ onUnmounted(() => {
                         <Icon name="lucide:chevron-down"
                             class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                     </div>
-
-                    <!-- Upload Time Filter -->
                     <div class="relative w-full sm:w-auto sm:min-w-[140px]">
                         <select v-model="selectedUploadTime"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
@@ -311,8 +262,6 @@ onUnmounted(() => {
                         <Icon name="lucide:chevron-down"
                             class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                     </div>
-
-                    <!-- Topic Filter -->
                     <div class="relative w-full sm:w-auto sm:min-w-[140px]">
                         <select v-model="selectedTopic"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
@@ -323,8 +272,6 @@ onUnmounted(() => {
                         <Icon name="lucide:chevron-down"
                             class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                     </div>
-
-                    <!-- Sort By Filter -->
                     <div class="relative w-full sm:w-auto sm:min-w-[120px]">
                         <select v-model="selectedSortBy"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
@@ -336,27 +283,22 @@ onUnmounted(() => {
                             class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                     </div>
                 </div>
-
-                <!-- Search Bar -->
                 <div class="flex items-center gap-2 lg:min-w-[350px]">
                     <div class="relative flex-1">
                         <input v-model="searchQuery" type="text" placeholder="Search videos about Hawaii..."
-                            class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            @keyup.enter="handleSearch" />
+                            class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                         <button v-if="searchQuery" @click="clearSearch"
                             class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
                             <Icon name="lucide:x" class="w-4 h-4" />
                         </button>
                     </div>
-                    <button @click="saveSearch"
+                    <button
                         class="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors whitespace-nowrap">
                         Save Search
                     </button>
                 </div>
             </div>
         </div>
-
-        <!-- Results Header -->
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-white rounded-lg p-4 lg:p-6">
             <div class="flex items-center gap-4">
                 <h2 class="text-lg lg:text-xl font-semibold text-gray-900">
@@ -393,31 +335,23 @@ onUnmounted(() => {
 
         <!-- Map View: 2-column grid + Map -->
         <div v-if="viewMode === 'Map View'" class="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
-            <!-- Video Listings Grid -->
             <div class="lg:col-span-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
                     <div v-for="video in videos" :key="video.id"
                         class="video-card bg-white rounded-xl overflow-hidden cursor-pointer border border-gray-100"
                         @mouseenter="onVideoCardHover(video)" @mouseleave="onVideoCardLeave"
                         @click="playVideo(video.id)">
-                        <!-- Video Thumbnail -->
                         <div class="relative h-48 lg:h-52">
                             <img :src="video.thumbnail" :alt="video.title" class="w-full h-full object-cover" />
-
-                            <!-- Play Button -->
                             <div
                                 class="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors">
                                 <div class="bg-red-600 hover:bg-red-700 rounded-full p-3 transition-colors">
                                     <Icon name="lucide:play" class="w-6 h-6 text-white ml-1" />
                                 </div>
                             </div>
-
-                            <!-- Duration Badge -->
                             <div class="absolute bottom-2 right-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
                                 {{ video.duration }}
                             </div>
-
-                            <!-- Favorite Button -->
                             <button @click.stop="toggleFavorite(video.id)"
                                 class="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-200 shadow-sm">
                                 <Icon name="lucide:heart" :class="[
@@ -444,8 +378,6 @@ onUnmounted(() => {
                                     <span>{{ video.uploadTime }}</span>
                                 </div>
                             </div>
-
-                            <!-- Video Category Badge -->
                             <div class="mt-2">
                                 <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
                                     {{ video.category }}

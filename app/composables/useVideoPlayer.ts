@@ -1,234 +1,158 @@
-/**
- * Video Player Composable
- *
- * Manages global video player state for the application.
- * Provides methods to open/close video player modal and track playback state.
- *
- * Features:
- * - Global video player state management
- * - YouTube-like modal interface
- * - Playlist support
- * - Playback history tracking
- */
-
 import { readonly, computed } from 'vue';
-
-// Video interface matching your existing video structure
 export interface Video {
-  id: number;
-  title: string;
-  subtitle?: string;
-  thumbnail: string;
-  duration: string;
-  channel?: string;
-  views?: string;
-  uploadTime?: string;
-  category?: string;
-  location?: string;
-  description?: string;
-  coordinates?: [number, number];
-  // Video source - will be populated when JW Player account is ready
-  videoUrl?: string;
+    id: number;
+    title: string;
+    subtitle?: string;
+    thumbnail: string;
+    duration: string;
+    channel?: string;
+    views?: string;
+    uploadTime?: string;
+    category?: string;
+    location?: string;
+    description?: string;
+    coordinates?: [number, number];
+    videoUrl?: string;
 }
-
-// Player state interface
 interface PlayerState {
-  isOpen: boolean;
-  currentVideo: Video | null;
-  playlist: Video[];
-  isPlaying: boolean;
-  currentTime: number;
-  duration: number;
-  volume: number;
-  isMuted: boolean;
-  playbackRate: number;
-  quality: string;
-  isFullscreen: boolean;
+    isOpen: boolean;
+    currentVideo: Video | null;
+    playlist: Video[];
+    isPlaying: boolean;
+    currentTime: number;
+    duration: number;
+    volume: number;
+    isMuted: boolean;
+    playbackRate: number;
+    quality: string;
+    isFullscreen: boolean;
 }
-
 export const useVideoPlayer = () => {
-  // Global state (singleton pattern for video player)
-  const playerState = useState<PlayerState>('videoPlayerState', () => ({
-    isOpen: false,
-    currentVideo: null,
-    playlist: [],
-    isPlaying: false,
-    currentTime: 0,
-    duration: 0,
-    volume: 100,
-    isMuted: false,
-    playbackRate: 1,
-    quality: 'auto',
-    isFullscreen: false,
-  }));
+    const playerState = useState<PlayerState>('videoPlayerState', () => ({
+        isOpen: false,
+        currentVideo: null,
+        playlist: [],
+        isPlaying: false,
+        currentTime: 0,
+        duration: 0,
+        volume: 100,
+        isMuted: false,
+        playbackRate: 1,
+        quality: 'auto',
+        isFullscreen: false,
+    }));
+    const openVideo = (video: Video, playlist: Video[] = []) => {
+        playerState.value.currentVideo = video;
+        playerState.value.playlist = playlist;
+        playerState.value.isOpen = true;
+        playerState.value.currentTime = 0;
+        if (typeof document !== 'undefined') {
+            document.body.style.overflow = 'hidden';
+        }
+    };
+    const closeVideo = () => {
+        playerState.value.isOpen = false;
+        playerState.value.isPlaying = false;
+        if (typeof document !== 'undefined') {
+            document.body.style.overflow = '';
+        }
+    };
+    const playNext = () => {
+        if (playerState.value.playlist.length === 0) return;
 
-  /**
-   * Open video player modal with a video
-   */
-  const openVideo = (video: Video, playlist: Video[] = []) => {
- 
+        const currentIndex = playerState.value.playlist.findIndex(
+            (v) => v.id === playerState.value.currentVideo?.id
+        );
 
-    playerState.value.currentVideo = video;
-    playerState.value.playlist = playlist;
-    playerState.value.isOpen = true;
-    playerState.value.currentTime = 0;
+        if (currentIndex >= 0 && currentIndex < playerState.value.playlist.length - 1) {
+            const nextVideo = playerState.value.playlist[currentIndex + 1];
+            if (nextVideo) {
+                openVideo(nextVideo, playerState.value.playlist);
+            }
+        }
+    };
+    const playPrevious = () => {
+        if (playerState.value.playlist.length === 0) return;
 
-    // Prevent body scroll when modal is open
-    if (typeof document !== 'undefined') {
-      document.body.style.overflow = 'hidden';
-    }
-  };
+        const currentIndex = playerState.value.playlist.findIndex(
+            (v) => v.id === playerState.value.currentVideo?.id
+        );
 
-  /**
-   * Close video player modal
-   */
-  const closeVideo = () => {
-    playerState.value.isOpen = false;
-    playerState.value.isPlaying = false;
+        if (currentIndex > 0) {
+            const previousVideo = playerState.value.playlist[currentIndex - 1];
+            if (previousVideo) {
+                openVideo(previousVideo, playerState.value.playlist);
+            }
+        }
+    };
+    const togglePlay = () => {
+        playerState.value.isPlaying = !playerState.value.isPlaying;
+    };
+    const setCurrentTime = (time: number) => {
+        playerState.value.currentTime = time;
+    };
+    const setVolume = (volume: number) => {
+        playerState.value.volume = Math.max(0, Math.min(100, volume));
+        if (volume > 0) {
+            playerState.value.isMuted = false;
+        }
+    };
+    const toggleMute = () => {
+        playerState.value.isMuted = !playerState.value.isMuted;
+    };
 
-    // Restore body scroll
-    if (typeof document !== 'undefined') {
-      document.body.style.overflow = '';
-    }
-  };
+    const setPlaybackRate = (rate: number) => {
+        playerState.value.playbackRate = rate;
+    };
 
-  /**
-   * Play next video in playlist
-   */
-  const playNext = () => {
-    if (playerState.value.playlist.length === 0) return;
+    const setQuality = (quality: string) => {
+        playerState.value.quality = quality;
+    };
 
-    const currentIndex = playerState.value.playlist.findIndex(
-      (v) => v.id === playerState.value.currentVideo?.id
-    );
+    const toggleFullscreen = () => {
+        playerState.value.isFullscreen = !playerState.value.isFullscreen;
+    };
 
-    if (currentIndex >= 0 && currentIndex < playerState.value.playlist.length - 1) {
-      const nextVideo = playerState.value.playlist[currentIndex + 1];
-      if (nextVideo) {
-        openVideo(nextVideo, playerState.value.playlist);
-      }
-    }
-  };
+    const setDuration = (duration: number) => {
+        playerState.value.duration = duration;
+    };
+    const formatTime = (seconds: number): string => {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = Math.floor(seconds % 60);
 
-  /**
-   * Play previous video in playlist
-   */
-  const playPrevious = () => {
-    if (playerState.value.playlist.length === 0) return;
+        if (hours > 0) {
+            return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    };
 
-    const currentIndex = playerState.value.playlist.findIndex(
-      (v) => v.id === playerState.value.currentVideo?.id
-    );
+    return {
+        playerState: readonly(playerState),
+        isOpen: computed(() => playerState.value.isOpen),
+        currentVideo: computed(() => playerState.value.currentVideo),
+        playlist: computed(() => playerState.value.playlist),
+        isPlaying: computed(() => playerState.value.isPlaying),
+        currentTime: computed(() => playerState.value.currentTime),
+        duration: computed(() => playerState.value.duration),
+        volume: computed(() => playerState.value.volume),
+        isMuted: computed(() => playerState.value.isMuted),
+        playbackRate: computed(() => playerState.value.playbackRate),
+        quality: computed(() => playerState.value.quality),
+        isFullscreen: computed(() => playerState.value.isFullscreen),
 
-    if (currentIndex > 0) {
-      const previousVideo = playerState.value.playlist[currentIndex - 1];
-      if (previousVideo) {
-        openVideo(previousVideo, playerState.value.playlist);
-      }
-    }
-  };
-
-  /**
-   * Toggle play/pause
-   */
-  const togglePlay = () => {
-    playerState.value.isPlaying = !playerState.value.isPlaying;
-  };
-
-  /**
-   * Set playback time
-   */
-  const setCurrentTime = (time: number) => {
-    playerState.value.currentTime = time;
-  };
-
-  /**
-   * Set volume
-   */
-  const setVolume = (volume: number) => {
-    playerState.value.volume = Math.max(0, Math.min(100, volume));
-    if (volume > 0) {
-      playerState.value.isMuted = false;
-    }
-  };
-
-  /**
-   * Toggle mute
-   */
-  const toggleMute = () => {
-    playerState.value.isMuted = !playerState.value.isMuted;
-  };
-
-  /**
-   * Set playback rate (speed)
-   */
-  const setPlaybackRate = (rate: number) => {
-    playerState.value.playbackRate = rate;
-  };
-
-  /**
-   * Set video quality
-   */
-  const setQuality = (quality: string) => {
-    playerState.value.quality = quality;
-  };
-
-  /**
-   * Toggle fullscreen
-   */
-  const toggleFullscreen = () => {
-    playerState.value.isFullscreen = !playerState.value.isFullscreen;
-  };
-
-  /**
-   * Update duration when video metadata is loaded
-   */
-  const setDuration = (duration: number) => {
-    playerState.value.duration = duration;
-  };
-
-  /**
-   * Format time in MM:SS or HH:MM:SS format
-   */
-  const formatTime = (seconds: number): string => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
-
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-    return `${minutes}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  return {
-    // State
-    playerState: readonly(playerState),
-    isOpen: computed(() => playerState.value.isOpen),
-    currentVideo: computed(() => playerState.value.currentVideo),
-    playlist: computed(() => playerState.value.playlist),
-    isPlaying: computed(() => playerState.value.isPlaying),
-    currentTime: computed(() => playerState.value.currentTime),
-    duration: computed(() => playerState.value.duration),
-    volume: computed(() => playerState.value.volume),
-    isMuted: computed(() => playerState.value.isMuted),
-    playbackRate: computed(() => playerState.value.playbackRate),
-    quality: computed(() => playerState.value.quality),
-    isFullscreen: computed(() => playerState.value.isFullscreen),
-
-    // Methods
-    openVideo,
-    closeVideo,
-    playNext,
-    playPrevious,
-    togglePlay,
-    setCurrentTime,
-    setVolume,
-    toggleMute,
-    setPlaybackRate,
-    setQuality,
-    toggleFullscreen,
-    setDuration,
-    formatTime,
-  };
+        openVideo,
+        closeVideo,
+        playNext,
+        playPrevious,
+        togglePlay,
+        setCurrentTime,
+        setVolume,
+        toggleMute,
+        setPlaybackRate,
+        setQuality,
+        toggleFullscreen,
+        setDuration,
+        formatTime,
+    };
 };

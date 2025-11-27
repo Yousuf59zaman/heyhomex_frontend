@@ -1,17 +1,4 @@
 <script setup lang="ts">
-/**
- * HLS.js Player Component
- *
- * A Vue 3 player powered by HLS.js with YouTube-like features:
- * - Responsive playback
- * - Custom controls
- * - Quality selection
- * - Playback speed control
- * - Keyboard shortcuts
- * - Picture-in-picture support
- * - Auto-quality selection
- */
-
 import Hls from 'hls.js';
 import type { Video } from '~/composables/useVideoPlayer';
 import { useHlsPlayerAds, type ParsedAd, type AdvertisingConfigHls } from '~/composables/useHlsPlayerAds';
@@ -30,7 +17,7 @@ interface Props {
     muted?: boolean;
     playbackRate?: number;
     aspectRatio?: string;
-    advertising?: AdvertisingConfigHls; // Advertising configuration
+    advertising?: AdvertisingConfigHls;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -51,11 +38,11 @@ const emit = defineEmits<{
     seek: [data: { offset: number }];
     buffer: [data: { percentage: number }];
     fullscreen: [isFullscreen: boolean];
-    adImpression: [data: { tag: string }]; // Ad started
-    adComplete: [data: { tag: string }]; // Ad finished
-    adSkipped: [data: { tag: string }]; // Ad skipped
-    adError: [error: any]; // Ad error
-    adClick: [data: { tag: string }]; // Ad clicked
+    adImpression: [data: { tag: string }];
+    adComplete: [data: { tag: string }];
+    adSkipped: [data: { tag: string }];
+    adError: [error: any];
+    adClick: [data: { tag: string }];
 }>();
 
 const playerContainer = ref<HTMLDivElement | null>(null);
@@ -91,8 +78,8 @@ const adEventCleanups: Array<() => void> = [];
 const hlsFallbackState = reactive({
     showControls: false,
     showSettings: false,
-    settingsTab: 'quality' as 'quality' | 'speed', // Active tab in settings menu
-    currentQuality: -1, // -1 means "Auto"
+    settingsTab: 'quality' as 'quality' | 'speed',
+    currentQuality: -1,
     availableQualities: [] as Array<{ label: string; index: number }>,
     playbackSpeed: 1,
     volume: 100,
@@ -101,10 +88,7 @@ const hlsFallbackState = reactive({
     playPauseEffectIcon: 'play' as 'play' | 'pause',
 });
 
-// Track the last non-zero volume so mute/unmute keeps the slider aligned with actual audio state
 const lastVolumeBeforeMute = ref(100);
-
-// Player state
 const state = reactive({
     isPlaying: false,
     currentTime: 0,
@@ -125,9 +109,7 @@ const {
     trackEvent,
 } = useHlsPlayerAds();
 
-/**
- * Safe play helper to avoid unhandled AbortError when pausing during pending play()
- */
+
 const safePlay = () => {
     if (!hlsVideoEl.value) {
         return;
@@ -153,9 +135,6 @@ const safePlay = () => {
     return attempt;
 };
 
-/**
- * Ad Management Functions
- */
 const setupAdVideoElement = () => {
     if (!playerContainer.value || adVideoEl.value) return;
 
@@ -190,8 +169,6 @@ const setupAdVideoElement = () => {
 
         adState.adCurrentTime = adVideo.currentTime;
         adState.adDuration = adVideo.duration || adState.currentAd.duration || 0;
-
-        // Update skip button state
         const skipOffset = adState.currentAd.skipOffset || 0;
         if (adVideo.currentTime >= skipOffset) {
             adState.canSkip = true;
@@ -219,8 +196,6 @@ const setupAdVideoElement = () => {
     });
 
     addAdListener('error', (event: Event) => {
-        // Only handle errors when an ad is actually playing
-        // Ignore errors from empty src during cleanup
         if (adState.isPlayingAd && adVideoEl.value?.src) {
             console.error('[HLS Ads] Ad playback error:', event);
             emit('adError', adVideo.error || event);
@@ -233,18 +208,13 @@ const playAd = async (ad: ParsedAd) => {
     if (!adVideoEl.value || !hlsVideoEl.value || !ad.mediaFileUrl) return;
 
     try {
-        console.log('[HLS Ads] Playing ad:', ad);
-
-        // Mark ad as played
+        // console.log('[HLS Ads] Playing ad:', ad);
         ad.hasBeenPlayed = true;
-
-        // Pause main content
         contentWasPausedForAd = !state.isPlaying;
         if (hlsVideoEl.value && !hlsVideoEl.value.paused) {
             hlsVideoEl.value.pause();
         }
 
-        // Set ad state
         adState.isPlayingAd = true;
         adState.currentAd = ad;
         adState.adCurrentTime = 0;
@@ -255,15 +225,11 @@ const playAd = async (ad: ParsedAd) => {
             adVideoEl.value.muted = adUiState.isMuted;
         }
         adUiState.isPaused = false;
-
-        // Show ad video element
         adVideoEl.value.style.display = 'block';
 
-        // Load and play ad
         adVideoEl.value.src = ad.mediaFileUrl;
         await adVideoEl.value.play();
 
-        // Track impression
         if (ad.vastResponse) {
             trackImpression(ad.vastResponse);
             trackEvent(ad.vastResponse, 'start');
@@ -282,7 +248,6 @@ const skipAd = () => {
 
     console.log('[HLS Ads] Ad skipped');
 
-    // Track skip event
     if (adState.currentAd.vastResponse) {
         trackEvent(adState.currentAd.vastResponse, 'skip');
     }
@@ -295,19 +260,15 @@ const handleAdComplete = () => {
     if (!adVideoEl.value || !hlsVideoEl.value) return;
 
     const completedAd = adState.currentAd;
-
-    // Track complete event
     if (completedAd?.vastResponse && adVideoEl.value.currentTime >= (adState.adDuration - 1)) {
         trackEvent(completedAd.vastResponse, 'complete');
         emit('adComplete', { tag: completedAd.vastTag });
     }
 
-    // Hide ad video and cleanup
     adVideoEl.value.pause();
     adVideoEl.value.style.display = 'none';
-    // Use removeAttribute instead of empty string to avoid triggering error event
     adVideoEl.value.removeAttribute('src');
-    adVideoEl.value.load(); // Reset the media element state
+    adVideoEl.value.load();
 
     // Reset ad state
     adState.isPlayingAd = false;
@@ -318,8 +279,7 @@ const handleAdComplete = () => {
     adState.skipTimeRemaining = 0;
     adUiState.isPaused = false;
     adUiState.isMuted = adVideoEl.value ? adVideoEl.value.muted : adUiState.isMuted;
-
-    // Resume main content if it was playing before
+    
     if (!contentWasPausedForAd && hlsVideoEl.value.paused) {
         safePlay();
     }
@@ -329,15 +289,10 @@ const handleAdClick = () => {
     if (!adState.currentAd?.clickThroughUrl) return;
 
     console.log('[HLS Ads] Ad clicked:', adState.currentAd.clickThroughUrl);
-
-    // Track click event
     if (adState.currentAd.vastResponse) {
         trackEvent(adState.currentAd.vastResponse, 'clickTracking');
     }
-
     emit('adClick', { tag: adState.currentAd.vastTag });
-
-    // Open click-through URL in new tab
     if (typeof window !== 'undefined') {
         window.open(adState.currentAd.clickThroughUrl, '_blank', 'noopener,noreferrer');
     }
@@ -372,7 +327,6 @@ const checkForAds = () => {
     const currentTime = hlsVideoEl.value.currentTime;
     const duration = hlsVideoEl.value.duration;
 
-    // Check for mid-roll ads
     const adToPlay = findAdToPlay(parsedAds.value, currentTime, duration, false, false);
 
     if (adToPlay) {
@@ -385,21 +339,12 @@ const initializeAds = async () => {
 
     try {
         console.log('[HLS Ads] Initializing ads...');
-
-        // Process ad schedule
         const ads = await processAdSchedule(
             props.advertising.schedule,
             props.advertising.skipoffset || 5
         );
-
         parsedAds.value = ads;
-
-        console.log('[HLS Ads] Parsed ads:', ads);
-
-        // Setup ad video element
         setupAdVideoElement();
-
-        // Start ad check interval for mid-roll ads
         if (adCheckInterval) {
             clearInterval(adCheckInterval);
         }
@@ -433,18 +378,13 @@ const playPostRollAd = () => {
 };
 
 const cleanupAds = () => {
-    // Clear ad check interval
     if (adCheckInterval) {
         clearInterval(adCheckInterval);
         adCheckInterval = null;
     }
-
-    // Cleanup ad event listeners
     if (adEventCleanups.length) {
         adEventCleanups.splice(0).forEach((cleanup) => cleanup());
     }
-
-    // Remove ad video element
     if (adVideoEl.value) {
         try {
             adVideoEl.value.pause();
@@ -456,8 +396,6 @@ const cleanupAds = () => {
         }
         adVideoEl.value = null;
     }
-
-    // Reset ad state
     parsedAds.value = [];
     adState.isPlayingAd = false;
     adState.currentAd = null;
@@ -465,14 +403,11 @@ const cleanupAds = () => {
 };
 
 const teardownHlsFallback = () => {
-    // Cleanup ads first
     cleanupAds();
-
     if (hlsInstance.value) {
         hlsInstance.value.destroy();
         hlsInstance.value = null;
     }
-
     if (fallbackEventCleanups.length) {
         fallbackEventCleanups.splice(0).forEach((cleanup) => cleanup());
     }
@@ -502,13 +437,12 @@ const setupHlsFallback = (source: string) => {
     state.currentTime = 0;
     state.duration = 0;
 
-    // Build a simple HTML5 video element that mirrors the JW API surface used above
     playerContainer.value.innerHTML = '';
     const video = document.createElement('video');
     const sourceIsHls = isHlsSource(source);
     video.className = 'hls-fallback-player';
     video.playsInline = true;
-    video.controls = false; // Disable native controls, we'll use custom ones
+    video.controls = false;
     video.autoplay = props.autoplay ?? false;
     video.muted = props.muted ?? false;
     video.preload = 'metadata';
@@ -539,21 +473,17 @@ const setupHlsFallback = (source: string) => {
                 break;
             case 'ArrowRight':
                 e.preventDefault();
-                // Seek forward 5 seconds
                 if (hlsVideoEl.value) {
                     seek(Math.min(state.duration, state.currentTime + 5));
                 }
                 break;
             case 'ArrowUp':
                 e.preventDefault();
-                // Increase volume by 5%
                 hlsFallbackState.showVolumeSlider = true;
                 setHlsFallbackVolume(Math.min(100, state.volume + 5));
-                // Clear existing timeout
                 if (volumeBarTimeout) {
                     clearTimeout(volumeBarTimeout);
                 }
-                // Set new timeout for 3 seconds
                 volumeBarTimeout = setTimeout(() => {
                     hlsFallbackState.showVolumeSlider = false;
                     volumeBarTimeout = null;
@@ -561,14 +491,11 @@ const setupHlsFallback = (source: string) => {
                 break;
             case 'ArrowDown':
                 e.preventDefault();
-                // Decrease volume by 5%
                 hlsFallbackState.showVolumeSlider = true;
                 setHlsFallbackVolume(Math.max(0, state.volume - 5));
-                // Clear existing timeout
                 if (volumeBarTimeout) {
                     clearTimeout(volumeBarTimeout);
                 }
-                // Set new timeout for 3 seconds
                 volumeBarTimeout = setTimeout(() => {
                     hlsFallbackState.showVolumeSlider = false;
                     volumeBarTimeout = null;
@@ -619,10 +546,7 @@ const setupHlsFallback = (source: string) => {
     });
     addListener('ended', () => {
         state.isPlaying = false;
-
-        // Play post-roll ad if available
         playPostRollAd();
-
         emit('complete');
     });
     addListener('loadedmetadata', () => {
@@ -631,10 +555,8 @@ const setupHlsFallback = (source: string) => {
         emit('ready');
         updateBuffered();
 
-        // Initialize ads after video is loaded
         if (props.advertising) {
             initializeAds().then(() => {
-                // Play pre-roll ad if available and autoplay is enabled
                 if (props.autoplay) {
                     playPreRollAd();
                 }
@@ -654,8 +576,6 @@ const setupHlsFallback = (source: string) => {
         const full = Boolean(document.fullscreenElement);
         state.isFullscreen = full;
         emit('fullscreen', full);
-
-        // Ensure controls are visible in fullscreen
         if (full) {
             hlsFallbackState.showControls = true;
         }
@@ -711,7 +631,6 @@ const setupHlsFallback = (source: string) => {
     } else if (sourceIsHls && video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = source;
     } else {
-        // Last-resort: fall back to direct assignment (may not play but avoids crash)
         video.src = source;
     }
 
@@ -720,11 +639,7 @@ const setupHlsFallback = (source: string) => {
     }
 };
 
-/**
- * Public methods for external control
- */
 const play = () => {
-    // If an ad is currently playing, resume the ad
     if (adState.isPlayingAd && adVideoEl.value) {
         if (adVideoEl.value.paused) {
             adVideoEl.value.play();
@@ -732,21 +647,15 @@ const play = () => {
         }
         return;
     }
-
-    // Always play the main video when user manually clicks play
-    // Pre-roll ads should only play automatically (via autoplay), not on manual user interaction
     safePlay();
 };
 
 const pause = () => {
-    // If an ad is currently playing, pause the ad
     if (adState.isPlayingAd && adVideoEl.value) {
         adVideoEl.value.pause();
         adUiState.isPaused = true;
         return;
     }
-
-    // Pause the main video
     hlsVideoEl.value?.pause();
 };
 
@@ -809,7 +718,6 @@ const getState = () => {
     return 'playing';
 };
 
-// HLS Fallback specific methods
 const setHlsFallbackQuality = (qualityIndex: number) => {
     if (!hlsInstance.value) return;
 
@@ -831,7 +739,6 @@ const setHlsFallbackSpeed = (speed: number) => {
 };
 
 const toggleHlsFallbackPlay = () => {
-    // If an ad is playing, delegate play/pause to the ad controls
     if (adState.isPlayingAd && adVideoEl.value) {
         toggleAdPlayPause();
         return;
@@ -841,8 +748,6 @@ const toggleHlsFallbackPlay = () => {
     if (!videoEl) {
         return;
     }
-
-    // Use the video element's paused state to avoid any reactive desync
     if (videoEl.paused) {
         play();
     } else {
@@ -970,19 +875,12 @@ defineExpose({
     isReady,
 });
 
-/**
- * Cleanup and remove player instance
- */
 const cleanupPlayer = () => {
     cleanupAds();
     teardownHlsFallback();
     isReady.value = false;
 };
 
-/**
- * Reload player with new video
- * This completely recreates the player instance to avoid ad-related issues
- */
 const reloadPlayerWithNewVideo = (newVideo: any) => {
     if (!newVideo) {
         console.warn('[HLS Fallback] No video provided for reload');
@@ -994,22 +892,18 @@ const reloadPlayerWithNewVideo = (newVideo: any) => {
     setupHlsFallback(source);
 };
 
-// Lifecycle hooks
 onMounted(() => {
     const source = props.video.videoUrl || 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
     setupHlsFallback(source);
 });
 
 onBeforeUnmount(() => {
-    // Cleanup player instance
     cleanupPlayer();
 });
 
-// Watch for video changes
 watch(
     () => props.video,
     (newVideo, oldVideo) => {
-        // Only reload if the video has actually changed
         if (newVideo && oldVideo && newVideo.id !== oldVideo.id) {
             console.log('[HLS Fallback] Video changed, reloading player...');
             reloadPlayerWithNewVideo(newVideo);
@@ -1023,10 +917,7 @@ watch(
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
         @mousemove="handleMouseMove">
-        <!-- HLS Player Container -->
         <div ref="playerContainer" class="absolute inset-0"></div>
-
-        <!-- Loading State -->
         <div v-if="!isReady"
             class="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-10">
             <div class="text-center text-white">
@@ -1034,21 +925,14 @@ watch(
                 <p class="text-sm">Loading player...</p>
             </div>
         </div>
-
-        <!-- Play/Pause Effect Overlay -->
         <div v-if="hlsFallbackState.showPlayPauseEffect" class="hls-play-pause-effect">
             <div class="hls-effect-icon">
                 <Icon v-if="hlsFallbackState.playPauseEffectIcon === 'play'" name="lucide:play" class="w-6 h-6" />
                 <Icon v-else name="lucide:pause" class="w-6 h-6" />
             </div>
         </div>
-
-        <!-- Video Click Hitarea (when no ad is playing) -->
         <div v-if="isReady && !adState.isPlayingAd" class="hls-video-hitarea" @click="handleVideoHitareaClick"></div>
-
-        <!-- Ad Overlay -->
         <div v-if="adState.isPlayingAd" class="hls-ad-overlay" @click="toggleAdPlayPause">
-            <!-- Ad Controls (Bottom) -->
             <div class="hls-ad-controls" @click.stop>
                 <div class="hls-ad-left">
                     <button
@@ -1069,13 +953,10 @@ watch(
                         <Icon v-if="adUiState.isMuted" name="lucide:volume-x" class="w-5 h-5" />
                         <Icon v-else name="lucide:volume-2" class="w-5 h-5" />
                     </button>
-                    <!-- Ad Message -->
                     <div class="hls-ad-message">
                         This ad will end in {{ Math.ceil(Math.max(0, adState.adDuration - adState.adCurrentTime)) }} seconds
                     </div>
                 </div>
-
-                <!-- Skip Button (Bottom Right) -->
                 <button
                     v-if="adState.canSkip"
                     @click="skipAd"
@@ -1085,7 +966,6 @@ watch(
                 </button>
             </div>
 
-            <!-- Ad Progress Bar -->
             <div class="hls-ad-progress-bar">
                 <div
                     class="hls-ad-progress-fill"
@@ -1093,12 +973,8 @@ watch(
                 ></div>
             </div>
         </div>
-
-        <!-- HLS Fallback Custom Controls -->
         <div v-if="isReady && !adState.isPlayingAd"
             :class="['hls-custom-controls', { 'show': hlsFallbackState.showControls }]">
-
-            <!-- Progress Bar -->
             <div class="hls-progress-container">
                 <div class="hls-progress-wrapper">
                     <!-- Background track -->
