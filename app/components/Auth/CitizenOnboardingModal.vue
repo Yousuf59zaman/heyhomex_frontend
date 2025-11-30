@@ -1,6 +1,8 @@
 <script setup lang="ts">
     type OnboardingStep = "motivation" | "budget" | "location" | "success"
 
+    const {citizen_user} = citizenAuth()
+
     const props = defineProps<{modelValue: boolean}>()
     const visible = ref(props.modelValue)
 
@@ -349,9 +351,7 @@
                 localStorage.removeItem("citizen_needs_onboarding")
             }
 
-            if (import.meta.client) {
-            }
-
+            citizen_user.value = response
             emit("onboarding-complete", {...formData})
 
             // const redirectSlug = response.data.user_type?.[0]?.slug || "kamaina"

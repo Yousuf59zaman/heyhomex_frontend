@@ -7,6 +7,26 @@
     const isOpenStartModal = ref(false)
     const initialStep = ref(0)
 
+    const citizenProfile = computed(() => {
+        const rawCitizen =
+            citizen_user && citizen_user.value !== undefined
+                ? citizen_user.value
+                : citizen_user
+        return rawCitizen?.data ?? rawCitizen
+    })
+
+    const hasCitizenDashboardAccess = computed(() => {
+        const profile = citizenProfile.value
+        const slug = profile?.user_type?.[0]?.slug
+        const onboardingStatus = profile?.user_onboard_profile_status
+        const onboardingComplete =
+            onboardingStatus === undefined || onboardingStatus === null
+                ? true
+                : onboardingStatus !== 0
+
+        return Boolean(slug && onboardingComplete)
+    })
+
     const handleScroll = () => {
         isScroll.value = window.scrollY > 0
     }
@@ -28,8 +48,11 @@
     }
 
     const handleDashboardRedirect = (userData) => {
-        console.log("user_data", userData.data)
-        const redirectSlug = userData.data.user_type[0].slug
+        const profile = (userData?.data ?? userData) || citizenProfile.value
+        const redirectSlug = profile?.user_type?.[0]?.slug
+
+        if (!redirectSlug) return
+
         const targetPath =
             redirectSlug === "kamaaina" ? "/kamaina/" : `/${redirectSlug}/`
         window.location.href = targetPath
@@ -90,7 +113,7 @@
                     </NuxtLink>
                 </div>
                 <div
-                    v-else-if="citizen_user"
+                    v-else-if="hasCitizenDashboardAccess"
                     style="cursor: pointer"
                     class="hidden cursor-pointer md:flex items-center space-x-4">
                     <div
@@ -158,7 +181,7 @@
             leave-to-class="opacity-0 -translate-y-2">
             <!-- Guest Mobile Menu -->
             <div
-                v-if="isMobileMenuOpen && !admin_user && !citizen_user"
+                v-if="isMobileMenuOpen && !admin_user && !hasCitizenDashboardAccess"
                 class="md:hidden bg-[#1a2530] border-t border-gray-700">
                 <div class="px-4 py-4 space-y-3">
                     <button
@@ -190,7 +213,7 @@
 
             <!-- Citizen Mobile Menu -->
             <div
-                v-else-if="isMobileMenuOpen && citizen_user"
+                v-else-if="isMobileMenuOpen && hasCitizenDashboardAccess"
                 class="md:hidden bg-[#1a2530] border-t border-gray-700">
                 <div class="px-4 py-4 space-y-3">
                     <button

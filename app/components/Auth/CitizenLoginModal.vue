@@ -1,6 +1,7 @@
 ﻿<script setup lang="ts">
     import {LockClosedIcon, UserIcon} from "@heroicons/vue/24/outline"
-    const {login, googleLogin, facebookLogin, appleLogin} = citizenAuth()
+    const {login, googleLogin, facebookLogin, appleLogin, citizen_user} =
+        citizenAuth()
 
     const closeHandler = () => {
         emit("close")
@@ -124,6 +125,7 @@
             }
 
             const needsOnboarding = userData.user_onboard_profile_status === 0
+            citizen_user.value = needsOnboarding ? null : response
 
             // Check for user role (agent, advisor) first
             if (userData.user_role) {

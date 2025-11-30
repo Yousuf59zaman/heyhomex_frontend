@@ -2,7 +2,7 @@
     interface Props {
         modelValue: boolean
     }
-    const { googleLogin, facebookLogin , appleLogin } = citizenAuth()
+    const {googleLogin, facebookLogin, appleLogin, citizen_user} = citizenAuth()
     const props = defineProps<Props>()
     const visible = ref<boolean>(props.modelValue)
     const isLoading = ref<boolean>(false)
@@ -69,6 +69,7 @@
             }
 
             const needsOnboarding = userData.user_onboard_profile_status === 0
+            citizen_user.value = needsOnboarding ? null : response
 
             if (!needsOnboarding && userData.user_type?.[0]?.slug) {
                 const redirectSlug = userData.user_type[0].slug
