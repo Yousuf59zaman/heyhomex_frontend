@@ -399,11 +399,11 @@ watch(
             content: 'border-0 pt-0 pb-0',
         }">
         <template #header>
-            <div class="absolute right-6 top-6 z-50">
+            <div class="absolute right-[0px] top-[0] z-50">
                 <button
                     @click="closeHandler"
-                    class="w-10 h-10 flex items-center justify-center bg-[#d9d9d9] text-[#4b5563] cursor-pointer rounded-full transition-all duration-200 focus:outline-none hover:bg-[#cfd1d4] shadow-sm">
-                    <i class="pi pi-times text-lg leading-none"></i>
+                    class="w-[56px] h-[56px] flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
             <div class="w-full text-center px-6 pt-8 pb-0">

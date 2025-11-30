@@ -112,154 +112,189 @@
         class="citizen-professional-modal"
         :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
-            root: 'border-0 rounded-2xl shadow-2xl m-4',
+            root: 'border-0 rounded-[10px] shadow-2xl m-4 bg-white',
             header: 'border-0 pb-0',
-            content: 'border-0 pt-0 pb-6',
+            content: 'border-0 pt-0 pb-0',
             closeButton:
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-sm transition-colors duration-200',
         }">
         <template #header>
-            <div class="absolute right-[0px] top-[0px] z-50">
+            <div class="absolute right-[0px] top-[0] z-50">
                 <button
                     @click="closeHandler"
-                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[15px] transition-all duration-300 focus:outline-none">
-                    <i class="pi pi-times text-xl"></i>
+                    class="w-[56px] h-[56px] flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
-            <div
-                class="w-full text-center px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
-                <h1
-                    class="text-2xl sm:text-3xl max-w-sm mx-auto font-semibold text-[#121A22] mb-2 leading-tight">
-                    Add professional information
-                </h1>
-                <p class="text-sm text-[#121A22]">
-                    Tell us about your professional background
-                </p>
+            <div class="w-full px-6 pt-8 pb-0">
+                <div class="flex items-center gap-[48px] w-full">
+                    <button
+                        @click="$emit('back')"
+                        class="flex items-center justify-center shrink-0">
+                        <i class="pi pi-chevron-left text-[24px] text-[#121A22]"></i>
+                    </button>
+                    <h1
+                        class="flex-1 text-[32px] leading-[40px] font-medium text-[#121A22] text-center">
+                        Add professional information
+                    </h1>
+                    <div class="w-[15px] h-[24px] shrink-0"></div>
+                </div>
             </div>
         </template>
 
-        <div class="px-6 pb-6 space-y-4">
-            <div class="space-y-2">
-                <label
-                    for="professionalType"
-                    class="block text-sm font-medium text-gray-700">
-                    Professional type
-                </label>
-                <Dropdown
-                    v-model="formData.professionalType"
-                    :options="professionalTypes"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="Select type"
-                    class="w-full"
-                    :pt="{
-                        root: 'w-full',
-                        input: 'w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-                    }" />
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div class="space-y-2">
-                    <label
-                        for="licenseNumber"
-                        class="block text-sm font-medium text-gray-700">
-                        License number
-                    </label>
-                    <InputText
-                        id="licenseNumber"
-                        v-model="formData.licenseNumber"
-                        type="text"
-                        placeholder="Enter your license number"
-                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+        <div class="px-6 pb-8 flex flex-col gap-[48px]">
+            <div class="flex flex-col gap-[20px]">
+                <div class="flex flex-col gap-[20px]">
+                    <div class="flex flex-col w-full">
+                        <div class="pb-2">
+                            <label
+                                for="professionalType"
+                                class="text-base font-medium text-[#121A22] leading-[24px]">
+                                Professional type
+                            </label>
+                        </div>
+                        <Dropdown
+                            v-model="formData.professionalType"
+                            :options="professionalTypes"
+                            optionLabel="label"
+                            optionValue="value"
+                            placeholder="Select type"
+                            class="w-full"
+                            :pt="{
+                                root: 'w-full h-[56px]',
+                                input: 'w-full h-[56px] px-4 py-4 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                            }" />
+                    </div>
                 </div>
 
-                <div class="space-y-2">
-                    <label
-                        for="brokerId"
-                        class="block text-sm font-medium text-gray-700">
-                        Broker ID
-                    </label>
-                    <InputText
-                        id="brokerId"
-                        v-model="formData.brokerId"
-                        type="text"
-                        placeholder="Enter your broker ID"
-                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
-                </div>
-            </div>
+                <div class="flex gap-[20px]">
+                    <div class="flex-1 flex flex-col gap-[20px]">
+                        <div class="flex flex-col w-full">
+                            <div class="pb-2">
+                                <label
+                                    for="licenseNumber"
+                                    class="text-base font-medium text-[#121A22] leading-[24px]">
+                                    License number
+                                </label>
+                            </div>
+                            <InputText
+                                id="licenseNumber"
+                                v-model="formData.licenseNumber"
+                                type="text"
+                                placeholder="Enter your license number"
+                                class="w-full h-[56px] px-4 py-4 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                        </div>
+                    </div>
 
-            <div class="space-y-2">
-                <label
-                    for="zipCode"
-                    class="block text-sm font-medium text-gray-700">
-                    Zip code
-                </label>
-                <InputText
-                    id="zipCode"
-                    v-model="formData.zipCode"
-                    type="text"
-                    placeholder="Enter your zip code"
-                    class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div class="space-y-2">
-                    <label
-                        for="mobilePhone"
-                        class="block text-sm font-medium text-gray-700">
-                        Mobile/Phone number
-                    </label>
-                    <InputText
-                        id="mobilePhone"
-                        v-model="formData.mobilePhone"
-                        type="tel"
-                        placeholder="Enter your mobile/phone number"
-                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                    <div class="flex-1 flex flex-col gap-[20px]">
+                        <div class="flex flex-col w-full">
+                            <div class="pb-2">
+                                <label
+                                    for="brokerId"
+                                    class="text-base font-medium text-[#121A22] leading-[24px]">
+                                    Broker ID
+                                </label>
+                            </div>
+                            <InputText
+                                id="brokerId"
+                                v-model="formData.brokerId"
+                                type="text"
+                                placeholder="Enter your broker ID"
+                                class="w-full h-[56px] px-4 py-4 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                        </div>
+                    </div>
                 </div>
 
-                <div class="space-y-2">
-                    <label
-                        for="extension"
-                        class="block text-sm font-medium text-gray-700">
-                        Extension
-                    </label>
-                    <InputText
-                        id="extension"
-                        v-model="formData.extension"
-                        type="text"
-                        placeholder="Enter extension"
-                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                <div class="flex flex-col gap-[20px]">
+                    <div class="flex flex-col w-full">
+                        <div class="pb-2">
+                            <label
+                                for="zipCode"
+                                class="text-base font-medium text-[#121A22] leading-[24px]">
+                                Zip code
+                            </label>
+                        </div>
+                        <InputText
+                            id="zipCode"
+                            v-model="formData.zipCode"
+                            type="text"
+                            placeholder="Enter your zip code"
+                            class="w-full h-[56px] px-4 py-4 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                    </div>
                 </div>
+
+                <div class="flex gap-[20px]">
+                    <div class="flex-1 flex flex-col gap-[20px]">
+                        <div class="flex flex-col w-full">
+                            <div class="pb-2">
+                                <label
+                                    for="mobilePhone"
+                                    class="text-base font-medium text-[#121A22] leading-[24px]">
+                                    Mobile/Phone number
+                                </label>
+                            </div>
+                            <InputText
+                                id="mobilePhone"
+                                v-model="formData.mobilePhone"
+                                type="tel"
+                                placeholder="Enter your mobile/phone number"
+                                class="w-full h-[56px] px-4 py-4 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                        </div>
+                    </div>
+
+                    <div class="flex-1 flex flex-col gap-[20px]">
+                        <div class="flex flex-col w-full">
+                            <div class="pb-2">
+                                <label
+                                    for="extension"
+                                    class="text-base font-medium text-[#121A22] leading-[24px]">
+                                    Extension
+                                </label>
+                            </div>
+                            <InputText
+                                id="extension"
+                                v-model="formData.extension"
+                                type="text"
+                                placeholder="Enter extension"
+                                class="w-full h-[56px] px-4 py-4 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    v-if="errorMessage"
+                    class="text-center">
+                    <p class="text-xs text-red-500">{{ errorMessage }}</p>
+                </div>
+
+                <button
+                    @click="handleNext"
+                    :disabled="isSubmitting"
+                    type="button"
+                    class="w-full px-5 py-3.5 h-[52px] font-bold text-base leading-[24px] rounded-[12px] transition-colors duration-200 flex items-center justify-center"
+                    :class="
+                        isSubmitting
+                            ? 'bg-[#606e83] text-white cursor-not-allowed'
+                            : 'bg-[#18222C] hover:bg-[#0F172A] text-white'
+                    ">
+                    {{ isSubmitting ? "Submitting..." : "Next" }}
+                </button>
             </div>
 
-            <div
-                v-if="errorMessage"
-                class="text-center">
-                <p class="text-xs text-red-500">{{ errorMessage }}</p>
-            </div>
-
-            <button
-                @click="handleNext"
-                :disabled="isSubmitting"
-                type="button"
-                class="w-full px-6 py-3.5 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center mt-6">
-                {{ isSubmitting ? "Submitting..." : "Next" }}
-            </button>
-
-            <div class="text-center pt-2">
-                <p class="text-xs text-gray-600">
-                    By using heyhomex, you agree to the
+            <div class="text-center">
+                <p class="text-base text-[#121A22] leading-[24px]">
+                    <span class="font-medium">By using heyhomex, you agree to the</span>
                     <a
                         href="/terms"
-                        class="text-gray-900 font-medium hover:underline"
+                        class="font-bold hover:underline"
                         >Terms</a
                     >
-                    and
+                    <span class="font-medium">and</span>
                     <a
                         href="/privacy"
-                        class="text-gray-900 font-medium hover:underline"
+                        class="font-bold hover:underline"
                         >Privacy Policy</a
-                    >.
+                    ><span class="font-medium">.</span>
                 </p>
             </div>
         </div>
@@ -268,7 +303,7 @@
 
 <style scoped>
     .citizen-professional-modal .p-dialog {
-        border-radius: 1rem;
+        border-radius: 10px;
     }
 
     .citizen-professional-modal .p-dialog-header {

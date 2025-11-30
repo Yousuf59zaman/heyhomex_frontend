@@ -145,43 +145,25 @@
         :draggable="false"
         :resizable="false"
         class="citizen-change-password-modal"
-        :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
-            root: 'border-0 rounded-2xl shadow-2xl m-4',
-            header: 'border-0 pb-4',
-            content: 'border-0 pt-0 pb-6',
+            root: 'border-0 rounded-[10px] shadow-2xl m-4 bg-white',
+            header: 'border-0 pb-0',
+            content: 'border-0 pt-0 pb-0',
             closeButton:
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200',
         }">
         <template #header>
-            <div class="absolute right-[0px] top-[0px] z-50">
+            <div class="absolute right-[0px] top-[0] z-50">
                 <button
                     @click="closeHandler"
-                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[15px] transition-all duration-300 focus:outline-none">
-                    <i class="pi pi-times text-xl"></i>
+                    class="w-[56px] h-[56px] flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
-            <div class="w-full px-6 pt-6 pb-2">
-                <div class="flex items-center justify-center relative">
-                    <button
-                        @click="handleBack"
-                        type="button"
-                        class="absolute left-0 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
-                        aria-label="Go back">
-                        <svg
-                            class="w-5 h-5 text-gray-700"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </button>
-
-                    <h2 class="text-xl font-semibold text-[#121A22]">
+            <div class="w-full px-6 pt-8 pb-0">
+                <div class="flex items-center justify-center">
+                    <h2 class="text-[32px] font-medium text-[#121A22] leading-[40px]">
                         Create New Password
                     </h2>
                 </div>
@@ -189,16 +171,16 @@
         </template>
 
         <!-- Content -->
-        <div class="px-6 pb-6 space-y-4">
-            <p class="text-sm text-gray-600 text-center">
+        <div class="px-6 pb-8 pt-12 flex flex-col gap-[40px]">
+            <p class="text-base text-[#121A22] leading-[24px] text-center">
                 Please create a new password for your account. Make sure it meets all the requirements below.
             </p>
 
             <!-- Password Field -->
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-[2px]">
                 <label
                     for="password"
-                    class="text-sm font-medium text-gray-700"
+                    class="text-base font-medium text-[#121A22] leading-[24px] pb-2"
                     >New Password</label
                 >
                 <div class="relative">
@@ -208,7 +190,7 @@
                         :type="showPassword ? 'text' : 'password'"
                         placeholder="Enter your new password"
                         :pt="{
-                            root: 'w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                            root: 'w-full px-4 py-4 h-[56px] pr-12 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                         }" />
                     <button
                         type="button"
@@ -248,10 +230,10 @@
             </div>
 
             <!-- Confirm Password Field -->
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-[2px]">
                 <label
                     for="confirm-password"
-                    class="text-sm font-medium text-gray-700"
+                    class="text-base font-medium text-[#121A22] leading-[24px] pb-2"
                     >Confirm New Password</label
                 >
                 <div class="relative">
@@ -262,7 +244,7 @@
                         placeholder="Confirm your new password"
                         @keyup.enter="handleSubmit"
                         :pt="{
-                            root: 'w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                            root: 'w-full px-4 py-4 h-[56px] pr-12 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                         }" />
                     <button
                         type="button"
@@ -302,12 +284,12 @@
             </div>
 
             <!-- Password Requirements -->
-            <div class="bg-gray-50 rounded-lg p-4 space-y-2">
-                <p class="text-xs font-medium text-gray-700">Password must contain:</p>
-                <div class="space-y-1">
-                    <div class="flex items-center gap-2 text-xs">
+            <div class="bg-gray-50 rounded-lg p-5 space-y-3">
+                <p class="text-base font-medium text-[#121A22]">Password must contain:</p>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-3 text-sm">
                         <svg
-                            class="w-4 h-4"
+                            class="w-5 h-5 flex-shrink-0"
                             :class="hasMinimumLength ? 'text-green-600' : 'text-gray-400'"
                             fill="currentColor"
                             viewBox="0 0 20 20">
@@ -316,13 +298,13 @@
                                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                 clip-rule="evenodd" />
                         </svg>
-                        <span :class="hasMinimumLength ? 'text-green-600' : 'text-gray-600'"
+                        <span :class="hasMinimumLength ? 'text-green-600 font-medium' : 'text-gray-600'"
                             >At least 8 characters</span
                         >
                     </div>
-                    <div class="flex items-center gap-2 text-xs">
+                    <div class="flex items-center gap-3 text-sm">
                         <svg
-                            class="w-4 h-4"
+                            class="w-5 h-5 flex-shrink-0"
                             :class="hasCapitalLetter ? 'text-green-600' : 'text-gray-400'"
                             fill="currentColor"
                             viewBox="0 0 20 20">
@@ -331,13 +313,13 @@
                                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                 clip-rule="evenodd" />
                         </svg>
-                        <span :class="hasCapitalLetter ? 'text-green-600' : 'text-gray-600'"
+                        <span :class="hasCapitalLetter ? 'text-green-600 font-medium' : 'text-gray-600'"
                             >One capital letter</span
                         >
                     </div>
-                    <div class="flex items-center gap-2 text-xs">
+                    <div class="flex items-center gap-3 text-sm">
                         <svg
-                            class="w-4 h-4"
+                            class="w-5 h-5 flex-shrink-0"
                             :class="hasSymbol ? 'text-green-600' : 'text-gray-400'"
                             fill="currentColor"
                             viewBox="0 0 20 20">
@@ -346,13 +328,13 @@
                                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                 clip-rule="evenodd" />
                         </svg>
-                        <span :class="hasSymbol ? 'text-green-600' : 'text-gray-600'"
+                        <span :class="hasSymbol ? 'text-green-600 font-medium' : 'text-gray-600'"
                             >One symbol (!@#$%^&*)</span
                         >
                     </div>
-                    <div class="flex items-center gap-2 text-xs">
+                    <div class="flex items-center gap-3 text-sm">
                         <svg
-                            class="w-4 h-4"
+                            class="w-5 h-5 flex-shrink-0"
                             :class="passwordsMatch ? 'text-green-600' : 'text-gray-400'"
                             fill="currentColor"
                             viewBox="0 0 20 20">
@@ -361,7 +343,7 @@
                                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                 clip-rule="evenodd" />
                         </svg>
-                        <span :class="passwordsMatch ? 'text-green-600' : 'text-gray-600'"
+                        <span :class="passwordsMatch ? 'text-green-600 font-medium' : 'text-gray-600'"
                             >Passwords match</span
                         >
                     </div>
@@ -384,11 +366,11 @@
                 @click="handleSubmit"
                 :disabled="isLoading || !allPasswordValidationsPassed"
                 type="button"
-                class="w-full px-6 py-3.5 font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                class="w-full px-5 h-[52px] text-base font-bold leading-6 rounded-[12px] transition-colors duration-200 flex items-center justify-center gap-2"
                 :class="
                     isLoading || !allPasswordValidationsPassed
                         ? 'bg-[#606e83] text-white cursor-not-allowed'
-                        : 'bg-[#1E293B] hover:bg-[#0F172A] text-white'
+                        : 'bg-[#18222C] hover:bg-[#0F172A] text-white'
                 ">
                 <svg
                     v-if="isLoading"
@@ -416,7 +398,7 @@
 
 <style scoped>
     .citizen-change-password-modal .p-dialog {
-        border-radius: 1rem;
+        border-radius: 10px;
     }
 
     .citizen-change-password-modal .p-dialog-header {
