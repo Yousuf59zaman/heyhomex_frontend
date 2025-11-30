@@ -130,11 +130,11 @@
         :draggable="false"
         :resizable="false"
         class="citizen-forgot-password-modal"
-        :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: '720px', maxWidth: '95vw'}"
         :pt="{
-            root: 'border-0 rounded-2xl shadow-2xl m-4',
-            header: 'border-0 pb-4',
-            content: 'border-0 pt-0 pb-6',
+            root: 'border-0 rounded-[10px] shadow-2xl m-4 bg-white overflow-hidden',
+            header: 'border-0 p-0 bg-white',
+            content: 'border-0 p-0 bg-white',
             closeButton:
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200',
         }">
@@ -142,13 +142,13 @@
             <div class="absolute right-[0px] top-[0px] z-50">
                 <button
                     @click="closeHandler"
-                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[15px] transition-all duration-300 focus:outline-none">
-                    <i class="pi pi-times text-xl"></i>
+                    class="w-[56px] h-[56px] flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[15px] transition-all duration-300 focus:outline-none">
+                    <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
-            <div class="w-full px-6 pt-6 pb-2">
+            <div class="w-full px-6 pt-8 pb-0">
                 <div class="flex items-center justify-center">
-                    <h2 class="text-xl font-semibold text-[#121A22]">
+                    <h2 class="text-[32px] font-medium text-[#121A22] leading-[40px]">
                         Forgot password
                     </h2>
                 </div>
@@ -156,17 +156,17 @@
         </template>
 
         <!-- Content -->
-        <div class="px-6 pb-6">
-            <div v-if="!isSuccess" class="space-y-4">
-                <p class="text-sm text-gray-600 text-center">
+        <div class="px-6 pb-8 pt-12">
+            <div v-if="!isSuccess" class="flex flex-col gap-[40px]">
+                <p class="text-base text-[#121A22] leading-[24px]">
                     No worries! Enter your email address and we'll send you a
                     link to reset it.
                 </p>
 
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-[2px]">
                     <label
                         for="forgot-email"
-                        class="text-sm font-medium text-gray-700"
+                        class="text-base font-medium text-[#121A22] leading-[24px] pb-2"
                         >Email Address</label
                     >
                     <InputText
@@ -176,7 +176,7 @@
                         placeholder="Enter your email address"
                         @keyup.enter="handleSubmit"
                         :pt="{
-                            root: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                            root: 'w-full px-4 py-4 h-[56px] border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                         }" />
                     <span
                         v-if="validations_errors.email"
@@ -195,11 +195,11 @@
                     @click="handleSubmit"
                     :disabled="isLoading"
                     type="button"
-                    class="w-full px-6 py-3.5 font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                    class="w-full px-5 py-3.5 h-[52px] font-bold text-base leading-[24px] rounded-[12px] transition-colors duration-200 flex items-center justify-center gap-2"
                     :class="
                         isLoading
                             ? 'bg-[#606e83] text-white cursor-not-allowed'
-                            : 'bg-[#1E293B] hover:bg-[#0F172A] text-white'
+                            : 'bg-[#18222C] hover:bg-[#0F172A] text-white'
                     ">
                     <svg
                         v-if="isLoading"
@@ -222,11 +222,11 @@
                     {{ isLoading ? "Sending..." : "Continue" }}
                 </button>
 
-                <div class="text-center pt-2">
+                <div class="text-center">
                     <button
                         @click="handleBackToLogin"
                         type="button"
-                        class="text-sm text-gray-900 font-medium hover:underline">
+                        class="text-base text-[#121A22] font-bold leading-[24px] hover:underline">
                         Back to Sign in
                     </button>
                 </div>
@@ -266,15 +266,16 @@
 
 <style scoped>
     .citizen-forgot-password-modal .p-dialog {
-        border-radius: 1rem;
+        border-radius: 10px;
     }
 
     .citizen-forgot-password-modal .p-dialog-header {
         border: none;
+        padding: 0;
     }
 
     .citizen-forgot-password-modal .p-dialog-content {
         border: none;
-        padding-top: 0;
+        padding: 0;
     }
 </style>
