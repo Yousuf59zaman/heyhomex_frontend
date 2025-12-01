@@ -154,10 +154,10 @@
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200',
         }">
         <template #header>
-            <div class="absolute right-[0px] top-[0] z-50">
+            <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-[56px] h-[56px] flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
@@ -172,7 +172,7 @@
 
         <!-- Content -->
         <div class="px-6 pb-8 pt-12 flex flex-col gap-10">
-            <p class="text-base text-[#121A22] leading-[24px] text-center">
+            <p class="text-base text-[#121A22] leading-6 text-center">
                 Please create a new password for your account. Make sure it meets all the requirements below.
             </p>
 
@@ -180,7 +180,7 @@
             <div class="flex flex-col gap-0.5">
                 <label
                     for="password"
-                    class="text-base font-medium text-[#121A22] leading-[24px] pb-2"
+                    class="text-base font-medium text-[#121A22] leading-6 pb-2"
                     >New Password</label
                 >
                 <div class="relative">
@@ -190,7 +190,7 @@
                         :type="showPassword ? 'text' : 'password'"
                         placeholder="Enter your new password"
                         :pt="{
-                            root: 'w-full px-4 py-4 h-[56px] pr-12 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                            root: 'w-full px-4 py-4 h-14 pr-12 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                         }" />
                     <button
                         type="button"
@@ -233,7 +233,7 @@
             <div class="flex flex-col gap-0.5">
                 <label
                     for="confirm-password"
-                    class="text-base font-medium text-[#121A22] leading-[24px] pb-2"
+                    class="text-base font-medium text-[#121A22] leading-6 pb-2"
                     >Confirm New Password</label
                 >
                 <div class="relative">
@@ -244,7 +244,7 @@
                         placeholder="Confirm your new password"
                         @keyup.enter="handleSubmit"
                         :pt="{
-                            root: 'w-full px-4 py-4 h-[56px] pr-12 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
+                            root: 'w-full px-4 py-4 h-14 pr-12 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                         }" />
                     <button
                         type="button"
@@ -366,7 +366,7 @@
                 @click="handleSubmit"
                 :disabled="isLoading || !allPasswordValidationsPassed"
                 type="button"
-                class="w-full px-5 h-[52px] text-base font-bold leading-6 rounded-[12px] transition-colors duration-200 flex items-center justify-center gap-2"
+                class="w-full px-5 h-[52px] text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
                 :class="
                     isLoading || !allPasswordValidationsPassed
                         ? 'bg-[#606e83] text-white cursor-not-allowed'

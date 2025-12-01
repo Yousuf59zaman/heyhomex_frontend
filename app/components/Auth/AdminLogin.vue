@@ -74,7 +74,7 @@ const admin_user = adminUser();
                             <template v-if="hydrated">
                                 <LazyInputText id="login_id" name="login_id" autocomplete="username" type="text"
                                     v-model="form.login_id"
-                                    class="w-full pl-[40px] pr-4 py-4 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+                                    class="w-full pl-10 pr-4 py-4 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
                                     required placeholder="User ID" />
                             </template>
                             <template v-else>
@@ -94,7 +94,7 @@ const admin_user = adminUser();
                             <template v-if="hydrated">
                                 <LazyInputText id="password" name="password" autocomplete="current-password"
                                     :type="password_open ? 'text' : 'password'" v-model="form.password"
-                                    class="w-full pl-[40px] pr-12 py-4 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+                                    class="w-full pl-10 pr-12 py-4 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
                                     required placeholder="Password" />
                                 <button type="button" @click="password_view_status(!password_open)"
                                     class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"

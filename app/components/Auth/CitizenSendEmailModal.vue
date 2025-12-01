@@ -146,10 +146,10 @@
             content: 'border-0 pt-0 pb-8',
         }">
         <template #header>
-            <div class="absolute right-[0px] top-[0] z-50">
+            <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-[56px] h-[56px] flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
@@ -195,7 +195,7 @@
                     placeholder="Enter your email address"
                     @keyup.enter="handleSubmit"
                     :pt="{
-                        root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-[8px] text-sm md:text-base text-[#566573] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
+                        root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-lg text-sm md:text-base text-[#566573] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                     }" />
                 <span
                     v-if="validations_errors.email"
@@ -208,7 +208,7 @@
                 @click="handleSubmit"
                 :disabled="isLoading"
                 type="button"
-                class="w-full h-[52px] px-6 font-bold rounded-[12px] transition-colors duration-200 flex items-center justify-center gap-2"
+                class="w-full h-[52px] px-6 font-bold rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
                 :class="
                     isLoading
                         ? 'bg-[#606e83] text-white cursor-not-allowed'
