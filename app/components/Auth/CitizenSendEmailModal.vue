@@ -173,7 +173,7 @@
                         </svg>
                     </button>
 
-                    <h2 class="text-[32px] leading-[40px] font-medium text-[#121A22]">
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22]">
                         Add your email
                     </h2>
                 </div>
@@ -195,7 +195,7 @@
                     placeholder="Enter your email address"
                     @keyup.enter="handleSubmit"
                     :pt="{
-                        root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-[8px] text-[16px] text-[#566573] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
+                        root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-[8px] text-sm md:text-base text-[#566573] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                     }" />
                 <span
                     v-if="validations_errors.email"

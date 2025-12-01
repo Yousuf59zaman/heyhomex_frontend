@@ -280,7 +280,7 @@
                 </button>
             </div>
             <div class="w-full text-center px-6 pt-8 pb-0">
-                <h1 class="text-[32px] font-medium text-[#121A22] leading-[40px]">
+                <h1 class="text-2xl md:text-3xl lg:text-4xl font-medium text-[#121A22] leading-tight">
                     Welcome Back!
                 </h1>
                 <p class="text-base text-[#121A22] leading-[24px] mt-4">

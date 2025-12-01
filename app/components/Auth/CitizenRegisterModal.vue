@@ -297,7 +297,7 @@
                     </button>
 
                     
-                    <h1 class="text-[32px] leading-[40px] font-medium text-[#121A22]">
+                    <h1 class="text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22]">
                         Set up profile
                     </h1>
                 </div>
@@ -324,7 +324,7 @@
                             required
                             autocomplete="off"
                             :pt="{
-                                root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-[8px] text-[16px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
+                                root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-[8px] text-sm md:text-base text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                             }" />
                         <span
                             v-if="validationErrors.first_name"
@@ -346,7 +346,7 @@
                             required
                             autocomplete="off"
                             :pt="{
-                                root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-[8px] text-[16px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
+                                root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-[8px] text-sm md:text-base text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                             }" />
                         <span
                             v-if="validationErrors.last_name"
@@ -372,7 +372,7 @@
                             autocomplete="new-password"
                             @blur="validatePasswords"
                             :pt="{
-                                root: 'w-full h-14 px-4 pr-12 border border-[#cfdbe8] rounded-[8px] text-[16px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
+                                root: 'w-full h-14 px-4 pr-12 border border-[#cfdbe8] rounded-[8px] text-sm md:text-base text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                             }" />
                         <button
                             type="button"
@@ -441,7 +441,7 @@
                             autocomplete="new-password"
                             @blur="validatePasswords"
                             :pt="{
-                                root: 'w-full h-14 px-4 pr-12 border border-[#cfdbe8] rounded-[8px] text-[16px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
+                                root: 'w-full h-14 px-4 pr-12 border border-[#cfdbe8] rounded-[8px] text-sm md:text-base text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                             }" />
                         <button
                             type="button"

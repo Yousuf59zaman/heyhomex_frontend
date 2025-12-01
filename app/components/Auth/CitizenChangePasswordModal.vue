@@ -163,7 +163,7 @@
             </div>
             <div class="w-full px-6 pt-8 pb-0">
                 <div class="flex items-center justify-center">
-                    <h2 class="text-[32px] font-medium text-[#121A22] leading-[40px]">
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-medium text-[#121A22] leading-tight">
                         Create New Password
                     </h2>
                 </div>

@@ -122,7 +122,7 @@ const admin_user = adminUser();
                     <!-- Hydration-safe rendering for submit button -->
                     <template v-if="hydrated">
                         <ButtonPrimary :disabled="isLoading"
-                            class="w-full py-4 rounded-xl text-[15px] font-semibold bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 transform hover:-translate-y-0.5 transition-all duration-200"
+                            class="w-full py-4 rounded-xl text-sm font-semibold bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 transform hover:-translate-y-0.5 transition-all duration-200"
                             :class="{ 'opacity-85': isLoading }">
                             <span v-if="!isLoading" class="flex items-center justify-center gap-2">
                                 Sign In <i class="fa fa-arrow-right"></i>

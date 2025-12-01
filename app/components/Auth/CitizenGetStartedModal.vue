@@ -224,7 +224,7 @@
                         </svg>
                     </button>
 
-                    <h2 class="text-[32px] leading-[40px] font-medium text-[#121A22]">
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22]">
                         Create account
                     </h2>
                     <div aria-hidden="true" class="absolute right-0 h-6 w-6"></div>
@@ -234,7 +234,7 @@
 
         <!-- Content -->
         <div class="px-6 pb-8">
-            <div class="mx-auto flex w-full max-w-[676px] flex-col gap-12">
+            <div class="mx-auto flex w-full max-w-[42rem] flex-col gap-12">
                 <!-- Error Message -->
                 <div
                     v-if="unauthorizedError"
@@ -325,7 +325,7 @@
                 </div>
 
                 <div class="text-center">
-                    <p class="text-[16px] leading-6 text-[#121a22]">
+                    <p class="text-sm md:text-base leading-6 text-[#121a22]">
                         By using heyhomex, you agree to the
                         <a
                             href="/terms"

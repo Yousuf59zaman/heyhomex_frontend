@@ -328,7 +328,7 @@
                         </svg>
                     </button>
 
-                    <h2 class="text-[32px] leading-[40px] font-medium text-[#121A22]">
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22]">
                         OTP Verification
                     </h2>
                 </div>

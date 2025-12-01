@@ -134,7 +134,7 @@
                         <i class="pi pi-chevron-left text-[24px] text-[#121A22]"></i>
                     </button>
                     <h1
-                        class="flex-1 text-[32px] leading-[40px] font-medium text-[#121A22] text-center">
+                        class="flex-1 text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22] text-center">
                         Add professional information
                     </h1>
                     <div class="w-[15px] h-[24px] shrink-0"></div>

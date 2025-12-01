@@ -149,7 +149,7 @@
                         </svg>
                     </button>
 
-                    <h2 class="text-[32px] leading-[40px] font-medium text-[#121A22]">
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22]">
                         Select account type
                     </h2>
                 </div>
@@ -163,7 +163,7 @@
                     @click="selectAccountType(3)"
                     type="button"
                     :class="[
-                        'h-[92px] px-5 py-[14px] rounded-[12px] text-[16px] font-bold transition-all duration-200',
+                        'h-[92px] px-5 py-[14px] rounded-[12px] text-sm md:text-base font-bold transition-all duration-200',
                         selectedAccountType === 3
                             ? 'bg-[#18222c] text-white'
                             : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
@@ -175,7 +175,7 @@
                     @click="selectAccountType(2)"
                     type="button"
                     :class="[
-                        'h-[92px] px-5 py-[14px] rounded-[12px] text-[16px] font-bold transition-all duration-200',
+                        'h-[92px] px-5 py-[14px] rounded-[12px] text-sm md:text-base font-bold transition-all duration-200',
                         selectedAccountType === 2
                             ? 'bg-[#18222c] text-white'
                             : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
@@ -187,7 +187,7 @@
                     @click="selectAccountType(1)"
                     type="button"
                     :class="[
-                        'h-[92px] px-5 py-[14px] rounded-[12px] text-[16px] font-bold transition-all duration-200',
+                        'h-[92px] px-5 py-[14px] rounded-[12px] text-sm md:text-base font-bold transition-all duration-200',
                         selectedAccountType === 1
                             ? 'bg-[#18222c] text-white'
                             : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',

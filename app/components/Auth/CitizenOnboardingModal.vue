@@ -408,7 +408,7 @@ watch(
             </div>
             <div class="w-full text-center px-6 pt-8 pb-0">
                 <h1
-                    class="text-[32px] leading-[40px] max-w-[404px] mx-auto text-[#121A22] font-medium">
+                    class="text-2xl md:text-3xl lg:text-4xl leading-tight max-w-[404px] mx-auto text-[#121A22] font-medium">
                     {{ getCurrentStepConfig().title }}
                 </h1>
             </div>
@@ -419,7 +419,7 @@ watch(
             <div class="flex items-center justify-between w-full">
                 <div
                     v-if="getCurrentStepConfig().stepLabel"
-                    class="text-[14px] leading-normal text-[#121A22]">
+                    class="text-xs sm:text-sm leading-normal text-[#121A22]">
                     <span class="font-normal">Steps: </span>
                     <span class="font-bold">{{ currentProgressIndex + 1 }}</span>
                     <span class="font-normal">/</span>
@@ -448,7 +448,7 @@ watch(
                 <div class="flex flex-col gap-4">
                     <p
                         v-if="getCurrentStepConfig().subtitle"
-                        class="text-[28px] leading-[40px] text-[#121A22] font-medium">
+                        class="text-xl md:text-2xl lg:text-3xl leading-tight text-[#121A22] font-medium">
                         {{ getCurrentStepConfig().subtitle }}
                     </p>
                 </div>
@@ -477,7 +477,7 @@ watch(
                             :key="option.value"
                             @click="formData.motivation = option.value"
                             :class="[
-                                'inline-flex min-h-[56px] items-center px-5 py-2.5 rounded-[99px] cursor-pointer transition-all duration-200 text-[14px] font-medium leading-[20px] whitespace-pre',
+                                'inline-flex min-h-[56px] items-center px-5 py-2.5 rounded-[99px] cursor-pointer transition-all duration-200 text-xs sm:text-sm font-medium leading-tight whitespace-pre',
                                 formData.motivation === option.value
                                     ? 'bg-[#18222c] text-white'
                                     : 'bg-[#F0F1F3] text-[#283849] hover:bg-[#e5e7eb]',
@@ -513,7 +513,7 @@ watch(
                 <div class="flex flex-col gap-4">
                     <p
                         v-if="getCurrentStepConfig().subtitle"
-                        class="text-[28px] leading-[40px] text-[#121A22] font-medium">
+                        class="text-xl md:text-2xl lg:text-3xl leading-tight text-[#121A22] font-medium">
                         {{ getCurrentStepConfig().subtitle }}
                     </p>
                 </div>
@@ -542,7 +542,7 @@ watch(
                             :key="option.value"
                             @click="formData.budget = option.value"
                             :class="[
-                                'inline-flex min-h-[56px] items-center px-5 py-2.5 rounded-[99px] cursor-pointer transition-all duration-200 text-[14px] font-medium leading-[20px] whitespace-pre',
+                                'inline-flex min-h-[56px] items-center px-5 py-2.5 rounded-[99px] cursor-pointer transition-all duration-200 text-xs sm:text-sm font-medium leading-tight whitespace-pre',
                                 formData.budget === option.value
                                     ? 'bg-[#18222c] text-white'
                                     : 'bg-[#F0F1F3] text-[#283849] hover:bg-[#e5e7eb]',
@@ -578,7 +578,7 @@ watch(
                 <div class="flex flex-col gap-4">
                     <p
                         v-if="getCurrentStepConfig().subtitle"
-                        class="text-[28px] leading-[40px] text-[#121A22] font-medium">
+                        class="text-xl md:text-2xl lg:text-3xl leading-tight text-[#121A22] font-medium">
                         {{ getCurrentStepConfig().subtitle }}
                     </p>
                 </div>
@@ -607,7 +607,7 @@ watch(
                             :key="option.value"
                             @click="formData.locationType = option.value"
                             :class="[
-                                'inline-flex min-h-[56px] items-center px-5 py-2.5 rounded-[99px] cursor-pointer transition-all duration-200 text-[14px] font-medium leading-[20px] whitespace-pre',
+                                'inline-flex min-h-[56px] items-center px-5 py-2.5 rounded-[99px] cursor-pointer transition-all duration-200 text-xs sm:text-sm font-medium leading-tight whitespace-pre',
                                 formData.locationType === option.value
                                     ? 'bg-[#18222c] text-white'
                                     : 'bg-[#F0F1F3] text-[#283849] hover:bg-[#e5e7eb]',
