@@ -415,7 +415,7 @@ watch(
         </template>
 
         <!-- Content -->
-        <div class="px-6 pb-8 flex flex-col gap-[48px]">
+        <div class="px-6 pb-8 flex flex-col gap-12">
             <div class="flex items-center justify-between w-full">
                 <div
                     v-if="getCurrentStepConfig().stepLabel"
@@ -444,18 +444,18 @@ watch(
             <!-- Step 1: Motivation -->
             <div
                 v-if="currentStep === 'motivation'"
-                class="flex flex-col gap-[24px]">
-                <div class="flex flex-col gap-[16px]">
+                class="flex flex-col gap-6">
+                <div class="flex flex-col gap-4">
                     <p
                         v-if="getCurrentStepConfig().subtitle"
                         class="text-[28px] leading-[40px] text-[#121A22] font-medium">
                         {{ getCurrentStepConfig().subtitle }}
                     </p>
                 </div>
-                <div class="flex flex-col gap-[36px]">
+                <div class="flex flex-col gap-9">
                     <div
                         v-if="questionsLoading"
-                        class="flex flex-col gap-[20px]">
+                        class="flex flex-col gap-5">
                         <div
                             class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
                             <div class="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -471,7 +471,7 @@ watch(
                     </div>
                     <div
                         v-else
-                        class="flex flex-wrap gap-[12px] max-w-full sm:max-w-[637px]">
+                        class="flex flex-wrap gap-3 max-w-full sm:max-w-[637px]">
                         <div
                             v-for="option in motivationOptions"
                             :key="option.value"
@@ -487,7 +487,7 @@ watch(
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row gap-[24px]">
+                <div class="flex flex-col sm:flex-row gap-6">
                     <button
                         @click="handleNext"
                         outlined
@@ -509,18 +509,18 @@ watch(
             <!-- Step 2: Budget -->
             <div
                 v-else-if="currentStep === 'budget'"
-                class="flex flex-col gap-[24px]">
-                <div class="flex flex-col gap-[16px]">
+                class="flex flex-col gap-6">
+                <div class="flex flex-col gap-4">
                     <p
                         v-if="getCurrentStepConfig().subtitle"
                         class="text-[28px] leading-[40px] text-[#121A22] font-medium">
                         {{ getCurrentStepConfig().subtitle }}
                     </p>
                 </div>
-                <div class="flex flex-col gap-[36px]">
+                <div class="flex flex-col gap-9">
                     <div
                         v-if="questionsLoading"
-                        class="flex flex-col gap-[20px]">
+                        class="flex flex-col gap-5">
                         <div
                             class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
                             <div class="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -536,7 +536,7 @@ watch(
                     </div>
                     <div
                         v-else
-                        class="flex flex-wrap gap-[12px] max-w-full sm:max-w-[637px]">
+                        class="flex flex-wrap gap-3 max-w-full sm:max-w-[637px]">
                         <div
                             v-for="option in budgetOptions"
                             :key="option.value"
@@ -552,7 +552,7 @@ watch(
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row gap-[24px]">
+                <div class="flex flex-col sm:flex-row gap-6">
                     <button
                         @click="handlePrev"
                         outlined
@@ -574,18 +574,18 @@ watch(
             <!-- Step 3: Location -->
             <div
                 v-else-if="currentStep === 'location'"
-                class="flex flex-col gap-[24px]">
-                <div class="flex flex-col gap-[16px]">
+                class="flex flex-col gap-6">
+                <div class="flex flex-col gap-4">
                     <p
                         v-if="getCurrentStepConfig().subtitle"
                         class="text-[28px] leading-[40px] text-[#121A22] font-medium">
                         {{ getCurrentStepConfig().subtitle }}
                     </p>
                 </div>
-                <div class="flex flex-col gap-[36px]">
+                <div class="flex flex-col gap-9">
                     <div
                         v-if="questionsLoading"
-                        class="flex flex-col gap-[20px]">
+                        class="flex flex-col gap-5">
                         <div
                             class="p-4 border-2 border-gray-200 rounded-full animate-pulse">
                             <div class="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -601,7 +601,7 @@ watch(
                     </div>
                     <div
                         v-else
-                        class="flex flex-wrap gap-[12px] max-w-full sm:max-w-[637px]">
+                        class="flex flex-wrap gap-3 max-w-full sm:max-w-[637px]">
                         <div
                             v-for="option in locationTypeOptions"
                             :key="option.value"
@@ -617,7 +617,7 @@ watch(
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row gap-[24px]">
+                <div class="flex flex-col sm:flex-row gap-6">
                     <button
                         @click="handlePrev"
                         outlined

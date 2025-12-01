@@ -157,13 +157,13 @@
 
         <!-- Content -->
         <div class="px-6 pb-8 pt-12">
-            <div v-if="!isSuccess" class="flex flex-col gap-[40px]">
+            <div v-if="!isSuccess" class="flex flex-col gap-10">
                 <p class="text-base text-[#121A22] leading-[24px]">
                     No worries! Enter your email address and we'll send you a
                     link to reset it.
                 </p>
 
-                <div class="flex flex-col gap-[2px]">
+                <div class="flex flex-col gap-0.5">
                     <label
                         for="forgot-email"
                         class="text-base font-medium text-[#121A22] leading-[24px] pb-2"

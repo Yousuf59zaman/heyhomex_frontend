@@ -171,13 +171,13 @@
         </template>
 
         <!-- Content -->
-        <div class="px-6 pb-8 pt-12 flex flex-col gap-[40px]">
+        <div class="px-6 pb-8 pt-12 flex flex-col gap-10">
             <p class="text-base text-[#121A22] leading-[24px] text-center">
                 Please create a new password for your account. Make sure it meets all the requirements below.
             </p>
 
             <!-- Password Field -->
-            <div class="flex flex-col gap-[2px]">
+            <div class="flex flex-col gap-0.5">
                 <label
                     for="password"
                     class="text-base font-medium text-[#121A22] leading-[24px] pb-2"
@@ -230,7 +230,7 @@
             </div>
 
             <!-- Confirm Password Field -->
-            <div class="flex flex-col gap-[2px]">
+            <div class="flex flex-col gap-0.5">
                 <label
                     for="confirm-password"
                     class="text-base font-medium text-[#121A22] leading-[24px] pb-2"

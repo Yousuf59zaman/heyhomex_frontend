@@ -242,7 +242,7 @@
                     <p class="text-sm text-red-600">{{ unauthorizedError }}</p>
                 </div>
 
-                <div class="flex flex-col gap-[10px]">
+                <div class="flex flex-col gap-2.5">
                     <button
                         @click="handleContinueWithEmail"
                         type="button"

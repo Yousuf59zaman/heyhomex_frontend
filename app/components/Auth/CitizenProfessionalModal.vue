@@ -127,7 +127,7 @@
                 </button>
             </div>
             <div class="w-full px-6 pt-8 pb-0">
-                <div class="flex items-center gap-[48px] w-full">
+                <div class="flex items-center gap-12 w-full">
                     <button
                         @click="$emit('back')"
                         class="flex items-center justify-center shrink-0">
@@ -142,9 +142,9 @@
             </div>
         </template>
 
-        <div class="px-6 pb-8 flex flex-col gap-[48px]">
-            <div class="flex flex-col gap-[20px]">
-                <div class="flex flex-col gap-[20px]">
+        <div class="px-6 pb-8 flex flex-col gap-12">
+            <div class="flex flex-col gap-5">
+                <div class="flex flex-col gap-5">
                     <div class="flex flex-col w-full">
                         <div class="pb-2">
                             <label
@@ -167,8 +167,8 @@
                     </div>
                 </div>
 
-                <div class="flex gap-[20px]">
-                    <div class="flex-1 flex flex-col gap-[20px]">
+                <div class="flex gap-5">
+                    <div class="flex-1 flex flex-col gap-5">
                         <div class="flex flex-col w-full">
                             <div class="pb-2">
                                 <label
@@ -186,7 +186,7 @@
                         </div>
                     </div>
 
-                    <div class="flex-1 flex flex-col gap-[20px]">
+                    <div class="flex-1 flex flex-col gap-5">
                         <div class="flex flex-col w-full">
                             <div class="pb-2">
                                 <label
@@ -205,7 +205,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col gap-[20px]">
+                <div class="flex flex-col gap-5">
                     <div class="flex flex-col w-full">
                         <div class="pb-2">
                             <label
@@ -223,8 +223,8 @@
                     </div>
                 </div>
 
-                <div class="flex gap-[20px]">
-                    <div class="flex-1 flex flex-col gap-[20px]">
+                <div class="flex gap-5">
+                    <div class="flex-1 flex flex-col gap-5">
                         <div class="flex flex-col w-full">
                             <div class="pb-2">
                                 <label
@@ -242,7 +242,7 @@
                         </div>
                     </div>
 
-                    <div class="flex-1 flex flex-col gap-[20px]">
+                    <div class="flex-1 flex flex-col gap-5">
                         <div class="flex flex-col w-full">
                             <div class="pb-2">
                                 <label

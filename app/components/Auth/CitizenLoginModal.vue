@@ -292,7 +292,7 @@
         <!-- Content -->
         <div class="px-6 pb-10 pt-10">
             <form @submit.prevent="handleLogin" class="flex flex-col gap-6" autocomplete="off">
-                <div class="flex flex-col gap-[8px]">
+                <div class="flex flex-col gap-2">
                     <label
                         for="email"
                         class="text-base font-medium text-[#121A22] leading-[24px]"
@@ -312,7 +312,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col gap-[8px]">
+                <div class="flex flex-col gap-2">
                     <label
                         for="password"
                         class="text-base font-medium text-[#121A22] leading-[24px]"
