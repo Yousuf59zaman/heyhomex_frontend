@@ -1,6 +1,7 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
     import {LockClosedIcon, UserIcon} from "@heroicons/vue/24/outline"
-    const {login, googleLogin, facebookLogin, appleLogin} = citizenAuth()
+    const {login, googleLogin, facebookLogin, appleLogin, citizen_user} =
+        citizenAuth()
 
     const closeHandler = () => {
         emit("close")
@@ -124,6 +125,7 @@
             }
 
             const needsOnboarding = userData.user_onboard_profile_status === 0
+            citizen_user.value = needsOnboarding ? null : response
 
             // Check for user role (agent, advisor) first
             if (userData.user_role) {
@@ -261,37 +263,39 @@
         :draggable="false"
         :resizable="false"
         class="citizen-login-modal"
-        :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}">
+        :style="{width: '45rem', maxWidth: '95vw'}"
+        :pt="{
+            root: 'border-0 rounded-xl shadow-2xl m-4 bg-white overflow-hidden',
+            header: 'border-0 p-0 bg-white',
+            content: 'border-0 p-0 bg-white',
+            closeButton:
+                'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200',
+        }">
         <template #header>
-            <div class="absolute right-[-1px] top-[-1px] z-50">
+            <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[11px] transition-all duration-300 focus:outline-none">
-                    <i class="pi pi-times text-xl"></i>
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[0.9375rem] rounded-tr-[0.625rem] transition-all duration-300 focus:outline-none">
+                    <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
-            <div
-                class="w-full text-center px-4 sm:px-6 pt-6 sm:pt-4 pb-4 sm:pb-6">
-                <h1
-                    class="text-2xl sm:text-3xl font-semibold text-[#121A22] mb-2 leading-tight">
-                    Welcome Back! 👋
+            <div class="w-full text-center px-6 pt-8 pb-0">
+                <h1 class="text-2xl md:text-3xl lg:text-4xl font-medium text-[#121A22] leading-tight">
+                    Welcome Back!
                 </h1>
-                <p class="text-sm text-[#121A22]">
+                <p class="text-base text-[#121A22] leading-6 mt-4">
                     Sign in to continue your home journey
                 </p>
             </div>
         </template>
 
         <!-- Content -->
-        <div class="px-4 sm:px-6">
-            <form
-                @submit.prevent="handleLogin"
-                class="space-y-4"
-                autocomplete="off">
+        <div class="px-6 pb-10 pt-10">
+            <form @submit.prevent="handleLogin" class="flex flex-col gap-6" autocomplete="off">
                 <div class="flex flex-col gap-2">
                     <label
                         for="email"
-                        class="text-sm font-medium text-gray-700"
+                        class="text-base font-medium text-[#121A22] leading-6"
                         >Email Address</label
                     >
                     <div class="relative">
@@ -304,14 +308,14 @@
                             placeholder="Enter your email"
                             required
                             autocomplete="off"
-                            class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                            class="w-full pl-12 pr-4 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <label
                         for="password"
-                        class="text-sm font-medium text-gray-700"
+                        class="text-base font-medium text-[#121A22] leading-6"
                         >Password</label
                     >
                     <div class="relative">
@@ -324,7 +328,7 @@
                             placeholder="Enter your password"
                             required
                             autocomplete="current-password"
-                            class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                            class="w-full pl-12 pr-12 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                         <button
                             type="button"
                             @click="password_view_status(!password_open)"
@@ -340,12 +344,12 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center justify-between text-base leading-6">
                     <label class="flex items-center">
                         <input
                             type="checkbox"
-                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                        <span class="ml-2 text-gray-600">Remember me</span>
+                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4" />
+                        <span class="ml-2 text-[#121A22]">Remember me</span>
                     </label>
                     <button
                         type="button"
@@ -368,7 +372,7 @@
                     :disabled="loading"
                     :loading="loading"
                     loadingIcon="pi pi-spin pi-spinner"
-                    class="w-full px-6 py-3 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
+                    class="w-full px-5 py-3.5 h-[3.25rem] bg-[#18222C] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-bold text-base leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center">
                     {{ loading ? "Signing In..." : "Sign In" }}
                 </button>
 
@@ -395,7 +399,7 @@
                             viewBox="0 0 24 24"
                             fill="currentColor">
                             <path
-                                d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+                                d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l-.01.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
                         </svg>
                         <span class="text-sm ml-2">Apple</span>
                         <span
@@ -451,7 +455,7 @@
                     </button>
                 </div>
 
-                <div class="text-center pt-2">
+                <div class="text-center">
                     <p class="text-sm text-gray-600">
                         Don't have an account?
                         <button
@@ -469,55 +473,19 @@
 
 <style scoped>
     .citizen-login-modal :deep(.p-dialog) {
+        border-radius: 0.625rem;
         border: 0;
-        border-radius: 1rem;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 1.5625rem 3.125rem -0.75rem rgba(0, 0, 0, 0.25);
         margin: 1rem;
     }
 
     .citizen-login-modal :deep(.p-dialog-header) {
         border: none;
-        padding-bottom: 0;
+        padding: 0;
     }
 
     .citizen-login-modal :deep(.p-dialog-content) {
         border: none;
-        padding-top: 0;
-        padding-bottom: 1.5rem;
-    }
-
-    .citizen-login-modal :deep(.p-dialog-header-close) {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        padding: 0.5rem;
-        transition: background-color 0.2s;
-    }
-
-    .citizen-login-modal :deep(.p-dialog-close-button:hover) {
-        background-color: #f3f4f6;
-        border-radius: 0.125rem;
-    }
-
-    .citizen-login-modal :deep(.p-dialog-close-button) {
-        position: absolute;
-        left: -2px;
-        top: -2px;
-        width: 32px;
-        height: 32px;
-        background: white;
-        border-radius: 9999px;
-        border: 1px solid #e5e7eb;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-        display: flex;
-        align-items: center;
-        justify-content: center;
         padding: 0;
-        transition: all 0.2s ease-in-out;
-    }
-
-    .citizen-login-modal :deep(.p-dialog-close-button:hover) {
-        background: #f9fafb;
-        transform: scale(1.12);
     }
 </style>

@@ -32,6 +32,13 @@
         class="auth-modal"
         :style="{width: '38rem'}">
         <template #header>
+            <div class="absolute right-0 top-0 z-50">
+                <button
+                    @click="closeHandler"
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[0.9375rem] rounded-tr-[0.625rem] transition-all duration-300 focus:outline-none">
+                    <i class="pi pi-times text-2xl"></i>
+                </button>
+            </div>
             <div class="flex items-center justify-between w-full">
                 <div class="w-6"></div>
                 <button

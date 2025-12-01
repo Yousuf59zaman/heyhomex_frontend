@@ -53,10 +53,10 @@ const admin_user = adminUser();
         class="min-h-screen w-full flex items-center justify-center animate-gradient bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
         <div class="w-full max-w-md p-8 transform perspective-1000">
             <div
-                class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-8 backdrop-blur-xl hover:shadow-[0_8px_40px_rgb(0,0,0,0.16)] transition-all duration-300 ease-in-out">
+                class="bg-white rounded-2xl shadow-[0_0.5rem_1.875rem_rgb(0,0,0,0.12)] p-8 backdrop-blur-xl hover:shadow-[0_0.5rem_2.5rem_rgb(0,0,0,0.16)] transition-all duration-300 ease-in-out">
                 <div class="flex justify-center mb-6 scale-animation select-none">
                     <NuxtLink to="/">
-                        <ApplicationLogo :width="'160px'" :height="'55px'" />
+                        <ApplicationLogo :width="'10rem'" :height="'3.4375rem'" />
                     </NuxtLink>
                 </div>
 
@@ -74,7 +74,7 @@ const admin_user = adminUser();
                             <template v-if="hydrated">
                                 <LazyInputText id="login_id" name="login_id" autocomplete="username" type="text"
                                     v-model="form.login_id"
-                                    class="w-full pl-[40px] pr-4 py-4 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+                                    class="w-full pl-10 pr-4 py-4 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
                                     required placeholder="User ID" />
                             </template>
                             <template v-else>
@@ -94,7 +94,7 @@ const admin_user = adminUser();
                             <template v-if="hydrated">
                                 <LazyInputText id="password" name="password" autocomplete="current-password"
                                     :type="password_open ? 'text' : 'password'" v-model="form.password"
-                                    class="w-full pl-[40px] pr-12 py-4 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+                                    class="w-full pl-10 pr-12 py-4 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
                                     required placeholder="Password" />
                                 <button type="button" @click="password_view_status(!password_open)"
                                     class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
@@ -122,14 +122,14 @@ const admin_user = adminUser();
                     <!-- Hydration-safe rendering for submit button -->
                     <template v-if="hydrated">
                         <ButtonPrimary :disabled="isLoading"
-                            class="w-full py-4 rounded-xl text-[15px] font-semibold bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 transform hover:-translate-y-0.5 transition-all duration-200"
+                            class="w-full py-4 rounded-xl text-sm font-semibold bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 transform hover:-translate-y-0.5 transition-all duration-200"
                             :class="{ 'opacity-85': isLoading }">
                             <span v-if="!isLoading" class="flex items-center justify-center gap-2">
                                 Sign In <i class="fa fa-arrow-right"></i>
                             </span>
                             <div v-else class="flex justify-center items-center">
                                 <div
-                                    class="w-7 h-7 border-[3px] border-white border-t-transparent rounded-full animate-spin">
+                                    class="w-7 h-7 border-2 border-white border-t-transparent rounded-full animate-spin">
                                 </div>
                             </div>
                         </ButtonPrimary>
@@ -160,7 +160,7 @@ const admin_user = adminUser();
 }
 
 .floating-input:focus-within {
-    transform: translateY(-2px);
+    transform: translateY(-0.125rem);
 }
 
 @keyframes gradient {

@@ -294,23 +294,21 @@
         :draggable="false"
         :resizable="false"
         class="citizen-verify-otp-modal"
-        :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
-            root: 'border-0 rounded-2xl shadow-2xl m-4',
-            header: 'border-0 pb-4',
-            content: 'border-0 pt-0 pb-6',
-            closeButton:
-                'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200',
+            root: 'border-0 rounded-xl shadow-2xl m-4',
+            header: 'border-0 pb-0',
+            content: 'border-0 pt-0 pb-8',
         }">
         <template #header>
-            <div class="absolute right-[0px] top-[0px] z-50">
+            <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-[40px] h-[47px] flex items-center justify-center bg-black/50 text-white cursor-pointer rounded-bl-[15px] rounded-tr-[15px] transition-all duration-300 focus:outline-none">
-                    <i class="pi pi-times text-xl"></i>
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[0.9375rem] rounded-tr-[0.625rem] transition-all duration-300 focus:outline-none">
+                    <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
-            <div class="w-full px-6 pt-6 pb-2">
+            <div class="w-full px-6 pt-8">
                 <div class="flex items-center justify-center relative">
                     <button
                         @click="handleBack"
@@ -323,14 +321,14 @@
                             stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M15 19l-7-7 7-7" />
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
 
-                    <h2 class="text-xl font-semibold text-[#121A22]">
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22]">
                         OTP Verification
                     </h2>
                 </div>
@@ -338,19 +336,19 @@
         </template>
 
         <!-- Content -->
-        <div class="px-6 pb-6 space-y-6">
-            <div class="text-center space-y-1">
-                <p class="text-sm text-gray-700">
+        <div class="px-6 pt-8 pb-2 space-y-7">
+            <div class="text-center space-y-2">
+                <p class="text-base font-medium text-[#121A22]">
                     We have sent a 6-digit OTP to your email. Please enter it
                     below.
                 </p>
-                <p class="text-xs text-gray-600">
+                <p class="text-base font-medium text-[#121A22]">
                     The OTP is valid for 5 minutes and you can request a maximum
                     of 3 times.
                 </p>
             </div>
 
-            <div class="flex justify-center gap-2">
+            <div class="flex justify-center gap-5">
                 <input
                     v-for="(digit, index) in otpDigits"
                     :key="index"
@@ -363,19 +361,19 @@
                     type="text"
                     inputmode="numeric"
                     maxlength="1"
-                    class="w-12 h-12 text-center text-lg font-semibold border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    class="w-[5.75rem] h-14 text-center text-lg font-semibold border border-[#cfdbe8] rounded-lg text-[#121A22] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors"
                     @input="handleOtpInput(index, $event)"
                     @keydown="handleKeyDown(index, $event)"
                     @paste="index === 0 ? handlePaste($event) : null" />
             </div>
 
-            <div class="text-center space-y-3">
+            <div class="text-center space-y-2">
                 <div
                     v-if="timeRemaining > 0 && !errorMessage"
-                    class="text-sm text-gray-700">
+                    class="text-base font-medium text-[#121A22]">
                     <p>
                         Time remaining:
-                        <span class="font-semibold">{{ formattedTime }}</span>
+                        <span class="font-bold">{{ formattedTime }}</span>
                     </p>
                 </div>
 
@@ -422,22 +420,22 @@
                 @click="handleVerify"
                 :disabled="isVerifying"
                 type="button"
-                class="w-full px-6 py-3.5 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
+                class="w-full h-[3.25rem] px-6 bg-[#18222c] hover:bg-[#101822] disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors duration-200 flex items-center justify-center">
                 {{ isVerifying ? "Verifying..." : "Verify email" }}
             </button>
 
-            <div class="text-center pt-2">
-                <p class="text-xs text-gray-600">
+            <div class="text-center">
+                <p class="text-base font-medium text-[#121A22]">
                     By using heyhomex, you agree to the
                     <a
                         href="/terms"
-                        class="text-gray-900 font-medium hover:underline"
+                        class="text-[#121A22] font-bold hover:underline"
                         >Terms</a
                     >
                     and
                     <a
                         href="/privacy"
-                        class="text-gray-900 font-medium hover:underline"
+                        class="text-[#121A22] font-bold hover:underline"
                         >Privacy Policy</a
                     >.
                 </p>
@@ -448,7 +446,7 @@
 
 <style scoped>
     .citizen-verify-otp-modal .p-dialog {
-        border-radius: 1rem;
+        border-radius: 0.625rem;
     }
 
     .citizen-verify-otp-modal .p-dialog-header {
