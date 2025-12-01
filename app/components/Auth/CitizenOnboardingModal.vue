@@ -402,13 +402,13 @@ watch(
             <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[0.9375rem] rounded-tr-[0.625rem] transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
             <div class="w-full text-center px-6 pt-8 pb-0">
                 <h1
-                    class="text-2xl md:text-3xl lg:text-4xl leading-tight max-w-[404px] mx-auto text-[#121A22] font-medium">
+                    class="text-2xl md:text-3xl lg:text-4xl leading-tight max-w-[25.25rem] mx-auto text-[#121A22] font-medium">
                     {{ getCurrentStepConfig().title }}
                 </h1>
             </div>
@@ -428,12 +428,12 @@ watch(
 
                 <div
                     v-if="showProgressBar"
-                    class="flex items-center gap-[7px]">
+                    class="flex items-center gap-[0.4375rem]">
                     <div
                         v-for="(step, index) in progressSteps"
                         :key="step"
                         :class="[
-                            'h-1.5 w-[65px] rounded-full transition-all duration-300',
+                            'h-1.5 w-[4.0625rem] rounded-full transition-all duration-300',
                             index <= currentProgressIndex
                                 ? 'bg-[#18222c]'
                                 : 'bg-[#f0f1f3]',
@@ -471,13 +471,13 @@ watch(
                     </div>
                     <div
                         v-else
-                        class="flex flex-wrap gap-3 max-w-full sm:max-w-[637px]">
+                        class="flex flex-wrap gap-3 max-w-full sm:max-w-[39.8125rem]">
                         <div
                             v-for="option in motivationOptions"
                             :key="option.value"
                             @click="formData.motivation = option.value"
                             :class="[
-                                'inline-flex min-h-14 items-center px-5 py-2.5 rounded-[99px] cursor-pointer transition-all duration-200 text-xs sm:text-sm font-medium leading-tight whitespace-pre',
+                                'inline-flex min-h-14 items-center px-5 py-2.5 rounded-[6.1875rem] cursor-pointer transition-all duration-200 text-xs sm:text-sm font-medium leading-tight whitespace-pre',
                                 formData.motivation === option.value
                                     ? 'bg-[#18222c] text-white'
                                     : 'bg-[#F0F1F3] text-[#283849] hover:bg-[#e5e7eb]',
@@ -491,7 +491,7 @@ watch(
                     <button
                         @click="handleNext"
                         outlined
-                        class="flex-1 basis-0 w-full h-[52px] px-4 py-3 bg-[#F0F1F3] hover:bg-[#e5e7eb] disabled:bg-gray-300 text-[#121a22] text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center">
+                        class="flex-1 basis-0 w-full h-[3.25rem] px-4 py-3 bg-[#F0F1F3] hover:bg-[#e5e7eb] disabled:bg-gray-300 text-[#121a22] text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center">
                         Start Over
                     </button>
 
@@ -500,7 +500,7 @@ watch(
                         :disabled="!formData.motivation || loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1 basis-0 w-full h-[52px] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#18222c] hover:bg-[#0F172A] text-white disabled:bg-gray-400">
+                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#18222c] hover:bg-[#0F172A] text-white disabled:bg-gray-400">
                         Next
                     </button>
                 </div>
@@ -536,13 +536,13 @@ watch(
                     </div>
                     <div
                         v-else
-                        class="flex flex-wrap gap-3 max-w-full sm:max-w-[637px]">
+                        class="flex flex-wrap gap-3 max-w-full sm:max-w-[39.8125rem]">
                         <div
                             v-for="option in budgetOptions"
                             :key="option.value"
                             @click="formData.budget = option.value"
                             :class="[
-                                'inline-flex min-h-14 items-center px-5 py-2.5 rounded-[99px] cursor-pointer transition-all duration-200 text-xs sm:text-sm font-medium leading-tight whitespace-pre',
+                                'inline-flex min-h-14 items-center px-5 py-2.5 rounded-[6.1875rem] cursor-pointer transition-all duration-200 text-xs sm:text-sm font-medium leading-tight whitespace-pre',
                                 formData.budget === option.value
                                     ? 'bg-[#18222c] text-white'
                                     : 'bg-[#F0F1F3] text-[#283849] hover:bg-[#e5e7eb]',
@@ -556,7 +556,7 @@ watch(
                     <button
                         @click="handlePrev"
                         outlined
-                        class="flex-1 basis-0 w-full h-[52px] px-4 py-3 bg-[#F0F1F3] hover:bg-[#e5e7eb] disabled:bg-gray-300 text-[#121a22] text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center">
+                        class="flex-1 basis-0 w-full h-[3.25rem] px-4 py-3 bg-[#F0F1F3] hover:bg-[#e5e7eb] disabled:bg-gray-300 text-[#121a22] text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center">
                         Back
                     </button>
 
@@ -565,7 +565,7 @@ watch(
                         :disabled="!formData.budget || loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1 basis-0 w-full h-[52px] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#18222c] hover:bg-[#0F172A] text-white disabled:bg-gray-400">
+                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#18222c] hover:bg-[#0F172A] text-white disabled:bg-gray-400">
                         Next
                     </button>
                 </div>
@@ -601,13 +601,13 @@ watch(
                     </div>
                     <div
                         v-else
-                        class="flex flex-wrap gap-3 max-w-full sm:max-w-[637px]">
+                        class="flex flex-wrap gap-3 max-w-full sm:max-w-[39.8125rem]">
                         <div
                             v-for="option in locationTypeOptions"
                             :key="option.value"
                             @click="formData.locationType = option.value"
                             :class="[
-                                'inline-flex min-h-14 items-center px-5 py-2.5 rounded-[99px] cursor-pointer transition-all duration-200 text-xs sm:text-sm font-medium leading-tight whitespace-pre',
+                                'inline-flex min-h-14 items-center px-5 py-2.5 rounded-[6.1875rem] cursor-pointer transition-all duration-200 text-xs sm:text-sm font-medium leading-tight whitespace-pre',
                                 formData.locationType === option.value
                                     ? 'bg-[#18222c] text-white'
                                     : 'bg-[#F0F1F3] text-[#283849] hover:bg-[#e5e7eb]',
@@ -621,7 +621,7 @@ watch(
                     <button
                         @click="handlePrev"
                         outlined
-                        class="flex-1 basis-0 w-full h-[52px] px-4 py-3 bg-[#F0F1F3] hover:bg-[#e5e7eb] disabled:bg-gray-300 text-[#121a22] text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center">
+                        class="flex-1 basis-0 w-full h-[3.25rem] px-4 py-3 bg-[#F0F1F3] hover:bg-[#e5e7eb] disabled:bg-gray-300 text-[#121a22] text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center">
                         Back
                     </button>
 
@@ -630,7 +630,7 @@ watch(
                         :disabled="!formData.locationType || loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1 basis-0 w-full h-[52px] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#18222c] hover:bg-[#0F172A] text-white disabled:bg-gray-400">
+                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#18222c] hover:bg-[#0F172A] text-white disabled:bg-gray-400">
                         Next
                     </button>
                 </div>
@@ -674,7 +674,7 @@ watch(
 
 <style scoped>
 .citizen-onboarding-modal .p-dialog {
-    border-radius: 10px;
+    border-radius: 0.625rem;
 }
 
 .citizen-onboarding-modal .p-dialog-header {

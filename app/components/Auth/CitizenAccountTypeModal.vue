@@ -125,7 +125,7 @@
             <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[0.9375rem] rounded-tr-[0.625rem] transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
@@ -163,7 +163,8 @@
                     @click="selectAccountType(3)"
                     type="button"
                     :class="[
-                        'h-[92px] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
+                        'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
+                        'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
                         selectedAccountType === 3
                             ? 'bg-[#18222c] text-white'
                             : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
@@ -175,7 +176,8 @@
                     @click="selectAccountType(2)"
                     type="button"
                     :class="[
-                        'h-[92px] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
+                        'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
+                        'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
                         selectedAccountType === 2
                             ? 'bg-[#18222c] text-white'
                             : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
@@ -187,7 +189,8 @@
                     @click="selectAccountType(1)"
                     type="button"
                     :class="[
-                        'h-[92px] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
+                        'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
+                        'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
                         selectedAccountType === 1
                             ? 'bg-[#18222c] text-white'
                             : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
@@ -199,7 +202,7 @@
             <button
                 @click="handleNext"
                 type="button"
-                class="w-full h-[52px] px-6 bg-[#18222c] hover:bg-[#101822] text-white font-bold rounded-xl transition-colors duration-200">
+                class="w-full h-[3.25rem] px-6 bg-[#18222c] hover:bg-[#101822] text-white font-bold rounded-xl transition-colors duration-200">
                 Next
             </button>
 
@@ -225,7 +228,7 @@
 
 <style scoped>
     .citizen-account-type-modal .p-dialog {
-        border-radius: 10px;
+        border-radius: 0.625rem;
     }
 
     .citizen-account-type-modal .p-dialog-header {

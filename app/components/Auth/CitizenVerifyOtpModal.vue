@@ -304,7 +304,7 @@
             <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[0.9375rem] rounded-tr-[0.625rem] transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
@@ -361,7 +361,7 @@
                     type="text"
                     inputmode="numeric"
                     maxlength="1"
-                    class="w-[92px] h-14 text-center text-lg font-semibold border border-[#cfdbe8] rounded-lg text-[#121A22] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors"
+                    class="w-[5.75rem] h-14 text-center text-lg font-semibold border border-[#cfdbe8] rounded-lg text-[#121A22] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors"
                     @input="handleOtpInput(index, $event)"
                     @keydown="handleKeyDown(index, $event)"
                     @paste="index === 0 ? handlePaste($event) : null" />
@@ -420,7 +420,7 @@
                 @click="handleVerify"
                 :disabled="isVerifying"
                 type="button"
-                class="w-full h-[52px] px-6 bg-[#18222c] hover:bg-[#101822] disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors duration-200 flex items-center justify-center">
+                class="w-full h-[3.25rem] px-6 bg-[#18222c] hover:bg-[#101822] disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors duration-200 flex items-center justify-center">
                 {{ isVerifying ? "Verifying..." : "Verify email" }}
             </button>
 
@@ -446,7 +446,7 @@
 
 <style scoped>
     .citizen-verify-otp-modal .p-dialog {
-        border-radius: 10px;
+        border-radius: 0.625rem;
     }
 
     .citizen-verify-otp-modal .p-dialog-header {

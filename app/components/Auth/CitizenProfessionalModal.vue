@@ -122,7 +122,7 @@
             <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[0.9375rem] rounded-tr-[0.625rem] transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
@@ -137,7 +137,7 @@
                         class="flex-1 text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22] text-center">
                         Add professional information
                     </h1>
-                    <div class="w-[15px] h-6 shrink-0"></div>
+                    <div class="w-[0.9375rem] h-6 shrink-0"></div>
                 </div>
             </div>
         </template>
@@ -271,7 +271,7 @@
                     @click="handleNext"
                     :disabled="isSubmitting"
                     type="button"
-                    class="w-full px-5 py-3.5 h-[52px] font-bold text-base leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center"
+                    class="w-full px-5 py-3.5 h-[3.25rem] font-bold text-base leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center"
                     :class="
                         isSubmitting
                             ? 'bg-[#606e83] text-white cursor-not-allowed'
@@ -303,7 +303,7 @@
 
 <style scoped>
     .citizen-professional-modal .p-dialog {
-        border-radius: 10px;
+        border-radius: 0.625rem;
     }
 
     .citizen-professional-modal .p-dialog-header {

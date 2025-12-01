@@ -271,7 +271,7 @@
             <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[0.9375rem] rounded-tr-[0.625rem] transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
@@ -630,7 +630,7 @@
                     :disabled="loading || !allPasswordValidationsPassed"
                     :loading="loading"
                     loadingIcon="pi pi-spin pi-spinner"
-                    class="w-full h-[52px] px-6 bg-[#18222c] hover:bg-[#101822] disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors duration-200 flex items-center justify-center"
+                    class="w-full h-[3.25rem] px-6 bg-[#18222c] hover:bg-[#101822] disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors duration-200 flex items-center justify-center"
                     >
                     {{ loading ? "Processing..." : "Next" }}
                 </button>
@@ -658,7 +658,7 @@
 
 <style scoped>
     .citizen-register-modal .p-dialog {
-        border-radius: 10px;
+        border-radius: 0.625rem;
     }
 
     .citizen-register-modal .p-dialog-header {

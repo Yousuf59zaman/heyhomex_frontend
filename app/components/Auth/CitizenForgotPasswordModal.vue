@@ -130,7 +130,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-forgot-password-modal"
-        :style="{width: '720px', maxWidth: '95vw'}"
+        :style="{width: '45rem', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4 bg-white overflow-hidden',
             header: 'border-0 p-0 bg-white',
@@ -142,7 +142,7 @@
             <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[0.9375rem] rounded-tr-[0.625rem] transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
@@ -195,7 +195,7 @@
                     @click="handleSubmit"
                     :disabled="isLoading"
                     type="button"
-                    class="w-full px-5 py-3.5 h-[52px] font-bold text-base leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
+                    class="w-full px-5 py-3.5 h-[3.25rem] font-bold text-base leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
                     :class="
                         isLoading
                             ? 'bg-[#606e83] text-white cursor-not-allowed'
@@ -266,7 +266,7 @@
 
 <style scoped>
     .citizen-forgot-password-modal .p-dialog {
-        border-radius: 10px;
+        border-radius: 0.625rem;
     }
 
     .citizen-forgot-password-modal .p-dialog-header {

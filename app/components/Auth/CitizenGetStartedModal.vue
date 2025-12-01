@@ -200,12 +200,12 @@
             <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[0.9375rem] rounded-tr-[0.625rem] transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
             <div class="w-full px-6 pt-8 pb-10">
-                <div class="relative mx-auto flex w-full max-w-[672px] items-center justify-center">
+                <div class="relative mx-auto flex w-full max-w-[42rem] items-center justify-center">
                     <button
                         @click="handleBack"
                         type="button"
@@ -247,7 +247,7 @@
                         @click="handleContinueWithEmail"
                         type="button"
                         :disabled="isLoading"
-                        class="flex h-[52px] w-full items-center justify-center rounded-xl bg-[#18222c] px-5 text-base font-bold leading-6 text-white transition-colors duration-200 hover:bg-[#111822] disabled:cursor-not-allowed disabled:opacity-50">
+                        class="flex h-[3.25rem] w-full items-center justify-center rounded-xl bg-[#18222c] px-5 text-base font-bold leading-6 text-white transition-colors duration-200 hover:bg-[#111822] disabled:cursor-not-allowed disabled:opacity-50">
                         Continue with email
                     </button>
 
@@ -261,7 +261,7 @@
                         @click="handleContinueWithApple"
                         type="button"
                         :disabled="isAppleLoadingSSO"
-                        class="flex h-[52px] w-full items-center justify-center gap-2 rounded-xl border border-[#cfdbe8] bg-white px-5 text-base font-bold leading-6 text-[#18222c] transition-colors duration-200 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
+                        class="flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-xl border border-[#cfdbe8] bg-white px-5 text-base font-bold leading-6 text-[#18222c] transition-colors duration-200 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
                         <svg
                             v-if="!isAppleLoadingSSO"
                             class="h-5 w-5"
@@ -280,7 +280,7 @@
                         @click="handleContinueWithFacebook"
                         type="button"
                         :disabled="isFacebookLoadingSSO"
-                        class="flex h-[52px] w-full items-center justify-center gap-2 rounded-xl border border-[#cfdbe8] bg-white px-5 text-base font-bold leading-6 text-[#18222c] transition-colors duration-200 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
+                        class="flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-xl border border-[#cfdbe8] bg-white px-5 text-base font-bold leading-6 text-[#18222c] transition-colors duration-200 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
                         <svg
                             v-if="!isFacebookLoadingSSO"
                             class="h-5 w-5 text-[#1877F2]"
@@ -299,7 +299,7 @@
                         @click="handleContinueWithGoogle"
                         type="button"
                         :disabled="isGoogleLoadingSSO"
-                        class="flex h-[52px] w-full items-center justify-center gap-2 rounded-xl border border-[#cfdbe8] bg-white px-5 text-base font-bold leading-6 text-[#18222c] transition-colors duration-200 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
+                        class="flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-xl border border-[#cfdbe8] bg-white px-5 text-base font-bold leading-6 text-[#18222c] transition-colors duration-200 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
                         <svg
                             v-if="!isGoogleLoadingSSO"
                             class="h-5 w-5"
@@ -342,7 +342,7 @@
 </template>
 <style scoped>
     .citizen-get-started-modal .p-dialog {
-        border-radius: 10px;
+        border-radius: 0.625rem;
     }
 
     .citizen-get-started-modal .p-dialog-header {

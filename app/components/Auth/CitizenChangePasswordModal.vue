@@ -157,11 +157,11 @@
             <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[0.9375rem] rounded-tr-[0.625rem] transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
-            <div class="w-full px-6 pt-8 pb-0">
+         <div class="w-full px-6 pt-4 pb-0">
                 <div class="flex items-center justify-center">
                     <h2 class="text-2xl md:text-3xl lg:text-4xl font-medium text-[#121A22] leading-tight">
                         Create New Password
@@ -171,7 +171,7 @@
         </template>
 
         <!-- Content -->
-        <div class="px-6 pb-8 pt-12 flex flex-col gap-10">
+        <div class="px-6 pb-8 pt-8 flex flex-col gap-10">
             <p class="text-base text-[#121A22] leading-6 text-center">
                 Please create a new password for your account. Make sure it meets all the requirements below.
             </p>
@@ -366,7 +366,7 @@
                 @click="handleSubmit"
                 :disabled="isLoading || !allPasswordValidationsPassed"
                 type="button"
-                class="w-full px-5 h-[52px] text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
+                class="w-full px-5 h-[3.25rem] text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
                 :class="
                     isLoading || !allPasswordValidationsPassed
                         ? 'bg-[#606e83] text-white cursor-not-allowed'
@@ -398,7 +398,7 @@
 
 <style scoped>
     .citizen-change-password-modal .p-dialog {
-        border-radius: 10px;
+        border-radius: 0.625rem;
     }
 
     .citizen-change-password-modal .p-dialog-header {

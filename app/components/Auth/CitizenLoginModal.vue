@@ -263,7 +263,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-login-modal"
-        :style="{width: '720px', maxWidth: '95vw'}"
+        :style="{width: '45rem', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4 bg-white overflow-hidden',
             header: 'border-0 p-0 bg-white',
@@ -275,7 +275,7 @@
             <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[0.9375rem] rounded-tr-[0.625rem] transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
@@ -372,7 +372,7 @@
                     :disabled="loading"
                     :loading="loading"
                     loadingIcon="pi pi-spin pi-spinner"
-                    class="w-full px-5 py-3.5 h-[52px] bg-[#18222C] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-bold text-base leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center">
+                    class="w-full px-5 py-3.5 h-[3.25rem] bg-[#18222C] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-bold text-base leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center">
                     {{ loading ? "Signing In..." : "Sign In" }}
                 </button>
 
@@ -473,9 +473,9 @@
 
 <style scoped>
     .citizen-login-modal :deep(.p-dialog) {
-        border-radius: 10px;
+        border-radius: 0.625rem;
         border: 0;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 1.5625rem 3.125rem -0.75rem rgba(0, 0, 0, 0.25);
         margin: 1rem;
     }
 
