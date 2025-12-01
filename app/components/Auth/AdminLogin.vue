@@ -129,7 +129,7 @@ const admin_user = adminUser();
                             </span>
                             <div v-else class="flex justify-center items-center">
                                 <div
-                                    class="w-7 h-7 border-[3px] border-white border-t-transparent rounded-full animate-spin">
+                                    class="w-7 h-7 border-2 border-white border-t-transparent rounded-full animate-spin">
                                 </div>
                             </div>
                         </ButtonPrimary>

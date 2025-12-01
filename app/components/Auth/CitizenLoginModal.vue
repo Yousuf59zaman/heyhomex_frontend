@@ -265,7 +265,7 @@
         class="citizen-login-modal"
         :style="{width: '720px', maxWidth: '95vw'}"
         :pt="{
-            root: 'border-0 rounded-[10px] shadow-2xl m-4 bg-white overflow-hidden',
+            root: 'border-0 rounded-xl shadow-2xl m-4 bg-white overflow-hidden',
             header: 'border-0 p-0 bg-white',
             content: 'border-0 p-0 bg-white',
             closeButton:

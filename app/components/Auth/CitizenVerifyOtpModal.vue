@@ -296,7 +296,7 @@
         class="citizen-verify-otp-modal"
         :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
-            root: 'border-0 rounded-[10px] shadow-2xl m-4',
+            root: 'border-0 rounded-xl shadow-2xl m-4',
             header: 'border-0 pb-0',
             content: 'border-0 pt-0 pb-8',
         }">

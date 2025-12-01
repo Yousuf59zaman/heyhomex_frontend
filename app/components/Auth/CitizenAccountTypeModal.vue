@@ -117,11 +117,12 @@
         class="citizen-account-type-modal"
         :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
-            root: 'border-0 rounded-[10px] shadow-2xl m-4',
+            root: 'border-0 rounded-xl shadow-2xl m-4',
             header: 'border-0 pb-0',
             content: 'border-0 pt-0 pb-8',
         }">
         <template #header>
+            <div class="absolute right-0 top-0 z-50">
             <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"

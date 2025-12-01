@@ -190,7 +190,7 @@
         class="citizen-get-started-modal"
         :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
-            root: 'border-0 rounded-[10px] shadow-2xl m-4',
+            root: 'border-0 rounded-xl shadow-2xl m-4',
             header: 'border-0 p-0',
             content: 'border-0 p-0',
             closeButton:
