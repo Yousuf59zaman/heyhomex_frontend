@@ -2,25 +2,21 @@
 definePageMeta({
     layout: 'citizen',
 });
+
+const route = useRoute()
 const hydrated = ref(false);
 const activeTab = ref('home');
 
-const videos = ref([
-    {
-        id: 1,
-        title: 'These are the best Places to Live in Oahu, Hawaii for...',
-        channel: 'Hawaii Living Guide',
-        duration: '8:25',
-        views: '245K views',
-        uploadTime: '2 weeks ago',
-        thumbnail: '/images/dashboard/1.png',
-        isFavorite: false,
-        category: 'Real Estate',
-        location: 'Honolulu',
-        coordinates: [21.3099, -157.8581],
-        videoUrl: 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8',
-    }
-]);
+// Videos state
+const videos = ref([]);
+const videosLoading = ref(false);
+const videosError = ref(null);
+const videosPaginationConfig = ref({
+    data: {},
+    lang: "en",
+    align: "center",
+    action: "",
+});
 
 const adConfig = ref({
     "client": "vast",
@@ -48,8 +44,60 @@ const adConfig = ref({
     "autoplayadsmuted": false
 });
 
+// Load videos from API
+const loadVideos = async () => {
+    videosLoading.value = true;
+    videosError.value = null;
+    try {
+        const response = await $fetchCMS("/videos/list", {
+            method: "GET",
+            params: {
+                page: route.query.videoPage ? route.query.videoPage : 1,
+            }
+        });
+
+        videos.value = response.data.data.map((video) => ({
+            id: video.id,
+            title: video.title,
+            channel: video.channel?.name || 'Unknown Channel',
+            duration: video.duration || '0:00',
+            views: '0 views', // API doesn't provide views
+            uploadTime: new Date(video.created_at).toLocaleDateString(),
+            thumbnail: '/images/dashboard/1.png', // Default thumbnail
+            isFavorite: false,
+            category: 'Real Estate',
+            location: video.latitude && video.longitude ? 'Custom Location' : 'Unknown',
+            coordinates: video.latitude && video.longitude ? [video.latitude, video.longitude] : null,
+            videoUrl: video.video_url,
+        }));
+
+        videosPaginationConfig.value.data = response.data.meta;
+    } catch (e) {
+        console.error("Error loading videos:", e.message);
+        videosError.value = e;
+        videos.value = [];
+    } finally {
+        videosLoading.value = false;
+    }
+};
+
 onMounted(() => {
     hydrated.value = true;
+    loadVideos();
+});
+
+// Watch for video page changes
+watch(() => route.query.videoPage, () => {
+    if (hydrated.value && activeTab.value === 'videos') {
+        loadVideos();
+    }
+});
+
+// Load videos when switching to videos tab
+watch(activeTab, (newTab) => {
+    if (newTab === 'videos' && videos.value.length === 0) {
+        loadVideos();
+    }
 });
 </script>
 
@@ -111,7 +159,38 @@ onMounted(() => {
                 </div>
             </div>
             <SearchProperty v-if="activeTab === 'home'" />
-            <SearchVideo v-else-if="activeTab === 'videos'" :videos="videos" :adConfig="adConfig"/>
+            <div v-else-if="activeTab === 'videos'">
+                <!-- Loading State -->
+                <div v-if="videosLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                    <div v-for="n in 8" :key="n" class="bg-white rounded-lg shadow-sm overflow-hidden animate-pulse">
+                        <div class="aspect-video bg-gray-200"></div>
+                        <div class="p-4 space-y-3">
+                            <div class="h-5 bg-gray-200 rounded w-3/4"></div>
+                            <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error State -->
+                <div v-else-if="videosError" class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                    <p class="text-red-600 mb-2">Error loading videos. Please try again later.</p>
+                    <p class="text-sm text-red-500">{{ videosError.message }}</p>
+                    <button @click="loadVideos" class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                        Retry
+                    </button>
+                </div>
+
+                <!-- Videos Content -->
+                <div v-else>
+                    <SearchVideo :videos="videos" :adConfig="adConfig"/>
+                    
+                    <!-- Pagination -->
+                    <LazyPagination
+                        v-if="videos.length > 0"
+                        class="px-4 mt-6"
+                        :config="videosPaginationConfig" />
+                </div>
+            </div>
         </template>
     </div>
 </template>
