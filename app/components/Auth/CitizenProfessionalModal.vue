@@ -112,17 +112,17 @@
         class="citizen-professional-modal"
         :style="{width: 'min(38rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
-            root: 'border-0 rounded-[10px] shadow-2xl m-4 bg-white',
+            root: 'border-0 rounded-xl shadow-2xl m-4 bg-white',
             header: 'border-0 pb-0',
             content: 'border-0 pt-0 pb-0',
             closeButton:
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-sm transition-colors duration-200',
         }">
         <template #header>
-            <div class="absolute right-[0px] top-[0] z-50">
+            <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-[56px] h-[56px] flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-2xl rounded-tr-xl transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
@@ -137,7 +137,7 @@
                         class="flex-1 text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22] text-center">
                         Add professional information
                     </h1>
-                    <div class="w-[15px] h-[24px] shrink-0"></div>
+                    <div class="w-4 h-6 shrink-0"></div>
                 </div>
             </div>
         </template>
@@ -149,7 +149,7 @@
                         <div class="pb-2">
                             <label
                                 for="professionalType"
-                                class="text-base font-medium text-[#121A22] leading-[24px]">
+                                class="text-base font-medium text-[#121A22] leading-6">
                                 Professional type
                             </label>
                         </div>
@@ -161,8 +161,8 @@
                             placeholder="Select type"
                             class="w-full"
                             :pt="{
-                                root: 'w-full h-[56px]',
-                                input: 'w-full h-[56px] px-4 py-4 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                                root: 'w-full h-14',
+                                input: 'w-full h-14 px-4 py-4 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
                             }" />
                     </div>
                 </div>
@@ -173,7 +173,7 @@
                             <div class="pb-2">
                                 <label
                                     for="licenseNumber"
-                                    class="text-base font-medium text-[#121A22] leading-[24px]">
+                                    class="text-base font-medium text-[#121A22] leading-6">
                                     License number
                                 </label>
                             </div>
@@ -182,7 +182,7 @@
                                 v-model="formData.licenseNumber"
                                 type="text"
                                 placeholder="Enter your license number"
-                                class="w-full h-[56px] px-4 py-4 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                                class="w-full h-14 px-4 py-4 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                         </div>
                     </div>
 
@@ -191,7 +191,7 @@
                             <div class="pb-2">
                                 <label
                                     for="brokerId"
-                                    class="text-base font-medium text-[#121A22] leading-[24px]">
+                                    class="text-base font-medium text-[#121A22] leading-6">
                                     Broker ID
                                 </label>
                             </div>
@@ -200,7 +200,7 @@
                                 v-model="formData.brokerId"
                                 type="text"
                                 placeholder="Enter your broker ID"
-                                class="w-full h-[56px] px-4 py-4 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                                class="w-full h-14 px-4 py-4 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                         </div>
                     </div>
                 </div>
@@ -210,7 +210,7 @@
                         <div class="pb-2">
                             <label
                                 for="zipCode"
-                                class="text-base font-medium text-[#121A22] leading-[24px]">
+                                class="text-base font-medium text-[#121A22] leading-6">
                                 Zip code
                             </label>
                         </div>
@@ -229,7 +229,7 @@
                             <div class="pb-2">
                                 <label
                                     for="mobilePhone"
-                                    class="text-base font-medium text-[#121A22] leading-[24px]">
+                                    class="text-base font-medium text-[#121A22] leading-6">
                                     Mobile/Phone number
                                 </label>
                             </div>
@@ -238,7 +238,7 @@
                                 v-model="formData.mobilePhone"
                                 type="tel"
                                 placeholder="Enter your mobile/phone number"
-                                class="w-full h-[56px] px-4 py-4 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                                class="w-full h-14 px-4 py-4 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                         </div>
                     </div>
 
@@ -247,7 +247,7 @@
                             <div class="pb-2">
                                 <label
                                     for="extension"
-                                    class="text-base font-medium text-[#121A22] leading-[24px]">
+                                    class="text-base font-medium text-[#121A22] leading-6">
                                     Extension
                                 </label>
                             </div>
@@ -256,7 +256,7 @@
                                 v-model="formData.extension"
                                 type="text"
                                 placeholder="Enter extension"
-                                class="w-full h-[56px] px-4 py-4 border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                                class="w-full h-14 px-4 py-4 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                         </div>
                     </div>
                 </div>
@@ -271,7 +271,7 @@
                     @click="handleNext"
                     :disabled="isSubmitting"
                     type="button"
-                    class="w-full px-5 py-3.5 h-[52px] font-bold text-base leading-[24px] rounded-[12px] transition-colors duration-200 flex items-center justify-center"
+                    class="w-full px-5 py-3.5 h-13 font-bold text-base leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center"
                     :class="
                         isSubmitting
                             ? 'bg-[#606e83] text-white cursor-not-allowed'

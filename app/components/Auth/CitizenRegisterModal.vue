@@ -261,17 +261,17 @@
         class="citizen-register-modal"
         :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
-            root: 'border-0 rounded-[10px] shadow-2xl m-4',
+            root: 'border-0 rounded-xl shadow-2xl m-4',
             header: 'border-0 pb-0',
             content: 'border-0 pt-0 pb-8',
             closeButton:
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-sm transition-colors duration-200',
         }">
         <template #header>
-            <div class="absolute right-[0px] top-[0] z-50">
+            <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-[56px] h-[56px] flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-2xl rounded-tr-xl transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
@@ -324,7 +324,7 @@
                             required
                             autocomplete="off"
                             :pt="{
-                                root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-[8px] text-sm md:text-base text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
+                                root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-lg text-sm md:text-base text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                             }" />
                         <span
                             v-if="validationErrors.first_name"
@@ -346,7 +346,7 @@
                             required
                             autocomplete="off"
                             :pt="{
-                                root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-[8px] text-sm md:text-base text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
+                                root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-lg text-sm md:text-base text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                             }" />
                         <span
                             v-if="validationErrors.last_name"
@@ -630,7 +630,7 @@
                     :disabled="loading || !allPasswordValidationsPassed"
                     :loading="loading"
                     loadingIcon="pi pi-spin pi-spinner"
-                    class="w-full h-[52px] px-6 bg-[#18222c] hover:bg-[#101822] disabled:bg-gray-400 text-white font-bold rounded-[12px] transition-colors duration-200 flex items-center justify-center"
+                    class="w-full h-13 px-6 bg-[#18222c] hover:bg-[#101822] disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors duration-200 flex items-center justify-center"
                     >
                     {{ loading ? "Processing..." : "Next" }}
                 </button>

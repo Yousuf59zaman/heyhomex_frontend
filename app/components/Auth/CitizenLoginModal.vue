@@ -265,17 +265,17 @@
         class="citizen-login-modal"
         :style="{width: '720px', maxWidth: '95vw'}"
         :pt="{
-            root: 'border-0 rounded-[10px] shadow-2xl m-4 bg-white overflow-hidden',
+            root: 'border-0 rounded-xl shadow-2xl m-4 bg-white overflow-hidden',
             header: 'border-0 p-0 bg-white',
             content: 'border-0 p-0 bg-white',
             closeButton:
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200',
         }">
         <template #header>
-            <div class="absolute right-[0px] top-[0] z-50">
+            <div class="absolute right-0 top-0 z-50">
                 <button
                     @click="closeHandler"
-                    class="w-[56px] h-[56px] flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-[15px] rounded-tr-[10px] transition-all duration-300 focus:outline-none">
+                    class="w-14 h-14 flex items-center justify-center bg-[#8B8B8B] text-white cursor-pointer rounded-bl-2xl rounded-tr-xl transition-all duration-300 focus:outline-none">
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
@@ -283,7 +283,7 @@
                 <h1 class="text-2xl md:text-3xl lg:text-4xl font-medium text-[#121A22] leading-tight">
                     Welcome Back!
                 </h1>
-                <p class="text-base text-[#121A22] leading-[24px] mt-4">
+                <p class="text-base text-[#121A22] leading-6 mt-4">
                     Sign in to continue your home journey
                 </p>
             </div>
@@ -295,7 +295,7 @@
                 <div class="flex flex-col gap-2">
                     <label
                         for="email"
-                        class="text-base font-medium text-[#121A22] leading-[24px]"
+                        class="text-base font-medium text-[#121A22] leading-6"
                         >Email Address</label
                     >
                     <div class="relative">
@@ -308,14 +308,14 @@
                             placeholder="Enter your email"
                             required
                             autocomplete="off"
-                            class="w-full pl-12 pr-4 h-[56px] border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                            class="w-full pl-12 pr-4 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <label
                         for="password"
-                        class="text-base font-medium text-[#121A22] leading-[24px]"
+                        class="text-base font-medium text-[#121A22] leading-6"
                         >Password</label
                     >
                     <div class="relative">
@@ -328,7 +328,7 @@
                             placeholder="Enter your password"
                             required
                             autocomplete="current-password"
-                            class="w-full pl-12 pr-12 h-[56px] border border-[#CFDBE8] rounded-[8px] text-base leading-[24px] text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                            class="w-full pl-12 pr-12 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                         <button
                             type="button"
                             @click="password_view_status(!password_open)"
@@ -344,7 +344,7 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between text-base leading-[24px]">
+                <div class="flex items-center justify-between text-base leading-6">
                     <label class="flex items-center">
                         <input
                             type="checkbox"
@@ -372,7 +372,7 @@
                     :disabled="loading"
                     :loading="loading"
                     loadingIcon="pi pi-spin pi-spinner"
-                    class="w-full px-5 py-3.5 h-[52px] bg-[#18222C] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-bold text-base leading-[24px] rounded-[12px] transition-colors duration-200 flex items-center justify-center">
+                    class="w-full px-5 py-3.5 h-13 bg-[#18222C] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-bold text-base leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center">
                     {{ loading ? "Signing In..." : "Sign In" }}
                 </button>
 
@@ -392,7 +392,7 @@
                         @click="handleAppleLogin"
                         type="button"
                         :disabled="isAppleLoadingSSO"
-                        class="px-2 py-3 bg-white hover:bg-gray-50 text-gray-900 font-medium border border-gray-300 rounded-[8px] transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="px-2 py-3 bg-white hover:bg-gray-50 text-gray-900 font-medium border border-gray-300 rounded-lg transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
                         <svg
                             v-if="!isAppleLoadingSSO"
                             class="w-6 h-6"
@@ -411,7 +411,7 @@
                         @click="handleFacebookLogin"
                         type="button"
                         :disabled="isFacebookLoadingSSO"
-                        class="px-4 py-3 bg-white hover:bg-gray-50 text-gray-900 font-medium border border-gray-300 rounded-[8px] transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="px-4 py-3 bg-white hover:bg-gray-50 text-gray-900 font-medium border border-gray-300 rounded-lg transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
                         <svg
                             v-if="!isFacebookLoadingSSO"
                             class="w-5 h-5 text-[#1877F2]"
@@ -430,7 +430,7 @@
                         @click="handleGoogleLogin"
                         type="button"
                         :disabled="loading || isGoogleLoadingSSO"
-                        class="px-4 py-3 bg-white hover:bg-gray-50 text-gray-900 font-medium border border-gray-300 rounded-[8px] transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="px-4 py-3 bg-white hover:bg-gray-50 text-gray-900 font-medium border border-gray-300 rounded-lg transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
                         <svg
                             v-if="!isGoogleLoadingSSO"
                             class="w-5 h-5"
