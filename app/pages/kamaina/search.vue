@@ -83,22 +83,19 @@ const loadVideos = async () => {
 
 onMounted(() => {
     hydrated.value = true;
-    loadVideos();
 });
 
-// Watch for video page changes
-watch(() => route.query.videoPage, () => {
-    if (hydrated.value && activeTab.value === 'videos') {
-        loadVideos();
-    }
-});
+const handleTabClick = (tab) => {
+    const router = useRouter();
+    router.replace({ query: {} });
 
-// Load videos when switching to videos tab
-watch(activeTab, (newTab) => {
-    if (newTab === 'videos' && videos.value.length === 0) {
+    if (tab === 'home') {
+        activeTab.value = 'home';
+    } else if (tab === 'videos') {
+        activeTab.value = 'videos';
         loadVideos();
     }
-});
+};
 </script>
 
 <template>
@@ -140,20 +137,24 @@ watch(activeTab, (newTab) => {
         <template v-else>
             <div class="bg-white rounded-lg p-3 lg:p-4">
                 <div class="flex items-center gap-3">
-                    <button @click="activeTab = 'home'" :class="[
-                        'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-                        activeTab === 'home'
-                            ? 'bg-gray-900 text-white'
-                            : 'text-gray-600 hover:text-gray-900'
-                    ]">
+                    <button
+                        @click="handleTabClick('home')"
+                        :class="[
+                            'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                            activeTab === 'home'
+                                ? 'bg-gray-900 text-white'
+                                : 'text-gray-600 hover:text-gray-900',
+                        ]">
                         Home
                     </button>
-                    <button @click="activeTab = 'videos'" :class="[
-                        'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-                        activeTab === 'videos'
-                            ? 'bg-gray-900 text-white'
-                            : 'text-gray-600 hover:text-gray-900'
-                    ]">
+                    <button
+                        @click="handleTabClick('videos')"
+                        :class="[
+                            'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                            activeTab === 'videos'
+                                ? 'bg-gray-900 text-white'
+                                : 'text-gray-600 hover:text-gray-900',
+                        ]">
                         Videos
                     </button>
                 </div>
