@@ -49,7 +49,7 @@ const loadVideos = async () => {
     videosLoading.value = true;
     videosError.value = null;
     try {
-        const response = await $fetchCMS("/videos/list", {
+        const response = await $fetchCitizen("/videos/list", {
             method: "GET",
             params: {
                 page: route.query.videoPage ? route.query.videoPage : 1,
