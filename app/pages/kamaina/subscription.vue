@@ -302,9 +302,7 @@
         <div
             v-if="activeTab === 'billing'"
             class="bg-white border border-gray-200 rounded-lg p-4 md:p-6">
-            <p class="text-sm text-gray-600">
-                Billing history will be available here.
-            </p>
+            <LazyCommonCitizenBillingHistory />
         </div>
     </div>
 </template>
