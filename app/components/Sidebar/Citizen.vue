@@ -126,10 +126,12 @@
         class="h-full w-[69px] flex flex-col items-center py-7"
         :style="{backgroundColor: sidebarColor}">
         <div class="mb-8">
-            <img
-                src="/svg/dashboard/home_logo.svg"
-                alt="HeyHome Logo"
-                class="h-8 w-8 rounded" />
+            <NuxtLink :to="`${getBasePath}/subscription`">
+                <img
+                    src="/svg/dashboard/home_logo.svg"
+                    alt="HeyHome Logo"
+                    class="h-8 w-8 rounded cursor-pointer hover:opacity-80 transition-opacity" />
+            </NuxtLink>
         </div>
 
         <!-- Navigation Icons -->
