@@ -155,7 +155,7 @@
     ])
 
     const playSidebarVideo = (video) => {
-        openVideo(video, videos.value)
+        openVideo(video, [])
     }
 
     // Ad configuration for VAST video advertising
