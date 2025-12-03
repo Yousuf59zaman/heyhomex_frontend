@@ -17,7 +17,7 @@
         action: "",
     })
     const demoVideoUrl =
-        "https://content.jwplatform.com/manifests/yp34SRmf.m3u8"
+        "https://eu2.contabostorage.com/beede22b78b34cd7b1c01987a4332d1b:meteka/hls-videos/2025-11-30_15-22-46/index.m3u8"
 
     const searchQuery = ref("")
     const selectedCategory = ref("")

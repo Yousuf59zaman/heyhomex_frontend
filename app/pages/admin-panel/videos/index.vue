@@ -5,13 +5,13 @@ definePageMeta({ middleware: ['auth-admin'], layout: 'admin' });
 const route = useRoute();
 const router = useRouter();
 
-// LIST STATE
+
 const isLoading = ref(false);
 const data = ref([]);
 const permissions = ref({});
 const search = ref('');
 
-// PAGINATION
+
 const paginationConfig = ref({
     data: [],
     lang: 'en',
@@ -19,7 +19,7 @@ const paginationConfig = ref({
     action: ''
 });
 
-// LOAD LIST
+
 const loadData = async () => {
     isLoading.value = true;
     permissions.value = {};
@@ -30,8 +30,7 @@ const loadData = async () => {
             method: 'GET',
         });
 
-        // API shape you gave:
-        // { status: "success", message: "...", data: { data: [...], meta: {...}, permissions: {...} } }
+        
         if (getData.status === 'success') {
             data.value = getData.data.data;
             permissions.value = getData.data.permissions || {};
@@ -55,7 +54,7 @@ watch(
     }
 );
 
-// MODAL (ADD / EDIT)
+
 const isOpenModal = ref(false);
 const item = ref({});
 const modalTitle = ref('');
@@ -72,14 +71,12 @@ const addNew = () => {
     isOpenModal.value = true;
 };
 
-// When AddEdit emits new/updated data
+
 const receivedData = (d) => {
     isOpenModal.value = false;
     if (modalTitle.value === 'Create') {
-        // newly created video should appear at top
         data.value.unshift(d);
     } else {
-        // update in list
         data.value = data.value.map((item) => (item.id === d.id ? d : item));
     }
 };
@@ -89,7 +86,7 @@ const cancelModal = () => {
     isOpenModal.value = false;
 };
 
-// DELETE
+
 const isOpenConModal = ref(false);
 const response_modal = ref({});
 const deleteId = ref(null);
@@ -122,7 +119,7 @@ const deleteHandler = async () => {
     }
 };
 
-// RESET PAGINATION WHEN FILTERS CHANGE
+
 const resetPagination = () => {
     const query = { ...route.query };
     delete query.page;
@@ -197,11 +194,11 @@ const onSearchChange = () => {
                                                 <span>Duration</span>
                                             </div>
                                         </th>
-                                        <th width="25%">
+                                        <!-- <th width="25%">
                                             <div class="flex flex-row items-center justify-start gap-2 text-gray-800 dark:text-gray-200">
                                                 <span>Video URL</span>
                                             </div>
-                                        </th>
+                                        </th> -->
                                         <!-- <th width="15%">
                                             <div class="flex flex-row items-center justify-center gap-2 text-gray-800 dark:text-gray-200">
                                                 <span>Created By</span>
@@ -267,7 +264,7 @@ const onSearchChange = () => {
                                         <td class="text-gray-800 dark:text-gray-200 text-center">
                                             {{ item.duration }} min
                                         </td>
-                                        <td class="text-gray-800 dark:text-gray-200">
+                                        <!-- <td class="text-gray-800 dark:text-gray-200">
                                             <a
                                                 :href="item.video_url"
                                                 target="_blank"
@@ -275,7 +272,7 @@ const onSearchChange = () => {
                                             >
                                                 {{ item.video_url }}
                                             </a>
-                                        </td>
+                                        </td> -->
                                         <!-- <td class="text-gray-800 dark:text-gray-200 text-center">
                                             <div class="flex flex-col text-xs">
                                                 <span>{{ item.created_by?.email || '-' }}</span>
@@ -319,7 +316,7 @@ const onSearchChange = () => {
                         </div>
                     </div>
 
-                    <!-- Add / Edit Modal -->
+                  
                     <AddEdit
                         :isOpenModal="isOpenModal"
                         :item="item"
@@ -328,17 +325,17 @@ const onSearchChange = () => {
                         @add_emit="receivedData"
                     />
 
-                    <!-- Pagination -->
+                   
                     <LazyPagination v-if="!isLoading" class="px-4" :config="paginationConfig" />
 
-                    <!-- Delete Confirm Modal -->
+                  
                     <LazyConfirmModal
                         :isOpenConModal="isOpenConModal"
                         @confirm="deleteHandler"
                         @update:isOpenConModal="isOpenConModal = $event"
                     />
 
-                    <!-- Response Modal -->
+                  
                     <LazyResponseModal :response_modal="response_modal" />
                 </div>
             </div>

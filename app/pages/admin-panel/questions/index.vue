@@ -424,7 +424,7 @@
                                         <th width="10%">
                                             <div
                                                 class="flex flex-row items-center justify-center gap-2 text-gray-800 dark:text-gray-200">
-                                                <span>Order Status</span>
+                                                <span>Order</span>
                                             </div>
                                         </th>
                                         <th width="15%">
@@ -547,9 +547,8 @@
                                                         )
                                                     "
                                                     class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold flex items-center gap-1">
-                                                    <i
-                                                        class="fa-solid fa-list-ol"></i>
-                                                    Order #{{
+                                                   
+                                                    {{
                                                         getQuestionOrder(
                                                             element.id
                                                         )
