@@ -60,7 +60,7 @@ const handleClick = () => {
             <div
                 class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <div
-                    class="bg-white/90 backdrop-blur-sm rounded-full p-2 sm:p-3 shadow-lg">
+                    class="bg-white/90 backdrop-blur-sm rounded-full w-12 h-12 sm:w-14 sm:h-14 shadow-lg flex items-center justify-center">
                     <Icon
                         name="lucide:play"
                         class="w-5 h-5 sm:w-6 sm:h-6 text-gray-800" />
