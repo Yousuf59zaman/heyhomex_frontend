@@ -95,60 +95,43 @@
         ]
     })
 
-    const videos = ref([
-        {
-            id: 1,
-            title: "These are the best Places to Live in Oahu,Hawaii for...",
-            description:
-                "These are the best Places to Live in Oahu,Hawaii for...",
-            thumbnail: "/images/dashboard/video/1.png",
-            duration: "10:33",
-            channelName: "Hello Hawaii",
-            channelInitial: "H",
-            views: "53K Views",
-            timeAgo: "5 Months ago",
-            videoUrl: demoVideoUrl,
-        },
-        {
-            id: 2,
-            title: "These are the best Places to Live in Oahu,Hawaii for...",
-            description:
-                "These are the best Places to Live in Oahu,Hawaii for...",
-            thumbnail: "/images/dashboard/video/2.png",
-            duration: "5:25",
-            channelName: "Hello Hawaii",
-            channelInitial: "H",
-            views: "53K Views",
-            timeAgo: "5 Months ago",
-            videoUrl: demoVideoUrl,
-        },
-        {
-            id: 3,
-            title: "These are the best Places to Live in Oahu,Hawaii for...",
-            description:
-                "These are the best Places to Live in Oahu,Hawaii for...",
-            thumbnail: "/images/dashboard/video/3.png",
-            duration: "5:25",
-            channelName: "Hello Hawaii",
-            channelInitial: "H",
-            views: "53K Views",
-            timeAgo: "5 Months ago",
-            videoUrl: demoVideoUrl,
-        },
-        {
-            id: 4,
-            title: "These are the best Places to Live in Oahu,Hawaii for...",
-            description:
-                "These are the best Places to Live in Oahu,Hawaii for...",
-            thumbnail: "/images/dashboard/video/1.png",
-            duration: "5:25",
-            channelName: "Hello Hawaii",
-            channelInitial: "H",
-            views: "53K Views",
-            timeAgo: "5 Months ago",
-            videoUrl: demoVideoUrl,
-        },
-    ])
+    const videos = ref([])
+    const videosLoading = ref(false)
+    const videosError = ref(null)
+
+    // Load videos from API (without pagination for "videos you might like")
+    const loadVideos = async () => {
+        videosLoading.value = true
+        videosError.value = null
+        try {
+            const response = await $fetchCitizen("/videos/list", {
+                method: "GET",
+                params: {
+                    page: 1,
+                    per_page: 4
+                }
+            })
+
+            videos.value = response.data.data.map((video) => ({
+                id: video.id,
+                title: video.title,
+                description: video.title,
+                thumbnail: video.video_image || '/images/dashboard/video/1.png',
+                duration: video.duration || '0:00',
+                channelName: video.channel?.name || 'Unknown Channel',
+                channelInitial: video.channel?.name?.charAt(0) || 'H',
+                views: '0 Views',
+                timeAgo: new Date(video.created_at).toLocaleDateString(),
+                videoUrl: video.video_url || demoVideoUrl,
+            }))
+        } catch (e) {
+            console.log("Error loading videos:", e.message)
+            videosError.value = e
+            videos.value = []
+        } finally {
+            videosLoading.value = false
+        }
+    }
 
     const playSidebarVideo = (video) => {
         openVideo(video, [])
@@ -263,6 +246,7 @@
     onMounted(() => {
         hydrated.value = true
         loadPropertyDetail()
+        loadVideos()
     })
 </script>
 

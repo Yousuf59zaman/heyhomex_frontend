@@ -66,32 +66,39 @@
         },
     ])
 
-    const videos = ref([
-        {
-            id: 1,
-            title: "HAWAIIAN",
-            subtitle: "AIRLINES",
-            thumbnail: "/images/dashboard/video/1.png",
-            duration: "3:45",
-            videoUrl: demoVideoUrl,
-        },
-        {
-            id: 2,
-            title: "LIVESTRAND",
-            subtitle: "HOUSE",
-            thumbnail: "/images/dashboard/video/2.png",
-            duration: "5:12",
-            videoUrl: demoVideoUrl,
-        },
-        {
-            id: 3,
-            title: "WHICH",
-            subtitle: "ONE ARE YOU?",
-            thumbnail: "/images/dashboard/video/3.png",
-            duration: "2:58",
-            videoUrl: demoVideoUrl,
-        },
-    ])
+    const videos = ref([])
+    const videosLoading = ref(false)
+    const videosError = ref(null)
+
+    // Load videos from API (without pagination for "videos you might like")
+    const loadVideos = async () => {
+        videosLoading.value = true
+        videosError.value = null
+        try {
+            const response = await $fetchCitizen("/videos/list", {
+                method: "GET",
+                params: {
+                    page: 1,
+                    per_page: 3
+                }
+            })
+
+            videos.value = response.data.data.map((video) => ({
+                id: video.id,
+                title: video.title,
+                subtitle: video.channel?.name || '',
+                thumbnail: video.video_image || '/images/dashboard/video/1.png',
+                duration: video.duration || '0:00',
+                videoUrl: video.video_url || demoVideoUrl,
+            }))
+        } catch (e) {
+            console.log("Error loading videos:", e.message)
+            videosError.value = e
+            videos.value = []
+        } finally {
+            videosLoading.value = false
+        }
+    }
 
     // Ad configuration for VAST video advertising
     const adConfig = ref({
@@ -266,10 +273,11 @@
         console.log("See all videos")
     }
 
-    
+
     onMounted(() => {
         hydrated.value = true
         loadData()
+        loadVideos()
     })
 
    
