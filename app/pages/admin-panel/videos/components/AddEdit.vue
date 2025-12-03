@@ -23,10 +23,16 @@ const formData = ref({
     duration: '',
     video_url: '',
     description: '',
+    video_image: null,
 });
 
+// Thumbnail upload
+const thumbnailFile = ref(null);
+const thumbnailPreview = ref('');
+const thumbnailInput = ref(null);
+
 const validations_errors = ref({});
-const skip_validations = ref(['id']); // all others required
+const skip_validations = ref(['id', 'video_image']); // all others required, video_image optional
 
 // When editing, fill the form with existing item
 watch(
@@ -41,7 +47,10 @@ watch(
                 duration: value.duration,
                 video_url: value.video_url,
                 description: value.description,
+                video_image: null,
             };
+            thumbnailPreview.value = value.video_image || '';
+            thumbnailFile.value = null;
         } else {
             formData.value = {
                 id: null,
@@ -50,7 +59,10 @@ watch(
                 duration: '',
                 video_url: '',
                 description: '',
+                video_image: null,
             };
+            thumbnailPreview.value = '';
+            thumbnailFile.value = null;
         }
     },
     { immediate: true }
@@ -59,7 +71,48 @@ watch(
 const isLoading = ref(false);
 const response_modal = ref({});
 
-// COMMON VALIDATION
+// Thumbnail upload handlers
+const handleThumbnailClick = () => {
+    thumbnailInput.value?.click();
+};
+
+const handleThumbnailChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+        alert('Please upload a valid image file (JPG, JPEG, PNG, WEBP)');
+        return;
+    }
+
+    // Validate file size (max 2MB)
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+        alert('File size must be less than 2MB');
+        return;
+    }
+
+    thumbnailFile.value = file;
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        thumbnailPreview.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+};
+
+const removeThumbnail = () => {
+    thumbnailFile.value = null;
+    thumbnailPreview.value = '';
+    if (thumbnailInput.value) {
+        thumbnailInput.value.value = '';
+    }
+};
+
+
 const validateForm = () => {
     validations_errors.value = {};
     const errors = Object.keys(formData.value).filter(
@@ -76,22 +129,29 @@ const validateForm = () => {
     return true;
 };
 
-// UPDATE
+
 const updateHandler = async () => {
     if (!validateForm()) return;
 
     try {
         isLoading.value = true;
 
-        const payload = {
-            ...formData.value,
-            duration: String(formData.value.duration),
-            _method: 'PATCH', 
-        };
+        const formDataToSend = new FormData();
+        formDataToSend.append('channel_id', formData.value.channel_id);
+        formDataToSend.append('title', formData.value.title);
+        formDataToSend.append('duration', String(formData.value.duration));
+        formDataToSend.append('video_url', formData.value.video_url);
+        formDataToSend.append('description', formData.value.description);
+        
+        if (thumbnailFile.value) {
+            formDataToSend.append('image', thumbnailFile.value);
+        }
+        
+        formDataToSend.append('_method', 'PATCH');
 
         const getData = await $fetchAdmin(`videos/${props.item.id}/update`, {
             method: 'POST',
-            body: payload,
+            body: formDataToSend,
         });
 
         response_modal.value = {
@@ -135,21 +195,27 @@ const updateHandler = async () => {
     }
 };
 
-// CREATE
+
 const createHandler = async () => {
     if (!validateForm()) return;
 
     try {
         isLoading.value = true;
 
-        const payload = {
-            ...formData.value,
-            duration: String(formData.value.duration), 
-        };
+        const formDataToSend = new FormData();
+        formDataToSend.append('channel_id', formData.value.channel_id);
+        formDataToSend.append('title', formData.value.title);
+        formDataToSend.append('duration', String(formData.value.duration));
+        formDataToSend.append('video_url', formData.value.video_url);
+        formDataToSend.append('description', formData.value.description);
+        
+        if (thumbnailFile.value) {
+            formDataToSend.append('image', thumbnailFile.value);
+        }
 
         const getData = await $fetchAdmin(`videos/store`, {
             method: 'POST',
-            body: payload,
+            body: formDataToSend,
         });
 
         response_modal.value = {
@@ -283,6 +349,54 @@ const createHandler = async () => {
                         @focus="validations_errors.description = ''"
                     />
                     <InputError class="text-sm mt-1" :message="validations_errors.description" />
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 md:col-span-2">
+                <div class="flex-auto">
+                    <label class="font-semibold">Video Thumbnail</label>
+                    <div class="mt-2 flex items-start gap-4">
+                        <div 
+                            class="relative flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors"
+                            :class="thumbnailPreview ? 'w-40 h-24' : 'w-full h-32'"
+                            @click="handleThumbnailClick"
+                        >
+                            <img 
+                                v-if="thumbnailPreview" 
+                                :src="thumbnailPreview" 
+                                class="w-full h-full object-cover rounded-lg"
+                                alt="Thumbnail preview"
+                            />
+                            <div v-else class="flex flex-col items-center justify-center gap-2 text-gray-500">
+                                <i class="pi pi-cloud-upload text-3xl"></i>
+                                <p class="text-sm">Click to upload thumbnail</p>
+                                <p class="text-xs text-gray-400">JPG, PNG, WEBP (Max 2MB)</p>
+                            </div>
+                        </div>
+                        <div v-if="thumbnailPreview" class="flex-1">
+                            <p class="text-sm text-gray-600 mb-2">{{ thumbnailFile?.name || 'Current thumbnail' }}</p>
+                            <Button
+                                type="button"
+                                label="Remove"
+                                severity="danger"
+                                size="small"
+                                outlined
+                                @click.stop="removeThumbnail"
+                            >
+                                <template #icon="{ class: iconClass }">
+                                    <i class="pi pi-times mr-2" :class="iconClass"></i>
+                                </template>
+                            </Button>
+                        </div>
+                    </div>
+                    <input 
+                        ref="thumbnailInput"
+                        type="file" 
+                        class="hidden" 
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        @change="handleThumbnailChange"
+                    />
+                    <InputError class="text-sm mt-1" :message="validations_errors.video_image" />
                 </div>
             </div>
         </div>

@@ -63,7 +63,7 @@ const loadVideos = async () => {
             duration: video.duration || '0:00',
             views: '0 views', 
             uploadTime: new Date(video.created_at).toLocaleDateString(),
-            thumbnail: '/images/dashboard/1.png', 
+            thumbnail: video.video_image || '/images/dashboard/1.png', 
             isFavorite: false,
             category: 'Real Estate',
             location: video.latitude && video.longitude ? 'Custom Location' : 'Unknown',
