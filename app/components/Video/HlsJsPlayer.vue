@@ -97,6 +97,7 @@ const state = reactive({
     volume: 100,
     isMuted: false,
     isFullscreen: false,
+    isBuffering: false,
 });
 
 const isHlsSource = (src: string) => src?.toLowerCase().includes('.m3u8');
@@ -535,10 +536,25 @@ const setupHlsFallback = (source: string) => {
 
     addListener('progress', updateBuffered);
 
-    addListener('seeking', () => emit('seek', { offset: video.currentTime }));
+    addListener('seeking', () => {
+        state.isBuffering = true;
+        emit('seek', { offset: video.currentTime });
+    });
+    addListener('seeked', () => {
+        state.isBuffering = false;
+    });
+    addListener('waiting', () => {
+        state.isBuffering = true;
+    });
+    addListener('canplay', () => {
+        state.isBuffering = false;
+    });
     addListener('play', () => {
         state.isPlaying = true;
         emit('play');
+    });
+    addListener('playing', () => {
+        state.isBuffering = false;
     });
     addListener('pause', () => {
         state.isPlaying = false;
@@ -595,22 +611,48 @@ const setupHlsFallback = (source: string) => {
             isReady.value = true;
             emit('ready');
 
-            // Populate quality levels
+            // Populate quality levels - Show only height in 'p' format
             const levels = hls.levels || [];
             hlsFallbackState.availableQualities = levels.map((level, index) => {
-                const pieces = [];
+                let label = '';
                 if (level.height) {
-                    pieces.push(`${level.height}p`);
-                }
-                if (level.bitrate) {
-                    pieces.push(`${Math.round(level.bitrate / 1000)}kbps`);
+                    label = `${level.height}p`;
+                } else if (level.bitrate) {
+                    // Convert bitrate to approximate resolution
+                    const bitrateKbps = level.bitrate / 1000;
+                    let estimatedHeight = '';
+
+                    if (bitrateKbps < 300) {
+                        estimatedHeight = '144p';
+                    } else if (bitrateKbps < 700) {
+                        estimatedHeight = '240p';
+                    } else if (bitrateKbps < 1500) {
+                        estimatedHeight = '360p';
+                    } else if (bitrateKbps < 3000) {
+                        estimatedHeight = '480p';
+                    } else if (bitrateKbps < 6000) {
+                        estimatedHeight = '720p';
+                    } else if (bitrateKbps < 10000) {
+                        estimatedHeight = '1080p';
+                    } else if (bitrateKbps < 16000) {
+                        estimatedHeight = '1440p';
+                    } else {
+                        estimatedHeight = '4K';
+                    }
+
+                    label = estimatedHeight;
+                } else {
+                    label = `Level ${index + 1}`;
                 }
                 return {
-                    label: pieces.join(' ') || `Level ${index + 1}`,
+                    label,
                     index,
                 };
             });
             hlsFallbackState.currentQuality = -1; // Auto by default
+        });
+        hls.on(Hls.Events.LEVEL_SWITCHING, () => {
+            state.isBuffering = true;
         });
         hls.on(Hls.Events.LEVEL_SWITCHED, (_event, data) => {
             if (hls.autoLevelEnabled) {
@@ -618,6 +660,13 @@ const setupHlsFallback = (source: string) => {
             } else {
                 hlsFallbackState.currentQuality = data.level;
             }
+            state.isBuffering = false;
+        });
+        hls.on(Hls.Events.BUFFER_APPENDING, () => {
+            state.isBuffering = true;
+        });
+        hls.on(Hls.Events.BUFFER_APPENDED, () => {
+            state.isBuffering = false;
         });
         hls.on(Hls.Events.ERROR, (_event, data) => {
             if (data?.fatal) {
@@ -925,6 +974,12 @@ watch(
                 <p class="text-sm">Loading player...</p>
             </div>
         </div>
+        <div v-if="isReady && state.isBuffering && !adState.isPlayingAd"
+            class="absolute inset-0 flex items-center justify-center pointer-events-none z-40">
+            <div class="hls-buffering-spinner">
+                <Icon name="lucide:loader-2" class="w-10 h-10 animate-spin text-white" />
+            </div>
+        </div>
         <div v-if="hlsFallbackState.showPlayPauseEffect" class="hls-play-pause-effect">
             <div class="hls-effect-icon">
                 <Icon v-if="hlsFallbackState.playPauseEffectIcon === 'play'" name="lucide:play" class="w-6 h-6" />
@@ -1081,7 +1136,7 @@ watch(
                             <!-- Playback Speed Options -->
                             <div v-if="hlsFallbackState.settingsTab === 'speed'" class="hls-settings-panel">
                                 <button
-                                    v-for="speed in [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3]"
+                                    v-for="speed in [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]"
                                     :key="speed"
                                     @click="setHlsFallbackSpeed(speed); hlsFallbackState.showSettings = false"
                                     :class="['hls-menu-item', { 'active': hlsFallbackState.playbackSpeed === speed }]"
@@ -1162,6 +1217,29 @@ watch(
 
 :deep(.hls-fallback-player) {
     background: #000;
+}
+
+/* Buffering Spinner */
+.hls-buffering-spinner {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 /* Play/Pause Effect Overlay */
