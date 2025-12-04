@@ -6,13 +6,12 @@
     const props = defineProps<Props>()
 
     const emit = defineEmits<{
-        'update:modelValue': [value: boolean]
-        'next': [email: string]
-        'back-to-login': []
-        'close': []
-        'verify-otp': []
+        "update:modelValue": [value: boolean]
+        next: [email: string]
+        "back-to-login": []
+        close: []
+        "verify-otp": []
     }>()
-
 
     const visible = computed({
         get: (): boolean => props.modelValue,
@@ -42,8 +41,6 @@
     const isLoading = ref<boolean>(false)
     const isSuccess = ref<boolean>(false)
 
- 
-
     const handleBackToLogin = (): void => {
         emit("back-to-login")
     }
@@ -62,11 +59,10 @@
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         if (!emailRegex.test(formData.value.email)) {
-            validations_errors.value.email = "Please enter a valid email address"
+            validations_errors.value.email =
+                "Please enter a valid email address"
             return
         }
-
-        
 
         try {
             isLoading.value = true
@@ -81,7 +77,7 @@
 
             if (response?.status === "success") {
                 isSuccess.value = true
-                emit("next" , response.data?.email || formData.value.email)
+                emit("next", response.data?.email || formData.value.email)
             } else {
                 validations_errors.value.message =
                     response?.message ||
@@ -148,7 +144,8 @@
             </div>
             <div class="w-full px-6 pt-8 pb-0">
                 <div class="flex items-center justify-center">
-                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-medium text-[#121A22] leading-tight">
+                    <h2
+                        class="text-2xl md:text-3xl lg:text-4xl font-medium text-[#121A22] leading-tight">
                         Forgot password
                     </h2>
                 </div>
@@ -157,7 +154,9 @@
 
         <!-- Content -->
         <div class="px-6 pb-8 pt-12">
-            <div v-if="!isSuccess" class="flex flex-col gap-10">
+            <div
+                v-if="!isSuccess"
+                class="flex flex-col gap-10">
                 <p class="text-base text-[#121A22] leading-6">
                     No worries! Enter your email address and we'll send you a
                     link to reset it.
@@ -232,7 +231,9 @@
                 </div>
             </div>
 
-            <div v-else class="space-y-4 text-center">
+            <div
+                v-else
+                class="space-y-4 text-center">
                 <div class="flex justify-center">
                     <div
                         class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">

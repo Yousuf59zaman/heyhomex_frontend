@@ -1,5 +1,6 @@
 <script setup>
     import {useVideoPlayer} from "~/composables/useVideoPlayer"
+
     const demoVideoUrl =
         "https://content.jwplatform.com/manifests/yp34SRmf.m3u8"
 
@@ -108,19 +109,19 @@
                 method: "GET",
                 params: {
                     page: 1,
-                    per_page: 4
-                }
+                    per_page: 4,
+                },
             })
 
             videos.value = response.data.data.map((video) => ({
                 id: video.id,
                 title: video.title,
                 description: video.title,
-                thumbnail: video.video_image || '/images/dashboard/video/1.png',
-                duration: video.duration || '0:00',
-                channelName: video.channel?.name || 'Unknown Channel',
-                channelInitial: video.channel?.name?.charAt(0) || 'H',
-                views: '0 Views',
+                thumbnail: video.video_image || "/images/dashboard/video/1.png",
+                duration: video.duration || "0:00",
+                channelName: video.channel?.name || "Unknown Channel",
+                channelInitial: video.channel?.name?.charAt(0) || "H",
+                views: "0 Views",
                 timeAgo: new Date(video.created_at).toLocaleDateString(),
                 videoUrl: video.video_url || demoVideoUrl,
             }))
@@ -241,6 +242,21 @@
         title: "Location & Maps",
         placeholder: "Interactive map will be displayed here",
     })
+
+
+    const showGallery = ref(false)
+    const galleryActiveIndex = ref(0)
+
+    const galleryItems = computed(() =>
+        allImages.value
+            .filter(Boolean)
+            .map((src) => ({item: src, thumbnail: src}))
+    )
+
+    const openGalleryAt = (index = 0) => {
+        galleryActiveIndex.value = index
+        showGallery.value = true
+    }
 
     // Set hydrated to true after component is mounted on client
     onMounted(() => {
@@ -419,7 +435,14 @@
                                 class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center rounded-lg">
                                 <div class="text-white text-center">
                                     <div class="text-sm font-medium">
-                                        See All {{ allImages.length }} Photos
+                                        <button
+                                            type="button"
+                                            class="text-white text-center px-4 py-2 rounded font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-white"
+                                            @click="openGalleryAt(0)"
+                                            aria-label="Open photo gallery">
+                                            See All
+                                            {{ allImages.length }} Photos
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -443,7 +466,14 @@
                                 class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center rounded-lg">
                                 <div class="text-white text-center">
                                     <div class="text-xs font-medium">
-                                        See All {{ allImages.length }} Photos
+                                        <button
+                                            type="button"
+                                            class="text-white text-center px-3 py-1 rounded font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-white"
+                                            @click="openGalleryAt(0)"
+                                            aria-label="Open photo gallery">
+                                            See All
+                                            {{ allImages.length }} Photos
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -815,12 +845,68 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Video Player Modal with Ads -->
-    <ClientOnly>
-        <VideoPlayerModal :adConfig="adConfig" />
-    </ClientOnly>
+        <!-- Video Player Modal with Ads -->
+        <ClientOnly>
+            <VideoPlayerModal :adConfig="adConfig" />
+
+            <!-- PrimeVue Gallery Dialog -->
+            <Dialog
+                v-model:visible="showGallery"
+                :modal="true"
+                :style="{width: '60vw', maxWidth: '600px'}"
+                :closable="true"
+                modalClass="p-0"
+                :breakpoints="{'640px': '85vw'}">
+                <template #header>
+                    <div class="flex justify-between items-center w-full">
+                        <div class="font-medium text-gray-900">Photos</div>
+                    </div>
+                </template>
+
+                <div class="p-0">
+                    <Galleria
+                        :value="galleryItems"
+                        :circular="true"
+                        :closable="false"
+                        :showThumbnails="true"
+                        :showIndicators="true"
+                        :autoPlay="false"
+                        v-model:activeIndex="galleryActiveIndex"
+                        :numVisible="1"
+                        :responsiveOptions="[
+                            {breakpoint: '991px', numVisible: 4},
+                            {breakpoint: '767px', numVisible: 1},
+                        ]">
+                        <!-- main item template -->
+                        <template #item="{item}">
+                            <img
+                                :src="item.item"
+                                style="
+                                    width: 100%;
+                                    height: auto;
+                                    margin: 0 auto;
+                                    display: block;
+                                    object-fit: contain;
+                                    max-height: 400px;
+                                " />
+                        </template>
+
+                        <!-- thumbnail template -->
+                        <template #thumbnail="{item}">
+                            <img
+                                :src="item.thumbnail"
+                                style="
+                                    width: 60px;
+                                    height: 60px;
+                                    object-fit: cover;
+                                " />
+                        </template>
+                    </Galleria>
+                </div>
+            </Dialog>
+        </ClientOnly>
+    </div>
 </template>
 
 <style scoped>
