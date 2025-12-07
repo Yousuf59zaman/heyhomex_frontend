@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Hls from 'hls.js';
+import type Hls from 'hls.js';
 import type { Video } from '~/composables/useVideoPlayer';
 import { useHlsPlayerAds, type ParsedAd, type AdvertisingConfigHls } from '~/composables/useHlsPlayerAds';
 interface AdPlaybackState {
@@ -110,6 +110,14 @@ const {
     trackEvent,
 } = useHlsPlayerAds();
 
+type HlsModuleType = typeof import('hls.js');
+let hlsModule: HlsModuleType | null = null;
+const loadHlsLib = async (): Promise<HlsModuleType> => {
+    if (hlsModule) return hlsModule;
+    const mod = await import('hls.js');
+    hlsModule = mod as HlsModuleType;
+    return hlsModule;
+};
 
 const safePlay = () => {
     if (!hlsVideoEl.value) {
@@ -428,7 +436,7 @@ const teardownHlsFallback = () => {
     pendingPlayPromise = null;
 };
 
-const setupHlsFallback = (source: string) => {
+const setupHlsFallback = async (source: string) => {
     if (!playerContainer.value) return;
 
     teardownHlsFallback();
@@ -599,15 +607,26 @@ const setupHlsFallback = (source: string) => {
     document.addEventListener('fullscreenchange', onFullscreenChange);
     fallbackEventCleanups.push(() => document.removeEventListener('fullscreenchange', onFullscreenChange));
 
-    if (sourceIsHls && Hls.isSupported()) {
-        const hls = new Hls({
+    let HlsCtor: HlsModuleType['default'] | undefined;
+    if (sourceIsHls) {
+        try {
+            const mod = await loadHlsLib();
+            HlsCtor = (mod as any).default || (mod as any);
+        } catch (err) {
+            console.error('[HLS Fallback] Failed to load hls.js dynamically:', err);
+        }
+    }
+
+    if (sourceIsHls && HlsCtor && typeof HlsCtor.isSupported === 'function' && HlsCtor.isSupported()) {
+        const Events = HlsCtor.Events;
+        const hls: Hls = new HlsCtor({
             enableWorker: true,
             lowLatencyMode: false,
             backBufferLength: 90,
         });
         hls.loadSource(source);
         hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        hls.on(Events.MANIFEST_PARSED, () => {
             isReady.value = true;
             emit('ready');
 
@@ -651,10 +670,10 @@ const setupHlsFallback = (source: string) => {
             });
             hlsFallbackState.currentQuality = -1; // Auto by default
         });
-        hls.on(Hls.Events.LEVEL_SWITCHING, () => {
+        hls.on(Events.LEVEL_SWITCHING, () => {
             state.isBuffering = true;
         });
-        hls.on(Hls.Events.LEVEL_SWITCHED, (_event, data) => {
+        hls.on(Events.LEVEL_SWITCHED, (_event: any, data: any) => {
             if (hls.autoLevelEnabled) {
                 hlsFallbackState.currentQuality = -1;
             } else {
@@ -662,13 +681,13 @@ const setupHlsFallback = (source: string) => {
             }
             state.isBuffering = false;
         });
-        hls.on(Hls.Events.BUFFER_APPENDING, () => {
+        hls.on(Events.BUFFER_APPENDING, () => {
             state.isBuffering = true;
         });
-        hls.on(Hls.Events.BUFFER_APPENDED, () => {
+        hls.on(Events.BUFFER_APPENDED, () => {
             state.isBuffering = false;
         });
-        hls.on(Hls.Events.ERROR, (_event, data) => {
+        hls.on(Events.ERROR, (_event: any, data: any) => {
             if (data?.fatal) {
                 console.error('[HLS Fallback] Fatal HLS error:', data);
                 emit('error', data);
@@ -930,7 +949,7 @@ const cleanupPlayer = () => {
     isReady.value = false;
 };
 
-const reloadPlayerWithNewVideo = (newVideo: any) => {
+const reloadPlayerWithNewVideo = async (newVideo: any) => {
     if (!newVideo) {
         console.warn('[HLS Fallback] No video provided for reload');
         return;
@@ -938,12 +957,12 @@ const reloadPlayerWithNewVideo = (newVideo: any) => {
 
     const source = newVideo.videoUrl || 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
     cleanupPlayer();
-    setupHlsFallback(source);
+    await setupHlsFallback(source);
 };
 
-onMounted(() => {
+onMounted(async () => {
     const source = props.video.videoUrl || 'https://content.jwplatform.com/manifests/yp34SRmf.m3u8';
-    setupHlsFallback(source);
+    await setupHlsFallback(source);
 });
 
 onBeforeUnmount(() => {
@@ -952,10 +971,10 @@ onBeforeUnmount(() => {
 
 watch(
     () => props.video,
-    (newVideo, oldVideo) => {
+    async (newVideo, oldVideo) => {
         if (newVideo && oldVideo && newVideo.id !== oldVideo.id) {
             console.log('[HLS Fallback] Video changed, reloading player...');
-            reloadPlayerWithNewVideo(newVideo);
+            await reloadPlayerWithNewVideo(newVideo);
         }
     }
 );

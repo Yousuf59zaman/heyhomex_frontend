@@ -1,4 +1,3 @@
-import { VASTClient } from '@dailymotion/vast-client';
 type VASTResponse = any;
 export interface Hls {
     offset: string;
@@ -27,9 +26,19 @@ export interface ParsedAd {
 }
 
 export const useHlsPlayerAds = () => {
+    let VastClientCtor: any = null;
+    const getVastClient = async () => {
+        if (VastClientCtor) {
+            return VastClientCtor;
+        }
+        const mod = await import('@dailymotion/vast-client');
+        VastClientCtor = (mod as any).VASTClient || (mod as any).default;
+        return VastClientCtor;
+    };
     const parseVastTag = async (tagUrl: string): Promise<VASTResponse | undefined> => {
         try {
-            const vastClient = new VASTClient();
+            const VastClient = await getVastClient();
+            const vastClient = new VastClient();
             const response = await vastClient.get(tagUrl);
             return response;
         } catch (error) {

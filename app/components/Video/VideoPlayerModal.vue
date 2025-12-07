@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue';
+
 const props = defineProps({
     adConfig: {
         type: Object,
@@ -95,6 +97,8 @@ onBeforeUnmount(() => {
     window.removeEventListener('keydown', handleKeydown);
     window.removeEventListener('resize', checkScreenSize);
 });
+
+const VideoHlsJsPlayer = defineAsyncComponent(() => import('./HlsJsPlayer.vue'));
 </script>
 
 <template>
