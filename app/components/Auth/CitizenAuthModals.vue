@@ -13,7 +13,7 @@
 
     const activeIndex = ref<number>(0)
     const userEmail = ref<string>("")
-    const accountType = ref<string>("")
+    const accountType = ref<any>("")
     const needsOnboarding = ref<boolean>(false)
     const otpSource = ref<string>("")
     const typeSource = ref<string>("")
@@ -112,17 +112,24 @@
         activeIndex.value = 3
     }
 
-    const handleAccountTypeNext = (type: string): void => {
+    const handleAccountTypeNext = (type: any): void => {
         accountType.value = type
         activeIndex.value = 4
+        
     }
 
     const handleRegisterSuccess = (data:any) => {
-        activeIndex.value = 9 
+        // activeIndex.value = 9 
+        if(accountType.value == 3){
+           activeIndex.value = 9 
+        }
+        else{
+            activeIndex.value = 5
+        }
     }
 
     const handleProfessionalNext = (data: any): void => {
-        activeIndex.value = 6
+        activeIndex.value = 9
     }
 
     const handleLoginSuccess = (needsOnboardingCheck: boolean): void => {

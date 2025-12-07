@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    const props = defineProps<{ modelValue: boolean }>()
+    const props = defineProps<{modelValue: boolean}>()
     const visible = ref(props.modelValue)
     watch(
         () => props.modelValue,
@@ -88,7 +88,6 @@
         uuid: getUuid.value?.uuid || "",
     })
 
-   
     const hasMinimumLength = computed(() => {
         return formData.value.password.length >= 8
     })
@@ -111,33 +110,27 @@
     })
 
     const allPasswordValidationsPassed = computed(() => {
-        return hasMinimumLength.value &&
-               hasSymbol.value &&
-               hasCapitalLetter.value &&
-               passwordsMatch.value
+        return (
+            hasMinimumLength.value &&
+            hasSymbol.value &&
+            hasCapitalLetter.value &&
+            passwordsMatch.value
+        )
     })
-
 
     const handleBack = () => {
         emit("back")
     }
 
-     const closeHandler = () => {
+    const closeHandler = () => {
         emit("close")
-    }
-
-    const resetForm = () => {
-        formData.value.first_name = ""
-        formData.value.last_name = ""
-        formData.value.password = ""
-        formData.value.password_confirmation = ""
-        validationErrors.value = {}
-        passwordMatchError.value = ""
     }
 
     const validatePasswords = () => {
         if (formData.value.password && formData.value.password_confirmation) {
-            if (formData.value.password !== formData.value.password_confirmation) {
+            if (
+                formData.value.password !== formData.value.password_confirmation
+            ) {
                 passwordMatchError.value = "Passwords do not match"
                 return false
             }
@@ -146,14 +139,12 @@
         return true
     }
 
-    const showError = (message: string) => {
-        // alert(message)
-    }
+    const showError = (message: string) => {}
 
     const handleRegister = async () => {
         validationErrors.value = {}
         passwordMatchError.value = ""
-        
+
         if (!allPasswordValidationsPassed.value) {
             if (!validatePasswords()) {
                 loading.value = false
@@ -164,7 +155,6 @@
         }
 
         loading.value = true
-        // emit('register-success', { ...formData })
         const uuid = getUuid.value?.uuid
         if (!uuid) {
             showError(
@@ -182,11 +172,7 @@
                 body: formData.value,
             })
 
-            console.log("Response", response)
-
             if (response.status) {
-                console.log("Response in block", response)
-
                 if (import.meta.client) {
                     const onboardingStatus =
                         response.data?.user_onboard_profile_status ?? 0
@@ -213,7 +199,6 @@
         } catch (e: any) {
             console.log("Get Message", e.message)
             if (e.response?.status === 404 || e.response?.status === 422) {
-                console.log("here 1", e.response)
                 if (e.response?.status === 404 || e.response?.status === 409) {
                     for (const key in e.response._data.data) {
                         if (e.response._data.data.hasOwnProperty(key)) {
@@ -233,13 +218,6 @@
             loading.value = false
         }
     }
-
-    // const showLogin = () => {
-    //     closeModal()
-    //     setTimeout(() => {
-    //         emit("show-login")
-    //     }, 300)
-    // }
 
     watch(
         () => props.modelValue,
@@ -277,7 +255,6 @@
             </div>
             <div class="w-full px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
                 <div class="flex items-center justify-center relative">
-                    
                     <button
                         @click="handleBack"
                         type="button"
@@ -296,8 +273,8 @@
                         </svg>
                     </button>
 
-                    
-                    <h1 class="text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22]">
+                    <h1
+                        class="text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22]">
                         Set up profile
                     </h1>
                 </div>
@@ -525,7 +502,9 @@
                         <p
                             :class="[
                                 'leading-relaxed transition-colors duration-200',
-                                hasMinimumLength ? 'text-green-600' : 'text-gray-600',
+                                hasMinimumLength
+                                    ? 'text-green-600'
+                                    : 'text-gray-600',
                             ]">
                             Minimum of 8 characters
                         </p>
@@ -587,7 +566,9 @@
                         <p
                             :class="[
                                 'leading-relaxed transition-colors duration-200',
-                                hasCapitalLetter ? 'text-green-600' : 'text-gray-600',
+                                hasCapitalLetter
+                                    ? 'text-green-600'
+                                    : 'text-gray-600',
                             ]">
                             Must have at least 1 capital letter
                         </p>
@@ -618,7 +599,9 @@
                         <p
                             :class="[
                                 'leading-relaxed transition-colors duration-200',
-                                passwordsMatch ? 'text-green-600' : 'text-gray-600',
+                                passwordsMatch
+                                    ? 'text-green-600'
+                                    : 'text-gray-600',
                             ]">
                             Password and confirm password must be the same
                         </p>
@@ -630,8 +613,7 @@
                     :disabled="loading || !allPasswordValidationsPassed"
                     :loading="loading"
                     loadingIcon="pi pi-spin pi-spinner"
-                    class="w-full h-[3.25rem] px-6 bg-[#18222c] hover:bg-[#101822] disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors duration-200 flex items-center justify-center"
-                    >
+                    class="w-full h-[3.25rem] px-6 bg-[#18222c] hover:bg-[#101822] disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors duration-200 flex items-center justify-center">
                     {{ loading ? "Processing..." : "Next" }}
                 </button>
 
