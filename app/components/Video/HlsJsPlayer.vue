@@ -113,7 +113,7 @@ defineExpose({
 </script>
 
 <template>
-    <div ref="wrapperElement" class="jwplayer-wrapper relative w-full h-full bg-black rounded-lg overflow-hidden"
+    <div ref="wrapperElement" class="hls-player-wrapper relative w-full h-full bg-black rounded-lg overflow-hidden"
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
         @mousemove="handleMouseMove">
@@ -303,24 +303,24 @@ defineExpose({
 </template>
 
 <style scoped>
-.jwplayer-wrapper {
+.hls-player-wrapper {
     min-height: 200px;
 }
 
 @media (min-width: 640px) {
-    .jwplayer-wrapper {
+    .hls-player-wrapper {
         min-height: 300px;
     }
 }
 
 @media (min-width: 1024px) {
-    .jwplayer-wrapper {
+    .hls-player-wrapper {
         min-height: 400px;
     }
 }
 
-:deep(.jwplayer-wrapper:fullscreen),
-.jwplayer-wrapper:fullscreen {
+:deep(.hls-player-wrapper:fullscreen),
+.hls-player-wrapper:fullscreen {
     width: 100vw !important;
     height: 100vh !important;
     max-width: 100vw !important;
@@ -328,8 +328,8 @@ defineExpose({
     border-radius: 0 !important;
 }
 
-:deep(.jwplayer-wrapper:fullscreen .hls-fallback-player),
-.jwplayer-wrapper:fullscreen .hls-fallback-player {
+:deep(.hls-player-wrapper:fullscreen .hls-fallback-player),
+.hls-player-wrapper:fullscreen .hls-fallback-player {
     width: 100% !important;
     height: 100% !important;
     min-height: 100% !important;
@@ -705,30 +705,6 @@ defineExpose({
 .hls-dropdown-menu::-webkit-scrollbar-thumb:hover,
 .hls-settings-content::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.3);
-}
-
-:deep(.jw-controls) {
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-}
-
-:deep(.jw-button-color) {
-    color: #ffffff !important;
-}
-
-:deep(.jw-button-color:hover) {
-    color: #ef4444 !important;
-}
-
-:deep(.jw-progress) {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-:deep(.jw-progress-bar) {
-    background: #ef4444 !important;
-}
-
-:deep(.jw-knob) {
-    background-color: #ef4444 !important;
 }
 
 .hls-video-hitarea {
