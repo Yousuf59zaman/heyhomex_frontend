@@ -112,6 +112,7 @@ interface OptionItem {
 const currentStep = ref<OnboardingStep>("motivation")
 const loading = ref(false)
 const questionsLoading = ref(false)
+const showStartOverConfirm = ref(false)
 
 const formData = reactive<OnboardingData>({
     motivation: null,
@@ -237,14 +238,6 @@ const fetchQuestions = async () => {
     }
 }
 
-const closeModal = () => {
-    emit("update:modelValue", false)
-    emit("close")
-    setTimeout(() => {
-        currentStep.value = "motivation"
-    }, 300)
-}
-
 const handleNext = () => {
     const steps: OnboardingStep[] = [
         "motivation",
@@ -277,6 +270,108 @@ const handlePrev = () => {
             currentStep.value = prevStep
         }
     }
+}
+
+const getDefaultValues = computed(() => {
+    const defaultMotivation = motivationQuestion.value?.answers.find(a => a.is_active)
+    const defaultBudget = budgetQuestion.value?.answers.find(a => a.is_active)
+    const defaultLocation = locationQuestion.value?.answers.find(a => a.is_active)
+
+    return {
+        role: defaultMotivation?.answer_text || 'Kamaina',
+        budget: defaultBudget?.answer_text || 'Not specified',
+        location: defaultLocation?.answer_text || 'Not specified'
+    }
+})
+
+const handleStartOver = () => {
+    showStartOverConfirm.value = true
+}
+
+const confirmStartOver = async () => {
+    showStartOverConfirm.value = false
+    loading.value = true
+
+    try {
+        const defaultMotivation = motivationQuestion.value?.answers.find(a => a.is_active)
+        const defaultBudget = budgetQuestion.value?.answers.find(a => a.is_active)
+        const defaultLocation = locationQuestion.value?.answers.find(a => a.is_active)
+
+        const payload = new FormData()
+
+        if (defaultMotivation?.id) {
+            payload.append("question_answer_one", defaultMotivation.id.toString())
+        }
+        if (defaultBudget?.id) {
+            payload.append("question_answer_two", defaultBudget.id.toString())
+        }
+        if (defaultLocation?.id) {
+            payload.append("question_answer_three", defaultLocation.id.toString())
+        }
+
+        const response = await $fetchCMS<OnboardingResponse>(
+            "/v1/user/onboard",
+            {
+                method: "POST",
+                body: payload,
+            }
+        )
+
+        if (
+            import.meta.client &&
+            response.data.user_onboard_profile_status !== undefined
+        ) {
+            const userId = localStorage.getItem("citizen_user_id")
+
+            if (userId) {
+                const onboardingStatusKey = `citizen_onboard_status_${userId}`
+                localStorage.setItem(
+                    onboardingStatusKey,
+                    response.data.user_onboard_profile_status.toString()
+                )
+
+                const userData = localStorage.getItem("citizen_user_data")
+                if (userData) {
+                    try {
+                        const parsedUserData = JSON.parse(userData)
+                        parsedUserData.user_onboard_profile_status =
+                            response.data.user_onboard_profile_status
+                        localStorage.setItem(
+                            "citizen_user_data",
+                            JSON.stringify(parsedUserData)
+                        )
+                    } catch (e) {
+                        console.error("Failed to update user data:", e)
+                    }
+                }
+            }
+
+            localStorage.removeItem("citizen_user_onboard_profile_status")
+            localStorage.removeItem("citizen_needs_onboarding")
+        }
+
+        citizen_user.value = response
+
+        const redirectSlug = response.data.user_type?.[0]?.slug || "kamaina"
+        const targetPath =
+            redirectSlug === "kamaaina" ? "/kamaina/" : `/${redirectSlug}/`
+        window.location.href = targetPath
+    } catch (error: any) {
+        console.error("Onboarding with defaults failed:", error)
+
+        if (import.meta.client) {
+            const errorMessage =
+                error?.data?.message ||
+                "Failed to complete onboarding. Please try again."
+            alert(errorMessage)
+        }
+    } finally {
+        loading.value = false
+    }
+}
+
+const cancelStartOver = () => {
+    showStartOverConfirm.value = false
 }
 
 const closeHandler = () => {
@@ -489,7 +584,7 @@ watch(
 
                 <div class="flex flex-col sm:flex-row gap-6">
                     <button
-                        @click="handleNext"
+                        @click="handleStartOver"
                         outlined
                         class="flex-1 basis-0 w-full h-[3.25rem] px-4 py-3 bg-[#F0F1F3] hover:bg-[#e5e7eb] disabled:bg-gray-300 text-[#121a22] text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center">
                         Start Over
@@ -667,6 +762,72 @@ watch(
                         {{ loading ? "Saving..." : "Continue to Dashboard" }}
                     </button>
                 </div>
+            </div>
+        </div>
+    </Dialog>
+
+    <!-- Start Over Confirmation Dialog -->
+    <Dialog
+        v-model:visible="showStartOverConfirm"
+        modal
+        :closable="false"
+        :draggable="false"
+        :resizable="false"
+        :style="{width: 'min(32rem, 90vw)', maxWidth: '90vw'}"
+        :pt="{
+            root: 'border-0 rounded-xl shadow-2xl m-4 bg-white',
+            header: 'border-0 pb-3',
+            content: 'border-0 pt-0 pb-6',
+        }">
+        <template #header>
+            <div class="w-full px-6 pt-6">
+                <h3 class="text-xl font-semibold text-[#121A22]">Start with Default Settings?</h3>
+            </div>
+        </template>
+
+        <div class="px-6 space-y-4">
+            <p class="text-base text-[#283849] leading-relaxed">
+                You will be onboarded with the following default values:
+            </p>
+
+            <div class="bg-[#F0F1F3] rounded-lg p-4 space-y-2">
+                <div class="flex items-start gap-2">
+                    <i class="pi pi-user text-[#18222c] mt-1"></i>
+                    <div>
+                        <p class="text-sm font-semibold text-[#121A22]">Default Role</p>
+                        <p class="text-sm text-[#283849]">{{ getDefaultValues.role }}</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-2">
+                    <i class="pi pi-dollar text-[#18222c] mt-1"></i>
+                    <div>
+                        <p class="text-sm font-semibold text-[#121A22]">Default Budget</p>
+                        <p class="text-sm text-[#283849]">{{ getDefaultValues.budget }}</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-2">
+                    <i class="pi pi-map-marker text-[#18222c] mt-1"></i>
+                    <div>
+                        <p class="text-sm font-semibold text-[#121A22]">Default Location</p>
+                        <p class="text-sm text-[#283849]">{{ getDefaultValues.location }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                <button
+                    @click="cancelStartOver"
+                    :disabled="loading"
+                    class="flex-1 h-11 px-4 py-2.5 bg-[#F0F1F3] hover:bg-[#e5e7eb] disabled:bg-gray-300 text-[#121a22] text-sm font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center">
+                    Cancel
+                </button>
+                <button
+                    @click="confirmStartOver"
+                    :disabled="loading"
+                    class="flex-1 h-11 px-4 py-2.5 bg-[#18222c] hover:bg-[#0F172A] disabled:bg-gray-400 text-white text-sm font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
+                    <i v-if="loading" class="pi pi-spin pi-spinner"></i>
+                    <span>{{ loading ? 'Processing...' : 'Okay' }}</span>
+                </button>
             </div>
         </div>
     </Dialog>

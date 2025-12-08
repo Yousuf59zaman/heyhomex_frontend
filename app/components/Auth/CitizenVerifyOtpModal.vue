@@ -348,7 +348,7 @@
                 </p>
             </div>
 
-            <div class="flex justify-center gap-5">
+            <div class="flex justify-center gap-3 md:gap-5 ">
                 <input
                     v-for="(digit, index) in otpDigits"
                     :key="index"
@@ -361,7 +361,9 @@
                     type="text"
                     inputmode="numeric"
                     maxlength="1"
-                    class="w-[5.75rem] h-14 text-center text-lg font-semibold border border-[#cfdbe8] rounded-lg text-[#121A22] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors"
+                    class="w-[3rem] h-14 text-center text-lg font-semibold border border-[#cfdbe8] rounded-lg text-[#121A22] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors
+                        md:w-[4rem] md:h-14
+                       "
                     @input="handleOtpInput(index, $event)"
                     @keydown="handleKeyDown(index, $event)"
                     @paste="index === 0 ? handlePaste($event) : null" />
