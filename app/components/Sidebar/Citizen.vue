@@ -100,7 +100,7 @@
             label: "Favourites",
             icon: "/svg/menubar/favourite.svg",
             iconType: "svg",
-            path: `#`,
+            path: `${getBasePath.value}/favorites`,
         },
         {
             id: "reports",

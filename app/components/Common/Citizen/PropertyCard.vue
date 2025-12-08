@@ -40,13 +40,16 @@
                 class="w-full rounded-lg h-40 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
             <button
                 @click.stop="handleFavoriteToggle"
-                class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors">
+                :class="[
+                    'absolute top-3 right-3 w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-colors',
+                    property.isFavorited ? 'bg-red-500 hover:bg-red-600' : 'bg-white hover:bg-gray-50'
+                ]">
                 <Icon
-                    name="lucide:heart"
+                    :name="property.isFavorited ? 'lucide:heart' : 'lucide:heart'"
                     :class="[
                         'w-4 h-4 transition-colors',
                         property.isFavorited
-                            ? 'text-red-500'
+                            ? 'text-white fill-white'
                             : 'text-gray-400 hover:text-red-500',
                     ]" />
             </button>
