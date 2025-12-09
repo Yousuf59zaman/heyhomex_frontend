@@ -1,9 +1,6 @@
 <script setup>
     import {useVideoPlayer} from "~/composables/useVideoPlayer"
 
-    const demoVideoUrl =
-        "https://content.jwplatform.com/manifests/yp34SRmf.m3u8"
-
     const {openVideo} = useVideoPlayer()
     definePageMeta({middleware: ["auth-citizen"], layout: "citizen"})
 
@@ -123,7 +120,7 @@
                 channelInitial: video.channel?.name?.charAt(0) || "H",
                 views: "0 Views",
                 timeAgo: new Date(video.created_at).toLocaleDateString(),
-                videoUrl: video.video_url || demoVideoUrl,
+                videoUrl: video.video_url,
             }))
         } catch (e) {
             console.log("Error loading videos:", e.message)

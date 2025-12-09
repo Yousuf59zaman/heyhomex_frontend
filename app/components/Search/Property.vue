@@ -14,7 +14,7 @@
 
   
     const searchQuery = ref(
-        route.query.q || "123 Aloha Lane, Honolulu, HI 96818"
+        route.query.q || ""
     )
     const viewMode = ref(route.query.view === "map" ? "Map View" : "List View")
     const selectedCategory = ref(route.query.category || "")
@@ -47,27 +47,27 @@
         pending.value = true
         error.value = null
         try {
-            const body = {
-                paginate: true,
-                page: route.query.page ? route.query.page : 1,
-                length: 8,
-                search: searchQuery.value,
-            }
+        const params = {
+            page: route.query.page ? route.query.page : 1,
+        }
 
             // Only add filter params if they have values
             if (selectedCategory.value) {
-                body.category = selectedCategory.value
+                params.category = selectedCategory.value
             }
             if (selectedPriceRange.value) {
-                body.price_range = selectedPriceRange.value
+                params.price_range = selectedPriceRange.value
             }
             if (selectedHomeType.value) {
-                body.home_type = selectedHomeType.value
+                params.home_type = selectedHomeType.value
+            }
+            if (searchQuery.value) {
+                params.search = searchQuery.value
             }
 
-            const response = await $fetchCMS("/property", {
-                method: "POST",
-                body,
+            const response = await $fetchCitizen("/v1/property", {
+                method: "GET",
+                params,
             })
 
          
@@ -78,18 +78,17 @@
                 price: property.price,
                 beds: property.beds,
                 baths: property.baths,
-                sqft: property["square-feet"],
-                image: property.image,
-                isFavorited: false,
-                coordinates: property.coordinates
+                sqft: property.square_feet,
+                image: property.image_url,
+                isFavorited: property.is_favorite || false,
+                coordinates: property.location
                     ? [
-                          property.coordinates.latitude,
-                          property.coordinates.longitude,
+                          parseFloat(property.location.latitude),
+                          parseFloat(property.location.longitude),
                       ]
                     : null,
-            }))
-
-            paginationConfig.value.data = response.data.meta
+            }))      
+            paginationConfig.value.data = response.data.meta      
         } catch (e) {
             console.log("Error loading properties:", e.message)
             error.value = e
@@ -109,10 +108,24 @@
     const resultsFound = computed(() => properties.value.length)
 
  
-    const toggleFavorite = (property) => {
+    const toggleFavorite = async (property) => {
         const prop = properties.value.find((p) => p.id === property.id)
-        if (prop) {
-            prop.isFavorited = !prop.isFavorited
+        if (!prop) return
+
+        const previousState = prop.isFavorited
+        prop.isFavorited = !prop.isFavorited
+
+        try {
+            const response = await $fetchCitizen(`/v1/favorite-properties/${property.id}/toggle`, {
+                method: "POST",
+            })
+
+            if (response.status === "success") {
+                console.log("Favorite toggled successfully")
+            }
+        } catch (e) {
+            console.error("Error toggling favorite:", e.message)
+            prop.isFavorited = previousState
         }
     }
 

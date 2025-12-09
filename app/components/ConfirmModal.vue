@@ -1,22 +1,36 @@
 <script setup>
-const props = defineProps({ isOpenConModal: Boolean });
+const props = defineProps({ 
+    isOpenConModal: Boolean,
+    title: {
+        type: String,
+        default: 'Are you sure you want to proceed?'
+    },
+    message: {
+        type: String,
+        default: ''
+    }
+});
 const emit = defineEmits(['confirm', 'update:isOpenConModal']);
 
-const visible = ref(props.isOpenConModal);
-const isLoading = ref(false);
-
-watch(() => props.isOpenConModal, (newVal) => {
-    visible.value = newVal;
+const visible = computed({
+    get: () => props.isOpenConModal,
+    set: (value) => {
+        if (!value) {
+            isLoading.value = false;
+            emit('update:isOpenConModal', false);
+        }
+    }
 });
 
-const confirmDelete = async () => {
-    isLoading.value = true;
-    try {
-        await emit('confirm');
-    } finally {
-        isLoading.value = false;
-        emit('update:isOpenConModal', false);
-    }
+const isLoading = ref(false);
+
+const confirmDelete = () => {
+    emit('confirm');
+    emit('update:isOpenConModal', false);
+};
+
+const handleCancel = () => {
+    emit('update:isOpenConModal', false);
 };
 </script>
 
@@ -53,7 +67,8 @@ const confirmDelete = async () => {
             </div>
         </div>
         <div class="mb-6 mt-2 text-center">
-            <h3 class="font-semibold text-lg text-center mt-2">Are you sure you want to proceed?</h3>
+            <h3 class="font-semibold text-lg text-center mt-2">{{ title }}</h3>
+            <p v-if="message" class="text-sm text-gray-600 mt-2">{{ message }}</p>
         </div>
         <div class="flex justify-end items-center gap-3 border-gray-200">
             <Button v-if="isLoading" severity="secondary" style="cursor: not-allowed; width: 80px;">
@@ -61,7 +76,7 @@ const confirmDelete = async () => {
             </Button>
             <template v-else>
                 <Button type="button" label="Cancel" severity="danger" outlined
-                    class="transition-all duration-300 hover:scale-105" @click="emit('update:isOpenConModal', false)">
+                    class="transition-all duration-300 hover:scale-105" @click="handleCancel">
                     <template #icon="{ class: iconClass }">
                         <i class="pi pi-times-circle mr-2" :class="iconClass"></i>
                     </template>

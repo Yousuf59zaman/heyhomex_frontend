@@ -2,12 +2,8 @@
     useHead({title: "Military Panel"})
     definePageMeta({middleware: ["auth-citizen"], layout: "citizen"})
 
-    // Hydration state for SSR/CSR skeleton loading
     const hydrated = ref(false)
 
-    
-
-    //state
     const properties = ref([])
     const pending = ref(false)
     const error = ref(null)
@@ -26,28 +22,10 @@
     const selectedPriceRange = ref("")
     const chartPeriod = ref("weekly")
 
-    
+    const savedHomeItems = ref([])
 
-    const savedHomeItems = ref([
-        {
-            id: 1,
-            title: "Island Bank Hawaii",
-            location: "123 Aloha Lane, Honolulu, HI 96814",
-            image: "/images/dashboard/1.png",
-        },
-        {
-            id: 2,
-            title: "Island Bank Hawaii",
-            location: "456 Kamehameha Hwy, Honolulu, HI 96817",
-            image: "/images/dashboard/2.png",
-        },
-        {
-            id: 3,
-            title: "Island Bank Hawaii",
-            location: "789 Pali Hwy, Honolulu, HI 96813",
-            image: "/images/dashboard/3.png",
-        },
-    ])
+    const showConfirmModal = ref(false)
+    const itemToRemove = ref(null)
 
     const savedVideoItems = ref([
         {
@@ -70,7 +48,6 @@
     const videosLoading = ref(false)
     const videosError = ref(null)
 
-    // Load videos from API (without pagination for "videos you might like")
     const loadVideos = async () => {
         videosLoading.value = true
         videosError.value = null
@@ -79,16 +56,16 @@
                 method: "GET",
                 params: {
                     page: 1,
-                    per_page: 3
-                }
+                    per_page: 3,
+                },
             })
 
             videos.value = response.data.data.map((video) => ({
                 id: video.id,
                 title: video.title,
-                subtitle: video.channel?.name || '',
-                thumbnail: video.video_image || '/images/dashboard/video/1.png',
-                duration: video.duration || '0:00',
+                subtitle: video.channel?.name || "",
+                thumbnail: video.video_image || "/images/dashboard/video/1.png",
+                duration: video.duration || "0:00",
                 videoUrl: video.video_url || demoVideoUrl,
             }))
         } catch (e) {
@@ -100,7 +77,6 @@
         }
     }
 
-    // Ad configuration for VAST video advertising
     const adConfig = ref({
         client: "vast",
         schedule: [
@@ -127,22 +103,23 @@
         autoplayadsmuted: false,
     })
 
-   
     const loadData = async () => {
         pending.value = true
         error.value = null
         try {
-            const response = await $fetchCMS("/property", {
-                method: "POST",
-                body: {
-                    paginate: true,
-                    page: route.query.page ? route.query.page : 1,
-                    length: 6,
-                    search: searchQuery.value,
-                },
+            const params = {
+                page: route.query.page ? route.query.page : 1,
+            }
+
+            if (searchQuery.value) {
+                params.search = searchQuery.value
+            }
+
+            const response = await $fetchCitizen("/v1/property", {
+                method: "GET",
+                params,
             })
 
-           
             properties.value = response.data.data.map((property) => ({
                 id: property.id,
                 title: property.name,
@@ -150,13 +127,13 @@
                 price: property.price,
                 beds: property.beds,
                 baths: property.baths,
-                sqft: property["square-feet"],
-                image: property.image,
-                isFavorited: false,
-                coordinates: property.coordinates
+                sqft: property.square_feet,
+                image: property.image_url,
+                isFavorited: property.is_favorite || false,
+                coordinates: property.location
                     ? [
-                          property.coordinates.latitude,
-                          property.coordinates.longitude,
+                          parseFloat(property.location.latitude),
+                          parseFloat(property.location.longitude),
                       ]
                     : null,
             }))
@@ -224,18 +201,13 @@
     }
 
     const handleSellAll = () => {
-        console.log("Sell all clicked")
+        navigateTo("/military/favorites")
     }
 
     const handleRemoveItem = ({itemId, type}) => {
-        console.log("Remove item:", itemId, type)
         if (type === "home") {
-            const index = savedHomeItems.value.findIndex(
-                (item) => item.id === itemId
-            )
-            if (index !== -1) {
-                savedHomeItems.value.splice(index, 1)
-            }
+            itemToRemove.value = {itemId, type}
+            showConfirmModal.value = true
         } else {
             const index = savedVideoItems.value.findIndex(
                 (item) => item.id === itemId
@@ -246,21 +218,123 @@
         }
     }
 
+    const confirmRemoveFavorite = async () => {
+        if (!itemToRemove.value) return
+
+        const itemId = itemToRemove.value.itemId
+        itemToRemove.value = null
+
+        try {
+            await $fetchCitizen(`/v1/favorite-properties/${itemId}/toggle`, {
+                method: "POST",
+            })
+
+            toast.add({
+                severity: "info",
+                summary: "Removed from Favorites",
+                detail: "Property has been removed from your saved list",
+                life: 3000,
+            })
+
+            await loadFavoriteProperties()
+        } catch (e) {
+            console.error("Error removing favorite:", e.message)
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: "Failed to remove from favorites",
+                life: 3000,
+            })
+        }
+    }
+
     const handleSavedItemClick = ({item, type}) => {
-        console.log("Saved item clicked:", item, type)
+        if (type === "home") {
+            navigateTo(`/military/property/${item.id}`)
+        } else {
+            console.log("Video clicked:", item)
+        }
     }
 
     const handlePropertyClick = (property) => {
         navigateTo(`/military/property/${property.id}`)
     }
 
-    const handleFavoriteToggle = (property) => {
+    const handleFavoriteToggle = async (property) => {
         const prop = properties.value.find((p) => p.id === property.id)
-        if (prop) {
-            prop.isFavorited = !prop.isFavorited
+        if (!prop) return
+
+        const previousState = prop.isFavorited
+        prop.isFavorited = !prop.isFavorited
+
+        try {
+            const response = await $fetchCitizen(
+                `/v1/favorite-properties/${property.id}/toggle`,
+                {
+                    method: "POST",
+                }
+            )
+
+            if (response.status === "success") {
+                prop.isFavorited = response.data.is_favorite
+
+                toast.add({
+                    severity: response.data.is_favorite ? "success" : "info",
+                    summary: response.data.is_favorite
+                        ? "Added to Favorites"
+                        : "Removed from Favorites",
+                    detail: response.data.is_favorite
+                        ? "Property has been added to your favorite list"
+                        : "Property has been removed from your favorite list",
+                    life: 3000,
+                })
+
+                await loadFavoriteProperties()
+            }
+        } catch (e) {
+            console.error("Error toggling favorite:", e.message)
+            prop.isFavorited = previousState
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: "Failed to update favorite status",
+                life: 3000,
+            })
         }
     }
 
+    const loadFavoriteProperties = async () => {
+        loadingFavorites.value = true
+        try {
+            const response = await $fetchCitizen(
+                "/v1/favorite-properties/list",
+                {
+                    method: "GET",
+                    params: {
+                        page: 1,
+                        per_page: 3,
+                    },
+                }
+            )
+
+            savedHomeItems.value = response.data.data
+                .slice(0, 3)
+                .map((property) => ({
+                    id: property.id,
+                    title: property.name,
+                    location: property.address,
+                    image: property.image_url,
+                    price: property.price,
+                    beds: property.beds,
+                    baths: property.baths,
+                }))
+        } catch (e) {
+            console.error("Error loading favorite properties:", e.message)
+            savedHomeItems.value = []
+        } finally {
+            loadingFavorites.value = false
+        }
+    }
     const handleVideoClick = (video) => {
         console.log("Video clicked:", video)
     }
@@ -273,14 +347,13 @@
         console.log("See all videos")
     }
 
-
     onMounted(() => {
         hydrated.value = true
         loadData()
         loadVideos()
+        loadFavoriteProperties()
     })
 
-   
     watch(
         () => route.query,
         () => {
@@ -318,9 +391,7 @@
         <!-- Chart and Saved List Section -->
         <div
             class="flex flex-col lg:grid lg:grid-cols-11 2xl:grid-cols-12 gap-4 lg:gap-2 2xl:gap-6">
-            <!-- Market Chart Skeleton/Real -->
             <div class="order-1 lg:order-1 lg:col-span-6 2xl:col-span-7">
-                <!-- Market Chart Skeleton BEFORE hydration -->
                 <div
                     v-if="!hydrated"
                     class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
@@ -344,7 +415,6 @@
 
             <!-- Saved List Skeleton/Real -->
             <div class="order-2 lg:order-2 lg:col-span-5 2xl:col-span-5">
-                <!-- Saved List Skeleton BEFORE hydration -->
                 <div
                     v-if="!hydrated"
                     class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
@@ -359,7 +429,6 @@
                     </div>
                 </div>
 
-                <!-- Real Saved List AFTER hydration -->
                 <CommonCitizenSavedList
                     v-else
                     :home-items="savedHomeItems"
@@ -371,7 +440,6 @@
             </div>
         </div>
 
-        <!-- Skeleton BEFORE hydration (SSR/Initial Load) -->
         <div
             v-if="!hydrated"
             class="space-y-4 md:space-y-6">
@@ -389,9 +457,7 @@
             </div>
         </div>
 
-        <!-- Content AFTER hydration -->
         <template v-else>
-            <!-- Loading State with Skeleton Loaders -->
             <div
                 v-if="pending"
                 class="space-y-4 md:space-y-6">
@@ -410,7 +476,6 @@
                 </div>
             </div>
 
-            <!-- Error State -->
             <div
                 v-else-if="error"
                 class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
@@ -420,7 +485,6 @@
                 <p class="text-sm text-red-500">{{ error.message }}</p>
             </div>
 
-            <!-- Properties Grid -->
             <CommonCitizenPropertyGrid
                 v-else
                 :properties="properties"
@@ -428,14 +492,12 @@
                 @property-click="handlePropertyClick"
                 @favorite-toggle="handleFavoriteToggle" />
 
-            <!-- Pagination -->
             <LazyPagination
                 v-if="!pending && properties.length > 0"
                 class="px-4"
                 :config="paginationConfig" />
         </template>
 
-        <!-- Video Grid Skeleton BEFORE hydration -->
         <div
             v-if="!hydrated"
             class="space-y-4 md:space-y-6">
@@ -460,7 +522,6 @@
             </div>
         </div>
 
-        <!-- Real Video Grid AFTER hydration -->
         <CommonCitizenVideoGrid
             v-else
             :videos="videos"
@@ -468,4 +529,12 @@
             @see-all="handleSeeAllVideos"
             @video-click="handleVideoClick" />
     </div>
+
+    <Toast position="top-right" />
+
+    <ConfirmModal
+        v-model:isOpenConModal="showConfirmModal"
+        title="Remove from Favorites?"
+        message="This property will be removed from your saved list."
+        @confirm="confirmRemoveFavorite" />
 </template>

@@ -2,10 +2,11 @@
     useHead({title: "Kamaina Panel"})
     definePageMeta({middleware: ["auth-citizen"], layout: "citizen"})
 
-    // Hydration state for SSR/CSR skeleton loading
+   
     const hydrated = ref(false)
+    const toast = useToast()
 
-    //state
+   
     const properties = ref([])
     const pending = ref(false)
     const error = ref(null)
@@ -25,26 +26,44 @@
     const selectedPriceRange = ref("")
     const chartPeriod = ref("weekly")
 
-    const savedHomeItems = ref([
-        {
-            id: 1,
-            title: "Island Bank Hawaii",
-            location: "123 Aloha Lane, Honolulu, HI 96814",
-            image: "/images/dashboard/1.png",
-        },
-        {
-            id: 2,
-            title: "Island Bank Hawaii",
-            location: "456 Kamehameha Hwy, Honolulu, HI 96817",
-            image: "/images/dashboard/2.png",
-        },
-        {
-            id: 3,
-            title: "Island Bank Hawaii",
-            location: "789 Pali Hwy, Honolulu, HI 96813",
-            image: "/images/dashboard/3.png",
-        },
-    ])
+    const savedHomeItems = ref([])
+    const loadingFavorites = ref(false)
+    
+    // Confirmation modal state
+    const showConfirmModal = ref(false)
+    const itemToRemove = ref(null)
+
+    // Load favorite properties
+    const loadFavoriteProperties = async () => {
+        loadingFavorites.value = true
+        try {
+            const response = await $fetchCitizen("/v1/favorite-properties/list", {
+                method: "GET",
+                params: {
+                    page: 1,
+                    per_page: 3,
+                },
+            })
+
+            // Only keep the first 3 properties
+            savedHomeItems.value = response.data.data
+                .slice(0, 3)
+                .map((property) => ({
+                    id: property.id,
+                    title: property.name,
+                    location: property.address,
+                    image: property.image_url,
+                    price: property.price,
+                    beds: property.beds,
+                    baths: property.baths,
+                }))
+        } catch (e) {
+            console.error("Error loading favorite properties:", e.message)
+            savedHomeItems.value = []
+        } finally {
+            loadingFavorites.value = false
+        }
+    }
 
     const savedVideoItems = ref([
         {
@@ -121,27 +140,26 @@
         pending.value = true
         error.value = null
         try {
-            const body = {
-                paginate: true,
+            const params = {
                 page: route.query.page ? route.query.page : 1,
-                length: 6,
-                search: searchQuery.value,
             }
 
-            // Only add filter params if they have values
+            if (searchQuery.value) {
+                params.search = searchQuery.value
+            }
             if (selectedCategory.value) {
-                body.category = selectedCategory.value
+                params.category = selectedCategory.value
             }
             if (selectedHomeType.value) {
-                body.home_type = selectedHomeType.value
+                params.home_type = selectedHomeType.value
             }
             if (selectedPriceRange.value) {
-                body.price_range = selectedPriceRange.value
+                params.price_range = selectedPriceRange.value
             }
 
-            const response = await $fetchCMS("/property", {
-                method: "POST",
-                body,
+            const response = await $fetchCitizen("/v1/property", {
+                method: "GET",
+                params,
             })
 
             properties.value = response.data.data.map((property) => ({
@@ -151,13 +169,13 @@
                 price: property.price,
                 beds: property.beds,
                 baths: property.baths,
-                sqft: property["square-feet"],
-                image: property.image,
-                isFavorited: false,
-                coordinates: property.coordinates
+                sqft: property.square_feet,
+                image: property.image_url,
+                isFavorited: property.is_favorite || false,
+                coordinates: property.location
                     ? [
-                          property.coordinates.latitude,
-                          property.coordinates.longitude,
+                          parseFloat(property.location.latitude),
+                          parseFloat(property.location.longitude),
                       ]
                     : null,
             }))
@@ -213,18 +231,13 @@
     }
 
     const handleSellAll = () => {
-        console.log("Sell all clicked")
+        navigateTo("/kamaina/favorites")
     }
 
     const handleRemoveItem = ({itemId, type}) => {
-        console.log("Remove item:", itemId, type)
         if (type === "home") {
-            const index = savedHomeItems.value.findIndex(
-                (item) => item.id === itemId
-            )
-            if (index !== -1) {
-                savedHomeItems.value.splice(index, 1)
-            }
+            itemToRemove.value = { itemId, type }
+            showConfirmModal.value = true
         } else {
             const index = savedVideoItems.value.findIndex(
                 (item) => item.id === itemId
@@ -235,18 +248,84 @@
         }
     }
 
+    const confirmRemoveFavorite = async () => {
+        if (!itemToRemove.value) return
+        
+        const itemId = itemToRemove.value.itemId
+        itemToRemove.value = null
+        
+        try {
+            await $fetchCitizen(`/v1/favorite-properties/${itemId}/toggle`, {
+                method: "POST",
+            })
+            
+            toast.add({
+                severity: 'info',
+                summary: 'Removed from Favorites',
+                detail: 'Property has been removed from your saved list',
+                life: 3000
+            })
+            
+            await loadFavoriteProperties()
+        } catch (e) {
+            console.error("Error removing favorite:", e.message)
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to remove from favorites',
+                life: 3000
+            })
+        }
+    }
+
     const handleSavedItemClick = ({item, type}) => {
-        console.log("Saved item clicked:", item, type)
+        if (type === "home") {
+            navigateTo(`/kamaina/property/${item.id}`)
+        }
     }
 
     const handlePropertyClick = (property) => {
         navigateTo(`/kamaina/property/${property.id}`)
     }
 
-    const handleFavoriteToggle = (property) => {
+    const handleFavoriteToggle = async (property) => {
         const prop = properties.value.find((p) => p.id === property.id)
-        if (prop) {
-            prop.isFavorited = !prop.isFavorited
+        if (!prop) return
+
+        const previousState = prop.isFavorited
+        prop.isFavorited = !prop.isFavorited
+
+        try {
+            const response = await $fetchCitizen(`/v1/favorite-properties/${property.id}/toggle`, {
+                method: "POST",
+            })
+
+            if (response.status === "success") {
+                prop.isFavorited = response.data.is_favorite
+                
+                toast.add({
+                    severity: response.data.is_favorite ? 'success' : 'info',
+                    summary: response.data.is_favorite ? 'Added to Favorites' : 'Removed from Favorites',
+                    detail: response.data.is_favorite 
+                        ? 'Property has been added to your favorite list'
+                        : 'Property has been removed from your favorite list',
+                    life: 3000
+                })
+                
+                // Reload favorites list
+                await loadFavoriteProperties()
+            } else {
+                prop.isFavorited = previousState
+            }
+        } catch (e) {
+            console.error("Error toggling favorite:", e.message)
+            prop.isFavorited = previousState
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to update favorite status',
+                life: 3000
+            })
         }
     }
 
@@ -265,6 +344,7 @@
     onMounted(() => {
         hydrated.value = true
         loadData()
+        loadFavoriteProperties()
     })
 
     watch(
@@ -455,4 +535,14 @@
             @see-all="handleSeeAllVideos"
             @video-click="handleVideoClick" />
     </div>
+
+    <!-- Toast Notifications -->
+    <Toast position="top-right" />
+
+    <!-- Confirmation Modal -->
+    <ConfirmModal
+        v-model:isOpenConModal="showConfirmModal"
+        title="Remove from Favorites?"
+        message="This property will be removed from your saved list."
+        @confirm="confirmRemoveFavorite" />
 </template>

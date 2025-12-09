@@ -75,7 +75,7 @@
                     name="lucide:heart"
                     :class="[
                         'w-4 h-4',
-                        type === 'video' ? 'text-red-500' : 'text-[#2C3E50]',
+                        type === 'video' ? 'text-red-500 fill-red-500' : 'text-black fill-current',
                     ]" />
             </button>
         </div>
