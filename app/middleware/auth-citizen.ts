@@ -20,9 +20,14 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     if (pathSegment && protectedSegments.includes(pathSegment)) {
         let allowedSegment: string | null = null
 
-        if (userRole === "agent" || userRole === "advertisers") {
-            allowedSegment = userRole
-        } else if (userTypeSlug) {
+        // if (userRole === "agent" || userRole === "advertisers") {
+        //     allowedSegment = userRole
+        // } else if (userTypeSlug) {
+        //     allowedSegment =
+        //         userTypeSlug === "kamaaina" ? "kamaina" : userTypeSlug
+        // }
+        console.log('user type segment' ,  userTypeSlug)
+       if (userTypeSlug) {
             allowedSegment =
                 userTypeSlug === "kamaaina" ? "kamaina" : userTypeSlug
         }

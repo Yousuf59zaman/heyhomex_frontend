@@ -33,14 +33,9 @@
 
     const errorMessage = ref("")
     const isSubmitting = ref(false)
+    const isLoadingProfessions = ref(false)
 
-    const professionalTypes = [
-        {label: "Real Estate Agent", value: "2"},
-        {label: "Real Estate Broker", value: "3"},
-        {label: "Property Manager", value: "4"},
-        {label: "Developer", value: "5"},
-        {label: "Investor", value: "6"},
-    ]
+    const professionalTypes = ref<Array<{label: string; value: string}>>([])
 
     type OnboardResponse = {
         status: string
@@ -48,6 +43,50 @@
             user_type?: Array<{slug?: string}>
         }
     }
+
+    type ProfessionResponse = {
+        status: string
+        message: string
+        data: Array<{
+            id: number
+            name: string
+            status: number
+            status_label: string
+        }>
+    }
+
+    // Fetch professions from API
+    const loadProfessions = async () => {
+        isLoadingProfessions.value = true
+        try {
+            const response = await $fetchCMS<ProfessionResponse>("admin/professions/all/active", {
+                method: 'GET'
+            })
+            if (response.status === "success" && response.data) {
+                professionalTypes.value = response.data.map(profession => ({
+                    label: profession.name,
+                    value: profession.id.toString()
+                }))
+            }
+        } catch (error) {
+            console.error("Failed to load professions:", error)
+            // Fallback to empty array if API fails
+            professionalTypes.value = []
+        } finally {
+            isLoadingProfessions.value = false
+        }
+    }
+
+    // Load professions when modal opens
+    watch(
+        () => props.modelValue,
+        (newVal) => {
+            if (newVal && professionalTypes.value.length === 0) {
+                loadProfessions()
+            }
+        },
+        { immediate: true }
+    )
 
     
 
@@ -180,6 +219,8 @@
                             optionLabel="label"
                             optionValue="value"
                             placeholder="Select type"
+                            :loading="isLoadingProfessions"
+                            :disabled="isLoadingProfessions"
                             class="w-full"
                             :pt="{
                                 root: 'w-full h-14',
