@@ -1,5 +1,4 @@
 <script setup>
-    // Props
     const props = defineProps({
         item: {
             type: Object,
@@ -8,29 +7,27 @@
         type: {
             type: String,
             required: true,
-            validator: (value) => ['home', 'video'].includes(value),
+            validator: (value) => ["home", "video"].includes(value),
         },
-    });
+    })
 
-    // Emits
-    const emit = defineEmits(['remove', 'click']);
+    const emit = defineEmits(["remove", "click"])
 
-    // Methods
     const formatSubtitle = (item) => {
-        if (props.type === 'home') {
-            return `📍 ${item.location}`;
+        if (props.type === "home") {
+            return `📍 ${item.location}`
         } else {
-            return `🎥 ${item.description} • ${item.duration}`;
+            return `🎥 ${item.description} • ${item.duration}`
         }
-    };
+    }
 
     const handleRemove = () => {
-        emit('remove', props.item.id);
-    };
+        emit("remove", props.item.id)
+    }
 
     const handleClick = () => {
-        emit('click', props.item);
-    };
+        emit("click", props.item)
+    }
 </script>
 
 <template>
@@ -41,13 +38,12 @@
         ]"
         @click="handleClick">
         <div class="flex items-start space-x-3">
-            <!-- Image/Thumbnail -->
             <div class="relative w-12 h-12 flex-shrink-0">
                 <img
                     :src="item.image"
                     :alt="item.title"
                     class="w-12 h-12 rounded-lg object-cover" />
-                <!-- Play icon for videos -->
+
                 <div
                     v-if="type === 'video'"
                     class="absolute inset-0 flex items-center justify-center">
@@ -57,7 +53,6 @@
                 </div>
             </div>
 
-            <!-- Content -->
             <div class="flex-1 min-w-0">
                 <h4 class="font-medium text-gray-900 text-sm leading-tight">
                     {{ item.title }}
@@ -67,7 +62,6 @@
                 </p>
             </div>
 
-            <!-- Action Button -->
             <button
                 @click.stop="handleRemove"
                 class="p-1 hover:bg-gray-200 rounded transition-colors">
@@ -75,7 +69,9 @@
                     name="lucide:heart"
                     :class="[
                         'w-4 h-4',
-                        type === 'video' ? 'text-red-500 fill-red-500' : 'text-black fill-current',
+                        type === 'video'
+                            ? 'text-red-500 fill-red-500'
+                            : 'text-black fill-current',
                     ]" />
             </button>
         </div>

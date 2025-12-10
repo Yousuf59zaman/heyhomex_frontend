@@ -1,46 +1,39 @@
 <script setup>
-import { useVideoPlayer } from '~/composables/useVideoPlayer';
+    import {useVideoPlayer} from "~/composables/useVideoPlayer"
 
-// Props
-const props = defineProps({
-    title: {
-        type: String,
-        default: 'Videos you might like!',
-    },
-    videos: {
-        type: Array,
-        default: () => [],
-    },
-    // Enable playlist mode (videos will auto-play next)
-    enablePlaylist: {
-        type: Boolean,
-        default: true,
-    },
-    // Ad configuration for VAST video advertising
-    adConfig: {
-        type: Object,
-        default: () => ({}),
-    },
-});
+    const emit = defineEmits(["see-all", "video-click"])
 
-// Emits
-const emit = defineEmits(['see-all', 'video-click']);
+    const props = defineProps({
+        title: {
+            type: String,
+            default: "Videos you might like!",
+        },
+        videos: {
+            type: Array,
+            default: () => [],
+        },
 
-// Video player composable
-const { openVideo } = useVideoPlayer();
+        enablePlaylist: {
+            type: Boolean,
+            default: true,
+        },
 
-// Methods
-const handleVideoClick = (video) => {
-    // Emit click event (for backward compatibility)
-    emit('video-click', video);
+        adConfig: {
+            type: Object,
+            default: () => ({}),
+        },
+    })
 
-    // Open video with playlist if enabled
-    if (props.enablePlaylist) {
-        openVideo(video, props.videos);
+    const {openVideo} = useVideoPlayer()
+
+    const handleVideoClick = (video) => {
+        emit("video-click", video)
+
+        if (props.enablePlaylist) {
+            openVideo(video, props.videos)
+        }
     }
-};
 </script>
-
 
 <template>
     <div class="rounded-lg mb-10">
@@ -55,8 +48,8 @@ const handleVideoClick = (video) => {
             </button>
         </div>
 
-        <!-- Video Cards Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+        <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
             <CommonCitizenVideoCard
                 v-for="video in videos"
                 :key="video.id"
@@ -64,11 +57,8 @@ const handleVideoClick = (video) => {
                 @click="handleVideoClick" />
         </div>
 
-        <!-- Video Player Modal with Ads -->
         <ClientOnly>
             <VideoPlayerModal :adConfig="adConfig" />
         </ClientOnly>
     </div>
 </template>
-
-

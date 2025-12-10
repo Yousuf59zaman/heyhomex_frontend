@@ -1,6 +1,6 @@
 <script setup>
-    import Avatar from "primevue/avatar"
-    import Menu from "primevue/menu"
+    import Avatar from 'primevue/avatar'
+    import Menu from 'primevue/menu'
 
     const {citizen_user, logout, isLoadingLogout} = citizenAuth()
 
@@ -87,7 +87,7 @@
         <div class="flex items-center justify-between lg:hidden">
             <!-- Left -->
             <div class="flex items-center space-x-3">
-                <NuxtLink to="/agent">
+                <NuxtLink to="/advertiser">
                     <img
                         class="w-8 h-8"
                         src="/svg/dashboard/home_logo.svg"
@@ -97,7 +97,7 @@
                     <span class="text-sm font-semibold text-gray-800">{{
                         getUserName
                     }}</span>
-                    <span class="text-xs text-gray-500">Agent</span>
+                    <span class="text-xs text-gray-500">Advertiser</span>
                 </div>
             </div>
 
@@ -150,7 +150,7 @@
             <!-- Left Side -->
             <div class="flex flex-col">
                 <div class="flex items-center space-x-2">
-                    <NuxtLink to="/agent">
+                    <NuxtLink to="/advertiser">
                         <img
                             class="w-8 h-8"
                             src="/svg/dashboard/home_logo.svg"
@@ -169,8 +169,7 @@
                 <p
                     style="letter-spacing: 0.5px"
                     class="text-gray-600 text-[0.775rem] mt-2 font-extralight">
-                    Manage your leads, track performance, and grow your
-                    business.
+                    Here's your advertising campaign overview for today.
                 </p>
             </div>
 

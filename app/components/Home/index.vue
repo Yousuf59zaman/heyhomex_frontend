@@ -1,33 +1,29 @@
 <script setup>
-    const hydrated = ref(false);
+    const hydrated = ref(false)
 
     const backgroundStyle = {
-        backgroundImage: 'url(/images/home/background.png)',
-    };
+        backgroundImage: "url(/images/home/background.png)",
+    }
 
-    // Modal state
-    const showAuthModal = ref(false);
+    const showAuthModal = ref(false)
 
     const handleLetsBegin = () => {
-        showAuthModal.value = true;
-    };
+        showAuthModal.value = true
+    }
 
-    
     const handleModalClose = () => {
-        showAuthModal.value = false;
-    };
+        showAuthModal.value = false
+    }
 
     onMounted(() => {
-        hydrated.value = true;
-    });
+        hydrated.value = true
+    })
 </script>
 
 <template>
-    <!-- Wrapper -->
     <div
         class="relative min-h-screen bg-cover bg-center bg-no-repeat overflow-hidden"
         :style="backgroundStyle">
-        <!-- Gradient Overlay -->
         <div
             class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div>
 
@@ -37,23 +33,18 @@
             class="relative z-10 flex flex-col justify-center lg:justify-end min-h-screen px-4 sm:px-6 lg:px-8 lg:pb-28 animate-pulse">
             <div
                 class="max-w-2xl mx-auto text-center sm:text-left lg:mx-0 lg:max-w-4xl">
-                <!-- Heading -->
                 <div class="h-8 sm:h-10 w-3/4 bg-gray-700 rounded mb-4"></div>
 
-                <!-- Divider -->
                 <div class="w-2/3 h-[1px] mb-4 bg-gray-600"></div>
 
-                <!-- Subtitle -->
                 <div class="h-5 w-5/6 bg-gray-600 rounded mb-8"></div>
 
-                <!-- Desktop Search -->
                 <div
                     class="hidden sm:flex items-center gap-3 sm:max-w-xl bg-gray-800/50 rounded-xl shadow-lg p-3">
                     <div class="flex-1 h-10 bg-gray-700 rounded"></div>
                     <div class="w-24 h-10 bg-gray-700 rounded"></div>
                 </div>
 
-                <!-- Mobile Search -->
                 <div class="flex sm:hidden flex-col gap-3 w-full mt-6">
                     <div class="h-12 bg-gray-700 rounded-xl"></div>
                     <div class="h-12 bg-gray-800 rounded-xl"></div>
@@ -67,7 +58,6 @@
             class="relative z-10 flex flex-col justify-center lg:justify-end min-h-screen px-4 sm:px-6 lg:px-8 lg:pb-28 transition-opacity duration-500">
             <div
                 class="max-w-2xl mx-auto text-center sm:text-left lg:mx-0 lg:max-w-4xl">
-                <!-- Heading -->
                 <h1
                     class="text-4xl font-bold tracking-wider text-white mb-4 sm:text-5xl lg:text-[2.5rem]">
                     Home Starts Here
@@ -76,14 +66,12 @@
                 <div
                     class="max-w-2xl sm:max-w-xl h-[1px] mb-4 bg-gray-600"></div>
 
-                <!-- Subtitle -->
                 <p
                     class="text-lg text-white/90 mb-8 sm:text-xl lg:text-base max-w-md">
                     Where your next chapter begins — Kama'aina, Military, or
                     Investor, your path starts with purpose
                 </p>
 
-                <!-- Desktop Search -->
                 <div
                     class="hidden sm:flex items-center gap-3 sm:max-w-xl bg-white rounded-xl shadow-lg p-1">
                     <div class="flex-1 relative">
@@ -117,7 +105,6 @@
                     </button>
                 </div>
 
-                <!-- Mobile Search -->
                 <div class="flex sm:hidden flex-col gap-3 w-full">
                     <div class="relative">
                         <svg
@@ -149,7 +136,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Auth Modal -->
-    <!-- <AuthCitizenAuthModals/> -->
 </template>

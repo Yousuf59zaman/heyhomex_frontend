@@ -1,32 +1,29 @@
 <script setup>
-    // Props
     const props = defineProps({
         property: {
             type: Object,
             required: true,
         },
-    });
+    })
 
-    // Emits
-    const emit = defineEmits(['click', 'favorite']);
+    const emit = defineEmits(["click", "favorite"])
 
-    // Methods
     const formatPrice = (price) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
+        return new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
-        }).format(price);
-    };
+        }).format(price)
+    }
 
     const handleClick = () => {
-        emit('click', props.property);
-    };
+        emit("click", props.property)
+    }
 
     const handleFavoriteToggle = () => {
-        emit('favorite', props.property);
-    };
+        emit("favorite", props.property)
+    }
 </script>
 
 <template>
@@ -42,10 +39,14 @@
                 @click.stop="handleFavoriteToggle"
                 :class="[
                     'absolute top-3 right-3 w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-colors',
-                    property.isFavorited ? 'bg-red-500 hover:bg-red-600' : 'bg-white hover:bg-gray-50'
+                    property.isFavorited
+                        ? 'bg-red-500 hover:bg-red-600'
+                        : 'bg-white hover:bg-gray-50',
                 ]">
                 <Icon
-                    :name="property.isFavorited ? 'lucide:heart' : 'lucide:heart'"
+                    :name="
+                        property.isFavorited ? 'lucide:heart' : 'lucide:heart'
+                    "
                     :class="[
                         'w-4 h-4 transition-colors',
                         property.isFavorited

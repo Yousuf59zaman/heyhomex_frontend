@@ -1,9 +1,8 @@
 <script setup>
-    // Props
     const props = defineProps({
         title: {
             type: String,
-            default: 'Saved List',
+            default: "Saved List",
         },
         showSellAll: {
             type: Boolean,
@@ -19,53 +18,47 @@
         },
         initialTab: {
             type: String,
-            default: 'Home',
+            default: "Home",
         },
-    });
+    })
 
-    // Emits
     const emit = defineEmits([
-        'tab-change',
-        'sell-all',
-        'remove-item',
-        'item-click',
-    ]);
+        "tab-change",
+        "sell-all",
+        "remove-item",
+        "item-click",
+    ])
 
-    // Static tabs configuration
     const tabs = [
-        { label: 'Home', value: 'Home' },
-        { label: 'Videos', value: 'Videos' },
-    ];
+        {label: "Home", value: "Home"},
+        {label: "Videos", value: "Videos"},
+    ]
 
-    // Reactive state
-    const activeTab = ref(props.initialTab);
+    const activeTab = ref(props.initialTab)
 
-    // Computed
     const currentItems = computed(() => {
-        return activeTab.value === 'Home' ? props.homeItems : props.videoItems;
-    });
+        return activeTab.value === "Home" ? props.homeItems : props.videoItems
+    })
 
-    // Methods
     const handleTabChange = (tab) => {
-        activeTab.value = tab;
-        emit('tab-change', tab);
-    };
+        activeTab.value = tab
+        emit("tab-change", tab)
+    }
 
     const handleRemoveItem = (itemId) => {
-        emit('remove-item', { itemId, type: activeTab.value.toLowerCase() });
-    };
+        emit("remove-item", {itemId, type: activeTab.value.toLowerCase()})
+    }
 
     const handleItemClick = (item) => {
-        emit('item-click', { item, type: activeTab.value.toLowerCase() });
-    };
+        emit("item-click", {item, type: activeTab.value.toLowerCase()})
+    }
 
-    // Watch for prop changes
     watch(
         () => props.initialTab,
         (newTab) => {
-            activeTab.value = newTab;
+            activeTab.value = newTab
         }
-    );
+    )
 </script>
 
 <template>
@@ -84,7 +77,6 @@
             </div>
         </div>
 
-        <!-- Home/Videos Toggle -->
         <div class="flex bg-gray-100 rounded-lg mb-4">
             <button
                 v-for="tab in tabs"
@@ -100,9 +92,7 @@
             </button>
         </div>
 
-        <!-- Saved Items -->
         <div class="space-y-3">
-            <!-- Home Tab Content -->
             <template v-if="activeTab === 'Home'">
                 <CommonCitizenSavedListItem
                     v-for="item in homeItems"
@@ -113,7 +103,6 @@
                     @click="handleItemClick" />
             </template>
 
-            <!-- Videos Tab Content -->
             <template v-else-if="activeTab === 'Videos'">
                 <CommonCitizenSavedListItem
                     v-for="item in videoItems"
@@ -124,7 +113,6 @@
                     @click="handleItemClick" />
             </template>
 
-            <!-- Empty State -->
             <div
                 v-if="currentItems.length === 0"
                 class="text-center py-8 text-gray-500">

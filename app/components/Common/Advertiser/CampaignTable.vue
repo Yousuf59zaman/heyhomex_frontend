@@ -5,61 +5,60 @@
             default: () => [
                 {
                     id: 1,
-                    name: 'Home Buyers FL',
-                    status: 'Running',
-                    statusColor: 'green',
+                    name: "Home Buyers FL",
+                    status: "Running",
+                    statusColor: "green",
                     clicks: 456,
                     impressions: 10000,
-                    cpc: '$0.23',
+                    cpc: "$0.23",
                     budget: 456,
                 },
                 {
                     id: 2,
-                    name: 'Military Offers',
-                    status: 'Paused',
-                    statusColor: 'yellow',
+                    name: "Military Offers",
+                    status: "Paused",
+                    statusColor: "yellow",
                     clicks: 110,
                     impressions: 2500,
-                    cpc: '$0.28',
+                    cpc: "$0.28",
                     budget: 456,
                 },
                 {
                     id: 3,
-                    name: 'Eco-Friendly Homes',
-                    status: 'Running',
-                    statusColor: 'green',
+                    name: "Eco-Friendly Homes",
+                    status: "Running",
+                    statusColor: "green",
                     clicks: 309,
                     impressions: 1200,
-                    cpc: '$0.17',
+                    cpc: "$0.17",
                     budget: 456,
                 },
                 {
                     id: 4,
-                    name: 'Investor Gold Leads',
-                    status: 'Running',
-                    statusColor: 'green',
+                    name: "Investor Gold Leads",
+                    status: "Running",
+                    statusColor: "green",
                     clicks: 456,
                     impressions: 1600,
-                    cpc: '$0.20',
+                    cpc: "$0.20",
                     budget: 456,
                 },
             ],
         },
-    });
+    })
 
     const getStatusColor = (status) => {
-        if (status === 'Running') {
-            return 'bg-green-100 text-green-700 border-green-200';
-        } else if (status === 'Paused') {
-            return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+        if (status === "Running") {
+            return "bg-green-100 text-green-700 border-green-200"
+        } else if (status === "Paused") {
+            return "bg-yellow-100 text-yellow-700 border-yellow-200"
         }
-        return 'bg-gray-100 text-gray-700 border-gray-200';
-    };
+        return "bg-gray-100 text-gray-700 border-gray-200"
+    }
 </script>
 
 <template>
     <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-        <!-- Header -->
         <div class="flex items-center justify-between mb-6">
             <h3 class="text-lg font-semibold text-gray-900">
                 Current Campaigns
@@ -69,10 +68,8 @@
             </button>
         </div>
 
-        <!-- Table -->
         <div class="overflow-x-auto">
             <table class="w-full">
-                <!-- Header -->
                 <thead>
                     <tr class="border-b border-gray-200">
                         <th
@@ -106,20 +103,17 @@
                     </tr>
                 </thead>
 
-                <!-- Body -->
                 <tbody>
                     <tr
                         v-for="campaign in campaigns"
                         :key="campaign.id"
                         class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                        <!-- Campaign Name -->
                         <td class="py-4 px-2">
                             <div class="text-sm font-medium text-gray-900">
                                 {{ campaign.name }}
                             </div>
                         </td>
 
-                        <!-- Status -->
                         <td class="py-4 px-2">
                             <span
                                 class="px-2 py-1 text-xs font-medium rounded-md border"
@@ -128,35 +122,30 @@
                             </span>
                         </td>
 
-                        <!-- Clicks -->
                         <td class="py-4 px-2">
                             <span class="text-sm text-gray-900">{{
                                 campaign.clicks
                             }}</span>
                         </td>
 
-                        <!-- Impressions -->
                         <td class="py-4 px-2">
                             <span class="text-sm text-gray-900">{{
                                 campaign.impressions.toLocaleString()
                             }}</span>
                         </td>
 
-                        <!-- CPC -->
                         <td class="py-4 px-2">
                             <span class="text-sm text-gray-900">{{
                                 campaign.cpc
                             }}</span>
                         </td>
 
-                        <!-- Budget -->
                         <td class="py-4 px-2">
                             <span class="text-sm text-gray-900">{{
                                 campaign.budget
                             }}</span>
                         </td>
 
-                        <!-- Action -->
                         <td class="py-4 px-2">
                             <button
                                 class="text-gray-400 hover:text-gray-600 transition-colors">

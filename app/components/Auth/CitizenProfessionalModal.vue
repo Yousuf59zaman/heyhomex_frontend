@@ -35,12 +35,19 @@
     const isSubmitting = ref(false)
 
     const professionalTypes = [
-        {label: "Real Estate Agent", value: "agent"},
-        {label: "Real Estate Broker", value: "broker"},
-        {label: "Property Manager", value: "property_manager"},
-        {label: "Developer", value: "developer"},
-        {label: "Investor", value: "investor"},
+        {label: "Real Estate Agent", value: "2"},
+        {label: "Real Estate Broker", value: "3"},
+        {label: "Property Manager", value: "4"},
+        {label: "Developer", value: "5"},
+        {label: "Investor", value: "6"},
     ]
+
+    type OnboardResponse = {
+        status: string
+        data: {
+            user_type?: Array<{slug?: string}>
+        }
+    }
 
     
 
@@ -70,13 +77,27 @@
         isSubmitting.value = true
 
         try {
-            await new Promise((resolve) => setTimeout(resolve, 1000))
+            const response = await $fetchCMS<OnboardResponse>("/v1/other-user-type/onboard", {
+                method: "POST",
+                body: {
+                    profession_id: formData.professionalType,
+                    license_number: formData.licenseNumber,
+                    broker_id: formData.brokerId,
+                    zip_code: formData.zipCode,
+                    mobile: formData.mobilePhone,
+                    extension: formData.extension,
+                }
+            })
 
-            console.log("Professional info submitted:", formData)
-            emit("next", formData)
+            if (response.status === "success") {
+                // Redirect to dashboard based on user type
+                const redirectSlug = response.data.user_type?.[0]?.slug || "kamaina"
+                const targetPath = redirectSlug === "kamaaina" ? "/kamaina/" : `/${redirectSlug}/`
+                window.location.href = targetPath
+            }
         } catch (error: any) {
             errorMessage.value =
-                error.message || "Failed to submit professional information"
+                error.data?.message || error.message || "Failed to submit professional information"
         } finally {
             isSubmitting.value = false
         }

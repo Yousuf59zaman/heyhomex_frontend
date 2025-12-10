@@ -1,35 +1,29 @@
 <script setup>
-import { useVideoPlayer } from '~/composables/useVideoPlayer';
+    import {useVideoPlayer} from "~/composables/useVideoPlayer"
 
-// Props
-const props = defineProps({
-    video: {
-        type: Object,
-        required: true,
-    },
-    // Optional: disable auto-play in modal
-    useModal: {
-        type: Boolean,
-        default: true,
-    },
-});
+    const props = defineProps({
+        video: {
+            type: Object,
+            required: true,
+        },
 
-// Emits
-const emit = defineEmits(['click']);
+        useModal: {
+            type: Boolean,
+            default: true,
+        },
+    })
 
-// Video player composable
-const { openVideo } = useVideoPlayer();
+    const emit = defineEmits(["click"])
 
-// Methods
-const handleClick = () => {
-    // Emit click event (for backward compatibility)
-    emit('click', props.video);
+    const {openVideo} = useVideoPlayer()
 
-    // Open video in modal if enabled
-    if (props.useModal) {
-        openVideo(props.video);
+    const handleClick = () => {
+        emit("click", props.video)
+
+        if (props.useModal) {
+            openVideo(props.video)
+        }
     }
-};
 </script>
 
 <template>
@@ -37,13 +31,11 @@ const handleClick = () => {
         @click="handleClick"
         class="bg-white rounded-lg overflow-hidden hover:shadow-lg transition-all duration-200 group cursor-pointer">
         <div class="relative h-40 sm:h-48 md:h-52">
-            <!-- Video thumbnail -->
             <img
                 :src="video.thumbnail"
                 :alt="video.title"
                 class="w-full h-full object-cover" />
 
-            <!-- Video overlay with title -->
             <div
                 class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center pb-3 sm:pb-4">
                 <div class="text-center text-white z-10">
@@ -56,7 +48,6 @@ const handleClick = () => {
                 </div>
             </div>
 
-            <!-- Play button overlay -->
             <div
                 class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <div
@@ -67,7 +58,6 @@ const handleClick = () => {
                 </div>
             </div>
 
-            <!-- Duration badge -->
             <div
                 class="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs font-medium">
                 {{ video.duration }}

@@ -57,7 +57,7 @@
         },
     });
 
-    // Fixed 78% display
+    
     const totalPercentage = computed(() => {
         return 78;
     });

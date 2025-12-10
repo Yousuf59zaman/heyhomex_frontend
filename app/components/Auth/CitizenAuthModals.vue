@@ -119,13 +119,13 @@
     }
 
     const handleRegisterSuccess = (data:any) => {
-        // activeIndex.value = 9 
-        if(accountType.value == 3){
-           activeIndex.value = 9 
-        }
-        else{
-            activeIndex.value = 5
-        }
+        activeIndex.value = 9 
+        // if(accountType.value == 3){
+        //    activeIndex.value = 9 
+        // }
+        // else{
+        //     activeIndex.value = 5
+        // }
     }
 
     const handleProfessionalNext = (data: any): void => {
@@ -134,17 +134,22 @@
 
     const handleLoginSuccess = (needsOnboardingCheck: boolean): void => {
         needsOnboarding.value = needsOnboardingCheck
-        if (needsOnboardingCheck) {
+        // if (needsOnboardingCheck) {
+        //     activeIndex.value = 7
+        // } else {
+        //     closeJourney()
+        //     navigateTo("/kamaina/")
+        // }
+        if (needsOnboardingCheck && accountType.value == 3) {
             activeIndex.value = 7
         } else {
-            closeJourney()
-            navigateTo("/kamaina/")
+            activeIndex.value = 5
         }
     }
 
     const handleOnboardingComplete = (data: any): void => {
         closeJourney()
-        navigateTo("/kamaina/")
+        // navigateTo("/kamaina/")
     }
 
     const handleShowLoginFromGetStarted = () => {
