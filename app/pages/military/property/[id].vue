@@ -35,7 +35,7 @@
         pending.value = true
         error.value = null
         try {
-            const response = await $fetchCMS(`/property/${propertyId}`, {
+            const response = await $fetchCitizen(`/v1/property/${propertyId}`, {
                 method: "GET",
             })
 
@@ -43,27 +43,23 @@
 
             propertyData.value = {
                 id: data.id,
-                title: data.title,
                 name: data.name,
                 address: data.address,
                 price: data.price,
                 beds: data.beds,
                 baths: data.baths,
-                sqft: data["square-feet"],
-                description: data.description,
-                year_built: data.year_built,
-                property_type: data.property_type,
-                parking: data.parking,
-                features: data.features || [],
-                nearby_facilities: data.nearby_facilities || [],
+                sqft: data.square_feet,
+                image: data.image_url,
+                category: data.category,
+                home_type: data.home_type,
                 location: data.location,
-                schools: data.schools || [],
-                hospitals: data.hospitals || [],
-                is_claimable: data.is_claimable,
-                insights: data.insights,
-                military_info: data.military_info,
-                images: data.images || {inside: [], outside: []},
-                image: data.image,
+                is_favorite: data.is_favorite,
+                other_images: data.other_images || [],
+                insights: data.insights || {},
+                loan_eligibility: data.loan_eligibility || {},
+                amenities: data.amenities || [],
+                created_at: data.created_at,
+                updated_at: data.updated_at,
             }
         } catch (e) {
             console.log("Error loading property detail:", e.message)
@@ -84,16 +80,17 @@
     const propertyImage = computed(
         () =>
             propertyData.value?.image ||
-            propertyData.value?.images?.inside?.[0] ||
+            propertyData.value?.other_images?.[0] ||
             `/images/dashboard/${propertyId || "1"}.png`
     )
 
     const allImages = computed(() => {
-        if (!propertyData.value?.images) return []
-        return [
-            ...(propertyData.value.images.inside || []),
-            ...(propertyData.value.images.outside || []),
-        ]
+        if (!propertyData.value) return []
+        const images = [propertyData.value.image]
+        if (propertyData.value.other_images) {
+            images.push(...propertyData.value.other_images)
+        }
+        return images.filter(Boolean)
     })
 
     const videos = ref([])
@@ -112,7 +109,6 @@
                     per_page: 4,
                 },
             })
-
             videos.value = response.data.data.map((video) => ({
                 id: video.id,
                 title: video.title,
@@ -177,75 +173,107 @@
         }
 
         const insights = propertyData.value.insights
+        const items = []
+
+        // Dynamically map all insights from API
+        Object.keys(insights).forEach((key, index) => {
+            if (
+                insights[key] &&
+                typeof insights[key] === "object" &&
+                insights[key].name
+            ) {
+                items.push({
+                    id: index + 1,
+                    label: insights[key].name,
+                    value: insights[key].value,
+                })
+            }
+        })
+
         return {
             title: "Insights",
             subtitle:
                 "Real-life suitability for Hawaii residents and local families.",
             downloadButtonText: "Download Local Living Snapshot",
-            items: [
-                {
-                    id: 1,
-                    label: "Public School Rating",
-                    value: insights.public_school_rating,
-                },
-                {id: 2, label: "Zoning Info", value: insights.zoning_info},
-                {
-                    id: 3,
-                    label: "Commute to Work Centers",
-                    value: insights.commute_to_work,
-                },
-                {
-                    id: 4,
-                    label: "Community Vibe",
-                    value: insights.community_vibe,
-                },
-                {
-                    id: 5,
-                    label: "Local Culture & Events",
-                    value: insights.local_culture_events,
-                },
-                {
-                    id: 6,
-                    label: "Ohana-Friendly Features",
-                    value: insights.ohana_friendly_features,
-                },
-                {
-                    id: 7,
-                    label: "Nearby Services",
-                    value: insights.nearby_services,
-                },
-                {
-                    id: 8,
-                    label: "Energy Cost Estimate",
-                    value: insights.energy_cost_estimate,
-                },
-            ],
+            items,
         }
     })
 
     const tabFeatures = computed(() => {
-        if (!propertyData.value?.features) {
-            return {title: "Features & Advantages", items: []}
+        if (!propertyData.value?.amenities) {
+            return {title: "Features & Amenities", items: []}
         }
 
         return {
-            title: "Features & Advantages",
-            items: propertyData.value.features.map((feature, index) => ({
+            title: "Features & Amenities",
+            items: propertyData.value.amenities.map((amenity, index) => ({
                 id: index + 1,
-                icon: "lucide:check-circle",
-                text: feature,
+                icon: amenity.icon || "lucide:check-circle",
+                text: amenity.name,
             })),
         }
     })
 
-    const tabMaps = ref({
-        title: "Location & Maps",
-        placeholder: "Interactive map will be displayed here",
+    const tabLoanEligibility = computed(() => {
+        if (!propertyData.value?.loan_eligibility) {
+            return {
+                title: "Loan Eligibility",
+                subtitle: "Military loan benefits and eligibility information.",
+                items: [],
+            }
+        }
+
+        const loan = propertyData.value.loan_eligibility
+        const items = []
+
+        // Dynamically map all loan eligibility fields
+        Object.keys(loan).forEach((key, index) => {
+            if (loan[key] && typeof loan[key] === "object" && loan[key].name) {
+                items.push({
+                    id: index + 1,
+                    label: loan[key].name,
+                    value: loan[key].value,
+                })
+            }
+        })
+
+        return {
+            title: "Loan Eligibility",
+            subtitle: "Military loan benefits and eligibility information.",
+            items,
+        }
     })
 
+    const tabMaps = computed(() => {
+        return {
+            title: "Location & Maps",
+            mapUrl: propertyData.value?.location?.map_url || null,
+            streetViewUrl:
+                propertyData.value?.location?.street_view_url || null,
+        }
+    })
 
     const showGallery = ref(false)
     const galleryActiveIndex = ref(0)
+
+    const galleryResponsiveOptions = ref([
+        {
+            breakpoint: '1500px',
+            numVisible: 5
+        },
+        {
+            breakpoint: '1024px',
+            numVisible: 3
+        },
+        {
+            breakpoint: '768px',
+            numVisible: 2
+        },
+        {
+            breakpoint: '560px',
+            numVisible: 1
+        }
+    ])
 
     const galleryItems = computed(() =>
         allImages.value
@@ -256,6 +284,18 @@
     const openGalleryAt = (index = 0) => {
         galleryActiveIndex.value = index
         showGallery.value = true
+        
+        // Add click outside handler after gallery opens
+        nextTick(() => {
+            const galleryMask = document.querySelector('.p-galleria-mask')
+            if (galleryMask) {
+                galleryMask.addEventListener('click', (e) => {
+                    if (e.target === galleryMask) {
+                        showGallery.value = false
+                    }
+                })
+            }
+        })
     }
 
     // Set hydrated to true after component is mounted on client
@@ -518,7 +558,6 @@
                             {{ propertyData.title || propertyData.name }}
                         </h1>
                         <button
-                            v-if="propertyData.is_claimable"
                             class="w-full md:w-auto bg-gray-900 text-white px-6 py-3 md:py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
                             Claim This Home
                         </button>
@@ -570,9 +609,10 @@
                                 <div
                                     class="text-lg md:text-xl font-bold text-gray-900">
                                     {{
-                                        propertyData.sqft
+                                        propertyData.sqft &&
+                                        typeof propertyData.sqft === "string"
                                             ? propertyData.sqft.split("/")[0]
-                                            : ""
+                                            : propertyData.sqft || ""
                                     }}
                                 </div>
                                 <div class="text-xs md:text-sm text-gray-600">
@@ -610,6 +650,16 @@
                             ]"
                             @click="activeTab = 'Insights'">
                             Insights
+                        </button>
+                        <button
+                            :class="[
+                                'whitespace-nowrap pb-2 px-3 py-2 rounded-md font-medium text-xs md:text-sm transition-colors hover:bg-black hover:text-white flex-shrink-0',
+                                activeTab === 'Loan'
+                                    ? 'bg-black  text-white'
+                                    : ' text-gray-500 ',
+                            ]"
+                            @click="activeTab = 'Loan'">
+                            Loan Eligibility
                         </button>
                         <button
                             :class="[
@@ -666,6 +716,32 @@
                     </div>
 
                     <div
+                        v-if="activeTab === 'Loan'"
+                        class="bg-white rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">
+                            {{ tabLoanEligibility.title }}
+                        </h3>
+                        <p class="text-gray-600 mb-6 text-sm">
+                            {{ tabLoanEligibility.subtitle }}
+                        </p>
+
+                        <div class="space-y-4">
+                            <div
+                                v-for="item in tabLoanEligibility.items"
+                                :key="item.id"
+                                class="flex items-start justify-between py-3 border-b border-gray-200 last:border-b-0">
+                                <span class="text-gray-700 font-medium text-sm">
+                                    {{ item.label }}
+                                </span>
+                                <span
+                                    class="text-gray-900 text-sm text-right font-semibold">
+                                    {{ item.value }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
                         v-if="activeTab === 'Features'"
                         class="bg-white p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">
@@ -692,10 +768,34 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">
                             {{ tabMaps.title }}
                         </h3>
-                        <div class="bg-gray-100 rounded-lg p-8 text-center">
-                            <p class="text-gray-600">
-                                {{ tabMaps.placeholder }}
-                            </p>
+                        <div
+                            v-if="tabMaps.mapUrl"
+                            class="space-y-4">
+                            <div class="rounded-lg overflow-hidden">
+                                <iframe
+                                    :src="tabMaps.mapUrl"
+                                    width="100%"
+                                    height="400"
+                                    style="border: 0"
+                                    allowfullscreen=""
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
+                            <div
+                                v-if="tabMaps.streetViewUrl"
+                                class="text-center">
+                                <a
+                                    :href="tabMaps.streetViewUrl"
+                                    target="_blank"
+                                    class="inline-block bg-gray-900 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                                    View Street View
+                                </a>
+                            </div>
+                        </div>
+                        <div
+                            v-else
+                            class="bg-gray-100 rounded-lg p-8 text-center">
+                            <p class="text-gray-600">Map data not available</p>
                         </div>
                     </div>
                 </div>
@@ -850,66 +950,41 @@
         <ClientOnly>
             <VideoPlayerModal :adConfig="adConfig" />
 
-            <!-- PrimeVue Gallery Dialog -->
-            <Dialog
-                v-model:visible="showGallery"
-                :modal="true"
-                :style="{width: '60vw', maxWidth: '600px'}"
-                :closable="true"
-                modalClass="p-0"
-                :breakpoints="{'640px': '85vw'}">
-                <template #header>
-                    <div class="flex justify-between items-center w-full">
-                        <div class="font-medium text-gray-900">Photos</div>
-                    </div>
+            <!-- Fullscreen Gallery -->
+            <Galleria 
+                v-model:visible="showGallery" 
+                v-model:activeIndex="galleryActiveIndex"
+                :value="galleryItems" 
+                :responsiveOptions="galleryResponsiveOptions" 
+                :numVisible="9" 
+                containerStyle="max-width: 100%" 
+                :circular="true" 
+                :fullScreen="true" 
+                :showItemNavigators="true"
+                :showThumbnails="true"
+                :closeOnEscape="true">
+                <template #item="slotProps">
+                    <img 
+                        :src="slotProps.item.item" 
+                        :alt="'Property Image'" 
+                        class="w-full h-auto max-h-[85vh] object-contain" 
+                        @click.stop />
                 </template>
-
-                <div class="p-0">
-                    <Galleria
-                        :value="galleryItems"
-                        :circular="true"
-                        :closable="false"
-                        :showThumbnails="true"
-                        :showIndicators="true"
-                        :autoPlay="false"
-                        v-model:activeIndex="galleryActiveIndex"
-                        :numVisible="1"
-                        :responsiveOptions="[
-                            {breakpoint: '991px', numVisible: 4},
-                            {breakpoint: '767px', numVisible: 1},
-                        ]">
-                        <!-- main item template -->
-                        <template #item="{item}">
-                            <img
-                                :src="item.item"
-                                style="
-                                    width: 100%;
-                                    height: auto;
-                                    margin: 0 auto;
-                                    display: block;
-                                    object-fit: contain;
-                                    max-height: 400px;
-                                " />
-                        </template>
-
-                        <!-- thumbnail template -->
-                        <template #thumbnail="{item}">
-                            <img
-                                :src="item.thumbnail"
-                                style="
-                                    width: 60px;
-                                    height: 60px;
-                                    object-fit: cover;
-                                " />
-                        </template>
-                    </Galleria>
-                </div>
-            </Dialog>
+                <template #thumbnail="slotProps">
+                    <img 
+                        :src="slotProps.item.thumbnail" 
+                        :alt="'Thumbnail'" 
+                        class="w-16 h-16 object-cover cursor-pointer" />
+                </template>
+            </Galleria>
         </ClientOnly>
     </div>
 </template>
 
 <style scoped>
+    :deep(.p-galleria){
+        border : none;
+    }
     .line-clamp-2 {
         display: -webkit-box;
         -webkit-line-clamp: 2;
