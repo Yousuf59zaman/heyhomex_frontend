@@ -1,10 +1,10 @@
 <script setup>
-useHead({ title: "Subscription - Military Panel" })
+useHead({ title: "Subscription - Agent Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "citizen" })
 
 // Tab Management
 const activeTab = ref('subscription')
-const completedTabs = ref(new Set(['subscription'])) // Track which tabs have been visited
+const completedTabs = ref(new Set(['subscription'])) 
 
 const switchTab = (tab) => {
     activeTab.value = tab
@@ -27,9 +27,6 @@ const loading = ref(false)
 const currentPlan = ref('free') // 'free' or 'premium'
 const billingCycle = ref('Free')
 const nextBilling = ref('Free')
-
-// Change Password Modal State
-const showChangePasswordModal = ref(false)
 
 // Icons as data URIs
 const checkIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M16.6668 5L7.50016 14.1667L3.3335 10' stroke='%23121A22' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
@@ -156,7 +153,7 @@ onMounted(async () => {
         <!-- Profile Tab Content -->
         <div v-show="activeTab === 'profile'" class="bg-white border border-gray-200 rounded-lg p-4 md:p-6">
             <CommonCitizenProfileSettings 
-                user-role="Investor"
+                user-role="Agent"
                 @change-password="handleChangePassword"
                 @profile-updated="handleProfileUpdated"
             />

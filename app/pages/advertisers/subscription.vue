@@ -1,6 +1,6 @@
 <script setup>
-useHead({ title: "Subscription - Military Panel" })
-definePageMeta({ middleware: ["auth-citizen"], layout: "citizen" })
+useHead({ title: "Subscription - Advertiser Panel" })
+definePageMeta({ middleware: ["auth-citizen"], layout: "advertiser" })
 
 // Tab Management
 const activeTab = ref('subscription')
@@ -38,16 +38,16 @@ const whiteCheckIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/
 
 // Features list (will come from API in future)
 const features = [
-    { name: 'Basic Personalization', free: true, premium: true },
-    { name: 'Property Search', free: true, premium: true },
-    { name: 'Saved Search', free: true, premium: true },
-    { name: 'Saved Homes', free: true, premium: true },
-    { name: 'Multimedia', free: false, premium: true },
-    { name: 'Heyhomex AI', free: false, premium: true },
-    { name: 'Advanced Lifestyle Reports', free: false, premium: true },
-    { name: 'Deeper Insights', free: false, premium: true },
-    { name: 'Priority Saved Search Results', free: false, premium: true },
-    { name: 'Full Dashboard with analytics, lead management and communication tools', free: false, premium: true },
+    { name: 'Basic Ad Campaign Management', free: true, premium: true },
+    { name: 'Standard Analytics Dashboard', free: true, premium: true },
+    { name: 'Click & Impression Tracking', free: true, premium: true },
+    { name: 'Basic Targeting Options', free: true, premium: true },
+    { name: 'Advanced Analytics & Insights', free: false, premium: true },
+    { name: 'A/B Testing Tools', free: false, premium: true },
+    { name: 'Custom Audience Targeting', free: false, premium: true },
+    { name: 'Priority Ad Placement', free: false, premium: true },
+    { name: 'Dedicated Account Manager', free: false, premium: true },
+    { name: 'Advanced Reporting & ROI Tracking', free: false, premium: true },
 ]
 
 // Plan Management
@@ -99,7 +99,6 @@ const handleCancelSubscription = async () => {
     }
 }
 
-// Lifecycle - Fetch current plan on mount
 // Handle change password
 const handleChangePassword = () => {
     showChangePasswordModal.value = true
@@ -115,6 +114,7 @@ const handleProfileUpdated = (profileData) => {
     // TODO: Handle any additional actions after profile update
 }
 
+// Lifecycle - Fetch current plan on mount
 onMounted(async () => {
     // TODO: Fetch current subscription status from API
     // const response = await $fetchCitizen('/subscription/status')
@@ -156,7 +156,7 @@ onMounted(async () => {
         <!-- Profile Tab Content -->
         <div v-show="activeTab === 'profile'" class="bg-white border border-gray-200 rounded-lg p-4 md:p-6">
             <CommonCitizenProfileSettings 
-                user-role="Investor"
+                user-role="Advertiser"
                 @change-password="handleChangePassword"
                 @profile-updated="handleProfileUpdated"
             />
@@ -196,105 +196,105 @@ onMounted(async () => {
             </div>
 
             <!-- Comparison Table -->
-        <div class="bg-white border border-gray-200 rounded-lg overflow-x-auto">
-            <div class="min-w-[640px] lg:min-w-0">
-                <!-- Header Row -->
-                <div class="grid grid-cols-[minmax(200px,2fr)_1fr_1fr] lg:grid-cols-[2fr_1fr_1fr] border-b border-gray-200">
-                    <!-- Left Header -->
-                    <div class="border-r border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-5 h-[160px] md:h-[200px] lg:h-[218px] flex flex-col justify-center gap-2 md:gap-3">
-                        <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-gray-900">Compare plans</h3>
-                        <p class="text-xs md:text-sm text-gray-700 leading-5">
-                            Choose your plan according to your buying needs.
-                        </p>
-                    </div>
-                    
-                    <!-- Free Plan Header -->
-                    <div class="border-r border-gray-200 px-3 md:px-5 lg:px-7 py-4 md:py-6 lg:py-7 h-[160px] md:h-[200px] lg:h-[218px] flex flex-col items-center justify-center gap-4 md:gap-6 lg:gap-7">
-                        <div class="flex flex-col items-center gap-1">
-                            <div class="py-1">
-                                <p class="text-base md:text-lg lg:text-xl font-bold text-gray-900">Free</p>
-                            </div>
-                            <p class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
-                                $0<span class="text-sm md:text-base lg:text-lg font-normal text-gray-600">/month</span>
+            <div class="bg-white border border-gray-200 rounded-lg overflow-x-auto">
+                <div class="min-w-[640px] lg:min-w-0">
+                    <!-- Header Row -->
+                    <div class="grid grid-cols-[minmax(200px,2fr)_1fr_1fr] lg:grid-cols-[2fr_1fr_1fr] border-b border-gray-200">
+                        <!-- Left Header -->
+                        <div class="border-r border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-5 h-[160px] md:h-[200px] lg:h-[218px] flex flex-col justify-center gap-2 md:gap-3">
+                            <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-gray-900">Compare plans</h3>
+                            <p class="text-xs md:text-sm text-gray-700 leading-5">
+                                Choose your plan according to your advertising needs.
                             </p>
                         </div>
                         
-                        <button
-                            v-if="currentPlan === 'free'"
-                            disabled
-                            class="w-full h-10 md:h-12 lg:h-13 bg-blue-500 text-white font-bold text-xs md:text-sm lg:text-base rounded-xl px-4 md:px-5 py-2 md:py-3 flex items-center justify-center gap-2 cursor-not-allowed">
-                            <img :src="whiteCheckIcon" alt="" class="w-4 h-4 md:w-5 md:h-5" />
-                            Current Plan
-                        </button>
-                        <button
-                            v-else
-                            @click="handleChoosePlan('free')"
-                            :disabled="loading"
-                            class="w-full h-10 md:h-12 lg:h-13 bg-gray-100 text-gray-900 font-bold text-xs md:text-sm lg:text-base rounded-xl px-4 md:px-5 py-2 md:py-3 hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                            {{ loading ? 'Processing...' : 'Downgrade' }}
-                        </button>
+                        <!-- Free Plan Header -->
+                        <div class="border-r border-gray-200 px-3 md:px-5 lg:px-7 py-4 md:py-6 lg:py-7 h-[160px] md:h-[200px] lg:h-[218px] flex flex-col items-center justify-center gap-4 md:gap-6 lg:gap-7">
+                            <div class="flex flex-col items-center gap-1">
+                                <div class="py-1">
+                                    <p class="text-base md:text-lg lg:text-xl font-bold text-gray-900">Free</p>
+                                </div>
+                                <p class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
+                                    $0<span class="text-sm md:text-base lg:text-lg font-normal text-gray-600">/month</span>
+                                </p>
+                            </div>
+                            
+                            <button
+                                v-if="currentPlan === 'free'"
+                                disabled
+                                class="w-full h-10 md:h-12 lg:h-13 bg-indigo-900 text-white font-bold text-xs md:text-sm lg:text-base rounded-xl px-4 md:px-5 py-2 md:py-3 flex items-center justify-center gap-2 cursor-not-allowed">
+                                <img :src="whiteCheckIcon" alt="" class="w-4 h-4 md:w-5 md:h-5" />
+                                Current Plan
+                            </button>
+                            <button
+                                v-else
+                                @click="handleChoosePlan('free')"
+                                :disabled="loading"
+                                class="w-full h-10 md:h-12 lg:h-13 bg-gray-100 text-gray-900 font-bold text-xs md:text-sm lg:text-base rounded-xl px-4 md:px-5 py-2 md:py-3 hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                {{ loading ? 'Processing...' : 'Downgrade' }}
+                            </button>
+                        </div>
+                        
+                        <!-- Premium Plan Header -->
+                        <div class="px-3 md:px-5 lg:px-7 py-4 md:py-6 lg:py-7 h-[160px] md:h-[200px] lg:h-[218px] flex flex-col items-center justify-center gap-4 md:gap-6 lg:gap-7">
+                            <div class="flex flex-col items-center gap-1">
+                                <div class="py-1">
+                                    <p class="text-base md:text-lg lg:text-xl font-bold text-gray-900">Premium</p>
+                                </div>
+                                <p class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
+                                    $50<span class="text-sm md:text-base lg:text-lg font-normal text-gray-600">/month</span>
+                                </p>
+                            </div>
+                            
+                            <button
+                                v-if="currentPlan === 'premium'"
+                                disabled
+                                class="w-full h-10 md:h-12 lg:h-13 bg-indigo-900 text-white font-bold text-xs md:text-sm lg:text-base rounded-xl px-4 md:px-5 py-2 md:py-3 flex items-center justify-center gap-2 cursor-not-allowed">
+                                <img :src="whiteCheckIcon" alt="" class="w-4 h-4 md:w-5 md:h-5" />
+                                Current Plan
+                            </button>
+                            <button
+                                v-else
+                                @click="handleChoosePlan('premium')"
+                                :disabled="loading"
+                                class="w-full h-10 md:h-12 lg:h-13 bg-gray-900 text-white font-bold text-xs md:text-sm lg:text-base rounded-xl px-4 md:px-5 py-2 md:py-3 hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                {{ loading ? 'Processing...' : 'Choose this Plan' }}
+                            </button>
+                        </div>
                     </div>
                     
-                    <!-- Premium Plan Header -->
-                    <div class="px-3 md:px-5 lg:px-7 py-4 md:py-6 lg:py-7 h-[160px] md:h-[200px] lg:h-[218px] flex flex-col items-center justify-center gap-4 md:gap-6 lg:gap-7">
-                        <div class="flex flex-col items-center gap-1">
-                            <div class="py-1">
-                                <p class="text-base md:text-lg lg:text-xl font-bold text-gray-900">Premium</p>
-                            </div>
-                            <p class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
-                                $10<span class="text-sm md:text-base lg:text-lg font-normal text-gray-600">/month</span>
+                    <!-- Feature Rows -->
+                    <div
+                        v-for="feature in features"
+                        :key="feature.name"
+                        class="grid grid-cols-[minmax(200px,2fr)_1fr_1fr] lg:grid-cols-[2fr_1fr_1fr] border-b border-gray-200">
+                        <!-- Feature Name -->
+                        <div class="border-r border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-5 h-[64px] md:h-[80px] flex items-center">
+                            <p class="text-xs md:text-sm lg:text-base font-medium text-gray-900 leading-tight md:leading-relaxed">
+                                {{ feature.name }}
                             </p>
                         </div>
                         
-                        <button
-                            v-if="currentPlan === 'premium'"
-                            disabled
-                            class="w-full h-10 md:h-12 lg:h-13 bg-blue-500 text-white font-bold text-xs md:text-sm lg:text-base rounded-xl px-4 md:px-5 py-2 md:py-3 flex items-center justify-center gap-2 cursor-not-allowed">
-                            <img :src="whiteCheckIcon" alt="" class="w-4 h-4 md:w-5 md:h-5" />
-                            Current Plan
-                        </button>
-                        <button
-                            v-else
-                            @click="handleChoosePlan('premium')"
-                            :disabled="loading"
-                            class="w-full h-10 md:h-12 lg:h-13 bg-gray-900 text-white font-bold text-xs md:text-sm lg:text-base rounded-xl px-4 md:px-5 py-2 md:py-3 hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                            {{ loading ? 'Processing...' : 'Choose this Plan' }}
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Feature Rows -->
-                <div
-                    v-for="feature in features"
-                    :key="feature.name"
-                    class="grid grid-cols-[minmax(200px,2fr)_1fr_1fr] lg:grid-cols-[2fr_1fr_1fr] border-b border-gray-200">
-                    <!-- Feature Name -->
-                    <div class="border-r border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-5 h-[64px] md:h-[80px] flex items-center">
-                        <p class="text-xs md:text-sm lg:text-base font-medium text-gray-900 leading-tight md:leading-relaxed">
-                            {{ feature.name }}
-                        </p>
-                    </div>
-                    
-                    <!-- Free Plan Checkmark -->
-                    <div class="border-r border-gray-200 h-[64px] md:h-[80px] flex items-center justify-center">
-                        <img
-                            v-if="feature.free"
-                            :src="checkIcon"
-                            alt="Included"
-                            class="w-4 h-4 md:w-5 md:h-5" />
-                    </div>
-                    
-                    <!-- Premium Plan Checkmark -->
-                    <div class="h-[64px] md:h-[80px] flex items-center justify-center">
-                        <img
-                            v-if="feature.premium"
-                            :src="checkIcon"
-                            alt="Included"
-                            class="w-4 h-4 md:w-5 md:h-5" />
+                        <!-- Free Plan Checkmark -->
+                        <div class="border-r border-gray-200 h-[64px] md:h-[80px] flex items-center justify-center">
+                            <img
+                                v-if="feature.free"
+                                :src="checkIcon"
+                                alt="Included"
+                                class="w-4 h-4 md:w-5 md:h-5" />
+                        </div>
+                        
+                        <!-- Premium Plan Checkmark -->
+                        <div class="h-[64px] md:h-[80px] flex items-center justify-center">
+                            <img
+                                v-if="feature.premium"
+                                :src="checkIcon"
+                                alt="Included"
+                                class="w-4 h-4 md:w-5 md:h-5" />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         </div>
 
         <!-- Billing Tab Content -->

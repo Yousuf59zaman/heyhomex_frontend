@@ -69,6 +69,11 @@
         return getUserName.value.charAt(0).toUpperCase()
     })
 
+    const getUserProfilePic = computed(() => {
+        if (!citizen_user.value?.data) return null
+        return citizen_user.value.data.profile_pic || citizen_user.value.data.photo || null
+    })
+
     onMounted(() => {
         window.addEventListener("scroll", handleScroll)
     })
@@ -116,7 +121,14 @@
                     :disabled="isLoadingLogout"
                     class="flex items-center rounded-lg hover:bg-gray-100 p-2">
                     <Avatar
+                        v-if="!getUserProfilePic"
                         :label="getUserInitial"
+                        class="avatar-bg"
+                        size="normal"
+                        shape="circle" />
+                    <Avatar
+                        v-else
+                        :image="getUserProfilePic"
                         class="avatar-bg"
                         size="normal"
                         shape="circle" />
@@ -189,7 +201,13 @@
                     :disabled="isLoadingLogout"
                     class="flex items-center rounded-lg hover:bg-gray-100 gap-2">
                     <Avatar
+                        v-if="!getUserProfilePic"
                         :label="getUserInitial"
+                        class="avatar-bg"
+                        shape="circle" />
+                    <Avatar
+                        v-else
+                        :image="getUserProfilePic"
                         class="avatar-bg"
                         shape="circle" />
                     <span class="text-sm font-medium text-gray-700">{{

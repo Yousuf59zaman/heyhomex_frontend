@@ -4,8 +4,12 @@ definePageMeta({ middleware: ["auth-citizen"], layout: "citizen" })
 
 // Tab Management
 const activeTab = ref('subscription')
+const completedTabs = ref(new Set(['subscription'])) 
+
 const switchTab = (tab) => {
     activeTab.value = tab
+    completedTabs.value.add(tab)
+    
     // TODO: Load tab-specific data when APIs are ready
     if (tab === 'profile') {
         // TODO: Fetch user profile data
@@ -14,11 +18,18 @@ const switchTab = (tab) => {
     }
 }
 
+const isTabCompleted = (tab) => {
+    return completedTabs.value.has(tab)
+}
+
 // Subscription State
 const loading = ref(false)
 const currentPlan = ref('free') // 'free' or 'premium'
 const billingCycle = ref('Free')
 const nextBilling = ref('Free')
+
+// Change Password Modal State
+const showChangePasswordModal = ref(false)
 
 // Icons as data URIs
 const checkIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M16.6668 5L7.50016 14.1667L3.3335 10' stroke='%23121A22' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
@@ -89,6 +100,21 @@ const handleCancelSubscription = async () => {
 }
 
 // Lifecycle - Fetch current plan on mount
+// Handle change password
+const handleChangePassword = () => {
+    showChangePasswordModal.value = true
+}
+
+const handlePasswordChangeSuccess = () => {
+    console.log('Password changed successfully')
+    // TODO: Handle any additional actions after password change
+}
+
+const handleProfileUpdated = (profileData) => {
+    console.log('Profile updated:', profileData)
+    // TODO: Handle any additional actions after profile update
+}
+
 onMounted(async () => {
     // TODO: Fetch current subscription status from API
     // const response = await $fetchCitizen('/subscription/status')
@@ -128,13 +154,16 @@ onMounted(async () => {
         </div>
 
         <!-- Profile Tab Content -->
-        <div v-if="activeTab === 'profile'" class="bg-white border border-gray-200 rounded-lg p-4 md:p-6">
-            <p class="text-sm text-gray-600">Profile settings will be available here.</p>
-            <!-- TODO: Add profile form fields when API is ready -->
+        <div v-show="activeTab === 'profile'" class="bg-white border border-gray-200 rounded-lg p-4 md:p-6">
+            <CommonCitizenProfileSettings 
+                user-role="Military"
+                @change-password="handleChangePassword"
+                @profile-updated="handleProfileUpdated"
+            />
         </div>
 
         <!-- Subscription Tab Content -->
-        <div v-if="activeTab === 'subscription'" class="space-y-4 md:space-y-6">
+        <div v-show="activeTab === 'subscription'" class="space-y-4 md:space-y-6">
             <!-- Current Plan Section -->
             <div class="space-y-2 md:space-y-3">
                 <h2 class="text-lg md:text-2xl font-semibold text-gray-900">
@@ -269,9 +298,16 @@ onMounted(async () => {
         </div>
 
         <!-- Billing Tab Content -->
-        <div v-if="activeTab === 'billing'" class="bg-white border border-gray-200 rounded-lg p-4 md:p-6">
-            <LazyCommonCitizenBillingHistory />
+        <div v-show="activeTab === 'billing'" class="bg-white border border-gray-200 rounded-lg p-4 md:p-6">
+            <LazyCommonCitizenBillingHistory v-if="isTabCompleted('billing')" />
         </div>
+
+        <!-- Change Password Modal -->
+        <CommonCitizenChangePasswordModal 
+            :is-open="showChangePasswordModal"
+            @close="showChangePasswordModal = false"
+            @success="handlePasswordChangeSuccess"
+        />
     </div>
 </template>
 
