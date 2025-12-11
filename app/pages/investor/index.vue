@@ -2,6 +2,7 @@
     useHead({title: "Investor Panel"})
     definePageMeta({middleware: ["auth-citizen"], layout: "citizen"})
 
+    const toast = useToast()
     // Hydration state for SSR/CSR skeleton loading
     const hydrated = ref(false)
 
@@ -29,6 +30,7 @@
     
 
     const savedHomeItems = ref([])
+    const loadingFavorites = ref(false)
     
     // Confirmation modal state
     const showConfirmModal = ref(false)

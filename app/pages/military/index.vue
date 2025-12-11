@@ -2,6 +2,7 @@
     useHead({title: "Military Panel"})
     definePageMeta({middleware: ["auth-citizen"], layout: "citizen"})
 
+    const toast = useToast()
     const hydrated = ref(false)
 
     const properties = ref([])
@@ -23,7 +24,8 @@
     const chartPeriod = ref("weekly")
 
     const savedHomeItems = ref([])
-
+    const loadingFavorites = ref(false)
+    
     const showConfirmModal = ref(false)
     const itemToRemove = ref(null)
 
