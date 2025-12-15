@@ -43,7 +43,7 @@ export default defineNuxtConfig({
             FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
             FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
             FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
-
+            STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
             // JWPlayer Configuration
             NUXT_PUBLIC_JWPLAYER_KEY: process.env.NUXT_PUBLIC_JWPLAYER_KEY,
             NUXT_PUBLIC_JWPLAYER_LIBRARY_URL: process.env.NUXT_PUBLIC_JWPLAYER_LIBRARY_URL,
