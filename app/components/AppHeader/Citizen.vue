@@ -7,17 +7,6 @@
     const menu = ref()
     const profileMenuItems = ref([
         {
-            label: "Homepage",
-            icon: "pi pi-user",
-            command: () => {
-                navigateTo("/")
-            },
-        },
-
-        {
-            separator: true,
-        },
-        {
             label: "Logout",
             icon: "pi pi-sign-out",
             command: async () => {

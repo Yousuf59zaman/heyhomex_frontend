@@ -93,7 +93,7 @@
             label: "Videos",
             icon: "/svg/menubar/video.svg",
             iconType: "svg",
-            path: `#`,
+            path: `${getBasePath.value}/videos`,
         },
         {
             id: "favourites",
@@ -114,7 +114,7 @@
             label: "Settings",
             icon: "/svg/menubar/setting.svg",
             iconType: "svg",
-            path: `#`,
+            path: `${getBasePath.value}/settings`,
         },
     ])
 </script>
@@ -125,12 +125,13 @@
         v-if="!isMobile"
         class="h-full w-[69px] flex flex-col items-center py-7"
         :style="{backgroundColor: sidebarColor}">
-        <div class="mb-8">
+        <div class="mb-8 subscription-glow">
             <NuxtLink :to="`${getBasePath}/subscription`">
+                <div class="glow-ring"></div>
                 <img
                     src="/svg/dashboard/home_logo.svg"
                     alt="HeyHome Logo"
-                    class="h-8 w-8 rounded cursor-pointer hover:opacity-80 transition-opacity" />
+                    class="h-8 w-8 rounded cursor-pointer hover:opacity-80 transition-opacity relative z-10" />
             </NuxtLink>
         </div>
 
@@ -292,5 +293,44 @@
 
     .mobile-sidebar-link-active .mobile-sidebar-icon {
         filter: brightness(0) saturate(100%) invert(100%) !important;
+    }
+
+    /* Subscription button glow effect */
+    .subscription-glow {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .glow-ring {
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
+        animation: pulse-ring 1.5s ease-in-out infinite;
+        z-index: 1;
+    }
+
+    @keyframes pulse-ring {
+        0%, 100% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.7;
+            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8),
+                        0 0 15px 3px rgba(255, 255, 255, 0.6),
+                        0 0 25px 5px rgba(255, 255, 255, 0.4);
+        }
+        50% {
+            transform: translate(-50%, -50%) scale(1.15);
+            opacity: 1;
+            box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.5),
+                        0 0 25px 8px rgba(255, 255, 255, 0.8),
+                        0 0 40px 12px rgba(255, 255, 255, 0.6),
+                        0 0 55px 15px rgba(255, 255, 255, 0.4);
+        }
     }
 </style>
