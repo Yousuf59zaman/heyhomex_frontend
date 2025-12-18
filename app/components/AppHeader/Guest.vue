@@ -78,16 +78,20 @@
             class="relative flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12">
             <!-- Left Spacer-->
             <div class="md:w-[200px]">
-                <img
-                    class="hidden sm:block lg:hidden"
-                    src="/images/home/home_logo.png"
-                    alt="" />
+                <NuxtLink
+                    to="/#"
+                    class="lg:hidden inline-flex items-center">
+                    <img
+                        class="h-[26px] w-auto"
+                        src="/images/home/home_logo.png"
+                        alt="" />
+                </NuxtLink>
             </div>
 
             <!-- Logo Section-->
             <div
                 :class="[
-                    'absolute left-1/2 -translate-x-1/2 transition-transform duration-300',
+                    'hidden md:block absolute left-1/2 -translate-x-1/2 transition-transform duration-300',
                     isScroll ? 'scale-90' : 'scale-100',
                 ]">
                 <div class="flex items-center space-x-3">
@@ -105,10 +109,10 @@
                 <!-- Desktop Menu -->
                 <div
                     v-if="admin_user"
-                    class="hidden md:flex items-center space-x-4">
+                    class="hidden md:flex items-center gap-[16px]">
                     <NuxtLink
                         to="/admin-panel"
-                        class="py-[0.5rem] px-[1.5rem] text-black text-[0.875rem] bg-white border rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                        class="py-[10px] px-[24px] text-[#121a22] text-[0.875rem] font-semibold leading-[20px] bg-white rounded-[12px] hover:bg-gray-50 transition-colors duration-200">
                         Admin Panel
                     </NuxtLink>
                 </div>
@@ -118,56 +122,66 @@
                     class="hidden cursor-pointer md:flex items-center space-x-4">
                     <div
                         @click="handleDashboardRedirect(citizen_user)"
-                        class="py-[0.5rem] px-[1.5rem] text-black text-[0.875rem] bg-white border rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                        class="py-[10px] px-[24px] text-[#121a22] text-[0.875rem] font-semibold leading-[20px] bg-white rounded-[12px] hover:bg-gray-50 transition-colors duration-200">
                         Citizen Panel
                     </div>
                 </div>
                 <div
                     v-else
-                    class="hidden md:flex items-center space-x-4">
+                    class="hidden md:flex items-center gap-[16px]">
                     <button
                         @click="handleSignIn"
-                        class="text-white text-[0.875rem] hover:text-gray-300 transition-colors">
+                        class="text-white text-[1rem] font-semibold leading-[24px] hover:text-gray-300 transition-colors">
                         Sign In
                     </button>
-                    <div class="bg-white w-[1px] h-[1.25rem]"></div>
+                    <div class="bg-white w-[1px] h-[20px]"></div>
                     <button
                         @click="handleGetStarted"
-                        class="py-[0.5rem] px-[1.5rem] text-black text-[0.875rem] bg-white border rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                        class="py-[10px] px-[24px] text-[#121a22] text-[0.875rem] font-semibold leading-[20px] bg-white rounded-[12px] hover:bg-gray-50 transition-colors duration-200">
                         Get Started
                     </button>
                 </div>
 
-                <!-- Mobile Hamburger Button -->
-                <button
-                    @click="toggleMobileMenu"
-                    class="md:hidden text-white p-2 focus:outline-none"
-                    aria-label="Toggle menu">
-                    <svg
-                        v-if="!isMobileMenuOpen"
-                        class="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                    <svg
-                        v-else
-                        class="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                <!-- Mobile Actions -->
+                <div class="md:hidden flex items-center gap-[11px]">
+                    <button
+                        v-if="!admin_user && !hasCitizenDashboardAccess"
+                        @click="handleGetStarted"
+                        class="py-[0.375rem] px-[0.75rem] text-[#121A22] text-[0.875rem] bg-white border rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                        Get Started
+                    </button>
+
+                    <!-- Mobile Hamburger Button -->
+                    <button
+                        @click="toggleMobileMenu"
+                        class="text-white p-2 focus:outline-none"
+                        aria-label="Toggle menu">
+                        <svg
+                            v-if="!isMobileMenuOpen"
+                            class="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg
+                            v-else
+                            class="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
 

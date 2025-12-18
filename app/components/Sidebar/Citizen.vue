@@ -73,13 +73,21 @@
         else return "/investor"
     })
 
-    const navigationItems = computed(() => [
+    // Main navigation items (above separator line) - order matches Figma design
+    const mainNavigationItems = computed(() => [
         {
             id: "dashboard",
             label: "Dashboard",
             icon: "/svg/menubar/dashboard.svg",
             iconType: "svg",
             path: getBasePath.value,
+        },
+        {
+            id: "favourites",
+            label: "Favourites",
+            icon: "/svg/menubar/favourite.svg",
+            iconType: "svg",
+            path: `${getBasePath.value}/favorites`,
         },
         {
             id: "Search",
@@ -96,26 +104,27 @@
             path: `${getBasePath.value}/videos`,
         },
         {
-            id: "favourites",
-            label: "Favourites",
-            icon: "/svg/menubar/favourite.svg",
-            iconType: "svg",
-            path: `${getBasePath.value}/favorites`,
-        },
-        {
             id: "reports",
             label: "Reports",
             icon: "/svg/menubar/search.svg",
             iconType: "svg",
             path: `#`,
         },
-        {
-            id: "settings",
-            label: "Settings",
-            icon: "/svg/menubar/setting.svg",
-            iconType: "svg",
-            path: `${getBasePath.value}/settings`,
-        },
+    ])
+
+    // Settings item (below separator line)
+    const settingsItem = computed(() => ({
+        id: "settings",
+        label: "Settings",
+        icon: "/svg/menubar/setting.svg",
+        iconType: "svg",
+        path: `${getBasePath.value}/settings`,
+    }))
+
+    // All navigation items for mobile (combined, no separator)
+    const navigationItems = computed(() => [
+        ...mainNavigationItems.value,
+        settingsItem.value,
     ])
 </script>
 
@@ -125,7 +134,7 @@
         v-if="!isMobile"
         class="h-full w-[69px] flex flex-col items-center py-7"
         :style="{backgroundColor: sidebarColor}">
-        <div class="mb-8 subscription-glow">
+        <div class="mb-6 subscription-glow">
             <NuxtLink :to="`${getBasePath}/subscription`">
                 <div class="glow-ring"></div>
                 <img
@@ -136,10 +145,10 @@
         </div>
 
         <!-- Navigation Icons -->
-        <nav class="flex-1">
-            <ul class="space-y-4">
+        <nav class="flex-1 flex flex-col">
+            <ul class="space-y-3">
                 <li
-                    v-for="item in navigationItems"
+                    v-for="item in mainNavigationItems"
                     :key="item.id">
                     <NuxtLink
                         :to="item.path"
@@ -157,6 +166,20 @@
                     </NuxtLink>
                 </li>
             </ul>
+
+            <!-- Separator Line -->
+            <div class="my-3 mx-auto w-10 h-px bg-white/30"></div>
+
+            <!-- Settings -->
+            <NuxtLink
+                :to="settingsItem.path"
+                class="sidebar-link flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 mx-auto"
+                active-class="sidebar-link-active">
+                <img
+                    :src="settingsItem.icon"
+                    :alt="settingsItem.label"
+                    class="sidebar-icon w-5 h-5" />
+            </NuxtLink>
         </nav>
     </aside>
 
