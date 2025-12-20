@@ -26,14 +26,6 @@ logs
 # md files
 *.md
 
-# video files
-*.mp4
-*.mov
-*.avi
-*.wmv
-*.flv
-/public/videos
-
 # test files
 video-test.vue
 test-jwplayer-ads.vue
