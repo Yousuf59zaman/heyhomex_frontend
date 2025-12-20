@@ -1,5 +1,5 @@
 <script setup>
-const videoSrc = ref('')
+const videoSrc = ref('') 
 
 const hydrated = ref(false)
 const videoError = ref(false)
