@@ -1,5 +1,5 @@
 <script setup>
-const videoSrc = '/video/HomePage.mp4'
+const videoSrc = ref('') // set at runtime to avoid build-time asset import
 
 const hydrated = ref(false)
 const videoError = ref(false)
@@ -17,6 +17,7 @@ const handleModalClose = () => {
 
 onMounted(() => {
   hydrated.value = true
+  videoSrc.value = `${import.meta.env.BASE_URL}video/HomePage.mp4`
 })
 
 const backgroundStyle = computed(() =>
