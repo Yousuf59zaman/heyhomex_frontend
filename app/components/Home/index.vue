@@ -1,5 +1,5 @@
 <script setup>
-const videoSrc = ref('') // set at runtime to avoid build-time asset import
+const videoSrc = ref('')
 
 const hydrated = ref(false)
 const videoError = ref(false)
