@@ -1,11 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import Aura from '@primeuix/themes/aura';
 import { definePreset } from '@primeuix/themes';
-type ProcessEnv = Record<string, string | undefined>;
-
-const runtimeEnv =
-    (globalThis as typeof globalThis & { process?: { env?: ProcessEnv } }).process?.env ?? {};
-
 const MyPreset = definePreset(Aura, {
     semantic: {
         colorScheme: {
