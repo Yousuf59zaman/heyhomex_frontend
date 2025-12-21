@@ -1,11 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import Aura from '@primeuix/themes/aura';
 import { definePreset } from '@primeuix/themes';
-type ProcessEnv = Record<string, string | undefined>;
-
-const runtimeEnv =
-    (globalThis as typeof globalThis & { process?: { env?: ProcessEnv } }).process?.env ?? {};
-
 const MyPreset = definePreset(Aura, {
     semantic: {
         colorScheme: {
@@ -48,6 +43,9 @@ export default defineNuxtConfig({
             NUXT_PUBLIC_JWPLAYER_KEY: process.env.NUXT_PUBLIC_JWPLAYER_KEY,
             NUXT_PUBLIC_JWPLAYER_LIBRARY_URL: process.env.NUXT_PUBLIC_JWPLAYER_LIBRARY_URL,
             NUXT_PUBLIC_JWPLAYER_DEVMODE: process.env.NUXT_PUBLIC_JWPLAYER_DEVMODE,
+
+            // Stripe Configuration
+            STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
             NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL: process.env.NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL,
 }
     },
