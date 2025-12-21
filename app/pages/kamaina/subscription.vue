@@ -1,18 +1,9 @@
 <script setup>
-<<<<<<< HEAD
-useHead({ title: 'Subscription - Kamaina Panel' })
-definePageMeta({ middleware: ['auth-citizen'], layout: 'citizen' })
-
-const activeTab = ref('subscription')
-const completedTabs = ref(new Set(['subscription']))
-const showChangePasswordModal = ref(false)
-=======
 import { loadStripe } from '@stripe/stripe-js'
 
 useHead({ title: "Subscription - Kamaina Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "citizen" })
 
->>>>>>> d55a73b53d1f3307248b34bf1710aed15028867a
 
 const activeTab = ref('subscription')
 const completedTabs = ref(new Set(['subscription']))
@@ -20,33 +11,18 @@ const completedTabs = ref(new Set(['subscription']))
 const switchTab = async (tab) => {
     activeTab.value = tab
     completedTabs.value.add(tab)
-<<<<<<< HEAD
-=======
 
     if (tab === 'billing' && !billingHistory.value) {
         await fetchBillingHistory()
     } else if (tab === 'history' && !subscriptionHistory.value) {
         await fetchSubscriptionHistory()
     }
->>>>>>> d55a73b53d1f3307248b34bf1710aed15028867a
 }
 
 const isTabCompleted = (tab) => {
     return completedTabs.value.has(tab)
 }
 
-<<<<<<< HEAD
-const loading = ref(false)
-const currentPlan = ref('free')
-const billingCycle = ref('Free')
-const nextBilling = ref('Free')
-
-// Pricing data for new payment system
-const selectedCurrency = ref('USD')
-const pricingPlans = ref([])
-const isLoadingPlans = ref(false)
-
-=======
 
 const loading = ref(false)
 const loadingPackages = ref(true)
@@ -80,141 +56,9 @@ const showSuccessModal = ref(false)
 const subscriptionData = ref(null)
 
 
->>>>>>> d55a73b53d1f3307248b34bf1710aed15028867a
 const checkIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M16.6668 5L7.50016 14.1667L3.3335 10' stroke='%23121A22' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
 const whiteCheckIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M16.6668 5L7.50016 14.1667L3.3335 10' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
 
-<<<<<<< HEAD
-const features = [
-    { name: 'Basic Personalization', free: true, premium: true },
-    { name: 'Property Search', free: true, premium: true },
-    { name: 'Saved Search', free: true, premium: true },
-    { name: 'Saved Homes', free: true, premium: true },
-    { name: 'Multimedia', free: false, premium: true },
-    { name: 'Heyhomex AI', free: false, premium: true },
-    { name: 'Advanced Lifestyle Reports', free: false, premium: true },
-    { name: 'Deeper Insights', free: false, premium: true },
-    { name: 'Priority Saved Search Results', free: false, premium: true },
-    { name: 'Full Dashboard with analytics, lead management and communication tools', free: false, premium: true }
-]
-
-// Load pricing plans for new system
-const loadPricingPlans = async () => {
-    try {
-        isLoadingPlans.value = true
-        await new Promise(resolve => setTimeout(resolve, 500))
-        
-        pricingPlans.value = [
-            {
-                id: 1,
-                name: 'Basic',
-                description: 'Perfect for getting started',
-                prices: [
-                    {
-                        id: 1,
-                        billing_cycle: 'monthly',
-                        price: 299,
-                        original_price: 399,
-                        discount: 100,
-                        final_price: 299,
-                        original_final_price: 29.99,
-                        original_price_usd: 39.99,
-                        original_discount: 10
-                    },
-                    {
-                        id: 2,
-                        billing_cycle: 'yearly',
-                        price: 2590,
-                        original_price: 3590,
-                        discount: 1000,
-                        final_price: 2590,
-                        original_final_price: 259.00,
-                        original_price_usd: 359.00,
-                        original_discount: 100
-                    }
-                ]
-            },
-            {
-                id: 2,
-                name: 'Pro',
-                description: 'Most popular choice',
-                prices: [
-                    {
-                        id: 3,
-                        billing_cycle: 'monthly',
-                        price: 599,
-                        original_price: 799,
-                        discount: 200,
-                        final_price: 599,
-                        original_final_price: 59.99,
-                        original_price_usd: 79.99,
-                        original_discount: 20
-                    },
-                    {
-                        id: 4,
-                        billing_cycle: 'yearly',
-                        price: 5190,
-                        original_price: 7190,
-                        discount: 2000,
-                        final_price: 5190,
-                        original_final_price: 519.00,
-                        original_price_usd: 719.00,
-                        original_discount: 200
-                    }
-                ]
-            },
-            {
-                id: 3,
-                name: 'Enterprise',
-                description: 'For power users',
-                prices: [
-                    {
-                        id: 5,
-                        billing_cycle: 'monthly',
-                        price: 999,
-                        original_price: 1299,
-                        discount: 300,
-                        final_price: 999,
-                        original_final_price: 99.99,
-                        original_price_usd: 129.99,
-                        original_discount: 30
-                    },
-                    {
-                        id: 6,
-                        billing_cycle: 'yearly',
-                        price: 8630,
-                        original_price: 11630,
-                        discount: 3000,
-                        final_price: 8630,
-                        original_final_price: 863.00,
-                        original_price_usd: 1163.00,
-                        original_discount: 300
-                    }
-                ]
-            }
-        ]
-    } catch (e) {
-        console.log('Load Pricing Plans Error:', e.message)
-    } finally {
-        isLoadingPlans.value = false
-    }
-}
-
-const handleChoosePlan = async (plan) => {
-    if (loading.value) return
-    
-    loading.value = true
-    try {
-        console.log('Selected plan:', plan)
-        // Navigate to new pricing page
-        if (plan === 'upgrade') {
-            // Show pricing options - user can choose plan and currency
-            // For now, navigate to pricing page with default currency
-            navigateTo(`/kamaina/payment?plan-id=2&currency=${selectedCurrency.value}`)
-        }
-    } catch (error) {
-        console.error('Error choosing plan:', error)
-=======
 
 const packages = ref([])
 const features = ref([])
@@ -251,7 +95,6 @@ const fetchActiveSubscription = async () => {
         currentPlan.value = null
         billingCycle.value = 'Free'
         nextBilling.value = 'Free'
->>>>>>> d55a73b53d1f3307248b34bf1710aed15028867a
     } finally {
         loadingActiveSubscription.value = false
     }
@@ -261,12 +104,6 @@ const fetchActiveSubscription = async () => {
 const fetchBillingHistory = async () => {
     loadingBilling.value = true
     try {
-<<<<<<< HEAD
-        console.log('Cancel subscription')
-        // TODO: Call cancel subscription API
-    } catch (error) {
-        console.error('Error canceling subscription:', error)
-=======
         const response = await $fetchCitizen('/v1/payments/list', {
             method: 'GET'
         })
@@ -428,40 +265,21 @@ const confirmCancelSubscription = async () => {
         console.error('Error canceling subscription:', error)
         const errorMessage = error.response?.data?.message || error.message || 'Failed to cancel subscription. Please try again.'
         alert(errorMessage)
->>>>>>> d55a73b53d1f3307248b34bf1710aed15028867a
     } finally {
         loading.value = false
     }
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> d55a73b53d1f3307248b34bf1710aed15028867a
 const handleChangePassword = () => {
     showChangePasswordModal.value = true
 }
 
 const handlePasswordChangeSuccess = () => {
     console.log('Password changed successfully')
-<<<<<<< HEAD
-=======
-
->>>>>>> d55a73b53d1f3307248b34bf1710aed15028867a
 }
 
 const handleProfileUpdated = (profileData) => {
     console.log('Profile updated:', profileData)
-<<<<<<< HEAD
-}
-
-const goToPayment = (planId) => {
-    navigateTo(`/kamaina/payment?plan-id=${planId}&currency=${selectedCurrency.value}`)
-}
-
-onMounted(async () => {
-    await loadPricingPlans()
-=======
 
 }
 
@@ -471,7 +289,6 @@ onMounted(async () => {
         fetchActiveSubscription(),
         fetchPackages()
     ])
->>>>>>> d55a73b53d1f3307248b34bf1710aed15028867a
 })
 </script>
 
@@ -553,14 +370,6 @@ onMounted(async () => {
             </div>
 
             <!-- Comparison Table -->
-<<<<<<< HEAD
-            <div class="bg-white border border-gray-200 rounded-lg overflow-x-auto">
-                <div class="min-w-[640px] lg:min-w-0">
-                    <!-- Header Row -->
-                    <div class="grid grid-cols-[minmax(200px,2fr)_1fr_1fr] lg:grid-cols-[2fr_1fr_1fr] border-b border-gray-200">
-                        <!-- Left Header -->
-                        <div class="border-r border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-5 h-[160px] md:h-[200px] lg:h-[218px] flex flex-col justify-center gap-2 md:gap-3">
-=======
             <div v-if="loadingPackages"
                 class="bg-white border border-gray-200 rounded-lg p-8 flex items-center justify-center">
                 <div class="text-center">
@@ -581,29 +390,11 @@ onMounted(async () => {
                         <!-- Left Header -->
                         <div
                             class="border-r border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-5 h-[160px] md:h-[200px] lg:h-[218px] flex flex-col justify-center gap-2 md:gap-3">
->>>>>>> d55a73b53d1f3307248b34bf1710aed15028867a
                             <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-gray-900">Compare plans</h3>
                             <p class="text-xs md:text-sm text-gray-700 leading-5">
                                 Choose your plan according to your buying needs.
                             </p>
                         </div>
-<<<<<<< HEAD
-                        
-                        <!-- Free Plan Header -->
-                        <div class="border-r border-gray-200 px-3 md:px-5 lg:px-7 py-4 md:py-6 lg:py-7 h-[160px] md:h-[200px] lg:h-[218px] flex flex-col items-center justify-center gap-4 md:gap-6 lg:gap-7">
-                            <div class="flex flex-col items-center gap-1">
-                                <div class="py-1">
-                                    <p class="text-base md:text-lg lg:text-xl font-bold text-gray-900">Free</p>
-                                </div>
-                                <p class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
-                                    $0<span class="text-sm md:text-base lg:text-lg font-normal text-gray-600">/month</span>
-                                </p>
-                            </div>
-                            
-                            <button
-                                v-if="currentPlan === 'free'"
-                                disabled
-=======
 
                         <!-- Package Headers -->
                         <div v-for="(pkg, index) in packages" :key="pkg.id" :class="[
@@ -623,77 +414,10 @@ onMounted(async () => {
                             </div>
 
                             <button v-if="activeSubscription?.status === 'active' && currentPlan === pkg.id" disabled
->>>>>>> d55a73b53d1f3307248b34bf1710aed15028867a
                                 class="w-full h-10 md:h-12 lg:h-13 bg-blue-500 text-white font-bold text-xs md:text-sm lg:text-base rounded-xl px-4 md:px-5 py-2 md:py-3 flex items-center justify-center gap-2 cursor-not-allowed">
                                 <img :src="whiteCheckIcon" alt="" class="w-4 h-4 md:w-5 md:h-5" />
                                 Current Plan
                             </button>
-<<<<<<< HEAD
-                            <button
-                                v-else
-                                @click="handleChoosePlan('free')"
-                                :disabled="loading"
-                                class="w-full h-10 md:h-12 lg:h-13 bg-gray-100 text-gray-900 font-bold text-xs md:text-sm lg:text-base rounded-xl px-4 md:px-5 py-2 md:py-3 hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                                {{ loading ? 'Processing...' : 'Downgrade' }}
-                            </button>
-                        </div>
-                        
-                        <!-- Premium Plan Header -->
-                        <div class="px-3 md:px-5 lg:px-7 py-4 md:py-6 lg:py-7 h-[160px] md:h-[200px] lg:h-[218px] flex flex-col items-center justify-center gap-4 md:gap-6 lg:gap-7">
-                            <div class="flex flex-col items-center gap-1">
-                                <div class="py-1">
-                                    <p class="text-base md:text-lg lg:text-xl font-bold text-gray-900">Premium</p>
-                                </div>
-                                <p class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
-                                    $10<span class="text-sm md:text-base lg:text-lg font-normal text-gray-600">/month</span>
-                                </p>
-                            </div>
-                            
-                            <button
-                                v-if="currentPlan === 'premium'"
-                                disabled
-                                class="w-full h-10 md:h-12 lg:h-13 bg-blue-500 text-white font-bold text-xs md:text-sm lg:text-base rounded-xl px-4 md:px-5 py-2 md:py-3 flex items-center justify-center gap-2 cursor-not-allowed">
-                                <img :src="whiteCheckIcon" alt="" class="w-4 h-4 md:w-5 md:h-5" />
-                                Current Plan
-                            </button>
-                            <button
-                                v-else
-                                @click="handleChoosePlan('upgrade')"
-                                :disabled="loading"
-                                class="w-full h-10 md:h-12 lg:h-13 bg-gray-900 text-white font-bold text-xs md:text-sm lg:text-base rounded-xl px-4 md:px-5 py-2 md:py-3 hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                                {{ loading ? 'Processing...' : 'Choose this Plan' }}
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Feature Rows -->
-                    <div
-                        v-for="feature in features"
-                        :key="feature.name"
-                        class="grid grid-cols-[minmax(200px,2fr)_1fr_1fr] lg:grid-cols-[2fr_1fr_1fr] border-b border-gray-200">
-                        <!-- Feature Name -->
-                        <div class="border-r border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-5 h-[64px] md:h-[80px] flex items-center">
-                            <p class="text-xs md:text-sm lg:text-base font-medium text-gray-900 leading-tight md:leading-relaxed">
-                                {{ feature.name }}
-                            </p>
-                        </div>
-                        
-                        <!-- Free Plan Checkmark -->
-                        <div class="border-r border-gray-200 h-[64px] md:h-[80px] flex items-center justify-center">
-                            <img
-                                v-if="feature.free"
-                                :src="checkIcon"
-                                alt="Included"
-                                class="w-4 h-4 md:w-5 md:h-5" />
-                        </div>
-                        
-                        <!-- Premium Plan Checkmark -->
-                        <div class="h-[64px] md:h-[80px] flex items-center justify-center">
-                            <img
-                                v-if="feature.premium"
-                                :src="checkIcon"
-                                alt="Included"
-=======
                             <button v-else @click="handleChoosePlan(pkg)"
                                 :disabled="loading || paymentProcessing || activeSubscription?.status === 'active'"
                                 :class="[
@@ -731,7 +455,6 @@ onMounted(async () => {
                             index < packages.length - 1 ? 'border-r border-gray-200' : ''
                         ]">
                             <img v-if="feature[`package_${pkg.id}`]" :src="checkIcon" alt="Included"
->>>>>>> d55a73b53d1f3307248b34bf1710aed15028867a
                                 class="w-4 h-4 md:w-5 md:h-5" />
                         </div>
                     </div>
@@ -901,9 +624,4 @@ onMounted(async () => {
     </div>
 </template>
 
-<<<<<<< HEAD
-<style scoped>
-</style>
-=======
 <style scoped></style>
->>>>>>> d55a73b53d1f3307248b34bf1710aed15028867a

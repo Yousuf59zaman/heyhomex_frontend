@@ -524,16 +524,18 @@
                             class="text-xl md:text-md max-w-sm font-bold text-gray-900 mb-2">
                             {{ propertyData.title || propertyData.name }}
                         </h1>
-                        <button
-                            class="w-full md:w-auto bg-gray-900 text-white px-6 py-3 md:py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
-                            Claim This Home
-                        </button>
-                        <button
-                            class="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors self-center md:self-auto">
-                            <Icon
-                                name="lucide:heart"
-                                class="w-5 h-5 text-gray-600" />
-                        </button>
+                        <div class="flex items-center gap-3">
+                            <button
+                                class="flex-1 md:flex-none md:w-auto bg-gray-900 text-white px-6 py-3 md:py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                                Claim This Home
+                            </button>
+                            <button
+                                class="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors flex-shrink-0">
+                                <Icon
+                                    name="lucide:heart"
+                                    class="w-5 h-5 text-gray-600" />
+                            </button>
+                        </div>
                     </div>
 
                     <div class="bg-white rounded-lg p-3 md:p-3">
@@ -676,7 +678,8 @@
                         v-if="activeTab === 'Features'"
                         class="bg-white p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                            {{ tabFeatures.title }}
+                            <!-- {{ tabFeatures.title }} -->
+                            Features & Advantages
                         </h3>
                         <div class="space-y-3">
                             <div
@@ -847,7 +850,7 @@
                             <Button
                                 type="submit"
                                 label="Contact Agent"
-                                class="w-full bg-gray-900 hover:bg-gray-800 text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
+                                class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
                         </form>
                     </div>
                 </div>
@@ -872,7 +875,7 @@
                         <Button
                             @click="bookTour"
                             label="Book a Tour"
-                            class="w-full bg-gray-900 hover:bg-gray-800 text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
+                            class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
                     </div>
                 </div>
             </div>

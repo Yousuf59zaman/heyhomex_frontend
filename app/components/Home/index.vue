@@ -26,7 +26,7 @@
             loop
             playsinline></video>
 
-        <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div>
+        <!-- <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div> -->
 
         <!-- Skeleton BEFORE hydration -->
         <div
