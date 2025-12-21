@@ -69,7 +69,7 @@
                     class="max-w-2xl sm:max-w-xl h-[1px] mb-4 bg-gray-600"></div>
 
                 <p
-                    class="text-lg text-white/90 mb-8 sm:text-xl lg:text-base max-w-md">
+                    class="text-[14px] leading-[20px] text-white mb-8 sm:text-[16px] sm:leading-[24px] max-w-md">
                     Where your next chapter begins — Kama‘āina, Military, or
                     Investor, your path starts with purpose
                 </p>
@@ -92,7 +92,7 @@
 
                         <input
                             type="text"
-                            placeholder="Enter an address, neighborhood, city or zip code"
+                            placeholder="Enter an address,neighborhood,city or zip code"
                             aria-label="Search location"
                             class="flex-1 min-w-0 bg-transparent focus:outline-none text-sm leading-6 text-[#121a22] placeholder:text-[#566573]" />
                     </div>
@@ -103,7 +103,7 @@
                         @click="handleLetsBegin"
                         class="px-6 py-3 bg-[#18222c] hover:bg-[#121a22] text-white text-sm font-semibold rounded-lg transition-colors duration-200 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#18222c]/30 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                         aria-label="Begin search">
-                        Let's Begin
+                        Let’s Begin
                     </button>
                 </div>
 
@@ -132,7 +132,7 @@
                         @click="handleLetsBegin"
                         class="w-full py-4 bg-[#18222c] hover:bg-[#121a22] text-white font-semibold rounded-xl shadow-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#18222c]/30 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                         aria-label="Begin search">
-                        Let's Begin
+                        Let’s Begin
                     </button>
                 </div>
             </div>

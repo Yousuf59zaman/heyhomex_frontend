@@ -15,9 +15,9 @@
 
     const formatSubtitle = (item) => {
         if (props.type === "home") {
-            return `📍 ${item.location}`
+            return item.location
         } else {
-            return `🎥 ${item.description} • ${item.duration}`
+            return `${item.description} • ${item.duration}`
         }
     }
 
@@ -54,11 +54,26 @@
             </div>
 
             <div class="flex-1 min-w-0">
-                <h4 class="font-medium text-gray-900 text-sm leading-tight">
+                <h4 class="font-bold text-gray-900 text-sm leading-tight">
                     {{ item.title }}
                 </h4>
-                <p class="text-xs text-gray-500 mt-0.5">
-                    {{ formatSubtitle(item) }}
+                <p
+                    :class="[
+                        'mt-1 flex items-center gap-1 text-[12px] leading-[18px]',
+                        type === 'home' ? 'text-[#283849]' : 'text-gray-500',
+                    ]">
+                    <span
+                        v-if="type === 'home'"
+                        class="flex items-center justify-center rounded-full bg-[#F6F6FA] p-1.5">
+                        <Icon
+                            name="mdi:map-marker"
+                            class="w-3 h-3 text-[#283849]" />
+                    </span>
+                    <Icon
+                        v-else
+                        name="lucide:video"
+                        class="w-3 h-3 text-gray-500 flex-shrink-0" />
+                    <span class="truncate">{{ formatSubtitle(item) }}</span>
                 </p>
             </div>
 
@@ -66,12 +81,10 @@
                 @click.stop="handleRemove"
                 class="p-1 hover:bg-gray-200 rounded transition-colors">
                 <Icon
-                    name="lucide:heart"
+                    name="mdi:heart"
                     :class="[
-                        'w-4 h-4',
-                        type === 'video'
-                            ? 'text-red-500 fill-red-500'
-                            : 'text-black fill-current',
+                        'w-5 h-5',
+                        type === 'video' ? 'text-red-500' : 'text-[#2C3E50]',
                     ]" />
             </button>
         </div>

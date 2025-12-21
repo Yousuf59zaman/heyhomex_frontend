@@ -70,9 +70,9 @@
             <div class="flex items-center space-x-2">
                 <span
                     v-if="showSellAll"
-                    class="text-sm text-gray-600 cursor-pointer hover:text-gray-800"
+                    class="text-[14px] leading-[20px] font-medium text-[#242424] cursor-pointer hover:text-[#121A22]"
                     @click="$emit('sell-all')">
-                    Sell All
+                    Sell all
                 </span>
             </div>
         </div>

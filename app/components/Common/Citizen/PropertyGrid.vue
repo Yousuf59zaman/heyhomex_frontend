@@ -24,7 +24,7 @@
     <div class="rounded-lg shadow-sm">
         <div class="flex items-center justify-between mb-4">
             <h2
-                class="text-base sm:text-lg tracking-wider font-semibold text-gray-900">
+                class="text-base sm:text-lg tracking-wider font-bold text-gray-900">
                 {{ title }}
             </h2>
             <button

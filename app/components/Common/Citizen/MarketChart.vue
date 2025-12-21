@@ -19,6 +19,37 @@
     ]
 
     const selectedPeriod = ref(props.initialPeriod)
+    const isDropdownOpen = ref(false)
+    const dropdownRef = ref(null)
+
+    const selectedLabel = computed(() => {
+        const period = periods.find((p) => p.value === selectedPeriod.value)
+        return period ? period.label : "Weekly"
+    })
+
+    const toggleDropdown = () => {
+        isDropdownOpen.value = !isDropdownOpen.value
+    }
+
+    const selectPeriod = (period) => {
+        selectedPeriod.value = period.value
+        isDropdownOpen.value = false
+        emit("period-change", period.value)
+    }
+
+    const handleClickOutside = (event) => {
+        if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+            isDropdownOpen.value = false
+        }
+    }
+
+    onMounted(() => {
+        document.addEventListener("click", handleClickOutside)
+    })
+
+    onUnmounted(() => {
+        document.removeEventListener("click", handleClickOutside)
+    })
     const showTooltip = ref(false)
     const tooltipStyle = ref({
         left: "0px",
@@ -56,11 +87,16 @@
             datasets: [
                 {
                     label: "Current Market",
-                    backgroundColor: "#E2E8F0",
-                    borderColor: "#E2E8F0",
+                    backgroundColor: "#BEC3C9",
+                    borderColor: "#BEC3C9",
                     borderWidth: 0,
                     data: config.currentMarket,
-                    borderRadius: 14,
+                    borderRadius: {
+                        topLeft: 4,
+                        topRight: 4,
+                        bottomLeft: 0,
+                        bottomRight: 0,
+                    },
                     borderSkipped: false,
                     categoryPercentage: 0.5,
                     barPercentage: 0.9,
@@ -68,11 +104,16 @@
                 },
                 {
                     label: "Best FHA Loans",
-                    backgroundColor: "#334155",
-                    borderColor: "#334155",
+                    backgroundColor: "#2C3E50",
+                    borderColor: "#2C3E50",
                     borderWidth: 0,
                     data: config.bestLoans,
-                    borderRadius: 14,
+                    borderRadius: {
+                        topLeft: 4,
+                        topRight: 4,
+                        bottomLeft: 0,
+                        bottomRight: 0,
+                    },
                     borderSkipped: false,
                     categoryPercentage: 0.5,
                     barPercentage: 0.9,
@@ -110,12 +151,13 @@
                     display: false,
                 },
                 ticks: {
-                    color: "#9CA3AF",
+                    color: "#7A7A7A",
                     font: {
-                        size: 11,
-                        family: "Inter, sans-serif",
+                        size: 16,
+                        family: "sf-pro-Regular, sans-serif",
+                        weight: "400",
                     },
-                    padding: 8,
+                    padding: 12,
                 },
                 border: {
                     display: false,
@@ -126,21 +168,23 @@
                 beginAtZero: true,
                 max: 50,
                 grid: {
-                    color: "#F3F4F6",
+                    color: "#EAECEE",
                     lineWidth: 1,
+                    borderDash: [4, 4],
                     drawBorder: false,
                 },
                 ticks: {
-                    color: "#9CA3AF",
+                    color: "#7A7A7A",
                     font: {
-                        size: 11,
-                        family: "Inter, sans-serif",
+                        size: 14,
+                        family: "sf-pro-Regular, sans-serif",
+                        weight: "400",
                     },
                     callback: function (value) {
                         return value + "%"
                     },
                     stepSize: 10,
-                    padding: 12,
+                    padding: 16,
                 },
                 border: {
                     display: false,
@@ -178,10 +222,6 @@
         },
     }
 
-    const handlePeriodChange = () => {
-        emit("period-change", selectedPeriod.value)
-    }
-
     watch(
         () => props.initialPeriod,
         (newPeriod) => {
@@ -191,25 +231,58 @@
 </script>
 
 <template>
-    <div class="bg-white rounded-lg p-4">
+    <div class="bg-white rounded-[10px] p-5">
         <div
-            class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 lg:mb-6 gap-2">
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-5 gap-4">
             <h2
-                class="text-base lg:text-lg font-semibold text-gray-900 leading-tight">
+                class="text-[20px] leading-[24px] tracking-[0.4px] font-semibold text-[#121A22]">
                 {{ title }}
             </h2>
-            <div class="flex items-center space-x-2">
-                <select
-                    v-model="selectedPeriod"
-                    @change="handlePeriodChange"
-                    class="text-sm text-gray-600 border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option
-                        v-for="period in periods"
-                        :key="period.value"
-                        :value="period.value">
-                        {{ period.label }}
-                    </option>
-                </select>
+            <div ref="dropdownRef" class="relative w-fit">
+                <button
+                    type="button"
+                    @click="toggleDropdown"
+                    class="flex h-[32px] items-center gap-[6px] rounded-[32px] bg-[#EAECEE] px-[16px] text-[12px] leading-[16px] font-normal text-[#2C3E50] transition-all hover:bg-[#DFE2E6] focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20">
+                    <span>{{ selectedLabel }}</span>
+                    <svg
+                        class="size-[16px] transition-transform duration-200"
+                        :class="{ 'rotate-180': isDropdownOpen }"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        aria-hidden="true">
+                        <path
+                            d="M6 8l4 4 4-4"
+                            stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <Transition
+                    enter-active-class="transition duration-150 ease-out"
+                    enter-from-class="opacity-0 scale-95 -translate-y-1"
+                    enter-to-class="opacity-100 scale-100 translate-y-0"
+                    leave-active-class="transition duration-100 ease-in"
+                    leave-from-class="opacity-100 scale-100 translate-y-0"
+                    leave-to-class="opacity-0 scale-95 -translate-y-1">
+                    <div
+                        v-if="isDropdownOpen"
+                        class="absolute right-0 top-[calc(100%+4px)] z-50 min-w-[120px] overflow-hidden rounded-[8px] bg-white py-1 shadow-lg ring-1 ring-black/5">
+                        <button
+                            v-for="period in periods"
+                            :key="period.value"
+                            type="button"
+                            @click="selectPeriod(period)"
+                            class="flex w-full items-center px-4 py-2 text-[13px] leading-[18px] transition-colors"
+                            :class="
+                                selectedPeriod === period.value
+                                    ? 'bg-[#2C3E50] text-white font-medium'
+                                    : 'text-[#2C3E50] hover:bg-[#F5F6F7]'
+                            ">
+                            {{ period.label }}
+                        </button>
+                    </div>
+                </Transition>
             </div>
         </div>
 
@@ -223,17 +296,16 @@
             <div
                 v-if="showTooltip"
                 :style="tooltipStyle"
-                class="absolute bg-slate-700 text-white px-4 py-3 rounded-lg shadow-lg z-10 pointer-events-none">
-                <div class="text-lg font-bold text-center">
+                class="absolute bg-[#2C3E50] text-white px-6 py-4 rounded-[16px] shadow-lg z-10 pointer-events-none">
+                <div class="text-[18px] leading-[24px] font-semibold text-center">
                     {{ tooltipData.value }}
                 </div>
-                <div
-                    class="text-xs text-gray-300 text-center whitespace-nowrap">
+                <div class="text-[12px] leading-[16px] text-center whitespace-nowrap">
                     {{ tooltipData.label }}
                 </div>
 
                 <div
-                    class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-slate-700"></div>
+                    class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-[#2C3E50]"></div>
             </div>
         </div>
     </div>

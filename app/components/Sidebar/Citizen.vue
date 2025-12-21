@@ -146,7 +146,7 @@
 
         <!-- Navigation Icons -->
         <nav class="flex-1 flex flex-col">
-            <ul class="space-y-3">
+            <ul class="space-y-2.5">
                 <li
                     v-for="item in mainNavigationItems"
                     :key="item.id">
@@ -214,7 +214,7 @@
                     :key="item.id">
                     <NuxtLink
                         :to="item.path"
-                        class="mobile-sidebar-link flex items-center space-x-3 w-full px-3 py-2 rounded-lg transition-all duration-200"
+                        class="mobile-sidebar-link flex items-center space-x-2.5 w-full px-3 py-2 rounded-lg transition-all duration-200"
                         active-class="mobile-sidebar-link-active"
                         @click="$emit('close-menu')">
                         <Icon
@@ -258,7 +258,7 @@
     }
 
     .sidebar-link .sidebar-icon {
-        filter: brightness(0) invert(1) opacity(0.6);
+        filter: brightness(0) invert(1) opacity(0.8);
         transition: all 0.2s ease;
     }
 
