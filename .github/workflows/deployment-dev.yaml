@@ -16,16 +16,19 @@ jobs:
               uses: pnpm/action-setup@v4
             - run: |
                 echo API_BASE_URL="${{ vars.DEV_API_BASE_URL }}" >> .env
+                echo CMS_EMAIL="${{ secrets.DEV_CMS_EMAIL }}" >> .env
+                echo CMS_PASSWORD="${{ secrets.DEV_CMS_PASSWORD }}" >> .env
                 echo FIREBASE_API_KEY="${{ secrets.DEV_FIREBASE_API_KEY }}" >> .env
                 echo FIREBASE_AUTH_DOMAIN="${{ secrets.DEV_FIREBASE_AUTH_DOMAIN }}" >> .env
                 echo FIREBASE_PROJECT_ID="${{ secrets.DEV_FIREBASE_PROJECT_ID }}" >> .env
                 echo FIREBASE_STORAGE_BUCKET="${{ secrets.DEV_FIREBASE_STORAGE_BUCKET }}" >> .env
                 echo FIREBASE_MESSAGING_SENDER_ID="${{ secrets.DEV_FIREBASE_MESSAGING_SENDER_ID }}" >> .env
                 echo FIREBASE_APP_ID="${{ secrets.DEV_FIREBASE_APP_ID }}" >> .env
+                echo STRIPE_PUBLISHABLE_KEY="${{ secrets.DEV_STRIPE_PUBLISHABLE_KEY }}" >> .env
                 echo NUXT_PUBLIC_JWPLAYER_KE="${{ secrets.DEV_NUXT_PUBLIC_JWPLAYER_KE }}" >> .env
                 echo NUXT_PUBLIC_JWPLAYER_LIBRARY_UR="${{ secrets.DEV_NUXT_PUBLIC_JWPLAYER_LIBRARY_UR }}" >> .env
                 echo NUXT_PUBLIC_JWPLAYER_DEVMODE="${{ vars.DEV_NUXT_PUBLIC_JWPLAYER_DEVMODE }}" >> .env
-                echo NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_UR="${{ secrets.DEV_NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_UR }}" >> .env
+                echo NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL="${{ secrets.DEV_NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_UR }}" >> .env
                 touch .env
                 pnpm install
                 pnpm run build

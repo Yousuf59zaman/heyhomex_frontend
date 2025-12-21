@@ -1,10 +1,6 @@
 <script setup>
     const hydrated = ref(false)
 
-    const backgroundStyle = {
-        backgroundImage: "url(/images/home/background.png)",
-    }
-
     const showAuthModal = ref(false)
 
     const handleLetsBegin = () => {
@@ -21,11 +17,16 @@
 </script>
 
 <template>
-    <div
-        class="relative min-h-screen bg-cover bg-center bg-no-repeat overflow-hidden"
-        :style="backgroundStyle">
-        <div
-            class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div>
+    <div class="relative min-h-screen overflow-hidden">
+        <video
+            class="absolute inset-0 w-full h-full object-cover"
+            src="/video/HomePageVideo.mp4"
+            autoplay
+            muted
+            loop
+            playsinline></video>
+
+        <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div>
 
         <!-- Skeleton BEFORE hydration -->
         <div
