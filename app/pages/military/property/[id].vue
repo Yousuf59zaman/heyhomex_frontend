@@ -45,6 +45,8 @@
                 id: data.id,
                 name: data.name,
                 address: data.address,
+                description:
+                    data.description || data.details || data.short_description || "",
                 price: data.price,
                 beds: data.beds,
                 baths: data.baths,
@@ -91,6 +93,14 @@
             images.push(...propertyData.value.other_images)
         }
         return images.filter(Boolean)
+    })
+
+    const sqftValue = computed(() => {
+        if (!propertyData.value?.sqft) return ""
+        if (typeof propertyData.value.sqft === "string") {
+            return propertyData.value.sqft.split("/")[0]
+        }
+        return propertyData.value.sqft
     })
 
     const videos = ref([])
@@ -554,76 +564,72 @@
                     <div
                         class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
                         <h1
-                            class="text-xl md:text-md max-w-sm font-bold text-gray-900 mb-2">
+                            class="text-xl md:text-md max-w-sm font-bold text-gray-900 mb-2 md:mb-0">
                             {{ propertyData.title || propertyData.name }}
                         </h1>
-                        <button
-                            class="w-full md:w-auto bg-gray-900 text-white px-6 py-3 md:py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
-                            Claim This Home
-                        </button>
-                        <button
-                            class="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors self-center md:self-auto">
-                            <Icon
-                                name="lucide:heart"
-                                class="w-5 h-5 text-gray-600" />
-                        </button>
+                        <div
+                            class="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 w-full md:w-auto">
+                            <button
+                                class="w-full md:w-auto bg-[#18222c] text-white h-[52px] px-5 rounded-xl text-sm font-semibold hover:bg-[#111922] transition-colors flex items-center justify-center">
+                                Claim This Home
+                            </button>
+                            <button
+                                class="h-[52px] w-[52px] bg-[#f0f1f3] rounded-xl flex items-center justify-center hover:bg-[#e6e8eb] transition-colors self-center md:self-auto">
+                                <Icon
+                                    name="lucide:heart"
+                                    class="w-6 h-6 text-[#121a22]" />
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="bg-white rounded-lg p-3 md:p-3">
-                        <div
-                            class="flex justify-between items-center space-x-2 md:space-x-4">
+                    <div class="bg-white rounded-xl p-4 flex flex-col gap-6">
+                        <div class="flex flex-col sm:flex-row gap-3">
                             <div
-                                class="flex-1 flex flex-col items-center bg-gray-100 rounded-lg p-3 md:p-4">
-                                <img
-                                    src="/svg/dashboard/card.bed.svg"
-                                    alt="Beds"
-                                    class="w-6 h-6 md:w-8 md:h-8 mb-2" />
+                                class="flex-1 bg-[#FAF9F8] rounded-xl px-8 py-5 flex items-center justify-center">
                                 <div
-                                    class="text-lg md:text-xl font-bold text-gray-900">
-                                    {{ propertyData.beds }}
-                                </div>
-                                <div class="text-xs md:text-sm text-gray-600">
-                                    Beds
+                                    class="flex flex-col items-center justify-center gap-4">
+                                    <img
+                                        src="/svg/dashboard/details-bed.svg"
+                                        alt="Beds"
+                                        class="w-8 h-8" />
+                                    <p
+                                        class="capitalize text-[20px] leading-[28px] font-medium text-[#121A22]">
+                                        {{ propertyData.beds }} Beds
+                                    </p>
                                 </div>
                             </div>
                             <div
-                                class="flex-1 flex flex-col items-center bg-gray-100 rounded-lg p-3 md:p-4">
-                                <img
-                                    src="/svg/dashboard/card-bath.svg"
-                                    alt="Baths"
-                                    class="w-6 h-6 md:w-8 md:h-8 mb-2" />
+                                class="flex-1 bg-[#FAF9F8] rounded-xl px-8 py-5 flex items-center justify-center">
                                 <div
-                                    class="text-lg md:text-xl font-bold text-gray-900">
-                                    {{ propertyData.baths }}
-                                </div>
-                                <div class="text-xs md:text-sm text-gray-600">
-                                    Baths
+                                    class="flex flex-col items-center justify-center gap-4">
+                                    <img
+                                        src="/svg/dashboard/details-bath.svg"
+                                        alt="Baths"
+                                        class="w-8 h-8" />
+                                    <p
+                                        class="capitalize text-[20px] leading-[28px] font-medium text-[#121A22]">
+                                        {{ propertyData.baths }} Baths
+                                    </p>
                                 </div>
                             </div>
                             <div
-                                class="flex-1 flex flex-col items-center bg-gray-100 rounded-lg p-3 md:p-4">
-                                <img
-                                    src="/svg/dashboard/card-cube.svg"
-                                    alt="SqFt"
-                                    class="w-6 h-6 md:w-8 md:h-8 mb-2" />
+                                class="flex-1 bg-[#FAF9F8] rounded-xl px-8 py-5 flex items-center justify-center">
                                 <div
-                                    class="text-lg md:text-xl font-bold text-gray-900">
-                                    {{
-                                        propertyData.sqft &&
-                                        typeof propertyData.sqft === "string"
-                                            ? propertyData.sqft.split("/")[0]
-                                            : propertyData.sqft || ""
-                                    }}
-                                </div>
-                                <div class="text-xs md:text-sm text-gray-600">
-                                    Sqft
+                                    class="flex flex-col items-center justify-center gap-4">
+                                    <img
+                                        src="/svg/dashboard/details-sqft.svg"
+                                        alt="Sqft"
+                                        class="w-8 h-8" />
+                                    <p
+                                        class="capitalize text-[20px] leading-[28px] font-medium text-[#121A22]">
+                                        {{ sqftValue }}Sqft
+                                    </p>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="py-4 md:pt-6">
-                            <p
-                                class="text-gray-700 leading-relaxed text-sm mb-4">
+                        <div class="flex flex-col gap-3">
+                            <p class="text-[#283849] text-base leading-6">
                                 {{ propertyData.description }}
                             </p>
                             <button
@@ -631,52 +637,53 @@
                                     propertyData.description &&
                                     propertyData.description.length > 300
                                 "
-                                class="text-gray-900 font-medium hover:underline text-sm">
+                                type="button"
+                                class="text-[#2C3E50] font-bold text-base">
                                 See More...
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="pt-4">
+                <div class="pt-4 flex flex-col gap-6">
                     <div
-                        class="flex rounded-lg mb-2 bg-white space-x-2 md:space-x-6 px-3 md:px-3 py-3 overflow-x-auto">
+                        class="flex items-center gap-3 rounded-lg bg-white p-1.5 overflow-x-auto">
                         <button
                             :class="[
-                                'whitespace-nowrap pb-2 px-3 py-2 rounded-md font-medium text-xs md:text-sm transition-colors hover:bg-black hover:text-white flex-shrink-0',
+                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-4 py-3',
                                 activeTab === 'Insights'
-                                    ? 'bg-black  text-white'
-                                    : ' text-gray-500 ',
+                                    ? 'bg-[#18222c] text-white px-5 hover:bg-[#111922]'
+                                    : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
                             ]"
                             @click="activeTab = 'Insights'">
                             Insights
                         </button>
                         <button
                             :class="[
-                                'whitespace-nowrap pb-2 px-3 py-2 rounded-md font-medium text-xs md:text-sm transition-colors hover:bg-black hover:text-white flex-shrink-0',
+                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-4 py-3',
                                 activeTab === 'Loan'
-                                    ? 'bg-black  text-white'
-                                    : ' text-gray-500 ',
+                                    ? 'bg-[#18222c] text-white px-5 hover:bg-[#111922]'
+                                    : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
                             ]"
                             @click="activeTab = 'Loan'">
                             Loan Eligibility
                         </button>
                         <button
                             :class="[
-                                'whitespace-nowrap pb-2 px-3 py-2 rounded-md font-medium text-xs md:text-sm transition-colors hover:bg-black hover:text-white flex-shrink-0',
+                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-4 py-3',
                                 activeTab === 'Features'
-                                    ? 'bg-black  text-white'
-                                    : 'text-gray-500 ',
+                                    ? 'bg-[#18222c] text-white px-5 hover:bg-[#111922]'
+                                    : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
                             ]"
                             @click="activeTab = 'Features'">
                             Features
                         </button>
                         <button
                             :class="[
-                                'whitespace-nowrap pb-2 px-3 py-2 rounded-md font-medium text-xs md:text-sm transition-colors hover:bg-black hover:text-white flex-shrink-0',
+                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-4 py-3',
                                 activeTab === 'Maps'
-                                    ? 'bg-black  text-white'
-                                    : 'text-gray-500 ',
+                                    ? 'bg-[#18222c] text-white px-5 hover:bg-[#111922]'
+                                    : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
                             ]"
                             @click="activeTab = 'Maps'">
                             Maps
@@ -685,31 +692,43 @@
 
                     <div
                         v-if="activeTab === 'Insights'"
-                        class="bg-white rounded-lg p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">
-                            {{ tabInsights.title }}
-                        </h3>
-                        <p class="text-gray-600 mb-6 text-sm">
-                            {{ tabInsights.subtitle }}
-                        </p>
-
-                        <div class="space-y-4">
-                            <div
-                                v-for="item in tabInsights.items"
-                                :key="item.id"
-                                class="flex items-start justify-between py-3 border-b border-gray-200 last:border-b-0">
-                                <span class="text-gray-700 font-medium text-sm">
-                                    {{ item.label }}
-                                </span>
-                                <span class="text-gray-900 text-sm text-right">
-                                    {{ item.value }}
-                                </span>
-                            </div>
+                        class="bg-white rounded-xl p-4 flex flex-col gap-5">
+                        <div class="flex flex-col gap-3">
+                            <h3
+                                class="text-2xl font-semibold text-[#121A22] leading-8">
+                                {{ tabInsights.title }}
+                            </h3>
+                            <p class="text-sm text-[#283849] leading-5">
+                                {{ tabInsights.subtitle }}
+                            </p>
                         </div>
 
-                        <div class="mt-6 text-right">
+                        <div
+                            class="bg-[#FAF9F8] rounded-[10px] p-5 flex flex-col gap-4">
+                            <template
+                                v-for="(item, index) in tabInsights.items"
+                                :key="item.id">
+                                <div
+                                    class="flex items-start justify-between text-[#283849] text-base leading-6">
+                                    <p class="font-medium flex-1 pr-4">
+                                        {{ item.label }}
+                                    </p>
+                                    <p
+                                        class="font-bold text-right w-full sm:w-[340px]">
+                                        {{ item.value }}
+                                    </p>
+                                </div>
+                                <div
+                                    v-if="
+                                        index !== tabInsights.items.length - 1
+                                    "
+                                    class="h-px w-full bg-[#EAECEE]"></div>
+                            </template>
+                        </div>
+
+                        <div class="flex justify-end">
                             <button
-                                class="bg-gray-900 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                                class="bg-[#121A22] text-white px-4 py-3 rounded-lg text-sm font-bold leading-5">
                                 {{ tabInsights.downloadButtonText }}
                             </button>
                         </div>
