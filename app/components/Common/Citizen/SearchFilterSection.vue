@@ -37,6 +37,74 @@
     const selectedHomeType = ref(props.homeType)
     const selectedPriceRange = ref(props.priceRange)
 
+    // Dropdown states
+    const isPropertyTypeOpen = ref(false)
+    const isPriceRangeOpen = ref(false)
+    const propertyTypeRef = ref(null)
+    const priceRangeRef = ref(null)
+
+    // Dropdown options
+    const propertyTypeOptions = [
+        {label: "Property Type: All", value: ""},
+        {label: "Studio", value: "studio"},
+        {label: "1 Bed", value: "one_bed"},
+        {label: "2 Bed", value: "two_bed"},
+        {label: "3+ Bed", value: "three_plus_bed"},
+    ]
+
+    const priceRangeOptions = [
+        {label: "Price Range: All", value: ""},
+        {label: "Under $250,000", value: "250000"},
+        {label: "Under $500,000", value: "500000"},
+        {label: "Under $750,000", value: "750000"},
+        {label: "$1,000,000+", value: "1000000_plus"},
+    ]
+
+    // Computed labels
+    const propertyTypeLabel = computed(() => {
+        const option = propertyTypeOptions.find((o) => o.value === selectedHomeType.value)
+        return option ? option.label : "Property Type: All"
+    })
+
+    const priceRangeLabel = computed(() => {
+        const option = priceRangeOptions.find((o) => o.value === selectedPriceRange.value)
+        return option ? option.label : "Price Range: All"
+    })
+
+    // Toggle functions
+    const togglePropertyType = () => {
+        isPropertyTypeOpen.value = !isPropertyTypeOpen.value
+        isPriceRangeOpen.value = false
+    }
+
+    const togglePriceRange = () => {
+        isPriceRangeOpen.value = !isPriceRangeOpen.value
+        isPropertyTypeOpen.value = false
+    }
+
+    // Select functions
+    const selectPropertyType = (option) => {
+        selectedHomeType.value = option.value
+        isPropertyTypeOpen.value = false
+        emit("update:home-type", option.value)
+    }
+
+    const selectPriceRange = (option) => {
+        selectedPriceRange.value = option.value
+        isPriceRangeOpen.value = false
+        emit("update:price-range", option.value)
+    }
+
+    // Click outside handler
+    const handleClickOutside = (event) => {
+        if (propertyTypeRef.value && !propertyTypeRef.value.contains(event.target)) {
+            isPropertyTypeOpen.value = false
+        }
+        if (priceRangeRef.value && !priceRangeRef.value.contains(event.target)) {
+            isPriceRangeOpen.value = false
+        }
+    }
+
     watch(
         () => props.modelValue,
         (newValue) => {
@@ -81,6 +149,14 @@
     const handlePriceRangeChange = () => {
         emit("update:price-range", selectedPriceRange.value)
     }
+
+    onMounted(() => {
+        document.addEventListener("click", handleClickOutside)
+    })
+
+    onUnmounted(() => {
+        document.removeEventListener("click", handleClickOutside)
+    })
 </script>
 
 <template>
@@ -136,29 +212,103 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <select
-                    v-model="selectedHomeType"
-                    @change="handleHomeTypeChange"
-                    class="border border-[#D4D4D4] rounded-lg px-4 py-3 text-base bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-[#121A22] font-medium appearance-none bg-no-repeat bg-right pr-10"
-                    style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2718%27 height=%2718%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23121A22%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M6 9l6 6 6-6%27/%3E%3C/svg%3E'); background-position: right 12px center;">
-                    <option value="">Property Type: All</option>
-                    <option value="studio">Studio</option>
-                    <option value="one_bed">1 Bed</option>
-                    <option value="two_bed">2 Bed</option>
-                    <option value="three_plus_bed">3+ Bed</option>
-                </select>
+                <!-- Property Type Dropdown -->
+                <div ref="propertyTypeRef" class="relative">
+                    <button
+                        type="button"
+                        @click="togglePropertyType"
+                        class="flex items-center gap-2 border border-[#D4D4D4] rounded-lg px-4 py-3 bg-white hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20">
+                        <span class="text-base text-[#121A22] font-medium whitespace-nowrap">
+                            {{ propertyTypeLabel }}
+                        </span>
+                        <svg
+                            class="size-[18px] transition-transform duration-200"
+                            :class="{'rotate-180': isPropertyTypeOpen}"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M6 9l6 6 6-6"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <Transition
+                        enter-active-class="transition duration-150 ease-out"
+                        enter-from-class="opacity-0 scale-95 -translate-y-1"
+                        enter-to-class="opacity-100 scale-100 translate-y-0"
+                        leave-active-class="transition duration-100 ease-in"
+                        leave-from-class="opacity-100 scale-100 translate-y-0"
+                        leave-to-class="opacity-0 scale-95 -translate-y-1">
+                        <div
+                            v-if="isPropertyTypeOpen"
+                            class="absolute left-0 top-[calc(100%+4px)] z-50 min-w-full overflow-hidden rounded-[8px] bg-white py-1 shadow-lg ring-1 ring-black/5">
+                            <button
+                                v-for="option in propertyTypeOptions"
+                                :key="option.value"
+                                type="button"
+                                @click="selectPropertyType(option)"
+                                class="flex w-full items-center px-4 py-2 text-[14px] leading-[20px] transition-colors whitespace-nowrap"
+                                :class="
+                                    selectedHomeType === option.value
+                                        ? 'bg-[#2C3E50] text-white font-medium'
+                                        : 'text-[#2C3E50] hover:bg-[#F5F6F7]'
+                                ">
+                                {{ option.label }}
+                            </button>
+                        </div>
+                    </Transition>
+                </div>
 
-                <select
-                    v-model="selectedPriceRange"
-                    @change="handlePriceRangeChange"
-                    class="border border-[#D4D4D4] rounded-lg px-4 py-3 text-base bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-[#121A22] font-medium appearance-none bg-no-repeat bg-right pr-10"
-                    style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2718%27 height=%2718%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23121A22%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M6 9l6 6 6-6%27/%3E%3C/svg%3E'); background-position: right 12px center;">
-                    <option value="">Price Range: All</option>
-                    <option value="250000">Under $250,000</option>
-                    <option value="500000">Under $500,000</option>
-                    <option value="750000">Under $750,000</option>
-                    <option value="1000000_plus">$1,000,000+</option>
-                </select>
+                <!-- Price Range Dropdown -->
+                <div ref="priceRangeRef" class="relative">
+                    <button
+                        type="button"
+                        @click="togglePriceRange"
+                        class="flex items-center gap-2 border border-[#D4D4D4] rounded-lg px-4 py-3 bg-white hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20">
+                        <span class="text-base text-[#121A22] font-medium whitespace-nowrap">
+                            {{ priceRangeLabel }}
+                        </span>
+                        <svg
+                            class="size-[18px] transition-transform duration-200"
+                            :class="{'rotate-180': isPriceRangeOpen}"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M6 9l6 6 6-6"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <Transition
+                        enter-active-class="transition duration-150 ease-out"
+                        enter-from-class="opacity-0 scale-95 -translate-y-1"
+                        enter-to-class="opacity-100 scale-100 translate-y-0"
+                        leave-active-class="transition duration-100 ease-in"
+                        leave-from-class="opacity-100 scale-100 translate-y-0"
+                        leave-to-class="opacity-0 scale-95 -translate-y-1">
+                        <div
+                            v-if="isPriceRangeOpen"
+                            class="absolute right-0 top-[calc(100%+4px)] z-50 min-w-full overflow-hidden rounded-[8px] bg-white py-1 shadow-lg ring-1 ring-black/5">
+                            <button
+                                v-for="option in priceRangeOptions"
+                                :key="option.value"
+                                type="button"
+                                @click="selectPriceRange(option)"
+                                class="flex w-full items-center px-4 py-2 text-[14px] leading-[20px] transition-colors whitespace-nowrap"
+                                :class="
+                                    selectedPriceRange === option.value
+                                        ? 'bg-[#2C3E50] text-white font-medium'
+                                        : 'text-[#2C3E50] hover:bg-[#F5F6F7]'
+                                ">
+                                {{ option.label }}
+                            </button>
+                        </div>
+                    </Transition>
+                </div>
             </div>
         </div>
     </div>

@@ -158,11 +158,38 @@
         top: "0px",
         transform: "translateX(-50%)",
     })
-
     const tooltipData = ref({
-        value: "29%",
+        value: "0%",
         label: "Special Loan Eligibility",
     })
+    const tooltipColor = ref("#2C3E50")
+    const tooltipTextColor = ref("#FFFFFF")
+    const tooltipIsCentered = ref(false)
+    const tooltipSize = {
+        width: 122,
+        height: 95,
+        gap: 8,
+    }
+    const tooltipLabels = ["Current Market", "Special Loan Eligibility"]
+
+    const getTooltipTextColor = (color) => {
+        if (!color || typeof color !== "string") return "#FFFFFF"
+        const hex = color.replace("#", "")
+        if (hex.length !== 3 && hex.length !== 6) return "#FFFFFF"
+        const normalized =
+            hex.length === 3
+                ? hex
+                      .split("")
+                      .map((char) => char + char)
+                      .join("")
+                : hex
+        const rgb = normalized.match(/.{2}/g)
+        if (!rgb) return "#FFFFFF"
+        const [r, g, b] = rgb.map((value) => parseInt(value, 16))
+        if ([r, g, b].some((value) => Number.isNaN(value))) return "#FFFFFF"
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+        return luminance > 0.72 ? "#121A22" : "#FFFFFF"
+    }
 
     const chartDataConfigs = {
         weekly: {
@@ -294,30 +321,51 @@
             },
         },
         interaction: {
-            intersect: false,
-            mode: "point",
+            intersect: true,
+            mode: "nearest",
         },
         onHover: (event, elements, chart) => {
-            if (elements.length > 0) {
-                const element = elements[0]
-                const datasetIndex = element.datasetIndex
-                const index = element.index
-
-                if (datasetIndex === 1 && index === 3) {
-                    showTooltip.value = true
-
-                    const x = element.element.x
-                    const y = element.element.y
-
-                    tooltipStyle.value.left = `${x}px`
-                    tooltipStyle.value.top = `${y - 70}px`
-                    tooltipStyle.value.transform = "translateX(-50%)"
-                } else {
-                    showTooltip.value = false
-                }
-            } else {
+            if (!elements.length) {
                 showTooltip.value = false
+                return
             }
+
+            const element = elements[0]
+            const datasetIndex = element.datasetIndex
+            const index = element.index
+            const dataset = chart.data.datasets?.[datasetIndex]
+            const rawValue = dataset?.data?.[index]
+            const backgroundColor = Array.isArray(dataset?.backgroundColor)
+                ? dataset?.backgroundColor?.[index]
+                : dataset?.backgroundColor
+
+            tooltipColor.value = backgroundColor || "#2C3E50"
+            tooltipTextColor.value = getTooltipTextColor(tooltipColor.value)
+            tooltipIsCentered.value = datasetIndex === 0
+
+            tooltipData.value = {
+                value: typeof rawValue === "number" ? `${rawValue}%` : "0%",
+                label:
+                    tooltipLabels[datasetIndex] ||
+                    dataset?.label ||
+                    "Special Loan Eligibility",
+            }
+
+            const {left, right} = chart.chartArea
+            const halfWidth = tooltipSize.width / 2
+            const clampedX = Math.min(
+                Math.max(element.element.x, left + halfWidth),
+                right - halfWidth
+            )
+            const top = Math.max(
+                8,
+                element.element.y - tooltipSize.height - tooltipSize.gap
+            )
+
+            tooltipStyle.value.left = `${clampedX}px`
+            tooltipStyle.value.top = `${top}px`
+            tooltipStyle.value.transform = "translateX(-50%)"
+            showTooltip.value = true
         },
         animation: {
             duration: 0,
@@ -419,17 +467,28 @@
                         <div
                             v-if="showTooltip"
                             :style="tooltipStyle"
-                            class="absolute bg-[#2C3E50] text-white px-6 py-4 rounded-[16px] shadow-lg z-10 pointer-events-none">
-                            <div
-                                class="text-[18px] leading-[24px] font-semibold text-center">
-                                {{ tooltipData.value }}
+                            class="absolute z-10 pointer-events-none">
+                            <div class="relative w-[122px] h-[95px]">
+                                <div
+                                    class="absolute inset-x-0 top-0 h-[85px] rounded-[16px]"
+                                    :style="{backgroundColor: tooltipColor}"></div>
+                                <div
+                                    class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0 w-0 border-l-[8px] border-r-[8px] border-t-[10px] border-l-transparent border-r-transparent"
+                                    :style="{borderTopColor: tooltipColor}"></div>
+                                <div
+                                    class="absolute left-1/2 -translate-x-1/2 w-[94px] text-center"
+                                    :class="tooltipIsCentered ? 'top-1/2 -translate-y-[60%]' : 'top-[8px]'"
+                                    :style="{color: tooltipTextColor}">
+                                    <div
+                                        class="text-[18px] leading-[24px] font-semibold">
+                                        {{ tooltipData.value }}
+                                    </div>
+                                    <div
+                                        class="text-[12px] leading-[16px]">
+                                        {{ tooltipData.label }}
+                                    </div>
+                                </div>
                             </div>
-                            <div
-                                class="text-[12px] leading-[16px] text-center whitespace-nowrap">
-                                {{ tooltipData.label }}
-                            </div>
-                            <div
-                                class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-[#2C3E50]"></div>
                         </div>
                     </div>
                 </div>
