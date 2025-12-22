@@ -22,6 +22,13 @@
     const isDropdownOpen = ref(false)
     const dropdownRef = ref(null)
 
+    // Mobile scroll indicator refs and state
+    const scrollContainerRef = ref(null)
+    const scrollTrackRef = ref(null)
+    const scrollProgress = ref(0)
+    const isMobile = ref(false)
+    const isDragging = ref(false)
+
     const selectedLabel = computed(() => {
         const period = periods.find((p) => p.value === selectedPeriod.value)
         return period ? period.label : "Weekly"
@@ -43,13 +50,108 @@
         }
     }
 
+    // Handle scroll to update custom indicator
+    const handleScroll = () => {
+        if (!scrollContainerRef.value || isDragging.value) return
+        const container = scrollContainerRef.value
+        const maxScroll = container.scrollWidth - container.clientWidth
+        if (maxScroll > 0) {
+            scrollProgress.value = container.scrollLeft / maxScroll
+        }
+    }
+
+    // Draggable scroll indicator functions
+    const handleScrollTrackClick = (event) => {
+        if (!scrollTrackRef.value || !scrollContainerRef.value) return
+
+        const track = scrollTrackRef.value
+        const rect = track.getBoundingClientRect()
+        const thumbWidth = 80 // Fixed thumb width
+        const trackWidth = rect.width - thumbWidth
+
+        // Get click position relative to track
+        const clientX = event.touches ? event.touches[0].clientX : event.clientX
+        let clickX = clientX - rect.left - thumbWidth / 2
+
+        // Clamp to valid range
+        clickX = Math.max(0, Math.min(clickX, trackWidth))
+
+        // Calculate progress (0 to 1)
+        const progress = clickX / trackWidth
+        scrollProgress.value = progress
+
+        // Apply scroll to chart
+        const container = scrollContainerRef.value
+        const maxScroll = container.scrollWidth - container.clientWidth
+        container.scrollLeft = progress * maxScroll
+    }
+
+    const handleThumbDragStart = (event) => {
+        event.preventDefault()
+        isDragging.value = true
+
+        document.addEventListener('mousemove', handleThumbDrag)
+        document.addEventListener('mouseup', handleThumbDragEnd)
+        document.addEventListener('touchmove', handleThumbDrag, {passive: false})
+        document.addEventListener('touchend', handleThumbDragEnd)
+    }
+
+    const handleThumbDrag = (event) => {
+        if (!isDragging.value || !scrollTrackRef.value || !scrollContainerRef.value) return
+        event.preventDefault()
+
+        const track = scrollTrackRef.value
+        const rect = track.getBoundingClientRect()
+        const thumbWidth = 80
+        const trackWidth = rect.width - thumbWidth
+
+        // Get current position
+        const clientX = event.touches ? event.touches[0].clientX : event.clientX
+        let dragX = clientX - rect.left - thumbWidth / 2
+
+        // Clamp to valid range
+        dragX = Math.max(0, Math.min(dragX, trackWidth))
+
+        // Calculate progress (0 to 1)
+        const progress = dragX / trackWidth
+        scrollProgress.value = progress
+
+        // Apply scroll to chart
+        const container = scrollContainerRef.value
+        const maxScroll = container.scrollWidth - container.clientWidth
+        container.scrollLeft = progress * maxScroll
+    }
+
+    const handleThumbDragEnd = () => {
+        isDragging.value = false
+
+        document.removeEventListener('mousemove', handleThumbDrag)
+        document.removeEventListener('mouseup', handleThumbDragEnd)
+        document.removeEventListener('touchmove', handleThumbDrag)
+        document.removeEventListener('touchend', handleThumbDragEnd)
+    }
+
+    // Check if mobile on mount and resize
+    const checkMobile = () => {
+        isMobile.value = window.innerWidth < 640 // sm breakpoint
+    }
+
     onMounted(() => {
         document.addEventListener("click", handleClickOutside)
+        checkMobile()
+        window.addEventListener("resize", checkMobile)
     })
 
     onUnmounted(() => {
         document.removeEventListener("click", handleClickOutside)
+        window.removeEventListener("resize", checkMobile)
+        // Clean up drag listeners if component unmounts during drag
+        document.removeEventListener('mousemove', handleThumbDrag)
+        document.removeEventListener('mouseup', handleThumbDragEnd)
+        document.removeEventListener('touchmove', handleThumbDrag)
+        document.removeEventListener('touchend', handleThumbDragEnd)
     })
+
     const showTooltip = ref(false)
     const tooltipStyle = ref({
         left: "0px",
@@ -222,6 +324,17 @@
         },
     }
 
+    // Computed style for scroll thumb position
+    const scrollThumbStyle = computed(() => {
+        const progress = scrollProgress.value
+        // margin-left percentage is relative to parent's content width
+        // When progress=0: thumb at left edge
+        // When progress=1: thumb's right edge aligns with track's right edge
+        return {
+            marginLeft: `calc(${progress * 100}% - ${progress * 80}px)`,
+        }
+    })
+
     watch(
         () => props.initialPeriod,
         (newPeriod) => {
@@ -231,82 +344,125 @@
 </script>
 
 <template>
-    <div class="bg-white rounded-[10px] p-5">
-        <div
-            class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-5 gap-4">
-            <h2
-                class="text-[20px] leading-[24px] tracking-[0.4px] font-semibold text-[#121A22]">
-                {{ title }}
-            </h2>
-            <div ref="dropdownRef" class="relative w-fit">
-                <button
-                    type="button"
-                    @click="toggleDropdown"
-                    class="flex h-[32px] items-center gap-[6px] rounded-[32px] bg-[#EAECEE] px-[16px] text-[12px] leading-[16px] font-normal text-[#2C3E50] transition-all hover:bg-[#DFE2E6] focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20">
-                    <span>{{ selectedLabel }}</span>
-                    <svg
-                        class="size-[16px] transition-transform duration-200"
-                        :class="{ 'rotate-180': isDropdownOpen }"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        aria-hidden="true">
-                        <path
-                            d="M6 8l4 4 4-4"
-                            stroke-linecap="round"
-                            stroke-linejoin="round" />
-                    </svg>
-                </button>
-                <Transition
-                    enter-active-class="transition duration-150 ease-out"
-                    enter-from-class="opacity-0 scale-95 -translate-y-1"
-                    enter-to-class="opacity-100 scale-100 translate-y-0"
-                    leave-active-class="transition duration-100 ease-in"
-                    leave-from-class="opacity-100 scale-100 translate-y-0"
-                    leave-to-class="opacity-0 scale-95 -translate-y-1">
-                    <div
-                        v-if="isDropdownOpen"
-                        class="absolute right-0 top-[calc(100%+4px)] z-50 min-w-[120px] overflow-hidden rounded-[8px] bg-white py-1 shadow-lg ring-1 ring-black/5">
-                        <button
-                            v-for="period in periods"
-                            :key="period.value"
-                            type="button"
-                            @click="selectPeriod(period)"
-                            class="flex w-full items-center px-4 py-2 text-[13px] leading-[18px] transition-colors"
-                            :class="
-                                selectedPeriod === period.value
-                                    ? 'bg-[#2C3E50] text-white font-medium'
-                                    : 'text-[#2C3E50] hover:bg-[#F5F6F7]'
-                            ">
-                            {{ period.label }}
-                        </button>
+    <div class="flex flex-col gap-6">
+        <!-- Card container - fits viewport width -->
+        <div class="bg-white rounded-[10px] p-4 sm:p-5">
+            <!-- Header: Title + Dropdown - always visible, no scroll -->
+            <div
+                class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5 sm:gap-4">
+                <h2
+                    class="text-[20px] leading-[28px] tracking-[0.4px] font-semibold text-[#121A22]">
+                    {{ title }}
+                </h2>
+                <div ref="dropdownRef" class="relative w-full sm:w-fit">
+                    <button
+                        type="button"
+                        @click="toggleDropdown"
+                        class="flex w-full sm:w-auto h-[32px] items-center justify-center gap-[6px] rounded-[32px] bg-[#EAECEE] px-[16px] text-[12px] leading-[16px] font-normal text-[#2C3E50] transition-all hover:bg-[#DFE2E6] focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20">
+                        <span>{{ selectedLabel }}</span>
+                        <svg
+                            class="size-[16px] transition-transform duration-200"
+                            :class="{'rotate-180': isDropdownOpen}"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            aria-hidden="true">
+                            <path
+                                d="M6 8l4 4 4-4"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <Transition
+                        enter-active-class="transition duration-150 ease-out"
+                        enter-from-class="opacity-0 scale-95 -translate-y-1"
+                        enter-to-class="opacity-100 scale-100 translate-y-0"
+                        leave-active-class="transition duration-100 ease-in"
+                        leave-from-class="opacity-100 scale-100 translate-y-0"
+                        leave-to-class="opacity-0 scale-95 -translate-y-1">
+                        <div
+                            v-if="isDropdownOpen"
+                            class="absolute left-0 sm:left-auto sm:right-0 top-[calc(100%+4px)] z-50 w-full sm:min-w-[120px] sm:w-auto overflow-hidden rounded-[8px] bg-white py-1 shadow-lg ring-1 ring-black/5">
+                            <button
+                                v-for="period in periods"
+                                :key="period.value"
+                                type="button"
+                                @click="selectPeriod(period)"
+                                class="flex w-full items-center justify-center sm:justify-start px-4 py-2 text-[13px] leading-[18px] transition-colors"
+                                :class="
+                                    selectedPeriod === period.value
+                                        ? 'bg-[#2C3E50] text-white font-medium'
+                                        : 'text-[#2C3E50] hover:bg-[#F5F6F7]'
+                                ">
+                                {{ period.label }}
+                            </button>
+                        </div>
+                    </Transition>
+                </div>
+            </div>
+
+            <!-- Chart area - scrolls horizontally on mobile only -->
+            <div
+                ref="scrollContainerRef"
+                class="overflow-x-auto scrollbar-hide sm:overflow-visible"
+                @scroll="handleScroll">
+                <!-- Wide chart wrapper for mobile scroll -->
+                <div class="min-w-[550px] sm:min-w-0 sm:w-full">
+                    <div class="h-[320px] sm:h-64 md:h-80 relative">
+                        <Chart
+                            type="bar"
+                            :data="chartData"
+                            :options="chartOptions"
+                            class="h-full" />
+
+                        <div
+                            v-if="showTooltip"
+                            :style="tooltipStyle"
+                            class="absolute bg-[#2C3E50] text-white px-6 py-4 rounded-[16px] shadow-lg z-10 pointer-events-none">
+                            <div
+                                class="text-[18px] leading-[24px] font-semibold text-center">
+                                {{ tooltipData.value }}
+                            </div>
+                            <div
+                                class="text-[12px] leading-[16px] text-center whitespace-nowrap">
+                                {{ tooltipData.label }}
+                            </div>
+                            <div
+                                class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-[#2C3E50]"></div>
+                        </div>
                     </div>
-                </Transition>
+                </div>
             </div>
         </div>
 
-        <div class="h-48 sm:h-64 md:h-80 relative">
-            <Chart
-                type="bar"
-                :data="chartData"
-                :options="chartOptions"
-                class="h-full" />
-
+        <!-- Mobile scroll indicator - INTERACTIVE: click track or drag thumb to scroll -->
+        <div
+            v-if="isMobile"
+            ref="scrollTrackRef"
+            class="w-full h-[8px] px-1 py-[1px] bg-[#E6E6EA] rounded-[99px] sm:hidden cursor-pointer relative"
+            @click="handleScrollTrackClick"
+            @touchstart="handleScrollTrackClick">
+            <!-- Draggable thumb -->
             <div
-                v-if="showTooltip"
-                :style="tooltipStyle"
-                class="absolute bg-[#2C3E50] text-white px-6 py-4 rounded-[16px] shadow-lg z-10 pointer-events-none">
-                <div class="text-[18px] leading-[24px] font-semibold text-center">
-                    {{ tooltipData.value }}
-                </div>
-                <div class="text-[12px] leading-[16px] text-center whitespace-nowrap">
-                    {{ tooltipData.label }}
-                </div>
-
-                <div
-                    class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-[#2C3E50]"></div>
-            </div>
+                class="h-[6px] w-[80px] bg-[#B0B1BF] rounded-[99px] cursor-grab active:cursor-grabbing select-none"
+                :class="{'cursor-grabbing': isDragging}"
+                :style="scrollThumbStyle"
+                @mousedown="handleThumbDragStart"
+                @touchstart.stop="handleThumbDragStart"></div>
         </div>
     </div>
 </template>
+
+<style scoped>
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+</style>
