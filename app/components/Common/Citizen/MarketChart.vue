@@ -346,12 +346,12 @@
 <template>
     <div class="flex flex-col gap-6">
         <!-- Card container - fits viewport width -->
-        <div class="bg-white rounded-[10px] p-4 sm:p-5">
+        <div class="bg-white rounded-[10px] p-5 flex flex-col gap-5">
             <!-- Header: Title + Dropdown - always visible, no scroll -->
             <div
-                class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5 sm:gap-4">
+                class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <h2
-                    class="text-[20px] leading-[28px] tracking-[0.4px] font-semibold text-[#121A22]">
+                    class="text-[20px] leading-[24px] tracking-[0.4px] font-semibold text-[#121A22]">
                     {{ title }}
                 </h2>
                 <div ref="dropdownRef" class="relative w-full sm:w-fit">

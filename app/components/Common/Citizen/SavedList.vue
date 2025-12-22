@@ -62,37 +62,40 @@
 </script>
 
 <template>
-    <div class="bg-white rounded-lg shadow-sm p-4">
-        <div class="flex items-center justify-between mb-4 lg:mb-6">
-            <h2 class="text-base lg:text-lg font-semibold text-gray-900">
-                {{ title }}
-            </h2>
-            <div class="flex items-center space-x-2">
+    <div class="bg-white border border-[#F4F4F6] rounded-[12px] p-4 flex flex-col gap-8">
+        <div class="flex flex-col gap-5">
+            <!-- Header -->
+            <div class="flex items-center justify-between">
+                <h2 class="text-[20px] leading-[28px] font-semibold text-[#121A22]">
+                    {{ title }}
+                </h2>
+                <!-- Sell all - visible on desktop only in header -->
                 <span
                     v-if="showSellAll"
-                    class="text-[14px] leading-[20px] font-medium text-[#242424] cursor-pointer hover:text-[#121A22]"
+                    class="hidden lg:inline-flex text-[14px] leading-[20px] font-medium text-[#242424] cursor-pointer hover:text-[#121A22]"
                     @click="$emit('sell-all')">
                     Sell all
                 </span>
             </div>
-        </div>
 
-        <div class="flex bg-gray-100 rounded-lg mb-4">
-            <button
-                v-for="tab in tabs"
-                :key="tab.value"
-                @click="handleTabChange(tab.value)"
-                :class="[
-                    'flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all',
-                    activeTab === tab.value
-                        ? 'bg-[#2C3E50] text-white shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900',
-                ]">
-                {{ tab.label }}
-            </button>
-        </div>
+            <!-- Tabs -->
+            <div class="flex gap-3 bg-[#F0F1F3] rounded-[8px] p-[6px]">
+                <button
+                    v-for="tab in tabs"
+                    :key="tab.value"
+                    @click="handleTabChange(tab.value)"
+                    :class="[
+                        'flex-1 py-[6px] px-5 text-[14px] leading-[20px] rounded-[8px] transition-all',
+                        activeTab === tab.value
+                            ? 'bg-[#2C3E50] text-white font-semibold'
+                            : 'text-[#121A22] font-medium',
+                    ]">
+                    {{ tab.label }}
+                </button>
+            </div>
 
-        <div class="space-y-3">
+            <!-- List Items -->
+            <div class="space-y-4">
             <template v-if="activeTab === 'Home'">
                 <CommonCitizenSavedListItem
                     v-for="item in homeItems"
@@ -125,6 +128,15 @@
                     No {{ activeTab.toLowerCase() }} saved yet
                 </p>
             </div>
+            </div>
         </div>
+
+        <!-- Sell all - visible on mobile only at bottom center -->
+        <span
+            v-if="showSellAll"
+            class="lg:hidden text-[14px] leading-[20px] font-medium text-[#242424] cursor-pointer hover:text-[#121A22] text-center"
+            @click="$emit('sell-all')">
+            Sell all
+        </span>
     </div>
 </template>

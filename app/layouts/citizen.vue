@@ -46,19 +46,19 @@
 
         <!-- Desktop Sidebar -->
         <div
-            class="hidden lg:block fixed inset-y-0 left-0 z-50 w-16 bg-white border-r border-gray-200">
+            class="hidden lg:block fixed inset-y-0 left-0 z-50 w-[69px] bg-transparent">
             <LazySidebarCitizen :is-mobile="false" />
         </div>
 
         <!-- Main Content -->
-        <div class="lg:ml-[4.375rem] min-h-screen">
+        <div class="lg:ml-[69px] min-h-screen">
             <!-- Header -->
             <LazyAppHeaderCitizen
                 @toggle-mobile-menu="toggleMobileMenu"
                 :is-mobile-menu-open="isMobileMenuOpen" />
 
             <!-- Page Content -->
-            <main class="px-4 lg:px-6 py-3">
+            <main class="px-4 lg:px-8 py-4">
                 <slot />
             </main>
         </div>

@@ -85,84 +85,63 @@
 
 <template>
     <div>
-        <div class="block lg:hidden">
-            <div class="flex items-center gap-3 mb-3">
-                <div class="relative flex-1">
+        <div class="flex flex-col gap-4 lg:hidden">
+            <div class="flex items-center gap-4">
+                <div class="relative flex-1 h-[44px]">
                     <Icon
                         name="lucide:search"
-                        class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        class="absolute left-4 top-1/2 transform -translate-y-1/2 size-5 text-[#6C6C6C]" />
                     <input
                         type="text"
                         :placeholder="placeholder"
                         v-model="searchQuery"
                         @input="handleSearch"
-                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                        class="w-full h-full pl-11 pr-4 border border-[#D4D4D4] rounded-lg text-sm text-[#6C6C6C] bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                 </div>
 
                 <button
                     @click="$emit('toggle-filters')"
-                    class="px-2 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors">
+                    class="p-3 border border-[#D4D4D4] rounded-lg bg-white hover:bg-gray-50 transition-colors shrink-0">
                     <Icon
                         name="lucide:sliders-horizontal"
-                        class="h-4 text-gray-600" />
+                        class="size-[18px] text-[#121A22]" />
                 </button>
             </div>
 
-            <div class="w-full">
-                <button
-                    @click="$emit('map-search')"
-                    class="w-full bg-[#121A22] text-white py-3 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
-                    Map Search
-                </button>
-            </div>
+            <button
+                @click="$emit('map-search')"
+                class="w-full bg-[#121A22] text-white px-4 py-3 rounded-lg text-sm font-bold hover:bg-[#1a2530] transition-colors capitalize">
+                Map Search
+            </button>
         </div>
 
-        <div class="hidden lg:flex lg:items-center lg:justify-between gap-4">
-            <div class="flex items-center gap-3 flex-1">
-                <div class="relative flex-1 max-w-sm">
+        <div class="hidden lg:flex lg:items-center lg:justify-between">
+            <div class="flex items-center gap-3">
+                <div class="relative w-[400px]">
                     <Icon
                         name="lucide:search"
-                        class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        class="absolute left-4 top-1/2 transform -translate-y-1/2 size-5 text-[#6C6C6C]" />
                     <input
                         type="text"
                         :placeholder="placeholder"
                         v-model="searchQuery"
                         @input="handleSearch"
-                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                        class="w-full pl-11 pr-4 py-3 border border-[#D4D4D4] rounded-lg text-sm text-[#6C6C6C] bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                 </div>
                 <button
                     @click="$emit('map-search')"
-                    class="bg-[#121A22] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors whitespace-nowrap">
+                    class="bg-[#121A22] text-white px-4 py-3 rounded-lg text-sm font-bold hover:bg-[#1a2530] transition-colors whitespace-nowrap capitalize">
                     Map Search
                 </button>
             </div>
 
             <div class="flex items-center gap-3">
                 <select
-                    v-model="selectedCategory"
-                    @change="handleCategoryChange"
-                    class="border border-gray-300 rounded-lg px-5 py-2 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option
-                        value=""
-                        disabled
-                        selected>
-                        Category: All
-                    </option>
-                    <option value="for_sale">For Sale</option>
-                    <option value="for_rent">For Rent</option>
-                    <option value="sold">Sold</option>
-                </select>
-
-                <select
                     v-model="selectedHomeType"
                     @change="handleHomeTypeChange"
-                    class="border border-gray-300 rounded-lg px-5 py-2 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option
-                        value=""
-                        disabled
-                        selected>
-                        Home Type: All
-                    </option>
+                    class="border border-[#D4D4D4] rounded-lg px-4 py-3 text-base bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-[#121A22] font-medium appearance-none bg-no-repeat bg-right pr-10"
+                    style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2718%27 height=%2718%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23121A22%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M6 9l6 6 6-6%27/%3E%3C/svg%3E'); background-position: right 12px center;">
+                    <option value="">Property Type: All</option>
                     <option value="studio">Studio</option>
                     <option value="one_bed">1 Bed</option>
                     <option value="two_bed">2 Bed</option>
@@ -172,13 +151,9 @@
                 <select
                     v-model="selectedPriceRange"
                     @change="handlePriceRangeChange"
-                    class="border border-gray-300 rounded-lg px-5 py-2 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option
-                        value=""
-                        disabled
-                        selected>
-                        Price Range: All
-                    </option>
+                    class="border border-[#D4D4D4] rounded-lg px-4 py-3 text-base bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-[#121A22] font-medium appearance-none bg-no-repeat bg-right pr-10"
+                    style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2718%27 height=%2718%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23121A22%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M6 9l6 6 6-6%27/%3E%3C/svg%3E'); background-position: right 12px center;">
+                    <option value="">Price Range: All</option>
                     <option value="250000">Under $250,000</option>
                     <option value="500000">Under $500,000</option>
                     <option value="750000">Under $750,000</option>

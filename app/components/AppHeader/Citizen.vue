@@ -98,120 +98,72 @@
 <template>
     <header
         :class="[
-            'sticky top-0 bg-white z-10 px-4 lg:px-4',
-            isPropertyDetails ? 'py-0' : 'py-3 lg:py-6',
+            'sticky top-0 z-10',
+            isPropertyDetails ? 'bg-white px-4 lg:px-8 py-3 lg:py-0' : 'bg-transparent',
         ]">
         <!-- {{ citizen_user.data.name }} -->
-        <div
-            v-if="isPropertyDetails"
-            class="flex items-center justify-between h-11">
-            <div class="flex items-center gap-4">
+        <div v-if="isPropertyDetails" class="flex flex-col gap-4">
+            <div class="flex items-center gap-4 lg:hidden">
                 <button
                     type="button"
-                    class="bg-[#F0F1F3] w-11 h-11 rounded-[30px] flex items-center justify-center"
+                    class="bg-[#F0F1F3] p-3 rounded-[30px] flex items-center justify-center"
                     aria-label="Go back"
                     @click="handleBack">
                     <Icon
                         name="lucide:arrow-left"
-                        class="w-5 h-5 text-[#2C3E50]" />
+                        class="w-4 h-4 text-[#2C3E50]" />
                 </button>
                 <h1
-                    class="text-lg sm:text-xl lg:text-[30px] leading-7 sm:leading-8 lg:leading-[40px] font-semibold text-[#2C3E50]">
+                    class="text-[20px] leading-[28px] font-semibold text-[#2C3E50]">
                     {{ propertyHeaderTitle }}
                 </h1>
             </div>
 
-            <div class="flex items-center gap-4">
-                <button
-                    type="button"
-                    aria-label="Notifications"
-                    class="relative text-gray-400 hover:text-gray-600 transition-colors">
-                    <img
-                        src="/svg/dashboard/bell-icon.svg"
-                        alt=""
-                        class="w-6 h-6" />
-                    <span
-                        class="absolute -top-0.5 right-0 w-2 h-2 bg-[#FF4D4F] rounded-full"></span>
-                </button>
-
-                <div class="w-px h-6 bg-[#D1D1D5]"></div>
-
-                <Button
-                    @click="toggleProfileMenu"
-                    :disabled="isLoadingLogout"
-                    class="flex items-center rounded-full hover:bg-gray-100">
-                    <Avatar
-                        v-if="!getUserProfilePic"
-                        :label="getUserInitial"
-                        class="avatar-bg"
-                        shape="circle" />
-                    <Avatar
-                        v-else
-                        :image="getUserProfilePic"
-                        class="avatar-bg"
-                        shape="circle" />
-                </Button>
-
-                <Menu
-                    ref="menu"
-                    :model="profileMenuItems"
-                    :popup="true"
-                    :pt="{
-                        root: 'mt-2 w-48 shadow-lg rounded-lg border border-gray-200',
-                        menu: 'p-2',
-                        menuitem: 'rounded-md',
-                        action: 'px-3 py-2 hover:bg-gray-100 rounded-md transition-colors',
-                        separator: 'my-2 border-t border-gray-200',
-                    }" />
-            </div>
-        </div>
-
-        <template v-else>
-            <!-- Mobile Header -->
-            <div class="flex items-center justify-between lg:hidden">
-                <!-- Left -->
-                <div class="flex items-center space-x-3">
-                    <NuxtLink to="/kamaina">
-                        <img
-                            class="w-8 h-8"
-                            src="/svg/dashboard/home_logo.svg"
-                            alt="HeyHome Logo" />
-                    </NuxtLink>
-                    <div class="flex flex-col">
-                        <span class="text-sm font-semibold text-gray-800">{{
-                            getUserName
-                        }}</span>
-                        <span class="text-xs text-gray-500"
-                            >Community Member</span
-                        >
-                    </div>
+            <div class="hidden lg:flex items-center justify-between h-11">
+                <div class="flex items-center gap-4">
+                    <button
+                        type="button"
+                        class="bg-[#F0F1F3] w-11 h-11 rounded-[30px] flex items-center justify-center"
+                        aria-label="Go back"
+                        @click="handleBack">
+                        <Icon
+                            name="lucide:arrow-left"
+                            class="w-5 h-5 text-[#2C3E50]" />
+                    </button>
+                    <h1
+                        class="text-lg sm:text-xl lg:text-[30px] leading-7 sm:leading-8 lg:leading-[40px] font-semibold text-[#2C3E50]">
+                        {{ propertyHeaderTitle }}
+                    </h1>
                 </div>
 
-                <!-- Right Side - Notification and Profile -->
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center gap-4">
                     <button
-                        class="text-gray-400 hover:text-gray-600 transition-colors p-2 flex items-center">
+                        type="button"
+                        aria-label="Notifications"
+                        class="relative text-gray-400 hover:text-gray-600 transition-colors">
                         <img
                             src="/svg/dashboard/bell-icon.svg"
-                            alt="Notifications"
+                            alt=""
                             class="w-6 h-6" />
+                        <span
+                            class="absolute -top-0.5 right-0 w-2 h-2 bg-[#FF4D4F] rounded-full"></span>
                     </button>
+
+                    <div class="w-px h-6 bg-[#D1D1D5]"></div>
 
                     <Button
                         @click="toggleProfileMenu"
                         :disabled="isLoadingLogout"
-                        class="flex items-center rounded-lg hover:bg-gray-100 p-2">
+                        class="flex items-center rounded-full hover:bg-gray-100">
                         <Avatar
                             v-if="!getUserProfilePic"
                             :label="getUserInitial"
                             class="avatar-bg"
-                            size="normal"
                             shape="circle" />
                         <Avatar
                             v-else
                             :image="getUserProfilePic"
                             class="avatar-bg"
-                            size="normal"
                             shape="circle" />
                     </Button>
 
@@ -226,61 +178,88 @@
                             action: 'px-3 py-2 hover:bg-gray-100 rounded-md transition-colors',
                             separator: 'my-2 border-t border-gray-200',
                         }" />
+                </div>
+            </div>
+        </div>
 
-                    <!-- Hamburger Menu -->
-                    <button
-                        @click="$emit('toggle-mobile-menu')"
-                        class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                        <Icon
-                            name="lucide:menu"
-                            class="w-6 h-6 text-gray-700" />
-                    </button>
+        <template v-else>
+            <!-- Mobile Top Bar -->
+            <div class="lg:hidden">
+                <div
+                    class="flex items-center justify-between bg-white border-b border-[#EAECEE] shadow-[0px_4px_32px_0px_rgba(24,34,44,0.06)] px-5 py-4">
+                    <NuxtLink :to="propertyBasePath">
+                        <img
+                            class="w-[26px] h-[26px]"
+                            src="/svg/dashboard/home_logo.svg"
+                            alt="HeyHome Logo" />
+                    </NuxtLink>
+                    <div class="flex items-center gap-6">
+                        <button
+                            type="button"
+                            aria-label="Notifications"
+                            class="relative">
+                            <img
+                                src="/svg/dashboard/bell-icon.svg"
+                                alt=""
+                                class="w-6 h-6" />
+                            <span
+                                class="absolute -top-0.5 right-0 w-2 h-2 bg-[#FF4D4F] rounded-full"></span>
+                        </button>
+                        <button
+                            type="button"
+                            aria-label="Open menu"
+                            @click="$emit('toggle-mobile-menu')"
+                            class="flex items-center justify-center">
+                            <Icon
+                                name="lucide:menu"
+                                class="w-6 h-6 text-[#283849]" />
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- Desktop Header -->
-            <div class="hidden lg:flex items-center justify-between">
-                <!-- Left Side -->
-                <div class="flex flex-col">
-                    <div class="flex items-center space-x-2">
-                        <NuxtLink to="/kamaina">
+            <div class="hidden lg:flex items-center justify-between bg-white px-8 pt-5 pb-4">
+                <div class="flex flex-col gap-2 items-start">
+                    <div class="flex items-center gap-2">
+                        <NuxtLink :to="propertyBasePath">
                             <img
-                                class="w-8 h-8"
+                                class="w-10 h-10"
                                 src="/svg/dashboard/home_logo.svg"
                                 alt="HeyHome Logo" />
                         </NuxtLink>
-
-                        <!-- Welcome Text -->
-                        <div>
-                            <h1
-                                style="letter-spacing: 1px"
-                                class="text-[1.655rem] font-extrabold text-[#2C3E50]">
-                                Welcome back, {{ getUserName }}!
-                            </h1>
-                        </div>
+                        <h1
+                            class="text-[32px] leading-[40px] font-semibold text-[#2C3E50]">
+                            Welcome back, {{ getUserName }}!
+                        </h1>
                     </div>
-                    <p
-                        style="letter-spacing: 0.5px"
-                        class="text-gray-600 text-[0.775rem] mt-2 font-extralight">
+                    <p class="text-[14px] leading-[1.5] text-[#283849]">
                         Your local community insights are just a click away.
                     </p>
                 </div>
 
-                <!-- Right Side Actions -->
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center gap-5">
                     <button
-                        class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <img
-                            src="/svg/dashboard/bell-icon.svg"
-                            alt="Notifications" />
+                        type="button"
+                        aria-label="Notifications"
+                        class="relative bg-white w-12 h-12 rounded-[30px] flex items-center justify-center">
+                        <span class="relative w-6 h-6">
+                            <img
+                                src="/svg/dashboard/bell-icon.svg"
+                                alt=""
+                                class="w-6 h-6" />
+                            <span
+                                class="absolute top-0 left-[14px] w-2 h-2 bg-[#FF4D4F] rounded-full"></span>
+                        </span>
                     </button>
 
-                    <div class="w-[1px] h-[20px] bg-[#D4D4D4]"></div>
+                    <div class="w-px h-6 bg-[#D4D4D4]"></div>
 
-                    <Button
+                    <button
+                        type="button"
                         @click="toggleProfileMenu"
                         :disabled="isLoadingLogout"
-                        class="flex items-center rounded-lg hover:bg-gray-100 gap-2">
+                        class="flex items-center">
                         <Avatar
                             v-if="!getUserProfilePic"
                             :label="getUserInitial"
@@ -291,15 +270,8 @@
                             :image="getUserProfilePic"
                             class="avatar-bg"
                             shape="circle" />
-                        <span class="text-sm font-medium text-gray-700">{{
-                            getUserName
-                        }}</span>
-                        <Icon
-                            name="lucide:chevron-down"
-                            class="w-4 h-4 text-gray-500" />
-                    </Button>
+                    </button>
 
-                    <!-- Profile Menu -->
                     <Menu
                         ref="menu"
                         :model="profileMenuItems"
