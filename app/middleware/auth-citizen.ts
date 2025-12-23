@@ -1,6 +1,6 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
     const citizen_user = citizenUser()
-    console.log("ciz", citizen_user)
+    // console.log("ciz", citizen_user)
 
     if (!citizen_user.value) return navigateTo("/", {replace: true})
 
@@ -26,7 +26,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         //     allowedSegment =
         //         userTypeSlug === "kamaaina" ? "kamaina" : userTypeSlug
         // }
-        console.log('user type segment' ,  userTypeSlug)
+        // console.log('user type segment' ,  userTypeSlug)
        if (userTypeSlug) {
             allowedSegment =
                 userTypeSlug === "kamaaina" ? "kamaina" : userTypeSlug

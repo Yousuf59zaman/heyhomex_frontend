@@ -367,7 +367,7 @@
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="flex flex-col gap-6">
         <!-- Search Filter Section Skeleton BEFORE hydration -->
         <div
             v-if="!hydrated"
