@@ -559,7 +559,7 @@
                                 <div
                                     class="flex flex-col items-center justify-center gap-4">
                                     <img
-                                        src="/svg/dashboard/details-bed.svg"
+                                        src="/svg/dashboard/card.bed.svg"
                                         alt="Beds"
                                         class="w-8 h-8" />
                                     <p
@@ -573,7 +573,7 @@
                                 <div
                                     class="flex flex-col items-center justify-center gap-4">
                                     <img
-                                        src="/svg/dashboard/details-bath.svg"
+                                        src="/svg/dashboard/card-bath.svg"
                                         alt="Baths"
                                         class="w-8 h-8" />
                                     <p
@@ -587,7 +587,7 @@
                                 <div
                                     class="flex flex-col items-center justify-center gap-4">
                                     <img
-                                        src="/svg/dashboard/details-sqft.svg"
+                                        src="/svg/dashboard/card-cube.svg"
                                         alt="Sqft"
                                         class="w-8 h-8" />
                                     <p
