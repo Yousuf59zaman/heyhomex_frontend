@@ -4,7 +4,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
     if (!citizen_user.value) return navigateTo("/", {replace: true})
 
-    const userRole = (citizen_user.value as any)?.data.user_role
+    // const userRole = (citizen_user.value as any)?.data.user_role
     const userTypeSlug = (citizen_user.value as any)?.data.user_type?.[0]?.slug
 
     const pathSegment = to.path.split("/")[1]
