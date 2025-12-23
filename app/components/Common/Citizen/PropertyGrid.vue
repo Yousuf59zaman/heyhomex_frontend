@@ -21,20 +21,20 @@
 </script>
 
 <template>
-    <div class="rounded-lg shadow-sm">
-        <div class="flex items-center justify-between mb-4">
+    <div class="rounded-lg">
+        <div class="flex items-end justify-between mb-4">
             <h2
-                class="text-base sm:text-lg tracking-wider font-semibold text-gray-900">
+                class="text-[20px] sm:text-[24px] leading-[32px] font-semibold text-[#121A22]">
                 {{ title }}
             </h2>
             <button
                 @click="$emit('see-all')"
-                class="text-sm text-[#2C3E50] hover:text-blue-700 font-medium">
+                class="hidden sm:inline-flex text-[16px] leading-[24px] text-[#2C3E50] font-medium hover:text-[#1F2E3D]">
                 See all
             </button>
         </div>
         <div
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <CommonCitizenPropertyCard
                 v-for="property in properties"
                 :key="property.id"
@@ -42,5 +42,10 @@
                 @click="handlePropertyClick"
                 @favorite="handleFavoriteToggle" />
         </div>
+        <button
+            @click="$emit('see-all')"
+            class="mt-4 w-full text-center text-[16px] leading-[24px] text-[#2C3E50] font-semibold sm:hidden">
+            See all
+        </button>
     </div>
 </template>

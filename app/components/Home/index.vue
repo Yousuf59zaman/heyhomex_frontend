@@ -41,9 +41,10 @@
                 <div class="h-5 w-5/6 bg-gray-600 rounded mb-8"></div>
 
                 <div
-                    class="hidden sm:flex items-center gap-3 sm:max-w-xl bg-gray-800/50 rounded-xl shadow-lg p-3">
-                    <div class="flex-1 h-10 bg-gray-700 rounded"></div>
-                    <div class="w-24 h-10 bg-gray-700 rounded"></div>
+                    class="hidden sm:flex items-center gap-6 sm:max-w-xl bg-gray-800/50 rounded-xl shadow-lg overflow-hidden pl-[15px] pr-[10px] py-[10px]">
+                    <div class="flex-1 h-6 bg-gray-700 rounded"></div>
+                    <div class="w-px h-6 bg-gray-700/60"></div>
+                    <div class="w-28 h-11 bg-gray-700 rounded-lg"></div>
                 </div>
 
                 <div class="flex sm:hidden flex-col gap-3 w-full mt-6">
@@ -68,16 +69,16 @@
                     class="max-w-2xl sm:max-w-xl h-[1px] mb-4 bg-gray-600"></div>
 
                 <p
-                    class="text-lg text-white/90 mb-8 sm:text-xl lg:text-base max-w-md">
-                    Where your next chapter begins — Kama'aina, Military, or
+                    class="text-[14px] leading-[20px] text-white mb-8 sm:text-[16px] sm:leading-[24px] max-w-md">
+                    Where your next chapter begins — Kama‘āina, Military, or
                     Investor, your path starts with purpose
                 </p>
 
                 <div
-                    class="hidden sm:flex items-center gap-3 sm:max-w-xl bg-white rounded-xl shadow-lg p-1">
-                    <div class="flex-1 relative">
+                    class="hidden sm:flex items-center gap-6 sm:max-w-xl bg-white rounded-xl shadow-lg overflow-hidden pl-[15px] pr-[10px] py-[10px]">
+                    <div class="flex items-center gap-3 flex-1 min-w-0">
                         <svg
-                            class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                            class="w-6 h-6 text-[#566573] shrink-0"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -91,25 +92,25 @@
 
                         <input
                             type="text"
-                            placeholder="Enter an address, neighborhood, city or zip code"
+                            placeholder="Enter an address,neighborhood,city or zip code"
                             aria-label="Search location"
-                            class="w-full pl-12 pr-4 text-[#566573] py-3 bg-transparent focus:outline-none text-gray-800 placeholder-gray-400 text-sm" />
+                            class="flex-1 min-w-0 bg-transparent focus:outline-none text-sm leading-6 text-[#121a22] placeholder:text-[#566573]" />
                     </div>
 
-                    <div class="bg-[#FFFFFF33] w-[1px] h-[1.25rem]"></div>
+                    <div class="w-px h-6 bg-[#CFDBE8]"></div>
 
                     <button
                         @click="handleLetsBegin"
-                        class="px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-xl transition-colors duration-200 whitespace-nowrap"
+                        class="px-6 py-3 bg-[#18222c] hover:bg-[#121a22] text-white text-sm font-semibold rounded-lg transition-colors duration-200 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#18222c]/30 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                         aria-label="Begin search">
-                        Let's Begin
+                        Let’s Begin
                     </button>
                 </div>
 
                 <div class="flex sm:hidden flex-col gap-3 w-full">
                     <div class="relative">
                         <svg
-                            class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                            class="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-[#566573]"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -124,14 +125,14 @@
                             type="text"
                             placeholder="Enter an address, neighborhood , City..."
                             aria-label="Search location"
-                            class="w-full pl-12 pr-4 py-4 bg-white rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-300 text-gray-800 placeholder-gray-400 text-sm" />
+                            class="w-full pl-12 pr-4 py-4 bg-white rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-[#18222c]/20 text-[#121a22] placeholder:text-[#566573] text-sm" />
                     </div>
 
                     <button
                         @click="handleLetsBegin"
-                        class="w-full py-4 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-xl shadow-lg transition-colors duration-200"
+                        class="w-full py-4 bg-[#18222c] hover:bg-[#121a22] text-white font-semibold rounded-xl shadow-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#18222c]/30 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                         aria-label="Begin search">
-                        Let's Begin
+                        Let’s Begin
                     </button>
                 </div>
             </div>

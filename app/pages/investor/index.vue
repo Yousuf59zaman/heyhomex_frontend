@@ -2,6 +2,22 @@
     useHead({title: "Investor Panel"})
     definePageMeta({middleware: ["auth-citizen"], layout: "citizen"})
 
+    const {citizen_user} = citizenAuth()
+
+    const dashboardUserName = computed(() => {
+        if (!citizen_user.value) return "User"
+        if (citizen_user.value.data?.name) {
+            return citizen_user.value.data.name.split(" ")[0]
+        }
+        if (citizen_user.value.data?.first_name) {
+            return citizen_user.value.data.first_name
+        }
+        if (citizen_user.value.data?.email) {
+            return citizen_user.value.data.email.split("@")[0]
+        }
+        return "User"
+    })
+
     const toast = useToast()
     // Hydration state for SSR/CSR skeleton loading
     const hydrated = ref(false)
@@ -374,7 +390,23 @@
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="flex flex-col gap-6">
+        <div class="lg:hidden flex flex-col gap-2 items-start justify-center pt-2">
+            <div class="flex items-center gap-2">
+                <img
+                    class="w-8 h-8"
+                    src="/svg/dashboard/home_logo.svg"
+                    alt="HeyHome Logo" />
+                <h1
+                    class="text-[24px] leading-[32px] font-semibold text-[#2C3E50]">
+                    Welcome back, {{ dashboardUserName }}!
+                </h1>
+            </div>
+            <p class="text-[14px] leading-[1.5] text-[#283849]">
+                Your local community insights are just a click away.
+            </p>
+        </div>
+
         <!-- Search Filter Section Skeleton BEFORE hydration -->
         <div
             v-if="!hydrated"

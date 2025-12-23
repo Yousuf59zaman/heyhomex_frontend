@@ -72,76 +72,31 @@
     <nav
         :class="[
             'sticky top-0 bg-[#121A22] w-full transition-all duration-300 z-50',
-            isScroll ? 'py-1 shadow-md' : 'py-1',
+            isScroll ? 'shadow-md' : '',
         ]">
-        <div
-            class="relative flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12">
-            <!-- Left Spacer-->
-            <div class="md:w-[200px]">
+        <div class="md:hidden flex items-center justify-between px-[20px] py-[8px]">
+            <NuxtLink
+                to="/#"
+                class="inline-flex items-center"
+                aria-label="Home">
                 <img
-                    class="hidden sm:block lg:hidden"
+                    class="h-[26px] w-[26px]"
                     src="/images/home/home_logo.png"
-                    alt="" />
-            </div>
+                    alt="HeyHome" />
+            </NuxtLink>
 
-            <!-- Logo Section-->
-            <div
-                :class="[
-                    'absolute left-1/2 -translate-x-1/2 transition-transform duration-300',
-                    isScroll ? 'scale-90' : 'scale-100',
-                ]">
-                <div class="flex items-center space-x-3">
-                    <NuxtLink to="/#">
-                        <ApplicationLogo
-                            :width="'100%'"
-                            :height="'1.625rem'"
-                            class="filter brightness-0 invert" />
-                    </NuxtLink>
-                </div>
-            </div>
-
-            <!-- Right Section -->
-            <div class="ml-auto flex items-center">
-                <!-- Desktop Menu -->
-                <div
-                    v-if="admin_user"
-                    class="hidden md:flex items-center space-x-4">
-                    <NuxtLink
-                        to="/admin-panel"
-                        class="py-[0.5rem] px-[1.5rem] text-black text-[0.875rem] bg-white border rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                        Admin Panel
-                    </NuxtLink>
-                </div>
-                <div
-                    v-else-if="hasCitizenDashboardAccess"
-                    style="cursor: pointer"
-                    class="hidden cursor-pointer md:flex items-center space-x-4">
-                    <div
-                        @click="handleDashboardRedirect(citizen_user)"
-                        class="py-[0.5rem] px-[1.5rem] text-black text-[0.875rem] bg-white border rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                        Citizen Panel
-                    </div>
-                </div>
-                <div
-                    v-else
-                    class="hidden md:flex items-center space-x-4">
-                    <button
-                        @click="handleSignIn"
-                        class="text-white text-[0.875rem] hover:text-gray-300 transition-colors">
-                        Sign In
-                    </button>
-                    <div class="bg-white w-[1px] h-[1.25rem]"></div>
-                    <button
-                        @click="handleGetStarted"
-                        class="py-[0.5rem] px-[1.5rem] text-black text-[0.875rem] bg-white border rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                        Get Started
-                    </button>
-                </div>
+            <div class="flex items-center gap-[11px]">
+                <button
+                    v-if="!admin_user && !hasCitizenDashboardAccess"
+                    @click="handleGetStarted"
+                    class="py-[6px] px-[12px] text-[#121A22] text-[14px] font-semibold leading-[20px] bg-white rounded-[8px] hover:bg-gray-50 transition-colors duration-200">
+                    Get Started
+                </button>
 
                 <!-- Mobile Hamburger Button -->
                 <button
                     @click="toggleMobileMenu"
-                    class="md:hidden text-white p-2 focus:outline-none"
+                    class="text-white p-2 focus:outline-none"
                     aria-label="Toggle menu">
                     <svg
                         v-if="!isMobileMenuOpen"
@@ -168,6 +123,66 @@
                             d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
+            </div>
+        </div>
+
+        <div
+            class="relative hidden md:flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12 py-1">
+            <!-- Left Spacer-->
+            <div class="w-[200px]"></div>
+
+            <!-- Logo Section-->
+            <div
+                :class="[
+                    'absolute left-1/2 -translate-x-1/2 transition-transform duration-300',
+                    isScroll ? 'scale-90' : 'scale-100',
+                ]">
+                <div class="flex items-center space-x-3">
+                    <NuxtLink to="/#">
+                        <ApplicationLogo
+                            :width="'100%'"
+                            :height="'1.625rem'"
+                            class="filter brightness-0 invert" />
+                    </NuxtLink>
+                </div>
+            </div>
+
+            <!-- Right Section -->
+            <div class="ml-auto flex items-center">
+                <!-- Desktop Menu -->
+                <div
+                    v-if="admin_user"
+                    class="flex items-center gap-[16px]">
+                    <NuxtLink
+                        to="/admin-panel"
+                        class="py-[10px] px-[24px] text-[#121a22] text-[0.875rem] font-semibold leading-[20px] bg-white rounded-[12px] hover:bg-gray-50 transition-colors duration-200">
+                        Admin Panel
+                    </NuxtLink>
+                </div>
+                <div
+                    v-else-if="hasCitizenDashboardAccess"
+                    style="cursor: pointer"
+                    class="flex cursor-pointer items-center space-x-4">
+                    <div
+                        @click="handleDashboardRedirect(citizen_user)"
+                        class="py-[10px] px-[24px] text-[#121a22] text-[0.875rem] font-semibold leading-[20px] bg-white rounded-[12px] hover:bg-gray-50 transition-colors duration-200">
+                        Citizen Panel
+                    </div>
+                </div>
+                <div
+                    v-else
+                    class="flex items-center gap-[16px]">
+                    <button
+                        @click="handleSignIn"
+                        class="text-white text-[0.875rem] font-semibold leading-[20px] hover:text-gray-300 transition-colors">
+                        Sign In
+                    </button>
+                    <button
+                        @click="handleGetStarted"
+                        class="py-[10px] px-[24px] text-[#121a22] text-[0.875rem] font-semibold leading-[20px] bg-white rounded-[8px] hover:bg-gray-50 transition-colors duration-200">
+                        Get Started
+                    </button>
+                </div>
             </div>
         </div>
 
