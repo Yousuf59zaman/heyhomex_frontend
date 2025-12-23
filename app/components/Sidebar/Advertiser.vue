@@ -1,4 +1,6 @@
 <script setup>
+    const {citizen_user} = citizenAuth()
+
     const props = defineProps({
         isMobile: {
             type: Boolean,
@@ -8,9 +10,46 @@
 
     defineEmits(["close-menu"])
 
-    const route = useRoute()
-
     const sidebarBackgroundColor = "#18222C"
+
+    const getUserName = computed(() => {
+        if (!citizen_user.value) return "User"
+
+        if (citizen_user.value.data?.name) {
+            return citizen_user.value.data.name.split(" ")[0]
+        }
+
+        if (citizen_user.value.data?.first_name) {
+            return citizen_user.value.data.first_name
+        }
+
+        if (citizen_user.value.data?.email) {
+            return citizen_user.value.data.email.split("@")[0]
+        }
+
+        return "User"
+    })
+
+    const getUserInitial = computed(() => {
+        return getUserName.value.charAt(0).toUpperCase()
+    })
+
+    const getUserType = computed(() => {
+        if (
+            citizen_user.value?.data?.user_type &&
+            citizen_user.value.data.user_type.length > 0
+        ) {
+            const userType = citizen_user.value.data.user_type[0]
+            return (
+                userType.name ||
+                userType.slug?.charAt(0).toUpperCase() +
+                    userType.slug?.slice(1) ||
+                "Advertiser"
+            )
+        }
+
+        return "Advertiser"
+    })
 
     const navigationItems = ref([
         {
@@ -18,56 +57,56 @@
             label: "Dashboard",
             icon: "/svg/menubar/dashboard.svg",
             iconType: "svg",
-            path: "/advisor",
+            path: "/advertisers",
         },
         {
             id: "campaigns",
             label: "Campaigns",
             icon: "lucide:megaphone",
             iconType: "lucide",
-            path: "/advisor/campaigns",
+            path: "#",
         },
         {
             id: "analytics",
             label: "Analytics",
             icon: "lucide:bar-chart-3",
             iconType: "lucide",
-            path: "/advisor/analytics",
+            path: "#",
         },
         {
             id: "targeting",
             label: "Targeting",
             icon: "lucide:target",
             iconType: "lucide",
-            path: "/advisor/targeting",
+            path: "#",
         },
         {
             id: "creatives",
             label: "Creatives",
             icon: "lucide:image",
             iconType: "lucide",
-            path: "/advisor/creatives",
+            path: "#",
         },
         {
             id: "reports",
             label: "Reports",
             icon: "lucide:file-text",
             iconType: "lucide",
-            path: "/advisor/reports",
+            path: "#",
         },
         {
             id: "budget",
             label: "Budget",
             icon: "lucide:dollar-sign",
             iconType: "lucide",
-            path: "/advisor/budget",
+            path: "#",
         },
         {
             id: "settings",
             label: "Settings",
             icon: "/svg/menubar/setting.svg",
             iconType: "svg",
-            path: "/advisor/settings",
+            path: "#",
         },
     ])
 </script>
@@ -76,13 +115,15 @@
     <!-- Desktop Sidebar -->
     <aside
         v-if="!isMobile"
-        class="h-full w-[69px] flex flex-col items-center py-4"
+        class="h-full w-[69px] flex flex-col items-center py-7"
         :style="{backgroundColor: sidebarBackgroundColor}">
         <div class="mb-8">
-            <img
-                src="/images/home/home_logo.png"
-                alt="HeyHome Logo"
-                class="h-8 w-8 rounded" />
+            <NuxtLink to="/advertisers">
+                <img
+                    src="/svg/dashboard/home_logo.svg"
+                    alt="HeyHome Logo"
+                    class="h-8 w-8 rounded" />
+            </NuxtLink>
         </div>
 
         <!-- Navigation Icons -->
@@ -123,7 +164,7 @@
                     alt="HeyHome Logo"
                     class="h-8 w-8 rounded" />
                 <span class="text-lg font-semibold text-white"
-                    >HeyHome Advisor</span
+                    >HeyHome Advertiser</span
                 >
             </div>
             <button
@@ -166,11 +207,15 @@
             <div class="flex items-center space-x-3">
                 <div
                     class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                    <span class="text-white text-sm font-medium">A</span>
+                    <span class="text-white text-sm font-medium">{{
+                        getUserInitial
+                    }}</span>
                 </div>
                 <div class="flex-1">
-                    <p class="text-sm font-medium text-white">Advisor Name</p>
-                    <p class="text-xs text-white/70">Ad Campaign Manager</p>
+                    <p class="text-sm font-medium text-white">
+                        {{ getUserName }}
+                    </p>
+                    <p class="text-xs text-white/70">{{ getUserType }}</p>
                 </div>
             </div>
         </div>

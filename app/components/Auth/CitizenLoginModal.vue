@@ -127,11 +127,11 @@
             const needsOnboarding = userData.user_onboard_profile_status === 0
             citizen_user.value = needsOnboarding ? null : response
 
-            // Check for user role (agent, advisor) first
+            // Check for user role (agent, advertiser) first
             if (userData.user_role) {
                 const roleRouteMap: Record<string, string> = {
                     agent: "/agent/",
-                    advisor: "/advisor/",
+                    advertiser: "/advertiser/",
                 }
 
                 const targetPath = roleRouteMap[userData.user_role]

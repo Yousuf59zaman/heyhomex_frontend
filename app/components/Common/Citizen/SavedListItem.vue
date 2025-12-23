@@ -1,5 +1,4 @@
 <script setup>
-    // Props
     const props = defineProps({
         item: {
             type: Object,
@@ -8,46 +7,40 @@
         type: {
             type: String,
             required: true,
-            validator: (value) => ['home', 'video'].includes(value),
+            validator: (value) => ["home", "video"].includes(value),
         },
-    });
+    })
 
-    // Emits
-    const emit = defineEmits(['remove', 'click']);
+    const emit = defineEmits(["remove", "click"])
 
-    // Methods
     const formatSubtitle = (item) => {
-        if (props.type === 'home') {
-            return `📍 ${item.location}`;
+        if (props.type === "home") {
+            return item.location
         } else {
-            return `🎥 ${item.description} • ${item.duration}`;
+            return `${item.description} • ${item.duration}`
         }
-    };
+    }
 
     const handleRemove = () => {
-        emit('remove', props.item.id);
-    };
+        emit("remove", props.item.id)
+    }
 
     const handleClick = () => {
-        emit('click', props.item);
-    };
+        emit("click", props.item)
+    }
 </script>
 
 <template>
     <div
-        :class="[
-            'rounded-lg p-3 border border-gray-100 hover:shadow-sm transition-shadow cursor-pointer',
-            type === 'home' ? 'bg-[#FAF9F8]' : 'bg-gray-50',
-        ]"
+        class="rounded-[8px] px-4 py-3 bg-[#FAF9F8] hover:bg-[#F3F2F1] transition-colors cursor-pointer"
         @click="handleClick">
-        <div class="flex items-start space-x-3">
-            <!-- Image/Thumbnail -->
-            <div class="relative w-12 h-12 flex-shrink-0">
+        <div class="flex items-center gap-4">
+            <div class="relative w-14 h-14 flex-shrink-0">
                 <img
                     :src="item.image"
                     :alt="item.title"
-                    class="w-12 h-12 rounded-lg object-cover" />
-                <!-- Play icon for videos -->
+                    class="w-14 h-14 rounded-[10px] object-cover" />
+
                 <div
                     v-if="type === 'video'"
                     class="absolute inset-0 flex items-center justify-center">
@@ -57,25 +50,37 @@
                 </div>
             </div>
 
-            <!-- Content -->
             <div class="flex-1 min-w-0">
-                <h4 class="font-medium text-gray-900 text-sm leading-tight">
+                <h4 class="font-bold text-[#283849] text-[14px] leading-[20px]">
                     {{ item.title }}
                 </h4>
-                <p class="text-xs text-gray-500 mt-0.5">
-                    {{ formatSubtitle(item) }}
+                <p
+                    :class="[
+                        'mt-1 flex items-center gap-2 text-[12px] leading-[18px] text-[#283849]',
+                    ]">
+                    <span
+                        v-if="type === 'home'"
+                        class="flex items-center justify-center rounded-[32px] bg-[#F6F6FA] p-[6px]">
+                        <Icon
+                            name="mdi:map-marker"
+                            class="w-3 h-3 text-[#283849]" />
+                    </span>
+                    <Icon
+                        v-else
+                        name="lucide:video"
+                        class="w-3 h-3 text-[#283849] flex-shrink-0" />
+                    <span class="truncate">{{ formatSubtitle(item) }}</span>
                 </p>
             </div>
 
-            <!-- Action Button -->
             <button
                 @click.stop="handleRemove"
-                class="p-1 hover:bg-gray-200 rounded transition-colors">
+                class="p-1 rounded transition-colors hover:bg-[#ECECEC]">
                 <Icon
-                    name="lucide:heart"
+                    name="mdi:heart"
                     :class="[
                         'w-4 h-4',
-                        type === 'video' ? 'text-red-500 fill-red-500' : 'text-black fill-current',
+                        'text-[#2C3E50]',
                     ]" />
             </button>
         </div>

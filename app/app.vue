@@ -5,7 +5,7 @@ useHead({
         {
             name: 'description',
             content:
-                "Where your next chapter begins — Kama'aina, Military, or Investor, your path starts with purpose",
+                "Where your next chapter begins — Kama‘āina, Military, or Investor, your path starts with purpose",
         },
     ],
 });

@@ -35,7 +35,7 @@
         pending.value = true
         error.value = null
         try {
-            const response = await $fetchCMS(`/property/${propertyId}`, {
+            const response = await $fetchCitizen(`/v1/property/${propertyId}`, {
                 method: "GET",
             })
 
@@ -43,27 +43,25 @@
 
             propertyData.value = {
                 id: data.id,
-                title: data.title,
                 name: data.name,
                 address: data.address,
+                description:
+                    data.description || data.details || data.short_description || "",
                 price: data.price,
                 beds: data.beds,
                 baths: data.baths,
-                sqft: data["square-feet"],
-                description: data.description,
-                year_built: data.year_built,
-                property_type: data.property_type,
-                parking: data.parking,
-                features: data.features || [],
-                nearby_facilities: data.nearby_facilities || [],
+                sqft: data.square_feet,
+                image: data.image_url,
+                category: data.category,
+                home_type: data.home_type,
                 location: data.location,
-                schools: data.schools || [],
-                hospitals: data.hospitals || [],
-                is_claimable: data.is_claimable,
-                insights: data.insights,
-                military_info: data.military_info,
-                images: data.images || {inside: [], outside: []},
-                image: data.image,
+                is_favorite: data.is_favorite,
+                other_images: data.other_images || [],
+                insights: data.insights || {},
+                loan_eligibility: data.loan_eligibility || {},
+                amenities: data.amenities || [],
+                created_at: data.created_at,
+                updated_at: data.updated_at,
             }
         } catch (e) {
             console.log("Error loading property detail:", e.message)
@@ -84,16 +82,25 @@
     const propertyImage = computed(
         () =>
             propertyData.value?.image ||
-            propertyData.value?.images?.inside?.[0] ||
+            propertyData.value?.other_images?.[0] ||
             `/images/dashboard/${propertyId || "1"}.png`
     )
 
     const allImages = computed(() => {
-        if (!propertyData.value?.images) return []
-        return [
-            ...(propertyData.value.images.inside || []),
-            ...(propertyData.value.images.outside || []),
-        ]
+        if (!propertyData.value) return []
+        const images = [propertyData.value.image]
+        if (propertyData.value.other_images) {
+            images.push(...propertyData.value.other_images)
+        }
+        return images.filter(Boolean)
+    })
+
+    const sqftValue = computed(() => {
+        if (!propertyData.value?.sqft) return ""
+        if (typeof propertyData.value.sqft === "string") {
+            return propertyData.value.sqft.split("/")[0]
+        }
+        return propertyData.value.sqft
     })
 
     const videos = ref([])
@@ -112,7 +119,6 @@
                     per_page: 4,
                 },
             })
-
             videos.value = response.data.data.map((video) => ({
                 id: video.id,
                 title: video.title,
@@ -177,75 +183,107 @@
         }
 
         const insights = propertyData.value.insights
+        const items = []
+
+        // Dynamically map all insights from API
+        Object.keys(insights).forEach((key, index) => {
+            if (
+                insights[key] &&
+                typeof insights[key] === "object" &&
+                insights[key].name
+            ) {
+                items.push({
+                    id: index + 1,
+                    label: insights[key].name,
+                    value: insights[key].value,
+                })
+            }
+        })
+
         return {
             title: "Insights",
             subtitle:
                 "Real-life suitability for Hawaii residents and local families.",
             downloadButtonText: "Download Local Living Snapshot",
-            items: [
-                {
-                    id: 1,
-                    label: "Public School Rating",
-                    value: insights.public_school_rating,
-                },
-                {id: 2, label: "Zoning Info", value: insights.zoning_info},
-                {
-                    id: 3,
-                    label: "Commute to Work Centers",
-                    value: insights.commute_to_work,
-                },
-                {
-                    id: 4,
-                    label: "Community Vibe",
-                    value: insights.community_vibe,
-                },
-                {
-                    id: 5,
-                    label: "Local Culture & Events",
-                    value: insights.local_culture_events,
-                },
-                {
-                    id: 6,
-                    label: "Ohana-Friendly Features",
-                    value: insights.ohana_friendly_features,
-                },
-                {
-                    id: 7,
-                    label: "Nearby Services",
-                    value: insights.nearby_services,
-                },
-                {
-                    id: 8,
-                    label: "Energy Cost Estimate",
-                    value: insights.energy_cost_estimate,
-                },
-            ],
+            items,
         }
     })
 
     const tabFeatures = computed(() => {
-        if (!propertyData.value?.features) {
-            return {title: "Features & Advantages", items: []}
+        if (!propertyData.value?.amenities) {
+            return {title: "Features & Amenities", items: []}
         }
 
         return {
-            title: "Features & Advantages",
-            items: propertyData.value.features.map((feature, index) => ({
+            title: "Features & Amenities",
+            items: propertyData.value.amenities.map((amenity, index) => ({
                 id: index + 1,
-                icon: "lucide:check-circle",
-                text: feature,
+                icon: amenity.icon || "lucide:check-circle",
+                text: amenity.name,
             })),
         }
     })
 
-    const tabMaps = ref({
-        title: "Location & Maps",
-        placeholder: "Interactive map will be displayed here",
+    const tabLoanEligibility = computed(() => {
+        if (!propertyData.value?.loan_eligibility) {
+            return {
+                title: "Loan Eligibility",
+                subtitle: "Military loan benefits and eligibility information.",
+                items: [],
+            }
+        }
+
+        const loan = propertyData.value.loan_eligibility
+        const items = []
+
+        // Dynamically map all loan eligibility fields
+        Object.keys(loan).forEach((key, index) => {
+            if (loan[key] && typeof loan[key] === "object" && loan[key].name) {
+                items.push({
+                    id: index + 1,
+                    label: loan[key].name,
+                    value: loan[key].value,
+                })
+            }
+        })
+
+        return {
+            title: "Loan Eligibility",
+            subtitle: "Military loan benefits and eligibility information.",
+            items,
+        }
     })
 
+    const tabMaps = computed(() => {
+        return {
+            title: "Location & Maps",
+            mapUrl: propertyData.value?.location?.map_url || null,
+            streetViewUrl:
+                propertyData.value?.location?.street_view_url || null,
+        }
+    })
 
     const showGallery = ref(false)
     const galleryActiveIndex = ref(0)
+
+    const galleryResponsiveOptions = ref([
+        {
+            breakpoint: '1500px',
+            numVisible: 5
+        },
+        {
+            breakpoint: '1024px',
+            numVisible: 3
+        },
+        {
+            breakpoint: '768px',
+            numVisible: 2
+        },
+        {
+            breakpoint: '560px',
+            numVisible: 1
+        }
+    ])
 
     const galleryItems = computed(() =>
         allImages.value
@@ -256,6 +294,18 @@
     const openGalleryAt = (index = 0) => {
         galleryActiveIndex.value = index
         showGallery.value = true
+        
+        // Add click outside handler after gallery opens
+        nextTick(() => {
+            const galleryMask = document.querySelector('.p-galleria-mask')
+            if (galleryMask) {
+                galleryMask.addEventListener('click', (e) => {
+                    if (e.target === galleryMask) {
+                        showGallery.value = false
+                    }
+                })
+            }
+        })
     }
 
     // Set hydrated to true after component is mounted on client
@@ -514,76 +564,72 @@
                     <div
                         class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
                         <h1
-                            class="text-xl md:text-md max-w-sm font-bold text-gray-900 mb-2">
+                            class="text-xl md:text-md max-w-sm font-bold text-gray-900 mb-2 md:mb-0">
                             {{ propertyData.title || propertyData.name }}
                         </h1>
-                        <button
-                            v-if="propertyData.is_claimable"
-                            class="w-full md:w-auto bg-gray-900 text-white px-6 py-3 md:py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
-                            Claim This Home
-                        </button>
-                        <button
-                            class="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors self-center md:self-auto">
-                            <Icon
-                                name="lucide:heart"
-                                class="w-5 h-5 text-gray-600" />
-                        </button>
+                        <div
+                            class="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 w-full md:w-auto">
+                            <button
+                                class="w-full md:w-auto bg-[#18222c] text-white h-[52px] px-5 rounded-xl text-sm font-semibold hover:bg-[#111922] transition-colors flex items-center justify-center">
+                                Claim This Home
+                            </button>
+                            <button
+                                class="h-[52px] w-[52px] bg-[#f0f1f3] rounded-xl flex items-center justify-center hover:bg-[#e6e8eb] transition-colors self-center md:self-auto">
+                                <Icon
+                                    name="lucide:heart"
+                                    class="w-6 h-6 text-[#121a22]" />
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="bg-white rounded-lg p-3 md:p-3">
-                        <div
-                            class="flex justify-between items-center space-x-2 md:space-x-4">
+                    <div class="bg-white rounded-xl p-4 flex flex-col gap-6">
+                        <div class="flex flex-col sm:flex-row gap-3">
                             <div
-                                class="flex-1 flex flex-col items-center bg-gray-100 rounded-lg p-3 md:p-4">
-                                <img
-                                    src="/svg/dashboard/card.bed.svg"
-                                    alt="Beds"
-                                    class="w-6 h-6 md:w-8 md:h-8 mb-2" />
+                                class="flex-1 bg-[#FAF9F8] rounded-xl px-8 py-5 flex items-center justify-center">
                                 <div
-                                    class="text-lg md:text-xl font-bold text-gray-900">
-                                    {{ propertyData.beds }}
-                                </div>
-                                <div class="text-xs md:text-sm text-gray-600">
-                                    Beds
+                                    class="flex flex-col items-center justify-center gap-4">
+                                    <img
+                                        src="/svg/dashboard/card.bed.svg"
+                                        alt="Beds"
+                                        class="w-8 h-8" />
+                                    <p
+                                        class="capitalize text-[20px] leading-[28px] font-medium text-[#121A22]">
+                                        {{ propertyData.beds }} Beds
+                                    </p>
                                 </div>
                             </div>
                             <div
-                                class="flex-1 flex flex-col items-center bg-gray-100 rounded-lg p-3 md:p-4">
-                                <img
-                                    src="/svg/dashboard/card-bath.svg"
-                                    alt="Baths"
-                                    class="w-6 h-6 md:w-8 md:h-8 mb-2" />
+                                class="flex-1 bg-[#FAF9F8] rounded-xl px-8 py-5 flex items-center justify-center">
                                 <div
-                                    class="text-lg md:text-xl font-bold text-gray-900">
-                                    {{ propertyData.baths }}
-                                </div>
-                                <div class="text-xs md:text-sm text-gray-600">
-                                    Baths
+                                    class="flex flex-col items-center justify-center gap-4">
+                                    <img
+                                        src="/svg/dashboard/card-bath.svg"
+                                        alt="Baths"
+                                        class="w-8 h-8" />
+                                    <p
+                                        class="capitalize text-[20px] leading-[28px] font-medium text-[#121A22]">
+                                        {{ propertyData.baths }} Baths
+                                    </p>
                                 </div>
                             </div>
                             <div
-                                class="flex-1 flex flex-col items-center bg-gray-100 rounded-lg p-3 md:p-4">
-                                <img
-                                    src="/svg/dashboard/card-cube.svg"
-                                    alt="SqFt"
-                                    class="w-6 h-6 md:w-8 md:h-8 mb-2" />
+                                class="flex-1 bg-[#FAF9F8] rounded-xl px-8 py-5 flex items-center justify-center">
                                 <div
-                                    class="text-lg md:text-xl font-bold text-gray-900">
-                                    {{
-                                        propertyData.sqft
-                                            ? propertyData.sqft.split("/")[0]
-                                            : ""
-                                    }}
-                                </div>
-                                <div class="text-xs md:text-sm text-gray-600">
-                                    Sqft
+                                    class="flex flex-col items-center justify-center gap-4">
+                                    <img
+                                        src="/svg/dashboard/card-cube.svg"
+                                        alt="Sqft"
+                                        class="w-8 h-8" />
+                                    <p
+                                        class="capitalize text-[20px] leading-[28px] font-medium text-[#121A22]">
+                                        {{ sqftValue }}Sqft
+                                    </p>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="py-4 md:pt-6">
-                            <p
-                                class="text-gray-700 leading-relaxed text-sm mb-4">
+                        <div class="flex flex-col gap-3">
+                            <p class="text-[#283849] text-base leading-6">
                                 {{ propertyData.description }}
                             </p>
                             <button
@@ -591,42 +637,53 @@
                                     propertyData.description &&
                                     propertyData.description.length > 300
                                 "
-                                class="text-gray-900 font-medium hover:underline text-sm">
+                                type="button"
+                                class="text-[#2C3E50] font-bold text-base">
                                 See More...
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="pt-4">
+                <div class="pt-4 flex flex-col gap-6">
                     <div
-                        class="flex rounded-lg mb-2 bg-white space-x-2 md:space-x-6 px-3 md:px-3 py-3 overflow-x-auto">
+                        class="flex items-center gap-3 rounded-lg bg-white p-1.5 overflow-x-auto">
                         <button
                             :class="[
-                                'whitespace-nowrap pb-2 px-3 py-2 rounded-md font-medium text-xs md:text-sm transition-colors hover:bg-black hover:text-white flex-shrink-0',
+                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-4 py-3',
                                 activeTab === 'Insights'
-                                    ? 'bg-black  text-white'
-                                    : ' text-gray-500 ',
+                                    ? 'bg-[#18222c] text-white px-5 hover:bg-[#111922]'
+                                    : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
                             ]"
                             @click="activeTab = 'Insights'">
                             Insights
                         </button>
                         <button
                             :class="[
-                                'whitespace-nowrap pb-2 px-3 py-2 rounded-md font-medium text-xs md:text-sm transition-colors hover:bg-black hover:text-white flex-shrink-0',
+                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-4 py-3',
+                                activeTab === 'Loan'
+                                    ? 'bg-[#18222c] text-white px-5 hover:bg-[#111922]'
+                                    : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
+                            ]"
+                            @click="activeTab = 'Loan'">
+                            Loan Eligibility
+                        </button>
+                        <button
+                            :class="[
+                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-4 py-3',
                                 activeTab === 'Features'
-                                    ? 'bg-black  text-white'
-                                    : 'text-gray-500 ',
+                                    ? 'bg-[#18222c] text-white px-5 hover:bg-[#111922]'
+                                    : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
                             ]"
                             @click="activeTab = 'Features'">
                             Features
                         </button>
                         <button
                             :class="[
-                                'whitespace-nowrap pb-2 px-3 py-2 rounded-md font-medium text-xs md:text-sm transition-colors hover:bg-black hover:text-white flex-shrink-0',
+                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-4 py-3',
                                 activeTab === 'Maps'
-                                    ? 'bg-black  text-white'
-                                    : 'text-gray-500 ',
+                                    ? 'bg-[#18222c] text-white px-5 hover:bg-[#111922]'
+                                    : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
                             ]"
                             @click="activeTab = 'Maps'">
                             Maps
@@ -635,34 +692,76 @@
 
                     <div
                         v-if="activeTab === 'Insights'"
-                        class="bg-white rounded-lg p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">
-                            {{ tabInsights.title }}
-                        </h3>
-                        <p class="text-gray-600 mb-6 text-sm">
-                            {{ tabInsights.subtitle }}
-                        </p>
-
-                        <div class="space-y-4">
-                            <div
-                                v-for="item in tabInsights.items"
-                                :key="item.id"
-                                class="flex items-start justify-between py-3 border-b border-gray-200 last:border-b-0">
-                                <span class="text-gray-700 font-medium text-sm">
-                                    {{ item.label }}
-                                </span>
-                                <span class="text-gray-900 text-sm text-right">
-                                    {{ item.value }}
-                                </span>
-                            </div>
+                        class="bg-white rounded-xl p-4 flex flex-col gap-5">
+                        <div class="flex flex-col gap-3">
+                            <h3
+                                class="text-2xl font-semibold text-[#121A22] leading-8">
+                                {{ tabInsights.title }}
+                            </h3>
+                            <p class="text-sm text-[#283849] leading-5">
+                                {{ tabInsights.subtitle }}
+                            </p>
                         </div>
 
-                        <div class="mt-6 text-right">
+                        <div
+                            class="bg-[#FAF9F8] rounded-[10px] p-5 flex flex-col gap-4">
+                            <template
+                                v-for="(item, index) in tabInsights.items"
+                                :key="item.id">
+                                <div
+                                    class="flex items-start justify-between text-[#283849] text-base leading-6">
+                                    <p class="font-medium flex-1 pr-4">
+                                        {{ item.label }}
+                                    </p>
+                                    <p
+                                        class="font-bold text-right w-full sm:w-[340px]">
+                                        {{ item.value }}
+                                    </p>
+                                </div>
+                                <div
+                                    v-if="
+                                        index !== tabInsights.items.length - 1
+                                    "
+                                    class="h-px w-full bg-[#EAECEE]"></div>
+                            </template>
+                        </div>
+
+                        <div class="flex justify-end">
                             <button
-                                class="bg-gray-900 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                                class="bg-[#121A22] text-white px-4 py-3 rounded-lg text-sm font-bold leading-5">
                                 {{ tabInsights.downloadButtonText }}
                             </button>
                         </div>
+                    </div>
+
+                    <div
+                        v-if="activeTab === 'Loan'"
+                        class="bg-white rounded-lg p-6">
+                        <h3 class="text-2xl font-semibold text-[#121a22] mb-5">
+                            VA Loan Estimate
+                        </h3>
+                        
+                        <div class="bg-[#f7f7f8] rounded-lg p-5 mb-5">
+                            <div class="space-y-6">
+                                <div
+                                    v-for="item in tabLoanEligibility.items"
+                                    :key="item.id"
+                                    class="flex items-start justify-between">
+                                    <span class="text-[#283849] font-medium text-base">
+                                        {{ item.label }}
+                                    </span>
+                                    <span
+                                        class="text-[#283849] text-xl font-bold italic text-right">
+                                        {{ item.value }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-3.5 px-5 rounded-xl text-sm font-bold transition-colors">
+                            Check Your Eligibility
+                        </button>
                     </div>
 
                     <div
@@ -692,10 +791,34 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">
                             {{ tabMaps.title }}
                         </h3>
-                        <div class="bg-gray-100 rounded-lg p-8 text-center">
-                            <p class="text-gray-600">
-                                {{ tabMaps.placeholder }}
-                            </p>
+                        <div
+                            v-if="tabMaps.mapUrl"
+                            class="space-y-4">
+                            <div class="rounded-lg overflow-hidden">
+                                <iframe
+                                    :src="tabMaps.mapUrl"
+                                    width="100%"
+                                    height="400"
+                                    style="border: 0"
+                                    allowfullscreen=""
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
+                            <div
+                                v-if="tabMaps.streetViewUrl"
+                                class="text-center">
+                                <a
+                                    :href="tabMaps.streetViewUrl"
+                                    target="_blank"
+                                    class="inline-block bg-gray-900 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                                    View Street View
+                                </a>
+                            </div>
+                        </div>
+                        <div
+                            v-else
+                            class="bg-gray-100 rounded-lg p-8 text-center">
+                            <p class="text-gray-600">Map data not available</p>
                         </div>
                     </div>
                 </div>
@@ -815,7 +938,7 @@
                             <Button
                                 type="submit"
                                 label="Contact Agent"
-                                class="w-full bg-gray-900 hover:bg-gray-800 text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
+                                class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
                         </form>
                     </div>
                 </div>
@@ -840,7 +963,7 @@
                         <Button
                             @click="bookTour"
                             label="Book a Tour"
-                            class="w-full bg-gray-900 hover:bg-gray-800 text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
+                            class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
                     </div>
                 </div>
             </div>
@@ -850,66 +973,41 @@
         <ClientOnly>
             <VideoPlayerModal :adConfig="adConfig" />
 
-            <!-- PrimeVue Gallery Dialog -->
-            <Dialog
-                v-model:visible="showGallery"
-                :modal="true"
-                :style="{width: '60vw', maxWidth: '600px'}"
-                :closable="true"
-                modalClass="p-0"
-                :breakpoints="{'640px': '85vw'}">
-                <template #header>
-                    <div class="flex justify-between items-center w-full">
-                        <div class="font-medium text-gray-900">Photos</div>
-                    </div>
+            <!-- Fullscreen Gallery -->
+            <Galleria 
+                v-model:visible="showGallery" 
+                v-model:activeIndex="galleryActiveIndex"
+                :value="galleryItems" 
+                :responsiveOptions="galleryResponsiveOptions" 
+                :numVisible="9" 
+                containerStyle="max-width: 100%" 
+                :circular="true" 
+                :fullScreen="true" 
+                :showItemNavigators="true"
+                :showThumbnails="true"
+                :closeOnEscape="true">
+                <template #item="slotProps">
+                    <img 
+                        :src="slotProps.item.item" 
+                        :alt="'Property Image'" 
+                        class="w-full h-auto max-h-[85vh] object-contain" 
+                        @click.stop />
                 </template>
-
-                <div class="p-0">
-                    <Galleria
-                        :value="galleryItems"
-                        :circular="true"
-                        :closable="false"
-                        :showThumbnails="true"
-                        :showIndicators="true"
-                        :autoPlay="false"
-                        v-model:activeIndex="galleryActiveIndex"
-                        :numVisible="1"
-                        :responsiveOptions="[
-                            {breakpoint: '991px', numVisible: 4},
-                            {breakpoint: '767px', numVisible: 1},
-                        ]">
-                        <!-- main item template -->
-                        <template #item="{item}">
-                            <img
-                                :src="item.item"
-                                style="
-                                    width: 100%;
-                                    height: auto;
-                                    margin: 0 auto;
-                                    display: block;
-                                    object-fit: contain;
-                                    max-height: 400px;
-                                " />
-                        </template>
-
-                        <!-- thumbnail template -->
-                        <template #thumbnail="{item}">
-                            <img
-                                :src="item.thumbnail"
-                                style="
-                                    width: 60px;
-                                    height: 60px;
-                                    object-fit: cover;
-                                " />
-                        </template>
-                    </Galleria>
-                </div>
-            </Dialog>
+                <template #thumbnail="slotProps">
+                    <img 
+                        :src="slotProps.item.thumbnail" 
+                        :alt="'Thumbnail'" 
+                        class="w-16 h-16 object-cover cursor-pointer" />
+                </template>
+            </Galleria>
         </ClientOnly>
     </div>
 </template>
 
 <style scoped>
+    :deep(.p-galleria){
+        border : none;
+    }
     .line-clamp-2 {
         display: -webkit-box;
         -webkit-line-clamp: 2;

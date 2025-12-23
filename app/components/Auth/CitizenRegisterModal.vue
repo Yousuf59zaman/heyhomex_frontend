@@ -1,5 +1,9 @@
 <script setup lang="ts">
-    const props = defineProps<{modelValue: boolean}>()
+    const props = defineProps<{
+        modelValue: boolean
+        email : string
+        accountType : number
+    }>()
     const visible = ref(props.modelValue)
     watch(
         () => props.modelValue,
@@ -27,6 +31,7 @@
         last_name: string
         password: string
         password_confirmation: string
+        user_type : any
         uuid: string
     }
 
@@ -85,6 +90,7 @@
         last_name: "",
         password: "",
         password_confirmation: "",
+        user_type: props.accountType === 1 ? "advertisers" : props.accountType === 2 ? "agent" : "",
         uuid: getUuid.value?.uuid || "",
     })
 

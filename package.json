@@ -19,7 +19,9 @@
     "@nuxtjs/sitemap": "7.4.7",
     "@nuxtjs/tailwindcss": "6.14.0",
     "@primeuix/themes": "^1.2.5",
+    "@stripe/stripe-js": "^8.6.0",
     "@types/leaflet": "^1.9.21",
+    "@unlok-co/nuxt-stripe": "^5.0.0",
     "chart.js": "^4.5.0",
     "date-fns": "^4.1.0",
     "firebase": "^12.5.0",
@@ -42,6 +44,7 @@
     "@primevue/nuxt-module": "^4.4.0",
     "@types/jwplayer": "^8.31.3",
     "@types/node": "^24.9.1",
+    "baseline-browser-mapping": "^2.9.11",
     "sass-embedded": "^1.93.2"
   }
 }

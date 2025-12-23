@@ -1,4 +1,6 @@
 <script setup>
+    const {citizen_user} = citizenAuth()
+
     const props = defineProps({
         isMobile: {
             type: Boolean,
@@ -8,9 +10,46 @@
 
     defineEmits(["close-menu"])
 
-    const route = useRoute()
-
     const sidebarBackgroundColor = "#2C3E50"
+
+    const getUserName = computed(() => {
+        if (!citizen_user.value) return "User"
+
+        if (citizen_user.value.data?.name) {
+            return citizen_user.value.data.name.split(" ")[0]
+        }
+
+        if (citizen_user.value.data?.first_name) {
+            return citizen_user.value.data.first_name
+        }
+
+        if (citizen_user.value.data?.email) {
+            return citizen_user.value.data.email.split("@")[0]
+        }
+
+        return "User"
+    })
+
+    const getUserInitial = computed(() => {
+        return getUserName.value.charAt(0).toUpperCase()
+    })
+
+    const getUserType = computed(() => {
+        if (
+            citizen_user.value?.data?.user_type &&
+            citizen_user.value.data.user_type.length > 0
+        ) {
+            const userType = citizen_user.value.data.user_type[0]
+            return (
+                userType.name ||
+                userType.slug?.charAt(0).toUpperCase() +
+                    userType.slug?.slice(1) ||
+                "Agent"
+            )
+        }
+
+        return "Agent"
+    })
 
     const navigationItems = ref([
         {
@@ -25,49 +64,49 @@
             label: "Leads",
             icon: "lucide:users",
             iconType: "lucide",
-            path: "/agent/leads",
+            path: "#",
         },
         {
             id: "properties",
             label: "Properties",
             icon: "/svg/menubar/search.svg",
             iconType: "svg",
-            path: "/agent/properties",
+            path: "#",
         },
         {
             id: "analytics",
             label: "Analytics",
             icon: "lucide:bar-chart-3",
             iconType: "lucide",
-            path: "/agent/analytics",
+            path: "#",
         },
         {
             id: "clients",
             label: "Clients",
             icon: "lucide:user-check",
             iconType: "lucide",
-            path: "/agent/clients",
+            path: "#",
         },
         {
             id: "calendar",
             label: "Calendar",
             icon: "lucide:calendar",
             iconType: "lucide",
-            path: "/agent/calendar",
+            path: "#",
         },
         {
             id: "reports",
             label: "Reports",
             icon: "lucide:file-text",
             iconType: "lucide",
-            path: "/agent/reports",
+            path: "#",
         },
         {
             id: "settings",
             label: "Settings",
             icon: "/svg/menubar/setting.svg",
             iconType: "svg",
-            path: "/agent/settings",
+            path: "#",
         },
     ])
 </script>
@@ -76,13 +115,15 @@
     <!-- Desktop Sidebar -->
     <aside
         v-if="!isMobile"
-        class="h-full w-[69px] flex flex-col items-center py-4"
+       class="h-full w-[69px] flex flex-col items-center py-7"
         :style="{backgroundColor: sidebarBackgroundColor}">
         <div class="mb-8">
-            <img
-                src="/images/home/home_logo.png"
-                alt="HeyHome Logo"
-                class="h-8 w-8 rounded" />
+            <NuxtLink to="/agent">
+                <img
+                   src="/svg/dashboard/home_logo.svg"
+                    alt="HeyHome Logo"
+                    class="h-8 w-8 rounded" />
+            </NuxtLink>
         </div>
 
         <nav class="flex-1">
@@ -163,11 +204,15 @@
             <div class="flex items-center space-x-3">
                 <div
                     class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                    <span class="text-white text-sm font-medium">A</span>
+                    <span class="text-white text-sm font-medium">{{
+                        getUserInitial
+                    }}</span>
                 </div>
                 <div class="flex-1">
-                    <p class="text-sm font-medium text-white">Agent Name</p>
-                    <p class="text-xs text-white/70">Real Estate Agent</p>
+                    <p class="text-sm font-medium text-white">
+                        {{ getUserName }}
+                    </p>
+                    <p class="text-xs text-white/70">{{ getUserType }}</p>
                 </div>
             </div>
         </div>

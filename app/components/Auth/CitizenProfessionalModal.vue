@@ -33,14 +33,60 @@
 
     const errorMessage = ref("")
     const isSubmitting = ref(false)
+    const isLoadingProfessions = ref(false)
 
-    const professionalTypes = [
-        {label: "Real Estate Agent", value: "agent"},
-        {label: "Real Estate Broker", value: "broker"},
-        {label: "Property Manager", value: "property_manager"},
-        {label: "Developer", value: "developer"},
-        {label: "Investor", value: "investor"},
-    ]
+    const professionalTypes = ref<Array<{label: string; value: string}>>([])
+
+    type OnboardResponse = {
+        status: string
+        data: {
+            user_type?: Array<{slug?: string}>
+        }
+    }
+
+    type ProfessionResponse = {
+        status: string
+        message: string
+        data: Array<{
+            id: number
+            name: string
+            status: number
+            status_label: string
+        }>
+    }
+
+    // Fetch professions from API
+    const loadProfessions = async () => {
+        isLoadingProfessions.value = true
+        try {
+            const response = await $fetchCMS<ProfessionResponse>("admin/professions/all/active", {
+                method: 'GET'
+            })
+            if (response.status === "success" && response.data) {
+                professionalTypes.value = response.data.map(profession => ({
+                    label: profession.name,
+                    value: profession.id.toString()
+                }))
+            }
+        } catch (error) {
+            console.error("Failed to load professions:", error)
+            // Fallback to empty array if API fails
+            professionalTypes.value = []
+        } finally {
+            isLoadingProfessions.value = false
+        }
+    }
+
+    // Load professions when modal opens
+    watch(
+        () => props.modelValue,
+        (newVal) => {
+            if (newVal && professionalTypes.value.length === 0) {
+                loadProfessions()
+            }
+        },
+        { immediate: true }
+    )
 
     
 
@@ -70,13 +116,27 @@
         isSubmitting.value = true
 
         try {
-            await new Promise((resolve) => setTimeout(resolve, 1000))
+            const response = await $fetchCMS<OnboardResponse>("/v1/other-user-type/onboard", {
+                method: "POST",
+                body: {
+                    profession_id: formData.professionalType,
+                    license_number: formData.licenseNumber,
+                    broker_id: formData.brokerId,
+                    zip_code: formData.zipCode,
+                    mobile: formData.mobilePhone,
+                    extension: formData.extension,
+                }
+            })
 
-            console.log("Professional info submitted:", formData)
-            emit("next", formData)
+            if (response.status === "success") {
+                // Redirect to dashboard based on user type
+                const redirectSlug = response.data.user_type?.[0]?.slug || "kamaina"
+                const targetPath = redirectSlug === "kamaaina" ? "/kamaina/" : `/${redirectSlug}/`
+                window.location.href = targetPath
+            }
         } catch (error: any) {
             errorMessage.value =
-                error.message || "Failed to submit professional information"
+                error.data?.message || error.message || "Failed to submit professional information"
         } finally {
             isSubmitting.value = false
         }
@@ -159,6 +219,8 @@
                             optionLabel="label"
                             optionValue="value"
                             placeholder="Select type"
+                            :loading="isLoadingProfessions"
+                            :disabled="isLoadingProfessions"
                             class="w-full"
                             :pt="{
                                 root: 'w-full h-14',

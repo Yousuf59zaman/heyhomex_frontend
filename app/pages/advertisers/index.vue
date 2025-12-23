@@ -1,7 +1,5 @@
 <script setup>
-    definePageMeta({
-        layout: 'advisor',
-    });
+    definePageMeta({middleware: ["auth-citizen"], layout: "agent"})
 
     // KPI data
     const kpis = ref([
@@ -108,18 +106,18 @@
 <template>
     <div class="space-y-6">
         <!-- KPI Cards -->
-        <CommonAdvisorKPICards :kpis="kpis" />
+        <CommonAdvertiserKPICards :kpis="kpis" />
 
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Left Column - Performance Chart -->
             <div class="lg:col-span-7">
-                <CommonAdvisorPerformanceChart :period="chartPeriod" />
+                <CommonAdvertiserPerformanceChart :period="chartPeriod" />
             </div>
 
             <!-- Right Column - Recent Activities -->
             <div class="lg:col-span-5">
-                <CommonAdvisorRecentActivities :activities="activities" />
+                <CommonAdvertiserRecentActivities :activities="activities" />
             </div>
         </div>
 
@@ -127,12 +125,12 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Left Column - Targeting Snapshot -->
             <div class="lg:col-span-4">
-                <CommonAdvisorTargetingSnapshot />
+                <CommonAdvertiserTargetingSnapshot />
             </div>
 
             <!-- Right Column - Campaign Table -->
             <div class="lg:col-span-8">
-                <CommonAdvisorCampaignTable :campaigns="campaigns" />
+                <CommonAdvertiserCampaignTable :campaigns="campaigns" />
             </div>
         </div>
     </div>

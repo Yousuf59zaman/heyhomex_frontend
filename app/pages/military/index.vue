@@ -2,6 +2,7 @@
     useHead({title: "Military Panel"})
     definePageMeta({middleware: ["auth-citizen"], layout: "citizen"})
 
+    const toast = useToast()
     const hydrated = ref(false)
 
     const properties = ref([])
@@ -23,7 +24,8 @@
     const chartPeriod = ref("weekly")
 
     const savedHomeItems = ref([])
-
+    const loadingFavorites = ref(false)
+    
     const showConfirmModal = ref(false)
     const itemToRemove = ref(null)
 
@@ -365,7 +367,7 @@
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="flex flex-col gap-6">
         <!-- Search Filter Section Skeleton BEFORE hydration -->
         <div
             v-if="!hydrated"

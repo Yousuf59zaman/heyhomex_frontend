@@ -73,13 +73,21 @@
         else return "/investor"
     })
 
-    const navigationItems = computed(() => [
+    // Main navigation items (above separator line) - order matches Figma design
+    const mainNavigationItems = computed(() => [
         {
             id: "dashboard",
             label: "Dashboard",
             icon: "/svg/menubar/dashboard.svg",
             iconType: "svg",
             path: getBasePath.value,
+        },
+        {
+            id: "favourites",
+            label: "Favourites",
+            icon: "/svg/menubar/favourite.svg",
+            iconType: "svg",
+            path: `${getBasePath.value}/favorites`,
         },
         {
             id: "Search",
@@ -93,14 +101,7 @@
             label: "Videos",
             icon: "/svg/menubar/video.svg",
             iconType: "svg",
-            path: `#`,
-        },
-        {
-            id: "favourites",
-            label: "Favourites",
-            icon: "/svg/menubar/favourite.svg",
-            iconType: "svg",
-            path: `${getBasePath.value}/favorites`,
+            path: `${getBasePath.value}/videos`,
         },
         {
             id: "reports",
@@ -109,13 +110,21 @@
             iconType: "svg",
             path: `#`,
         },
-        {
-            id: "settings",
-            label: "Settings",
-            icon: "/svg/menubar/setting.svg",
-            iconType: "svg",
-            path: `#`,
-        },
+    ])
+
+    // Settings item (below separator line)
+    const settingsItem = computed(() => ({
+        id: "settings",
+        label: "Settings",
+        icon: "/svg/menubar/setting.svg",
+        iconType: "svg",
+        path: `${getBasePath.value}/settings`,
+    }))
+
+    // All navigation items for mobile (combined, no separator)
+    const navigationItems = computed(() => [
+        ...mainNavigationItems.value,
+        settingsItem.value,
     ])
 </script>
 
@@ -125,20 +134,21 @@
         v-if="!isMobile"
         class="h-full w-[69px] flex flex-col items-center py-7"
         :style="{backgroundColor: sidebarColor}">
-        <div class="mb-8">
+        <div class="mb-6 subscription-glow">
             <NuxtLink :to="`${getBasePath}/subscription`">
+                <div class="glow-ring"></div>
                 <img
                     src="/svg/dashboard/home_logo.svg"
                     alt="HeyHome Logo"
-                    class="h-8 w-8 rounded cursor-pointer hover:opacity-80 transition-opacity" />
+                    class="h-8 w-8 rounded cursor-pointer hover:opacity-80 transition-opacity relative z-10" />
             </NuxtLink>
         </div>
 
         <!-- Navigation Icons -->
-        <nav class="flex-1">
-            <ul class="space-y-4">
+        <nav class="flex-1 flex flex-col">
+            <ul class="space-y-2.5">
                 <li
-                    v-for="item in navigationItems"
+                    v-for="item in mainNavigationItems"
                     :key="item.id">
                     <NuxtLink
                         :to="item.path"
@@ -156,6 +166,20 @@
                     </NuxtLink>
                 </li>
             </ul>
+
+            <!-- Separator Line -->
+            <div class="my-3 mx-auto w-10 h-px bg-white/30"></div>
+
+            <!-- Settings -->
+            <NuxtLink
+                :to="settingsItem.path"
+                class="sidebar-link flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 mx-auto"
+                active-class="sidebar-link-active">
+                <img
+                    :src="settingsItem.icon"
+                    :alt="settingsItem.label"
+                    class="sidebar-icon w-5 h-5" />
+            </NuxtLink>
         </nav>
     </aside>
 
@@ -190,7 +214,7 @@
                     :key="item.id">
                     <NuxtLink
                         :to="item.path"
-                        class="mobile-sidebar-link flex items-center space-x-3 w-full px-3 py-2 rounded-lg transition-all duration-200"
+                        class="mobile-sidebar-link flex items-center space-x-2.5 w-full px-3 py-2 rounded-lg transition-all duration-200"
                         active-class="mobile-sidebar-link-active"
                         @click="$emit('close-menu')">
                         <Icon
@@ -234,7 +258,7 @@
     }
 
     .sidebar-link .sidebar-icon {
-        filter: brightness(0) invert(1) opacity(0.6);
+        filter: brightness(0) invert(1) opacity(0.8);
         transition: all 0.2s ease;
     }
 
@@ -292,5 +316,44 @@
 
     .mobile-sidebar-link-active .mobile-sidebar-icon {
         filter: brightness(0) saturate(100%) invert(100%) !important;
+    }
+
+    /* Subscription button glow effect */
+    .subscription-glow {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .glow-ring {
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
+        animation: pulse-ring 1.5s ease-in-out infinite;
+        z-index: 1;
+    }
+
+    @keyframes pulse-ring {
+        0%, 100% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.7;
+            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8),
+                        0 0 15px 3px rgba(255, 255, 255, 0.6),
+                        0 0 25px 5px rgba(255, 255, 255, 0.4);
+        }
+        50% {
+            transform: translate(-50%, -50%) scale(1.15);
+            opacity: 1;
+            box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.5),
+                        0 0 25px 8px rgba(255, 255, 255, 0.8),
+                        0 0 40px 12px rgba(255, 255, 255, 0.6),
+                        0 0 55px 15px rgba(255, 255, 255, 0.4);
+        }
     }
 </style>
