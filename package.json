@@ -44,6 +44,7 @@
     "@primevue/nuxt-module": "^4.4.0",
     "@types/jwplayer": "^8.31.3",
     "@types/node": "^24.9.1",
+    "baseline-browser-mapping": "^2.9.11",
     "sass-embedded": "^1.93.2"
   }
 }
