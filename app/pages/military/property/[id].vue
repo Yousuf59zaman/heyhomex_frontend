@@ -737,27 +737,31 @@
                     <div
                         v-if="activeTab === 'Loan'"
                         class="bg-white rounded-lg p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">
-                            {{ tabLoanEligibility.title }}
+                        <h3 class="text-2xl font-semibold text-[#121a22] mb-5">
+                            VA Loan Estimate
                         </h3>
-                        <p class="text-gray-600 mb-6 text-sm">
-                            {{ tabLoanEligibility.subtitle }}
-                        </p>
-
-                        <div class="space-y-4">
-                            <div
-                                v-for="item in tabLoanEligibility.items"
-                                :key="item.id"
-                                class="flex items-start justify-between py-3 border-b border-gray-200 last:border-b-0">
-                                <span class="text-gray-700 font-medium text-sm">
-                                    {{ item.label }}
-                                </span>
-                                <span
-                                    class="text-gray-900 text-sm text-right font-semibold">
-                                    {{ item.value }}
-                                </span>
+                        
+                        <div class="bg-[#f7f7f8] rounded-lg p-5 mb-5">
+                            <div class="space-y-6">
+                                <div
+                                    v-for="item in tabLoanEligibility.items"
+                                    :key="item.id"
+                                    class="flex items-start justify-between">
+                                    <span class="text-[#283849] font-medium text-base">
+                                        {{ item.label }}
+                                    </span>
+                                    <span
+                                        class="text-[#283849] text-xl font-bold italic text-right">
+                                        {{ item.value }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
+
+                        <button
+                            class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-3.5 px-5 rounded-xl text-sm font-bold transition-colors">
+                            Check Your Eligibility
+                        </button>
                     </div>
 
                     <div
@@ -934,7 +938,7 @@
                             <Button
                                 type="submit"
                                 label="Contact Agent"
-                                class="w-full bg-gray-900 hover:bg-gray-800 text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
+                                class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
                         </form>
                     </div>
                 </div>
@@ -959,7 +963,7 @@
                         <Button
                             @click="bookTour"
                             label="Book a Tour"
-                            class="w-full bg-gray-900 hover:bg-gray-800 text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
+                            class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
                     </div>
                 </div>
             </div>

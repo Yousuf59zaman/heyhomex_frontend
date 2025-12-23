@@ -57,7 +57,6 @@ const subscriptionData = ref(null)
 
 
 const checkIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M16.6668 5L7.50016 14.1667L3.3335 10' stroke='%23121A22' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
-const limitedCheckIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M16.6668 5L7.50016 14.1667L3.3335 10' stroke='%23999999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
 const whiteCheckIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M16.6668 5L7.50016 14.1667L3.3335 10' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
 
 
@@ -271,14 +270,12 @@ const confirmCancelSubscription = async () => {
     }
 }
 
-
 const handleChangePassword = () => {
     showChangePasswordModal.value = true
 }
 
 const handlePasswordChangeSuccess = () => {
     console.log('Password changed successfully')
-
 }
 
 const handleProfileUpdated = (profileData) => {

@@ -695,7 +695,8 @@
                         v-if="activeTab === 'Features'"
                         class="bg-white p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                            {{ tabFeatures.title }}
+                            <!-- {{ tabFeatures.title }} -->
+                            Features & Advantages
                         </h3>
                         <div class="space-y-3">
                             <div
@@ -866,7 +867,7 @@
                             <Button
                                 type="submit"
                                 label="Contact Agent"
-                                class="w-full bg-gray-900 hover:bg-gray-800 text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
+                                class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
                         </form>
                     </div>
                 </div>
@@ -891,7 +892,7 @@
                         <Button
                             @click="bookTour"
                             label="Book a Tour"
-                            class="w-full bg-gray-900 hover:bg-gray-800 text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
+                            class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
                     </div>
                 </div>
             </div>

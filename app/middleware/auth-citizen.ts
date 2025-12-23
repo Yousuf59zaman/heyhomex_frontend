@@ -1,10 +1,10 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
     const citizen_user = citizenUser()
-    console.log("ciz", citizen_user)
+    // console.log("ciz", citizen_user)
 
     if (!citizen_user.value) return navigateTo("/", {replace: true})
 
-    const userRole = (citizen_user.value as any)?.data.user_role
+    // const userRole = (citizen_user.value as any)?.data.user_role
     const userTypeSlug = (citizen_user.value as any)?.data.user_type?.[0]?.slug
 
     const pathSegment = to.path.split("/")[1]
@@ -26,7 +26,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         //     allowedSegment =
         //         userTypeSlug === "kamaaina" ? "kamaina" : userTypeSlug
         // }
-        console.log('user type segment' ,  userTypeSlug)
+        // console.log('user type segment' ,  userTypeSlug)
        if (userTypeSlug) {
             allowedSegment =
                 userTypeSlug === "kamaaina" ? "kamaina" : userTypeSlug

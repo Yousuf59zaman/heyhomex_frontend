@@ -868,7 +868,7 @@
                             <Button
                                 type="submit"
                                 label="Contact Agent"
-                                class="w-full bg-gray-900 hover:bg-gray-800 text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
+                                class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
                         </form>
                     </div>
                 </div>
@@ -893,7 +893,7 @@
                         <Button
                             @click="bookTour"
                             label="Book a Tour"
-                            class="w-full bg-gray-900 hover:bg-gray-800 text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
+                            class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
                     </div>
                 </div>
             </div>
