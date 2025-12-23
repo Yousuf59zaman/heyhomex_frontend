@@ -46,12 +46,13 @@
             validations_errors.value = ""
 
             const {first_name, last_name, social_media_id} = props.ssoData
-            const role_id = selectedAccountType.value
+            const role_id = 3 
+            const user_type = selectedAccountType.value === 1 ? 4 : selectedAccountType.value === 2 ? 5 : "";
 
             try {
                 const response: any = await $fetchCitizen("/admin/login", {
                     method: "POST",
-                    body: {social_media_id, first_name, last_name, role_id},
+                    body: {social_media_id, first_name, last_name, role_id , user_type},
                 })
 
                 const userData = response?.data
