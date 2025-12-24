@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import auth from '~~/server/api/auth';
+
     interface Props {
         isOpenStartModal: boolean
         initialStep?: number
@@ -18,6 +20,7 @@
     const otpSource = ref<string>("")
     const typeSource = ref<string>("")
     const ssoData = ref({})
+    const authType = ref<string>("")
 
     const isGetStartedVisible = ref(false)
     const isSendEmailVisible = ref(false)
@@ -140,11 +143,42 @@
         //     closeJourney()
         //     navigateTo("/kamaina/")
         // }
-        if (needsOnboardingCheck && accountType.value == 3) {
-            activeIndex.value = 7
-        } else {
-            activeIndex.value = 5
+        if(authType.value === "sso"){
+                if (needsOnboardingCheck && accountType.value == 3) {
+                    activeIndex.value = 7
+                } else{
+                    activeIndex.value = 5
+                }
         }
+        else{
+                if (needsOnboardingCheck && accountType.value == 3) {
+                    activeIndex.value = 7
+                } else if(needsOnboardingCheck && (accountType.value == 1 || accountType.value == 2)) {
+                    activeIndex.value = 5
+                }
+                else{
+                    activeIndex.value = 7
+                }
+        }
+        // console.log('nneed onboarding' , needsOnboarding.value)
+        // console.log('otp source dsd' , accountType.value)
+        // if (needsOnboardingCheck && accountType.value == 3) {
+        //     activeIndex.value = 7
+        // } else if(needsOnboardingCheck && (accountType.value == 1 || accountType.value == 2)) {
+        //     activeIndex.value = 5
+        // }
+        // else{
+        //     activeIndex.value = 7
+        // }
+    }
+
+    const handleAccountType = (data: any) => {
+        console.log('calling account tyoe' , data)
+        accountType.value = data;
+    }
+    const handleAuthType = (data: any) => {
+        console.log('calling auth tyoe' , data)
+        authType.value = data;
     }
 
     const handleOnboardingComplete = (data: any): void => {
@@ -218,6 +252,8 @@
                 v-model="isAccountTypeVisible"
                 :source="typeSource"
                 :ssoData="ssoData"
+                @account-type="handleAccountType"
+                @auth-type="handleAuthType"
                 @login-success="handleLoginSuccess"
                 @next="handleAccountTypeNext"
                 @back="handleBack"
