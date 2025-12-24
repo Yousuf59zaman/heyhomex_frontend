@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import auth from '~~/server/api/auth';
+// import auth from '~~/server/api/auth';
 
     interface Props {
         isOpenStartModal: boolean
