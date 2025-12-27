@@ -2,7 +2,7 @@
 import { loadStripe } from '@stripe/stripe-js'
 
 useHead({ title: "Subscription - Agent Panel" })
-definePageMeta({ middleware: ["auth-citizen"], layout: "citizen" })
+definePageMeta({ middleware: ["auth-citizen"], layout: "agent" })
 
 
 const activeTab = ref('subscription')

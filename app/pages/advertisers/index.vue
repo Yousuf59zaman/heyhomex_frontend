@@ -1,5 +1,5 @@
 <script setup>
-    definePageMeta({middleware: ["auth-citizen"], layout: "agent"})
+    definePageMeta({middleware: ["auth-citizen"], layout: "advertiser"})
 
     // KPI data
     const kpis = ref([
