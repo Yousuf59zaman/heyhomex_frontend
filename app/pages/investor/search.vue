@@ -100,6 +100,9 @@ const handleTabClick = (tab) => {
 
 <template>
     <div class="space-y-4 lg:space-y-6">
+        <!-- Top Banner Ad -->
+        <AdvertisementDisplay placement-slug="investor-search-top-banner" />
+
         <!-- Skeleton BEFORE hydration -->
         <template v-if="!hydrated">
             <!-- Tab Navigation Skeleton -->

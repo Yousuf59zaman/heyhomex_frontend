@@ -1,0 +1,231 @@
+<script setup>
+const props = defineProps({
+    isOpenModal: Boolean,
+    modalTitle: String,
+    item: Object,
+    data: Array,
+});
+
+const emit = defineEmits(['add_emit', 'close']);
+
+const visible = ref(props.isOpenModal);
+watch(() => props.isOpenModal, (newVal) => {
+    visible.value = newVal;
+});
+
+const formData = ref({
+    id: null,
+    name: '',
+    slug: '',
+    status: 1,
+});
+
+const isChecked = ref(false);
+
+watch(() => props.item, (value) => {
+    if (value && Object.keys(value).length > 0) {
+        validations_errors.value = {};
+        formData.value = {
+            id: value.id || null,
+            name: value.name || '',
+            slug: value.slug || '',
+            status: value.status ?? 1,
+        };
+        isChecked.value = value.status == 1 ? true : false;
+    } else {
+        formData.value = {
+            id: null,
+            name: '',
+            slug: '',
+            status: 1,
+        };
+        isChecked.value = true;
+    }
+}, { immediate: true });
+
+const validations_errors = ref({});
+const skip_validations = ref([
+    'id',
+    'status',
+]);
+
+const isLoading = ref(false);
+const response_modal = ref({});
+
+const handleCheckboxChange = () => {
+    formData.value.status = isChecked.value ? 1 : 0;
+};
+
+const updateHandler = async () => {
+    validations_errors.value = {};
+    const errors = Object.keys(formData.value).filter(item => !formData.value[item] && !skip_validations.value.includes(item));
+    if (errors.length > 0) {
+        errors.map(item => {
+            validations_errors.value[item] = `${item.replaceAll('_', ' ')} is required`;
+        });
+        return;
+    }
+
+    try {
+        isLoading.value = true;
+        const submitData = {
+            ...formData.value,
+            _method: 'PATCH'
+        };
+        
+        const getData = await $fetchAdmin(`admin/ads-places/${props.item.id}/update`, {
+            method: 'POST',
+            body: submitData
+        });
+        
+        response_modal.value = getData;
+        if (getData.status == true || getData.status == 'success') {
+            emit('add_emit', getData.data);
+        }
+    } catch (e) {
+        console.log('Get Message', e.message);
+        if (e.response?.status === 422) {
+            if (e.response?._data?.errors) {
+                for (const key in e.response._data.errors) {
+                    if (e.response._data.errors.hasOwnProperty(key)) {
+                        const value = e.response._data.errors[key][0];
+                        validations_errors.value[key] = value;
+                    }
+                }
+            }
+        } else if (!e.response?.status) {
+            response_modal.value = {
+                status: false,
+                message: 'Something went wrong. Please try again later.',
+            }
+        } else {
+            response_modal.value = {
+                status: e.response._data.status,
+                message: e.response._data.message,
+            }
+        }
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+const createHandler = async () => {
+    validations_errors.value = {};
+    const errors = Object.keys(formData.value).filter(item => !formData.value[item] && !skip_validations.value.includes(item));
+    if (errors.length > 0) {
+        errors.map(item => {
+            validations_errors.value[item] = `${item.replaceAll('_', ' ')} is required`;
+        });
+        return;
+    }
+
+    try {
+        isLoading.value = true;
+        const submitData = {
+            ...formData.value,
+        };
+        
+        const getData = await $fetchAdmin(`admin/ads-places/store`, {
+            method: 'POST',
+            body: submitData,
+        });
+        
+        response_modal.value = getData;
+        if (getData.status == true || getData.status == 'success') {
+            emit('add_emit', getData.data);
+        }
+    } catch (e) {
+        console.log('Get Message', e.message);
+        if (e.response?.status === 422) {
+            if (e.response?._data?.errors) {
+                for (const key in e.response._data.errors) {
+                    if (e.response._data.errors.hasOwnProperty(key)) {
+                        const value = e.response._data.errors[key][0];
+                        validations_errors.value[key] = value;
+                    }
+                }
+            }
+        } else if (!e.response?.status) {
+            response_modal.value = {
+                status: false,
+                message: 'Something went wrong. Please try again later.',
+            }
+        } else {
+            response_modal.value = {
+                status: e.response._data.status,
+                message: e.response._data.message,
+            }
+        }
+    } finally {
+        isLoading.value = false;
+    }
+};
+</script>
+
+<template>
+    <Dialog v-model:visible="visible" modal :closable="false" :style="{ width: '40rem' }"
+        @update:visible="$emit('close')">
+        <template #header>
+            <div class="flex items-center justify-center w-full gap-2">
+                <h4 class="text-xl font-semibold">{{ modalTitle }} Ad Placement</h4>
+            </div>
+        </template>
+        <form class="grid grid-cols-1 gap-4">
+            <div class="flex items-center gap-4">
+                <div class="flex-auto">
+                    <label class="font-semibold">Name</label>
+                    <InputText v-model="formData.name" class="w-full" placeholder="e.g., Dashboard Top Banner"
+                        :class="validations_errors.name ? 'border-[#f44336!important]' : ''" autocomplete="off"
+                        @focus="validations_errors.name = ''" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.name" />
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex-auto">
+                    <label class="font-semibold">Slug</label>
+                    <InputText v-model="formData.slug" class="w-full" placeholder="e.g., dashboard-top-banner"
+                        :class="validations_errors.slug ? 'border-[#f44336!important]' : ''" autocomplete="off"
+                        @focus="validations_errors.slug = ''" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.slug" />
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        Unique identifier for this placement (lowercase, use hyphens)
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <label class="font-semibold">Status</label>
+                <div class="flex-auto">
+                    <ToggleSwitch v-model="isChecked" @change="handleCheckboxChange"
+                        @focus="validations_errors.status = ''" />
+                    <InputError class="text-sm mt-1" :message="validations_errors.status" />
+                </div>
+            </div>
+        </form>
+
+        <template #footer class="flex justify-end gap-2 border-gray-200">
+            <div class="flex justify-end items-center gap-3 border-gray-200">
+                <Button v-if="isLoading" severity="secondary" style="cursor: not-allowed; width: 80px;">
+                    <ProgressSpinner style="width: 25px; height: 25px" strokeWidth="8" animationDuration=".5s" />
+                </Button>
+                <template v-else>
+                    <Button type="button" label="Cancel" severity="danger" outlined
+                        class="transition-all duration-300 hover:scale-105" @click="$emit('close')">
+                        <template #icon="{ class: iconClass }">
+                            <i class="pi pi-times-circle mr-2" :class="iconClass"></i>
+                        </template>
+                    </Button>
+                    <Button type="button" :label="modalTitle === 'Create' ? 'Create' : 'Update'" severity="success"
+                        raised class="transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                        @click="modalTitle === 'Create' ? createHandler() : updateHandler()">
+                        <template #icon="{ class: iconClass }">
+                            <i :class="modalTitle === 'Create' ? 'pi pi-plus-circle mr-2' : 'pi pi-refresh mr-2'"></i>
+                        </template>
+                    </Button>
+                </template>
+            </div>
+        </template>
+    </Dialog>
+    <LazyResponseModal :response_modal="response_modal" />
+</template>
+
+<style lang="scss" scoped></style>

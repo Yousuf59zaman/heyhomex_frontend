@@ -112,6 +112,9 @@ watch(
 
 <template>
     <div class="space-y-4 md:space-y-6 p-4 md:p-6 lg:p-8">
+        <!-- Top Banner Ad -->
+        <AdvertisementDisplay placement-slug="investor-videos-top-banner" />
+
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-xl md:text-2xl font-semibold text-gray-900">Videos</h1>

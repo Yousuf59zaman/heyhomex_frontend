@@ -432,8 +432,17 @@
         <!-- Chart and Saved List Section -->
         <div
             class="flex flex-col lg:grid lg:grid-cols-11 2xl:grid-cols-12 gap-4 lg:gap-2 2xl:gap-6">
+            <!-- Advertisement Placement (Top Banner) -->
+            <div class="lg:col-span-11 2xl:col-span-12">
+                <AdvertisementDisplay 
+                    v-if="hydrated"
+                    placement-slug="investor-dashboard-banner" 
+                    height="200px"
+                />
+            </div>
+
             <!-- Market Chart Skeleton/Real -->
-            <div class="order-1 lg:order-1 lg:col-span-6 2xl:col-span-7">
+            <div class="lg:col-span-6 2xl:col-span-7">
                 <!-- Market Chart Skeleton BEFORE hydration -->
                 <div
                     v-if="!hydrated"
@@ -457,7 +466,7 @@
             </div>
 
             <!-- Saved List Skeleton/Real -->
-            <div class="order-2 lg:order-2 lg:col-span-5 2xl:col-span-5">
+            <div class="lg:col-span-5 2xl:col-span-5">
                 <!-- Saved List Skeleton BEFORE hydration -->
                 <div
                     v-if="!hydrated"

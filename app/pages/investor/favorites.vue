@@ -198,6 +198,9 @@ watch(
 
 <template>
     <div class="space-y-4 md:space-y-6 p-4 md:p-6 lg:p-8">
+        <!-- Top Banner Ad -->
+        <AdvertisementDisplay placement-slug="investor-favorites-top-banner" />
+
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
