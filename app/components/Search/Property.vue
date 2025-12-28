@@ -179,7 +179,7 @@
 
       
         const defaultCenter = [21.3099, -157.8581] 
-        const defaultZoom = 8
+        const defaultZoom = 14
 
         map.value = L.map("property-map").setView(
             defaultCenter,
@@ -240,7 +240,8 @@
         const group = new L.featureGroup(
             markers.value.map(({marker}) => marker)
         )
-        map.value.fitBounds(group.getBounds().pad(0.1))
+        // Fit bounds with minimal padding and maxZoom 14 for ~100km range view
+        map.value.fitBounds(group.getBounds().pad(0.02), {maxZoom: 14, minZoom: 10})
     }
 
     const onMarkerHover = (property, event) => {
@@ -434,7 +435,7 @@
             v-else-if="viewMode === 'Map View'"
             class="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
            
-            <div class="lg:col-span-8">
+            <div class="lg:col-span-7">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
                     <div
                         v-for="property in properties"
@@ -450,7 +451,7 @@
             </div>
 
          
-            <div class="lg:col-span-4">
+            <div class="lg:col-span-5">
                 <div
                     class="bg-white rounded-xl overflow-hidden h-96 lg:h-[600px] lg:sticky lg:top-6">
                     <div class="w-full h-full relative">
