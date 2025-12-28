@@ -1,6 +1,7 @@
 <script setup>
-    import {useVideoPlayer} from "~/composables/useVideoPlayer"
-    const {openVideo} = useVideoPlayer()
+    const router = useRouter()
+    const route = useRoute()
+
     const props = defineProps({
         videos: {
             type: Array,
@@ -10,6 +11,15 @@
             type: Object,
             default: () => ({}),
         },
+    })
+
+    // Get current section from route (kamaina, investor, military)
+    const currentSection = computed(() => {
+        const path = route.path
+        if (path.includes('/kamaina')) return 'kamaina'
+        if (path.includes('/investor')) return 'investor'
+        if (path.includes('/military')) return 'military'
+        return 'kamaina' // default
     })
 
     // Reactive state
@@ -78,7 +88,8 @@
             return
         }
 
-        openVideo(video, props.videos)
+        // Navigate to watch page instead of opening modal
+        router.push(`/${currentSection.value}/watch/${videoId}`)
     }
     const clearSearch = () => {
         searchQuery.value = ""
@@ -237,101 +248,102 @@
                 <div
                     class="flex flex-wrap lg:flex-nowrap items-center gap-2 flex-1">
                     <div class="relative w-full sm:w-auto sm:min-w-[140px]">
-                        <select
-                            v-model="selectedCategory"
+                    <select
+                        v-model="selectedCategory"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
-                            <option
-                                v-for="category in categories"
-                                :key="category"
-                                :value="category">
-                                {{ category }}
-                            </option>
-                        </select>
-                        <Icon
-                            name="lucide:chevron-down"
-                            class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                    </div>
+                        <option
+                            v-for="category in categories"
+                            :key="category"
+                            :value="category">
+                            {{ category }}
+                        </option>
+                    </select>
+                    <Icon
+                        name="lucide:chevron-down"
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </div>
                     <div class="relative w-full sm:w-auto sm:min-w-[140px]">
-                        <select
-                            v-model="selectedDuration"
+                    <select
+                        v-model="selectedDuration"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
-                            <option
-                                v-for="duration in durations"
-                                :key="duration"
-                                :value="duration">
-                                {{ duration }}
-                            </option>
-                        </select>
-                        <Icon
-                            name="lucide:chevron-down"
-                            class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                    </div>
+                        <option
+                            v-for="duration in durations"
+                            :key="duration"
+                            :value="duration">
+                            {{ duration }}
+                        </option>
+                    </select>
+                    <Icon
+                        name="lucide:chevron-down"
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </div>
                     <div class="relative w-full sm:w-auto sm:min-w-[140px]">
-                        <select
-                            v-model="selectedUploadTime"
+                    <select
+                        v-model="selectedUploadTime"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
-                            <option
-                                v-for="time in uploadTimes"
-                                :key="time"
-                                :value="time">
-                                {{ time }}
-                            </option>
-                        </select>
-                        <Icon
-                            name="lucide:chevron-down"
-                            class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                    </div>
+                        <option
+                            v-for="time in uploadTimes"
+                            :key="time"
+                            :value="time">
+                            {{ time }}
+                        </option>
+                    </select>
+                    <Icon
+                        name="lucide:chevron-down"
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </div>
                     <div class="relative w-full sm:w-auto sm:min-w-[140px]">
-                        <select
-                            v-model="selectedTopic"
+                    <select
+                        v-model="selectedTopic"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
-                            <option
-                                v-for="topic in topics"
-                                :key="topic"
-                                :value="topic">
-                                {{ topic }}
-                            </option>
-                        </select>
-                        <Icon
-                            name="lucide:chevron-down"
-                            class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                    </div>
+                        <option
+                            v-for="topic in topics"
+                            :key="topic"
+                            :value="topic">
+                            {{ topic }}
+                        </option>
+                    </select>
+                    <Icon
+                        name="lucide:chevron-down"
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </div>
                     <div class="relative w-full sm:w-auto sm:min-w-[120px]">
-                        <select
-                            v-model="selectedSortBy"
+                    <select
+                        v-model="selectedSortBy"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
-                            <option
-                                v-for="option in sortByOptions"
-                                :key="option"
-                                :value="option">
-                                {{ option }}
-                            </option>
-                        </select>
-                        <Icon
-                            name="lucide:chevron-down"
-                            class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                    </div>
+                        <option
+                            v-for="option in sortByOptions"
+                            :key="option"
+                            :value="option">
+                            {{ option }}
+                        </option>
+                    </select>
+                    <Icon
+                        name="lucide:chevron-down"
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </div>
                 </div>
                 <div class="flex items-center gap-2 lg:min-w-[350px]">
                     <div class="relative flex-1">
-                        <input
-                            v-model="searchQuery"
-                            type="text"
-                            placeholder="Search videos about Hawaii..."
-                            class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                        <button
-                            v-if="searchQuery"
-                            @click="clearSearch"
-                            class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                            <Icon
-                                name="lucide:x"
-                                class="w-4 h-4" />
-                        </button>
-                    </div>
+                    <input
+                        v-model="searchQuery"
+                        type="text"
+                        placeholder="Search videos about Hawaii..."
+                        class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                     <button
-                        class="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors whitespace-nowrap">
-                        Save Search
+                        v-if="searchQuery"
+                        @click="clearSearch"
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <Icon
+                            name="lucide:x"
+                            class="w-4 h-4" />
                     </button>
+                </div>
+                <!-- Save Search button -->
+                <button
+                        class="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors whitespace-nowrap">
+                    Save Search
+                </button>
                 </div>
             </div>
         </div>
@@ -552,9 +564,6 @@
                 </div>
             </div>
         </div>
-        <ClientOnly>
-            <VideoPlayerModal :adConfig="adConfig" />
-        </ClientOnly>
     </div>
 </template>
 

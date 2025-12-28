@@ -482,19 +482,19 @@
                     </span>
                 </div>
 
-                <div class="text-sm text-[#121A22] space-y-2.5 mt-2">
+                <div class="text-sm space-y-3 mt-4">
                     <!-- Minimum 8 characters validation -->
-                    <div class="flex items-center gap-2.5">
+                    <div class="flex items-center gap-2">
                         <span
                             :class="[
-                                'w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-200',
+                                'w-3 h-3 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-200',
                                 hasMinimumLength
-                                    ? 'bg-green-500 border-2 border-green-500'
-                                    : 'border-2 border-gray-400',
+                                    ? 'bg-[#121A22]'
+                                    : 'border border-[#cfdbe8]',
                             ]">
                             <svg
                                 v-if="hasMinimumLength"
-                                class="w-2.5 h-2.5 text-white"
+                                class="w-2 h-2 text-white"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -507,27 +507,27 @@
                         </span>
                         <p
                             :class="[
-                                'leading-relaxed transition-colors duration-200',
+                                'text-sm leading-normal transition-colors duration-200',
                                 hasMinimumLength
-                                    ? 'text-green-600'
-                                    : 'text-gray-600',
+                                    ? 'text-[#121A22]'
+                                    : 'text-[#566573]',
                             ]">
                             Minimum of 8 characters
                         </p>
                     </div>
 
                     <!-- Symbol validation -->
-                    <div class="flex items-center gap-2.5">
+                    <div class="flex items-center gap-2">
                         <span
                             :class="[
-                                'w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-200',
+                                'w-3 h-3 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-200',
                                 hasSymbol
-                                    ? 'bg-green-500 border-2 border-green-500'
-                                    : 'border-2 border-gray-400',
+                                    ? 'bg-[#121A22]'
+                                    : 'border border-[#cfdbe8]',
                             ]">
                             <svg
                                 v-if="hasSymbol"
-                                class="w-2.5 h-2.5 text-white"
+                                class="w-2 h-2 text-white"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -540,25 +540,25 @@
                         </span>
                         <p
                             :class="[
-                                'leading-relaxed transition-colors duration-200',
-                                hasSymbol ? 'text-green-600' : 'text-gray-600',
+                                'text-sm leading-normal transition-colors duration-200',
+                                hasSymbol ? 'text-[#121A22]' : 'text-[#566573]',
                             ]">
                             Must have at least 1 symbol
                         </p>
                     </div>
 
                     <!-- Capital letter validation -->
-                    <div class="flex items-center gap-2.5">
+                    <div class="flex items-center gap-2">
                         <span
                             :class="[
-                                'w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-200',
+                                'w-3 h-3 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-200',
                                 hasCapitalLetter
-                                    ? 'bg-green-500 border-2 border-green-500'
-                                    : 'border-2 border-gray-400',
+                                    ? 'bg-[#121A22]'
+                                    : 'border border-[#cfdbe8]',
                             ]">
                             <svg
                                 v-if="hasCapitalLetter"
-                                class="w-2.5 h-2.5 text-white"
+                                class="w-2 h-2 text-white"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -571,27 +571,27 @@
                         </span>
                         <p
                             :class="[
-                                'leading-relaxed transition-colors duration-200',
+                                'text-sm leading-normal transition-colors duration-200',
                                 hasCapitalLetter
-                                    ? 'text-green-600'
-                                    : 'text-gray-600',
+                                    ? 'text-[#121A22]'
+                                    : 'text-[#566573]',
                             ]">
                             Must have at least 1 capital letter
                         </p>
                     </div>
 
                     <!-- Passwords match validation -->
-                    <div class="flex items-center gap-2.5">
+                    <div class="flex items-center gap-2">
                         <span
                             :class="[
-                                'w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-200',
+                                'w-3 h-3 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-200',
                                 passwordsMatch
-                                    ? 'bg-green-500 border-2 border-green-500'
-                                    : 'border-2 border-gray-400',
+                                    ? 'bg-[#121A22]'
+                                    : 'border border-[#cfdbe8]',
                             ]">
                             <svg
                                 v-if="passwordsMatch"
-                                class="w-2.5 h-2.5 text-white"
+                                class="w-2 h-2 text-white"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -604,10 +604,10 @@
                         </span>
                         <p
                             :class="[
-                                'leading-relaxed transition-colors duration-200',
+                                'text-sm leading-normal transition-colors duration-200',
                                 passwordsMatch
-                                    ? 'text-green-600'
-                                    : 'text-gray-600',
+                                    ? 'text-[#121A22]'
+                                    : 'text-[#566573]',
                             ]">
                             Password and confirm password must be the same
                         </p>
@@ -619,7 +619,7 @@
                     :disabled="loading || !allPasswordValidationsPassed"
                     :loading="loading"
                     loadingIcon="pi pi-spin pi-spinner"
-                    class="w-full h-[3.25rem] px-6 bg-[#18222c] hover:bg-[#101822] disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors duration-200 flex items-center justify-center">
+                    class="w-full h-[3.25rem] px-6 bg-[#121A22] hover:bg-[#101822] disabled:bg-[#9ca3af] disabled:cursor-not-allowed text-white font-bold rounded-xl transition-colors duration-200 flex items-center justify-center">
                     {{ loading ? "Processing..." : "Next" }}
                 </button>
 

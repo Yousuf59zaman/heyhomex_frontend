@@ -120,75 +120,131 @@
                     </div>
 
                     <!-- Password Requirements -->
-                    <div class="flex flex-col gap-1 w-full">
+                    <div class="flex flex-col gap-3 w-full">
                         <div class="flex gap-2 items-center">
                             <div
-                                class="shrink-0 size-4 rounded-lg border transition-all duration-200 flex items-center justify-center"
+                                class="shrink-0 w-3 h-3 rounded-full transition-all duration-200 flex items-center justify-center"
                                 :class="
                                     passwordValidation.minLength
-                                        ? 'border-[#4caf50] bg-[#4caf50]'
-                                        : 'border-[#cfdbe8] bg-white'
+                                        ? 'bg-[#121A22]'
+                                        : 'border border-[#cfdbe8]'
                                 ">
-                                <i
+                                <svg
                                     v-if="passwordValidation.minLength"
-                                    class="fa-solid fa-check text-white text-[10px]"></i>
+                                    class="w-2 h-2 text-white"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="4"
+                                        d="M5 13l4 4L19 7" />
+                                </svg>
                             </div>
                             <p
-                                class="flex-1 text-[#121a22] text-base font-normal leading-[1.6]">
+                                :class="[
+                                    'flex-1 text-sm leading-normal transition-colors duration-200',
+                                    passwordValidation.minLength
+                                        ? 'text-[#121A22]'
+                                        : 'text-[#566573]',
+                                ]">
                                 Minimum of 8 characters
                             </p>
                         </div>
 
                         <div class="flex gap-2 items-center">
                             <div
-                                class="shrink-0 size-4 rounded-lg border transition-all duration-200 flex items-center justify-center"
+                                class="shrink-0 w-3 h-3 rounded-full transition-all duration-200 flex items-center justify-center"
                                 :class="
                                     passwordValidation.hasSymbol
-                                        ? 'border-[#4caf50] bg-[#4caf50]'
-                                        : 'border-[#cfdbe8] bg-white'
+                                        ? 'bg-[#121A22]'
+                                        : 'border border-[#cfdbe8]'
                                 ">
-                                <i
+                                <svg
                                     v-if="passwordValidation.hasSymbol"
-                                    class="fa-solid fa-check text-white text-[10px]"></i>
+                                    class="w-2 h-2 text-white"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="4"
+                                        d="M5 13l4 4L19 7" />
+                                </svg>
                             </div>
                             <p
-                                class="flex-1 text-[#121a22] text-base font-normal leading-[1.6]">
+                                :class="[
+                                    'flex-1 text-sm leading-normal transition-colors duration-200',
+                                    passwordValidation.hasSymbol
+                                        ? 'text-[#121A22]'
+                                        : 'text-[#566573]',
+                                ]">
                                 Must have at least 1 symbol
                             </p>
                         </div>
 
                         <div class="flex gap-2 items-center">
                             <div
-                                class="shrink-0 size-4 rounded-lg border transition-all duration-200 flex items-center justify-center"
+                                class="shrink-0 w-3 h-3 rounded-full transition-all duration-200 flex items-center justify-center"
                                 :class="
                                     passwordValidation.hasCapital
-                                        ? 'border-[#4caf50] bg-[#4caf50]'
-                                        : 'border-[#cfdbe8] bg-white'
+                                        ? 'bg-[#121A22]'
+                                        : 'border border-[#cfdbe8]'
                                 ">
-                                <i
+                                <svg
                                     v-if="passwordValidation.hasCapital"
-                                    class="fa-solid fa-check text-white text-[10px]"></i>
+                                    class="w-2 h-2 text-white"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="4"
+                                        d="M5 13l4 4L19 7" />
+                                </svg>
                             </div>
                             <p
-                                class="flex-1 text-[#121a22] text-base font-normal leading-[1.6]">
+                                :class="[
+                                    'flex-1 text-sm leading-normal transition-colors duration-200',
+                                    passwordValidation.hasCapital
+                                        ? 'text-[#121A22]'
+                                        : 'text-[#566573]',
+                                ]">
                                 Must have at least 1 capital letter
                             </p>
                         </div>
 
                         <div class="flex gap-2 items-center">
                             <div
-                                class="shrink-0 size-4 rounded-lg border transition-all duration-200 flex items-center justify-center"
+                                class="shrink-0 w-3 h-3 rounded-full transition-all duration-200 flex items-center justify-center"
                                 :class="
                                     passwordValidation.passwordsMatch
-                                        ? 'border-[#4caf50] bg-[#4caf50]'
-                                        : 'border-[#cfdbe8] bg-white'
+                                        ? 'bg-[#121A22]'
+                                        : 'border border-[#cfdbe8]'
                                 ">
-                                <i
+                                <svg
                                     v-if="passwordValidation.passwordsMatch"
-                                    class="fa-solid fa-check text-white text-[10px]"></i>
+                                    class="w-2 h-2 text-white"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="4"
+                                        d="M5 13l4 4L19 7" />
+                                </svg>
                             </div>
                             <p
-                                class="flex-1 text-[#121a22] text-base font-normal leading-[1.6]">
+                                :class="[
+                                    'flex-1 text-sm leading-normal transition-colors duration-200',
+                                    passwordValidation.passwordsMatch
+                                        ? 'text-[#121A22]'
+                                        : 'text-[#566573]',
+                                ]">
                                 Password and confirm password must be the same
                             </p>
                         </div>

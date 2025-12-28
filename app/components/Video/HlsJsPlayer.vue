@@ -305,6 +305,7 @@ defineExpose({
 <style scoped>
 .hls-player-wrapper {
     min-height: 200px;
+    isolation: isolate; /* Creates stacking context to contain z-index values */
 }
 
 @media (min-width: 640px) {
@@ -713,7 +714,7 @@ defineExpose({
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 35;
+    z-index: 25; /* Lower than controls (z-index: 30) so buttons work */
     cursor: pointer;
     pointer-events: auto;
 }

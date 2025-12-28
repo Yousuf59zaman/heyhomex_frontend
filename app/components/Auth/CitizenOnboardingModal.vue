@@ -595,7 +595,7 @@ watch(
                         :disabled="!formData.motivation || loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#18222c] hover:bg-[#0F172A] text-white disabled:bg-gray-400">
+                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#121A22] hover:bg-[#0F172A] text-white disabled:opacity-50 disabled:cursor-not-allowed">
                         Next
                     </button>
                 </div>
@@ -660,7 +660,7 @@ watch(
                         :disabled="!formData.budget || loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#18222c] hover:bg-[#0F172A] text-white disabled:bg-gray-400">
+                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#121A22] hover:bg-[#0F172A] text-white disabled:opacity-50 disabled:cursor-not-allowed">
                         Next
                     </button>
                 </div>
@@ -725,7 +725,7 @@ watch(
                         :disabled="!formData.locationType || loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#18222c] hover:bg-[#0F172A] text-white disabled:bg-gray-400">
+                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#121A22] hover:bg-[#0F172A] text-white disabled:opacity-50 disabled:cursor-not-allowed">
                         Next
                     </button>
                 </div>

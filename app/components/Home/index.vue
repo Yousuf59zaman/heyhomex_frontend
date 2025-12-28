@@ -70,7 +70,7 @@
 
                 <p
                     class="text-[14px] leading-[20px] text-white mb-8 sm:text-[16px] sm:leading-[24px] max-w-md">
-                    Where your next chapter begins — Kama‘āina, Military, or
+                    Where your next chapter begins — Kama‘aina, Military, or
                     Investor, your path starts with purpose
                 </p>
 
