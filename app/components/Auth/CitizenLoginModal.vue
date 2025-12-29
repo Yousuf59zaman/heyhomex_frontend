@@ -1,5 +1,4 @@
 ﻿<script setup lang="ts">
-    import {LockClosedIcon, UserIcon} from "@heroicons/vue/24/outline"
     const {login, googleLogin, facebookLogin, appleLogin, citizen_user} =
         citizenAuth()
 
@@ -279,18 +278,17 @@
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
-            <div class="w-full text-center px-6 pt-8 pb-0">
-                <h1 class="text-2xl md:text-3xl lg:text-4xl font-medium text-[#121A22] leading-tight">
-                    Welcome Back!
+            <div class="w-full text-center px-4 sm:px-6 pt-8 md:pt-9 pb-1">
+                <h1 class="text-[1.75rem] sm:text-3xl lg:text-[2.5rem] font-normal text-[#121A22] leading-snug">
+                    Welcome back! Let's get you
+                    <br />
+                    signed in.
                 </h1>
-                <p class="text-base text-[#121A22] leading-6 mt-4">
-                    Sign in to continue your home journey
-                </p>
             </div>
         </template>
 
         <!-- Content -->
-        <div class="px-6 pb-10 pt-10">
+        <div class="px-6 pb-10 pt-6">
             <form @submit.prevent="handleLogin" class="flex flex-col gap-6" autocomplete="off">
                 <div class="flex flex-col gap-2">
                     <label
@@ -298,18 +296,14 @@
                         class="text-base font-medium text-[#121A22] leading-6"
                         >Email Address</label
                     >
-                    <div class="relative">
-                        <UserIcon
-                            class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <LazyInputText
-                            id="email"
-                            v-model="formData.email"
-                            type="email"
-                            placeholder="Enter your email"
-                            required
-                            autocomplete="off"
-                            class="w-full pl-12 pr-4 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
-                    </div>
+                    <LazyInputText
+                        id="email"
+                        v-model="formData.email"
+                        type="email"
+                        placeholder="Enter your email address"
+                        required
+                        autocomplete="off"
+                        class="w-full px-4 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                 </div>
 
                 <div class="flex flex-col gap-2">
@@ -319,8 +313,6 @@
                         >Password</label
                     >
                     <div class="relative">
-                        <LockClosedIcon
-                            class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                         <LazyInputText
                             id="password"
                             v-model="formData.password"
@@ -328,7 +320,7 @@
                             placeholder="Enter your password"
                             required
                             autocomplete="current-password"
-                            class="w-full pl-12 pr-12 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                            class="w-full px-4 pr-12 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                         <button
                             type="button"
                             @click="password_view_status(!password_open)"
@@ -342,29 +334,27 @@
                                 ]"></i>
                         </button>
                     </div>
-                </div>
-
-                <div class="flex items-center justify-between text-base leading-6">
-                    <label class="flex items-center">
-                        <input
-                            type="checkbox"
-                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4" />
-                        <span class="ml-2 text-[#121A22]">Remember me</span>
-                    </label>
-                    <button
-                        type="button"
-                        @click="showForgotPassword"
-                        class="text-blue-600 hover:text-blue-700 font-medium">
-                        Forgot password?
-                    </button>
+                    <div class="text-left">
+                        <button
+                            type="button"
+                            @click="showForgotPassword"
+                            class="text-base text-[#121A22] hover:text-gray-700 font-semibold">
+                            Forgot password?
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Error Message -->
                 <div
                     v-if="validations_errors"
-                    class="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
-                    <i class="pi pi-exclamation-circle text-red-600 mt-0.5"></i>
-                    <p class="text-sm text-red-800">{{ validations_errors }}</p>
+                    class="p-3 bg-[#FEE2E2] border border-[#FECACA] rounded-lg flex items-center justify-between gap-2">
+                    <p class="text-sm text-[#DC2626]">{{ validations_errors }}</p>
+                    <button
+                        type="button"
+                        @click="validations_errors = ''"
+                        class="text-[#DC2626] hover:text-red-800 flex-shrink-0">
+                        <i class="pi pi-times text-sm"></i>
+                    </button>
                 </div>
 
                 <button
@@ -372,8 +362,8 @@
                     :disabled="loading"
                     :loading="loading"
                     loadingIcon="pi pi-spin pi-spinner"
-                    class="w-full px-5 py-3.5 h-[3.25rem] bg-[#18222C] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-bold text-base leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center">
-                    {{ loading ? "Signing In..." : "Sign In" }}
+                    class="w-full px-5 py-3.5 h-[3.25rem] bg-[#0C1822] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-bold text-base leading-6 rounded-lg transition-colors duration-200 flex items-center justify-center">
+                    {{ loading ? "Signing In..." : "Continue" }}
                 </button>
 
                 <div class="relative flex items-center justify-center">
@@ -381,7 +371,7 @@
                         <div class="w-full border-t border-gray-300"></div>
                     </div>
                     <div class="relative px-4 bg-white">
-                        <span class="text-sm text-gray-500"
+                        <span class="text-base text-gray-500"
                             >or continue with</span
                         >
                     </div>
@@ -456,13 +446,13 @@
                 </div>
 
                 <div class="text-center">
-                    <p class="text-sm text-gray-600">
-                        Don't have an account?
+                    <p class="text-base text-[#121A22]">
+                        New to heyhomex?
                         <button
                             type="button"
                             @click="showRegister"
-                            class="text-blue-600 hover:text-blue-700 font-medium">
-                            Create Account
+                            class="text-[#121A22] hover:text-gray-700 font-semibold">
+                            Create account
                         </button>
                     </p>
                 </div>
