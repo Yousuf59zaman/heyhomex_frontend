@@ -45,8 +45,8 @@ export default defineNuxtConfig({
 
             // Stripe Configuration
             STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
-            NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL: process.env.NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL,
-}
+            NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL: process.env.NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL
+        }
     },
     compatibilityDate: "2025-07-15",
     devtools: { enabled: true },
