@@ -108,7 +108,7 @@ const submitHandler = async () => {
             body: {
                 advertisement_id: props.advertisement.id,
                 amount: parseFloat(form.value.amount),
-                payment_method_id: paymentMethod.id // Stripe payment method token
+                payment_method_id: paymentMethod.id 
             }
         });
 

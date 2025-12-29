@@ -24,7 +24,7 @@
     const props = defineProps({
         period: {
             type: String,
-            default: "Yearly",
+            default: "yearly",
         },
         lineGraphData: {
             type: Object,
@@ -35,6 +35,8 @@
             default: false
         }
     })
+
+    const emit = defineEmits(['period-change'])
 
     const chartData = computed(() => {
         if (!props.lineGraphData || !props.lineGraphData.data) {
@@ -84,12 +86,27 @@
             }
         }
 
-        const monthLabels = props.lineGraphData.data.map(item => item.month_name.substring(0, 3))
-        const clicksData = props.lineGraphData.data.map(item => item.clicks)
-        const impressionsData = props.lineGraphData.data.map(item => item.impressions)
+        let labels = []
+        let clicksData = []
+        let impressionsData = []
+
+        // Handle different view types
+        if (props.lineGraphData.view_type === 'weekly') {
+            labels = props.lineGraphData.data.map(item => item.day_short)
+            clicksData = props.lineGraphData.data.map(item => item.clicks)
+            impressionsData = props.lineGraphData.data.map(item => item.impressions)
+        } else if (props.lineGraphData.view_type === 'monthly') {
+            labels = props.lineGraphData.data.map(item => item.month_name.substring(0, 3))
+            clicksData = props.lineGraphData.data.map(item => item.clicks)
+            impressionsData = props.lineGraphData.data.map(item => item.impressions)
+        } else if (props.lineGraphData.view_type === 'yearly') {
+            labels = props.lineGraphData.data.map(item => item.year_label || item.year.toString())
+            clicksData = props.lineGraphData.data.map(item => item.clicks)
+            impressionsData = props.lineGraphData.data.map(item => item.impressions)
+        }
 
         return {
-            labels: monthLabels,
+            labels: labels,
             datasets: [
                 {
                     label: "Clicks",
@@ -191,10 +208,11 @@
             <div v-if="!isLoading" class="relative">
                 <select
                     :value="period"
+                    @change="emit('period-change', $event.target.value)"
                     class="appearance-none bg-white px-4 py-2 pr-8 text-sm text-gray-700 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 cursor-pointer">
-                    <option value="Weekly">Weekly</option>
-                    <option value="Monthly">Monthly</option>
-                    <option value="Yearly">Yearly</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
                 </select>
                 <div
                     class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">

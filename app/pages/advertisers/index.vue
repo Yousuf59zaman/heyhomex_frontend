@@ -142,7 +142,8 @@
     ])
 
     
-    const chartPeriod = ref('Yearly')
+    const chartPeriod = ref('yearly')
+    const chartViewType = ref('yearly')
 
     
     const loadDashboardData = async () => {
@@ -173,10 +174,13 @@
     }
 
     
-    const loadLineGraphData = async () => {
+    const loadLineGraphData = async (viewType = 'yearly') => {
         try {
             const response = await $fetchCitizen('advertiser/advertisements/analytics/line-graph', {
-                method: 'GET'
+                method: 'GET',
+                params: {
+                    view_type: viewType
+                }
             })
             if (response.status === 'success') {
                 lineGraphData.value = response.data
@@ -184,6 +188,12 @@
         } catch (error) {
             console.error('Error loading line graph data:', error)
         }
+    }
+
+    const handlePeriodChange = async (newPeriod) => {
+        chartPeriod.value = newPeriod
+        chartViewType.value = newPeriod
+        await loadLineGraphData(newPeriod)
     }
 
     
@@ -230,7 +240,8 @@
                 <CommonAdvertiserPerformanceChart 
                     :period="chartPeriod" 
                     :lineGraphData="lineGraphData"
-                    :isLoading="isLoading" />
+                    :isLoading="isLoading"
+                    @period-change="handlePeriodChange" />
             </div>
 
             <!-- Right Column - Recent Activities -->
