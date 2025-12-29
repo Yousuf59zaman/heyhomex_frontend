@@ -1,4 +1,6 @@
 <script setup>
+import { loadStripe } from '@stripe/stripe-js'
+
 const props = defineProps({
     isOpenModal: {
         type: Boolean,
@@ -12,6 +14,8 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 
+const config = useRuntimeConfig();
+
 const visible = computed({
     get: () => props.isOpenModal,
     set: (value) => {
@@ -20,32 +24,91 @@ const visible = computed({
 });
 
 const form = ref({
-    amount: '',
-    payment_method_id: 'pm_card_visa'
+    amount: ''
 });
 
 const errors = ref({});
 const isLoading = ref(false);
 const response_modal = ref({});
 
-const paymentMethods = [
-    { value: 'pm_card_visa', label: 'Visa Card' },
-    { value: 'pm_card_mastercard', label: 'Mastercard' },
-    { value: 'pm_card_amex', label: 'American Express' }
-];
+// Stripe integration
+const stripe = ref(null);
+const cardElement = ref(null);
+const cardError = ref('');
+const cardComplete = ref(false);
+
+const initializeStripe = async () => {
+    try {
+        stripe.value = await loadStripe(config.public.STRIPE_PUBLISHABLE_KEY);
+
+        if (!stripe.value) {
+            throw new Error('Failed to load Stripe');
+        }
+
+        const elements = stripe.value.elements();
+        cardElement.value = elements.create('card', {
+            style: {
+                base: {
+                    fontSize: '16px',
+                    color: '#424770',
+                    '::placeholder': {
+                        color: '#aab7c4',
+                    },
+                },
+                invalid: {
+                    color: '#9e2146',
+                },
+            },
+        });
+
+        cardElement.value.mount('#card-element');
+
+        cardElement.value.on('change', (event) => {
+            cardError.value = event.error ? event.error.message : '';
+            cardComplete.value = event.complete;
+        });
+    } catch (error) {
+        console.error('Error initializing Stripe:', error);
+        cardError.value = 'Failed to initialize payment system. Please refresh the page.';
+    }
+};
 
 const submitHandler = async () => {
+    if (!stripe.value || !cardElement.value) {
+        cardError.value = 'Payment system not ready. Please try again.';
+        return;
+    }
+
+    if (!form.value.amount || parseFloat(form.value.amount) < 1) {
+        errors.value.amount = ['Amount must be at least $1.00'];
+        return;
+    }
+
     isLoading.value = true;
     errors.value = {};
     response_modal.value = {};
+    cardError.value = '';
     
     try {
+        // Create Stripe payment method
+        const { error, paymentMethod } = await stripe.value.createPaymentMethod({
+            type: 'card',
+            card: cardElement.value,
+        });
+
+        if (error) {
+            cardError.value = error.message;
+            isLoading.value = false;
+            return;
+        }
+
+        // Send payment to backend with Stripe token
         const response = await $fetchCitizen('advertiser/advertisements/deposit', {
             method: 'POST',
             body: {
                 advertisement_id: props.advertisement.id,
                 amount: parseFloat(form.value.amount),
-                payment_method_id: form.value.payment_method_id
+                payment_method_id: paymentMethod.id // Stripe payment method token
             }
         });
 
@@ -73,6 +136,24 @@ const submitHandler = async () => {
 const cancel = () => {
     emit('close');
 };
+
+watch(() => props.isOpenModal, (newVal) => {
+    if (newVal) {
+        nextTick(() => {
+            initializeStripe();
+        });
+    } else {
+        // Clean up Stripe elements
+        if (cardElement.value) {
+            cardElement.value.destroy();
+            cardElement.value = null;
+        }
+        cardError.value = '';
+        cardComplete.value = false;
+        errors.value = {};
+        form.value.amount = '';
+    }
+});
 </script>
 
 <template>
@@ -114,16 +195,20 @@ const cancel = () => {
                 </div>
             </div>
 
-            <!-- Payment Method -->
+            <!-- Stripe Card Element -->
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
-                    <label class="font-semibold">Payment Method</label>
-                    <Dropdown v-model="form.payment_method_id" :options="paymentMethods" optionLabel="label"
-                        optionValue="value" placeholder="Select payment method" class="w-full"
-                        :class="errors.payment_method_id ? 'border-[#f44336!important]' : ''"
-                        @focus="errors.payment_method_id = ''" />
-                    <InputError class="text-sm mt-1" v-if="errors.payment_method_id"
-                        :message="errors.payment_method_id[0]" />
+                    <label class="font-semibold">Card Information</label>
+                    <div id="card-element"
+                        class="p-3 border border-gray-300 dark:border-gray-600 rounded-md focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+                    </div>
+                    <div v-if="cardError" class="mt-2 text-sm text-red-600 dark:text-red-400">
+                        {{ cardError }}
+                    </div>
+                    <div class="mt-2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                        <i class="pi pi-lock"></i>
+                        Secured by Stripe
+                    </div>
                 </div>
             </div>
 
@@ -138,6 +223,7 @@ const cancel = () => {
                                 <li>Funds will be added immediately to your advertisement balance</li>
                                 <li>CPC: ${{ advertisement.cpc }} per click</li>
                                 <li>CPM: ${{ advertisement.cpm }} per 1000 impressions</li>
+                                <li>Secure payment processing via Stripe</li>
                             </ul>
                         </div>
                     </div>
@@ -158,9 +244,11 @@ const cancel = () => {
                         </template>
                     </Button>
                     <Button type="button" label="Add Payment" severity="success" raised
-                        class="transition-all duration-300 hover:scale-105 hover:shadow-lg" @click="submitHandler">
+                        :disabled="!cardComplete || !form.amount"
+                        class="transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed" 
+                        @click="submitHandler">
                         <template #icon="{ class: iconClass }">
-                            <i class="pi pi-plus-circle mr-2"></i>
+                            <i class="pi pi-credit-card mr-2"></i>
                         </template>
                     </Button>
                 </template>
@@ -171,3 +259,9 @@ const cancel = () => {
         <ResponseModal v-if="response_modal.status" :message="response_modal" @close="response_modal = {}" />
     </Dialog>
 </template>
+
+<style scoped>
+#card-element {
+    min-height: 40px;
+}
+</style>

@@ -33,6 +33,10 @@
                 },
             ],
         },
+        isLoading: {
+            type: Boolean,
+            default: false
+        }
     })
 
     const getIconFilter = (color) => {
@@ -65,19 +69,23 @@
             <div
                 class="flex items-center justify-center w-12 h-12 rounded-full mb-4">
                 <img
+                    v-if="!isLoading"
                     :src="kpi.icon"
                     :alt="kpi.title"
                     class="w-8 h-8 filter" />
+                <Skeleton v-else size="2rem" shape="circle" />
             </div>
 
             <h3 class="text-sm font-medium text-gray-600 mb-2">
-                {{ kpi.title }}
+                <Skeleton v-if="isLoading" width="7rem" height="1rem" />
+                <span v-else>{{ kpi.title }}</span>
             </h3>
 
             <div
                 class="text-2xl font-bold mb-1"
                 :class="getValueColor(kpi.color)">
-                {{ kpi.value }}
+                <Skeleton v-if="isLoading" width="5rem" height="2rem" />
+                <span v-else>{{ kpi.value }}</span>
             </div>
         </div>
     </div>

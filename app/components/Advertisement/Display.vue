@@ -110,27 +110,40 @@ const startRotation = () => {
 const adElement = ref(null);
 const observer = ref(null);
 
-onMounted(() => {
-    loadAdvertisements();
+const setupIntersectionObserver = () => {
+    if (!process.client) return;
 
-    // Setup intersection observer for impression tracking
-    if (process.client) {
-        observer.value = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting && currentAd.value && !hasTrackedImpression.value) {
-                        trackImpression(currentAd.value.id);
-                        hasTrackedImpression.value = true;
-                    }
-                });
-            },
-            { threshold: 0.5 }
-        );
+    // Clean up existing observer
+    if (observer.value && adElement.value) {
+        observer.value.unobserve(adElement.value);
+    }
 
+    // Setup new intersection observer for impression tracking
+    observer.value = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting && currentAd.value && !hasTrackedImpression.value) {
+                    trackImpression(currentAd.value.id);
+                    hasTrackedImpression.value = true;
+                }
+            });
+        },
+        { threshold: 0.5 }
+    );
+
+    // Wait for next tick to ensure DOM is ready
+    nextTick(() => {
         if (adElement.value) {
             observer.value.observe(adElement.value);
         }
-    }
+    });
+};
+
+onMounted(async () => {
+    await loadAdvertisements();
+    
+    // Setup observer after ads are loaded
+    setupIntersectionObserver();
 });
 
 onBeforeUnmount(() => {
@@ -139,8 +152,29 @@ onBeforeUnmount(() => {
     }
 });
 
-watch(currentAd, () => {
+watch(currentAd, async (newAd, oldAd) => {
     hasTrackedImpression.value = false;
+    
+    // Track impression immediately when ad changes and is visible
+    if (newAd && process.client) {
+        await nextTick();
+        
+        // Check if ad is already in viewport
+        if (adElement.value) {
+            const rect = adElement.value.getBoundingClientRect();
+            const isVisible = (
+                rect.top >= 0 &&
+                rect.left >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+            );
+            
+            if (isVisible) {
+                trackImpression(newAd.id);
+                hasTrackedImpression.value = true;
+            }
+        }
+    }
 });
 </script>
 

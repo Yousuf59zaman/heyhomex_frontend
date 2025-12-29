@@ -26,54 +26,110 @@
             type: String,
             default: "Yearly",
         },
+        lineGraphData: {
+            type: Object,
+            default: null
+        },
+        isLoading: {
+            type: Boolean,
+            default: false
+        }
     })
 
-    const chartData = ref({
-        labels: [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-        ],
-        datasets: [
-            {
-                label: "Clicks",
-                data: [20, 35, 40, 60, 70, 55, 85, 65, 75, 60, 45, 50],
-                borderColor: "#6B9BD8",
-                backgroundColor: "rgba(107, 155, 216, 0.1)",
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: "#6B9BD8",
-                pointBorderColor: "#6B9BD8",
-                pointBorderWidth: 2,
-                pointRadius: 4,
-            },
-            {
-                label: "Impressions",
-                data: [25, 45, 35, 50, 65, 45, 70, 55, 65, 50, 40, 45],
-                borderColor: "#FF6B6B",
-                backgroundColor: "rgba(255, 107, 107, 0.1)",
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: "#FF6B6B",
-                pointBorderColor: "#FF6B6B",
-                pointBorderWidth: 2,
-                pointRadius: 4,
-            },
-        ],
+    const chartData = computed(() => {
+        if (!props.lineGraphData || !props.lineGraphData.data) {
+            return {
+                labels: [
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Aug",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Dec",
+                ],
+                datasets: [
+                    {
+                        label: "Clicks",
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        borderColor: "#6B9BD8",
+                        backgroundColor: "rgba(107, 155, 216, 0.1)",
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: "#6B9BD8",
+                        pointBorderColor: "#6B9BD8",
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                    },
+                    {
+                        label: "Impressions",
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        borderColor: "#FF6B6B",
+                        backgroundColor: "rgba(255, 107, 107, 0.1)",
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: "#FF6B6B",
+                        pointBorderColor: "#FF6B6B",
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                    },
+                ],
+            }
+        }
+
+        const monthLabels = props.lineGraphData.data.map(item => item.month_name.substring(0, 3))
+        const clicksData = props.lineGraphData.data.map(item => item.clicks)
+        const impressionsData = props.lineGraphData.data.map(item => item.impressions)
+
+        return {
+            labels: monthLabels,
+            datasets: [
+                {
+                    label: "Clicks",
+                    data: clicksData,
+                    borderColor: "#6B9BD8",
+                    backgroundColor: "rgba(107, 155, 216, 0.1)",
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: "#6B9BD8",
+                    pointBorderColor: "#6B9BD8",
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                },
+                {
+                    label: "Impressions",
+                    data: impressionsData,
+                    borderColor: "#FF6B6B",
+                    backgroundColor: "rgba(255, 107, 107, 0.1)",
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: "#FF6B6B",
+                    pointBorderColor: "#FF6B6B",
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                },
+            ],
+        }
     })
 
-    const chartOptions = ref({
+    const maxYValue = computed(() => {
+        if (!props.lineGraphData || !props.lineGraphData.data) return 100
+        
+        const allValues = props.lineGraphData.data.flatMap(item => [item.clicks, item.impressions])
+        const maxValue = Math.max(...allValues, 10)
+        return Math.ceil(maxValue * 1.2 / 10) * 10
+    })
+
+    const chartOptions = computed(() => ({
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
@@ -104,7 +160,7 @@
             },
             y: {
                 beginAtZero: true,
-                max: 100,
+                max: maxYValue.value,
                 grid: {
                     color: "#F3F4F6",
                     borderDash: [5, 5],
@@ -114,9 +170,6 @@
                     font: {
                         size: 12,
                     },
-                    callback: function (value) {
-                        return value + "%"
-                    },
                 },
             },
         },
@@ -124,7 +177,7 @@
             intersect: false,
             mode: "index",
         },
-    })
+    }))
 </script>
 
 <template>
@@ -132,9 +185,10 @@
         class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm h-full">
         <div class="flex items-center justify-between mb-6">
             <h3 class="text-lg font-semibold text-gray-900">
-                Ad Performance Overview
+                <Skeleton v-if="isLoading" width="12rem" height="1.5rem" />
+                <span v-else>Ad Performance Overview</span>
             </h3>
-            <div class="relative">
+            <div v-if="!isLoading" class="relative">
                 <select
                     :value="period"
                     class="appearance-none bg-white px-4 py-2 pr-8 text-sm text-gray-700 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 cursor-pointer">
@@ -157,10 +211,15 @@
                     </svg>
                 </div>
             </div>
+            <Skeleton v-else width="8rem" height="2.5rem" borderRadius="0.5rem" />
         </div>
 
         <div class="relative h-64 mb-6">
+            <div v-if="isLoading" class="flex items-center justify-center h-full">
+                <Skeleton width="100%" height="100%" />
+            </div>
             <Line
+                v-else
                 :data="chartData"
                 :options="chartOptions"
                 class="w-full h-full" />
