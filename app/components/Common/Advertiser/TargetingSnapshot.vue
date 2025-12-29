@@ -117,7 +117,7 @@
 
 <template>
     <div
-        class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm h-full">
+        class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm h-full min-h-[400px] flex flex-col">
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">
             <h3 class="text-lg font-semibold text-gray-900">

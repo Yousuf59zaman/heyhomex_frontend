@@ -7,7 +7,7 @@
     const lineGraphData = ref(null)
     const campaignsData = ref([])
 
-    // KPI data
+  
     const kpis = computed(() => {
         if (!dashboardData.value) {
             return [
@@ -119,7 +119,7 @@
         ]
     })
 
-    // Recent activities data (keeping static for now)
+   
     const activities = ref([
         {
             id: 1,
@@ -141,10 +141,10 @@
         }
     ])
 
-    // Chart period
+    
     const chartPeriod = ref('Yearly')
 
-    // Load dashboard analytics
+    
     const loadDashboardData = async () => {
         try {
             const response = await $fetchCitizen('advertiser/advertisements/analytics/dashboard', {
@@ -158,7 +158,7 @@
         }
     }
 
-    // Load pie chart data
+   
     const loadPieChartData = async () => {
         try {
             const response = await $fetchCitizen('advertiser/advertisements/analytics/pie-chart', {
@@ -172,7 +172,7 @@
         }
     }
 
-    // Load line graph data
+    
     const loadLineGraphData = async () => {
         try {
             const response = await $fetchCitizen('advertiser/advertisements/analytics/line-graph', {
@@ -186,24 +186,26 @@
         }
     }
 
-    // Load campaigns list
+    
     const loadCampaigns = async () => {
         try {
             const response = await $fetchCitizen('advertiser/advertisements/list', {
                 method: 'GET',
                 params: {
-                    per_page: 4
+                    page: 1
                 }
             })
+            console.log('Campaigns response:', response)
             if (response.status === 'success') {
-                campaignsData.value = response.data.data
+                // Handle both response.data.data and response.data structures
+                campaignsData.value = response.data?.data || response.data || []
             }
         } catch (error) {
             console.error('Error loading campaigns:', error)
         }
     }
 
-    // Load all data on mount
+  
     onMounted(async () => {
         isLoading.value = true
         await Promise.all([
@@ -218,13 +220,13 @@
 
 <template>
     <div class="space-y-6">
-        <!-- KPI Cards -->
+        
         <CommonAdvertiserKPICards :kpis="kpis" :isLoading="isLoading" />
 
-        <!-- Main Content Grid -->
+       
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Left Column - Performance Chart -->
-            <div class="lg:col-span-7">
+            <div class="lg:col-span-12">
                 <CommonAdvertiserPerformanceChart 
                     :period="chartPeriod" 
                     :lineGraphData="lineGraphData"
@@ -232,25 +234,27 @@
             </div>
 
             <!-- Right Column - Recent Activities -->
-            <div class="lg:col-span-5">
+            <!-- <div class="lg:col-span-5">
                 <CommonAdvertiserRecentActivities :activities="activities" />
-            </div>
+            </div> -->
         </div>
 
         <!-- Second Row Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Left Column - Targeting Snapshot -->
-            <div class="lg:col-span-4">
+            <div class="lg:col-span-4 flex">
                 <CommonAdvertiserTargetingSnapshot 
                     :pieChartData="pieChartData"
-                    :isLoading="isLoading" />
+                    :isLoading="isLoading" 
+                    class="w-full" />
             </div>
 
             <!-- Right Column - Campaign Table -->
-            <div class="lg:col-span-8">
+            <div class="lg:col-span-8 flex">
                 <CommonAdvertiserCampaignTable 
                     :campaigns="campaignsData" 
-                    :isLoading="isLoading" />
+                    :isLoading="isLoading" 
+                    class="w-full" />
             </div>
         </div>
     </div>

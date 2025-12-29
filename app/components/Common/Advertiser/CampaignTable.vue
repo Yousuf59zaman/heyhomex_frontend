@@ -29,7 +29,7 @@
 </script>
 
 <template>
-    <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+    <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm h-full min-h-[400px] flex flex-col">
         <div class="flex items-center justify-between mb-6">
             <h3 class="text-lg font-semibold text-gray-900">
                 <Skeleton v-if="isLoading" width="10rem" height="1.5rem" />
@@ -40,7 +40,7 @@
             </NuxtLink>
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto flex-1">
             <table class="w-full">
                 <thead>
                     <tr class="border-b border-gray-200">

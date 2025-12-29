@@ -30,7 +30,7 @@ const currentAd = computed(() => {
 const loadAdvertisements = async () => {
     isLoading.value = true;
     try {
-        // First get the placement ID by slug
+
         const placementsResponse = await $fetchCitizen('advertiser/advertisements/ads-places/list', {
             method: 'GET'
         });
@@ -44,7 +44,7 @@ const loadAdvertisements = async () => {
             return;
         }
 
-        // Then fetch advertisements for this placement
+
         const adsResponse = await $fetchCitizen(
             `advertiser/advertisements/by-place/${placement.id}`,
             {
@@ -54,8 +54,8 @@ const loadAdvertisements = async () => {
 
         if (adsResponse.data?.data) {
             advertisements.value = adsResponse.data.data.filter(ad => ad.is_active);
-            
-            // Start rotation if multiple ads
+
+
             if (advertisements.value.length > 1) {
                 startRotation();
             }
@@ -90,10 +90,10 @@ const trackClick = async (adId) => {
 const handleAdClick = async () => {
     if (!currentAd.value) return;
 
-    // Track click
+
     await trackClick(currentAd.value.id);
 
-    // Redirect to URL
+
     if (currentAd.value.redirect_url) {
         window.open(currentAd.value.redirect_url, '_blank');
     }
@@ -103,22 +103,22 @@ const startRotation = () => {
     setInterval(() => {
         currentAdIndex.value = (currentAdIndex.value + 1) % advertisements.value.length;
         hasTrackedImpression.value = false;
-    }, 10000); // Rotate every 10 seconds
+    }, 10000);
 };
 
-// Track impression when ad is visible
+
 const adElement = ref(null);
 const observer = ref(null);
 
 const setupIntersectionObserver = () => {
     if (!process.client) return;
 
-    // Clean up existing observer
+
     if (observer.value && adElement.value) {
         observer.value.unobserve(adElement.value);
     }
 
-    // Setup new intersection observer for impression tracking
+
     observer.value = new IntersectionObserver(
         (entries) => {
             entries.forEach((entry) => {
@@ -131,7 +131,7 @@ const setupIntersectionObserver = () => {
         { threshold: 0.5 }
     );
 
-    // Wait for next tick to ensure DOM is ready
+
     nextTick(() => {
         if (adElement.value) {
             observer.value.observe(adElement.value);
@@ -141,8 +141,8 @@ const setupIntersectionObserver = () => {
 
 onMounted(async () => {
     await loadAdvertisements();
-    
-    // Setup observer after ads are loaded
+
+
     setupIntersectionObserver();
 });
 
@@ -154,12 +154,12 @@ onBeforeUnmount(() => {
 
 watch(currentAd, async (newAd, oldAd) => {
     hasTrackedImpression.value = false;
-    
-    // Track impression immediately when ad changes and is visible
+
+
     if (newAd && process.client) {
         await nextTick();
-        
-        // Check if ad is already in viewport
+
+
         if (adElement.value) {
             const rect = adElement.value.getBoundingClientRect();
             const isVisible = (
@@ -168,7 +168,7 @@ watch(currentAd, async (newAd, oldAd) => {
                 rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
                 rect.right <= (window.innerWidth || document.documentElement.clientWidth)
             );
-            
+
             if (isVisible) {
                 trackImpression(newAd.id);
                 hasTrackedImpression.value = true;
@@ -179,41 +179,23 @@ watch(currentAd, async (newAd, oldAd) => {
 </script>
 
 <template>
-    <div 
-        v-if="currentAd" 
-        ref="adElement"
-        :class="className"
-        :style="{ width, height }"
-        class="advertisement-container"
-    >
-        <div 
-            class="advertisement-content cursor-pointer hover:opacity-90 transition-opacity relative overflow-hidden rounded-lg shadow-sm"
-            @click="handleAdClick"
-        >
-            <!-- Image Ad -->
-            <img 
-                v-if="currentAd.type === 1" 
-                :src="currentAd.media_url" 
-                :alt="currentAd.title"
-                class="w-full h-full object-cover"
-            />
+    <div v-if="currentAd" ref="adElement" :class="className" :style="{ width, height }" class="advertisement-container">
+        <div class="advertisement-content cursor-pointer hover:opacity-90 transition-opacity relative overflow-hidden rounded-lg shadow-sm"
+            @click="handleAdClick">
 
-            <!-- Video Ad -->
-            <video 
-                v-else-if="currentAd.type === 2"
-                :src="currentAd.media_url"
-                class="w-full h-full object-cover"
-                autoplay
-                loop
-                muted
-            />
+            <img v-if="currentAd.type === 1" :src="currentAd.media_url" :alt="currentAd.title"
+                class="w-full h-full object-cover" />
 
-            <!-- Ad Label -->
+
+            <video v-else-if="currentAd.type === 2" :src="currentAd.media_url" class="w-full h-full object-cover"
+                autoplay loop muted />
+
+
             <div class="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
                 Ad
             </div>
 
-            <!-- Ad Title Overlay -->
+
             <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
                 <h4 class="text-white text-sm font-semibold">{{ currentAd.title }}</h4>
                 <p v-if="currentAd.description" class="text-white text-xs opacity-90 mt-1">
@@ -222,14 +204,11 @@ watch(currentAd, async (newAd, oldAd) => {
             </div>
         </div>
 
-        <!-- Rotation Indicator -->
+
         <div v-if="advertisements.length > 1" class="flex justify-center gap-1 mt-2">
-            <div 
-                v-for="(ad, index) in advertisements" 
-                :key="ad.id"
+            <div v-for="(ad, index) in advertisements" :key="ad.id"
                 :class="index === currentAdIndex ? 'bg-indigo-600' : 'bg-gray-300 dark:bg-gray-600'"
-                class="w-2 h-2 rounded-full transition-colors"
-            />
+                class="w-2 h-2 rounded-full transition-colors" />
         </div>
     </div>
 </template>

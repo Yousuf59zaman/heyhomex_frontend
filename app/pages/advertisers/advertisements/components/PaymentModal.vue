@@ -88,9 +88,9 @@ const submitHandler = async () => {
     errors.value = {};
     response_modal.value = {};
     cardError.value = '';
-    
+
     try {
-        // Create Stripe payment method
+
         const { error, paymentMethod } = await stripe.value.createPaymentMethod({
             type: 'card',
             card: cardElement.value,
@@ -102,7 +102,7 @@ const submitHandler = async () => {
             return;
         }
 
-        // Send payment to backend with Stripe token
+
         const response = await $fetchCitizen('advertiser/advertisements/deposit', {
             method: 'POST',
             body: {
@@ -143,7 +143,7 @@ watch(() => props.isOpenModal, (newVal) => {
             initializeStripe();
         });
     } else {
-        // Clean up Stripe elements
+
         if (cardElement.value) {
             cardElement.value.destroy();
             cardElement.value = null;
@@ -164,7 +164,7 @@ watch(() => props.isOpenModal, (newVal) => {
                 <h4 class="text-xl font-semibold">Add Payment</h4>
             </div>
         </template>
-        
+
         <div class="mb-4">
             <p class="text-sm text-gray-500 dark:text-gray-400">
                 Advertisement: <strong>{{ advertisement.title }}</strong>
@@ -185,7 +185,8 @@ watch(() => props.isOpenModal, (newVal) => {
                 <div class="flex-auto">
                     <label class="font-semibold">Amount to Add</label>
                     <div class="relative">
-                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">$</span>
+                        <span
+                            class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">$</span>
                         <InputText v-model="form.amount" type="number" step="0.01" min="1" class="w-full pl-7"
                             placeholder="0.00" :class="errors.amount ? 'border-[#f44336!important]' : ''"
                             @focus="errors.amount = ''" />
@@ -245,7 +246,7 @@ watch(() => props.isOpenModal, (newVal) => {
                     </Button>
                     <Button type="button" label="Add Payment" severity="success" raised
                         :disabled="!cardComplete || !form.amount"
-                        class="transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed" 
+                        class="transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                         @click="submitHandler">
                         <template #icon="{ class: iconClass }">
                             <i class="pi pi-credit-card mr-2"></i>
@@ -254,7 +255,7 @@ watch(() => props.isOpenModal, (newVal) => {
                 </template>
             </div>
         </template>
-        
+
         <!-- Response Modal -->
         <ResponseModal v-if="response_modal.status" :message="response_modal" @close="response_modal = {}" />
     </Dialog>
