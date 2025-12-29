@@ -171,15 +171,17 @@
                 </div>
                 <div
                     v-else
-                    class="flex items-center gap-[16px]">
+                    class="flex items-center gap-4">
                     <button
                         @click="handleSignIn"
-                        class="text-white text-[0.875rem] font-semibold leading-[20px] hover:text-gray-300 transition-colors">
+                        class="text-white text-sm font-semibold leading-5 hover:text-gray-300 transition-colors no-underline">
                         Sign In
                     </button>
+                    <!-- Vertical Divider -->
+                    <div class="w-px h-5 bg-[#566573]"></div>
                     <button
                         @click="handleGetStarted"
-                        class="py-[10px] px-[24px] text-[#121a22] text-[0.875rem] font-semibold leading-[20px] bg-white rounded-[8px] hover:bg-gray-50 transition-colors duration-200">
+                        class="py-2 px-5 text-[#121A22] text-sm font-semibold leading-5 bg-white rounded-lg hover:bg-gray-50 transition-colors duration-200 border border-white">
                         Get Started
                     </button>
                 </div>

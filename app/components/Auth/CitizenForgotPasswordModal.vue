@@ -88,7 +88,9 @@
                 "Forgot Password Error:",
                 e instanceof Error ? e.message : String(e)
             )
-            const status = e?.response?.status
+            const status = e?.response?.status || e?.statusCode
+            const responseMessage = e?.response?._data?.message || e?.data?.message
+
             if (status === 422 || status === 409) {
                 const errorsData = e.response?._data?.data || {}
                 for (const key in errorsData) {
@@ -96,12 +98,18 @@
                         validations_errors.value[key] = errorsData[key][0]
                     }
                 }
+                if (Object.keys(validations_errors.value).length === 0) {
+                    validations_errors.value.message = responseMessage || "Please check your email and try again."
+                }
             } else if (status === 404) {
                 validations_errors.value.message =
-                    "Email address not found. Please check and try again."
+                    "We couldn't find an account with that email address. Please check and try again."
+            } else if (status === 500) {
+                validations_errors.value.message =
+                    responseMessage || "We couldn't find an account with that email address. Please check and try again."
             } else {
                 validations_errors.value.message =
-                    e?.message || "Something went wrong. Please try again."
+                    "Something went wrong. Please try again later."
             }
         } finally {
             isLoading.value = false
@@ -184,11 +192,17 @@
                     </span>
                 </div>
 
-                <span
+                <div
                     v-if="validations_errors.message"
-                    class="text-xs text-red-500 block text-center">
-                    {{ validations_errors.message }}
-                </span>
+                    class="p-3 bg-[#FEE2E2] border border-[#FECACA] rounded-lg flex items-center justify-between gap-2">
+                    <p class="text-sm text-[#DC2626]">{{ validations_errors.message }}</p>
+                    <button
+                        type="button"
+                        @click="validations_errors.message = ''"
+                        class="text-[#DC2626] hover:text-red-800 flex-shrink-0">
+                        <i class="pi pi-times text-sm"></i>
+                    </button>
+                </div>
 
                 <button
                     @click="handleSubmit"
@@ -225,7 +239,7 @@
                     <button
                         @click="handleBackToLogin"
                         type="button"
-                        class="text-base text-[#121A22] font-bold leading-6 hover:underline">
+                        class="text-base text-[#121A22] font-semibold leading-6 hover:underline">
                         Back to Sign in
                     </button>
                 </div>
