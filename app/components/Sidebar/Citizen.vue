@@ -103,13 +103,6 @@
             iconType: "svg",
             path: `${getBasePath.value}/videos`,
         },
-        {
-            id: "reports",
-            label: "Reports",
-            icon: "/svg/menubar/search.svg",
-            iconType: "svg",
-            path: `#`,
-        },
     ])
 
     // Settings item (below separator line)
