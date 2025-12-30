@@ -13,6 +13,19 @@ export interface HlsPlayerProps {
     advertising?: AdvertisingConfigHls;
 }
 
+interface ApiAdvertisement {
+    id: number;
+    title: string;
+    description?: string;
+    type: number;
+    type_label: string;
+    media_url: string;
+    redirect_url?: string;
+    starts_at: string;
+    ends_at: string;
+    is_active: boolean;
+}
+
 interface AdPlaybackState {
     isPlayingAd: boolean;
     currentAd: ParsedAd | null;
@@ -205,6 +218,17 @@ export const useHlsPlayerCore = (
         });
     };
 
+    const trackApiImpression = async (apiAdId: number) => {
+        try {
+            const response = await $fetchCitizen<any>(`/advertiser/advertisements/${apiAdId}/impression`, {
+                method: 'POST',
+            });
+            console.log('[HLS Ads] API Impression tracked:', response);
+        } catch (error) {
+            console.error('[HLS Ads] Error tracking API impression:', error);
+        }
+    };
+
     const playAd = async (ad: ParsedAd) => {
         if (!adVideoEl.value || !hlsVideoEl.value || !ad.mediaFileUrl) return;
 
@@ -233,6 +257,11 @@ export const useHlsPlayerCore = (
             if (ad.vastResponse) {
                 trackImpression(ad.vastResponse);
                 trackEvent(ad.vastResponse, 'start');
+            }
+
+            // Track API impression when ad starts playing
+            if (ad.apiAdId) {
+                trackApiImpression(ad.apiAdId);
             }
 
             emit('adImpression', { tag: ad.vastTag });
@@ -312,13 +341,54 @@ export const useHlsPlayerCore = (
         }
     };
 
+    const fetchAdsFromApi = async (videoId: number): Promise<AdvertisingConfigHls | null> => {
+        try {
+            const { $generateVastXml, $buildAdConfig } = useNuxtApp();
+
+            // Use $fetchCitizen from utils (auto-imported)
+            const response = await $fetchCitizen<any>(`/advertiser/advertisements/by-video/${videoId}`, {
+                method: 'GET',
+            }).catch(() => null);
+
+            if (!response?.data?.data || !Array.isArray(response.data.data)) {
+                return null;
+            }
+
+            const ads: ApiAdvertisement[] = response.data.data;
+            if (ads.length === 0) {
+                return null;
+            }
+
+            const config = $buildAdConfig(ads, $generateVastXml);
+            return config as AdvertisingConfigHls;
+        } catch (error) {
+            console.error('[HLS Ads] Error fetching ads from API:', error);
+            return null;
+        }
+    };
+
     const initializeAds = async () => {
-        if (!props.advertising || !props.advertising.schedule) return;
+        // First try to fetch ads from API using video ID
+        const videoId = props.video?.id;
+        let adConfig: AdvertisingConfigHls | null = null;
+
+        if (videoId) {
+            adConfig = await fetchAdsFromApi(videoId);
+        }
+
+        // Fallback to props.advertising if no API ads found
+        if (!adConfig && props.advertising?.schedule?.length) {
+            adConfig = props.advertising;
+        }
+
+        if (!adConfig || !adConfig.schedule?.length) {
+            return;
+        }
 
         try {
             const ads = await processAdSchedule(
-                props.advertising.schedule,
-                props.advertising.skipoffset || 5
+                adConfig.schedule,
+                adConfig.skipoffset || 5
             );
             parsedAds.value = ads;
             setupAdVideoElement();
@@ -509,13 +579,12 @@ export const useHlsPlayerCore = (
             emit('ready');
             updateBuffered();
 
-            if (props.advertising) {
-                initializeAds().then(() => {
-                    if (props.autoplay) {
-                        playPreRollAd();
-                    }
-                });
-            }
+            // Always try to initialize ads - will fetch from API or use props.advertising
+            initializeAds().then(() => {
+                if (props.autoplay) {
+                    playPreRollAd();
+                }
+            });
         });
         addListener('volumechange', () => {
             state.volume = Math.round(video.volume * 100);

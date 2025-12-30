@@ -15,33 +15,6 @@ const error = ref(null);
 const showFullDescription = ref(false);
 const playerRef = ref(null);
 
-// Ad configuration
-const adConfig = ref({
-    client: 'vast',
-    schedule: [
-        {
-            offset: 'pre',
-            tag: 'http://localhost:3000/ads/pre-roll-ad.xml',
-            type: 'linear',
-        },
-        {
-            offset: '50%',
-            tag: 'http://localhost:3000/ads/mid-roll-ad.xml',
-            type: 'linear',
-        },
-        {
-            offset: 'post',
-            tag: 'http://localhost:3000/ads/post-roll-ad.xml',
-            type: 'linear',
-        },
-    ],
-    skipoffset: 5,
-    admessage: 'This ad will end in xx seconds',
-    skipmessage: 'Skip ad',
-    vpaidcontrols: true,
-    autoplayadsmuted: false,
-});
-
 // Load video details
 const loadVideoDetails = async () => {
     loading.value = true;
@@ -224,8 +197,7 @@ watch(
                                 v-if="video"
                                 ref="playerRef"
                                 :video="video"
-                                :autoplay="true"
-                                :advertising="{ client: adConfig.client ?? '', ...adConfig }" />
+                                :autoplay="true" />
                         </div>
                     </div>
 

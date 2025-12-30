@@ -3,6 +3,7 @@ export interface Hls {
     offset: string;
     tag: string;
     type?: 'linear' | 'nonlinear';
+    apiAdId?: number;
 }
 export interface AdvertisingConfigHls {
     client: 'vast' | 'googima';
@@ -23,6 +24,7 @@ export interface ParsedAd {
     duration?: number;
     skipOffset?: number;
     hasBeenPlayed?: boolean;
+    apiAdId?: number;
 }
 
 export const useHlsPlayerAds = () => {
@@ -146,6 +148,7 @@ export const useHlsPlayerAds = () => {
                     duration: getAdDuration(vastResponse),
                     skipOffset,
                     hasBeenPlayed: false,
+                    apiAdId: adSchedule.apiAdId,
                 };
 
                 parsedAds.push(parsedAd);
