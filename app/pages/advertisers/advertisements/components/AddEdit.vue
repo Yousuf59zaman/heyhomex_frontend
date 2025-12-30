@@ -109,13 +109,19 @@ const submitHandler = async () => {
         formData.append('description', form.value.description);
         formData.append('type', form.value.type);
         
-        // Handle media based on upload method - always use media_path parameter
-        if (uploadMethod.value === 'file' && form.value.media_path) {
-            // Send file
-            formData.append('media_path', form.value.media_path);
-        } else if (uploadMethod.value === 'url' && form.value.media_url) {
-            // Send URL as string in media_path
-            formData.append('media_path', form.value.media_url);
+        // Handle media based on type and upload method
+        if (form.value.type === 1) {
+            // Image type: only file upload with ad_image parameter
+            if (form.value.media_path) {
+                formData.append('ad_image', form.value.media_path);
+            }
+        } else if (form.value.type === 2) {
+            // Video type: file or URL upload with media_path parameter
+            if (uploadMethod.value === 'file' && form.value.media_path) {
+                formData.append('media_path', form.value.media_path);
+            } else if (uploadMethod.value === 'url' && form.value.media_url) {
+                formData.append('media_path', form.value.media_url);
+            }
         }
         
         formData.append('redirect_url', form.value.redirect_url);
@@ -199,7 +205,7 @@ const cancel = () => {
 
             <!-- Media Upload -->
             <div class="flex flex-col gap-4">
-                <div class="flex items-center gap-4">
+                <div v-if="form.type === 2" class="flex items-center gap-4">
                     <label class="font-semibold">Media Source</label>
                     <div class="flex gap-2">
                         <Button 
@@ -224,7 +230,7 @@ const cancel = () => {
                 </div>
 
                 <!-- File Upload Option -->
-                <div v-if="uploadMethod === 'file'" class="flex items-center gap-4">
+                <div v-if="form.type === 1 || (form.type === 2 && uploadMethod === 'file')" class="flex items-center gap-4">
                     <div class="flex-auto">
                         <label class="font-semibold">{{ form.type === 1 ? 'Image' : 'Video' }} File</label>
                         <input type="file" id="media_path" @change="handleFileChange"
@@ -234,19 +240,19 @@ const cancel = () => {
                             <img v-if="form.type === 1" :src="mediaPreview" alt="Preview" class="h-32 w-auto rounded" />
                             <video v-else :src="mediaPreview" class="h-32 w-auto rounded" controls></video>
                         </div>
-                        <InputError class="text-sm mt-1" v-if="errors.media_path" :message="errors.media_path[0]" />
+                        <InputError class="text-sm mt-1" v-if="errors.media_path || errors.ad_image" :message="errors.media_path?.[0] || errors.ad_image?.[0]" />
                     </div>
                 </div>
 
-                <!-- URL Input Option -->
-                <div v-if="uploadMethod === 'url'" class="flex items-center gap-4">
+                <!-- URL Input Option (Video Only) -->
+                <div v-if="form.type === 2 && uploadMethod === 'url'" class="flex items-center gap-4">
                     <div class="flex-auto">
-                        <label class="font-semibold">{{ form.type === 1 ? 'Image' : 'Video' }} URL</label>
+                        <label class="font-semibold">Video URL</label>
                         <InputText 
                             v-model="form.media_url" 
                             class="w-full" 
                             type="url"
-                            :placeholder="form.type === 1 ? 'https://example.com/image.jpg' : 'https://example.com/video.mp4'"
+                            placeholder="https://example.com/video.mp4"
                             :class="errors.media_url ? 'border-[#f44336!important]' : ''" 
                             autocomplete="off"
                             @focus="errors.media_url = ''"
