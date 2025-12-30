@@ -429,18 +429,17 @@
             @map-search="handleMapSearch"
             @toggle-filters="handleToggleFilters" />
 
+        <!-- Advertisement Placement (Top Banner) -->
+        <AdvertisementDisplay 
+            v-if="hydrated"
+            placement-slug="kamaina-dashboard-row1-col-4-8" 
+            
+        />      
+
         <!-- Chart and Saved List Section -->
         <div
             class="flex flex-col lg:grid lg:grid-cols-11 2xl:grid-cols-12 gap-4 lg:gap-2 2xl:gap-6">
-            <!-- Advertisement Placement (Top Banner) -->
-            <div class="lg:col-span-11 2xl:col-span-12">
-                <AdvertisementDisplay 
-                    v-if="hydrated"
-                    placement-slug="investor-dashboard-banner" 
-                    height="200px"
-                />
-            </div>
-
+            
             <!-- Market Chart Skeleton/Real -->
             <div class="lg:col-span-6 2xl:col-span-7">
                 <!-- Market Chart Skeleton BEFORE hydration -->
