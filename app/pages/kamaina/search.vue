@@ -18,32 +18,6 @@ const videosPaginationConfig = ref({
     action: "",
 });
 
-const adConfig = ref({
-    "client": "vast",
-    "schedule": [
-        {
-            "offset": "pre",
-            "tag": "http://localhost:3000/ads/pre-roll-ad.xml",
-            "type": "linear"
-        },
-        {
-            "offset": "50%",
-            "tag": "http://localhost:3000/ads/mid-roll-ad.xml",
-            "type": "linear"
-        },
-        {
-            "offset": "post",
-            "tag": "http://localhost:3000/ads/post-roll-ad.xml",
-            "type": "linear"
-        }
-    ],
-    "skipoffset": 5,
-    "admessage": "This ad will end in xx seconds",
-    "skipmessage": "Skip ad",
-    "vpaidcontrols": true,
-    "autoplayadsmuted": false
-});
-
 // Load videos from API
 const loadVideos = async () => {
     videosLoading.value = true;
@@ -186,7 +160,7 @@ const handleTabClick = (tab) => {
 
                 <!-- Videos Content -->
                 <div v-else>
-                    <SearchVideo :videos="videos" :adConfig="adConfig"/>
+                    <SearchVideo :videos="videos" />
                     
                     <!-- Pagination -->
                     <LazyPagination

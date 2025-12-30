@@ -2,7 +2,12 @@ type VASTResponse = any;
 export interface Hls {
     offset: string;
     tag: string;
+    tagFilename?: string; // Clean filename like "2025-12-30_13-45-00_3.xml"
     type?: 'linear' | 'nonlinear';
+    apiAdId?: number;
+    directMediaUrl?: string;
+    clickThroughUrl?: string;
+    adTitle?: string;
 }
 export interface AdvertisingConfigHls {
     client: 'vast' | 'googima';
@@ -23,6 +28,7 @@ export interface ParsedAd {
     duration?: number;
     skipOffset?: number;
     hasBeenPlayed?: boolean;
+    apiAdId?: number;
 }
 
 export const useHlsPlayerAds = () => {
@@ -122,10 +128,12 @@ export const useHlsPlayerAds = () => {
 
         for (const adSchedule of schedule) {
             try {
+                // Parse VAST tag (works with both static XML URLs and data URI from generateVastXml)
+                console.log('[HLS Ads] Parsing VAST tag for ad:', adSchedule.tagFilename || adSchedule.apiAdId || 'static');
                 const vastResponse = await parseVastTag(adSchedule.tag);
 
                 if (!vastResponse) {
-                    console.warn('[HLS Ads] Failed to parse VAST tag:', adSchedule.tag);
+                    console.warn('[HLS Ads] Failed to parse VAST tag:', adSchedule.tag?.substring(0, 100));
                     continue;
                 }
 
@@ -136,16 +144,19 @@ export const useHlsPlayerAds = () => {
                     continue;
                 }
 
+                console.log('[HLS Ads] Successfully parsed VAST, media URL:', mediaFileUrl);
+
                 const parsedAd: ParsedAd = {
                     id: `ad-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
                     offset: adSchedule.offset,
                     vastTag: adSchedule.tag,
                     vastResponse,
                     mediaFileUrl,
-                    clickThroughUrl: extractClickThrough(vastResponse),
-                    duration: getAdDuration(vastResponse),
+                    clickThroughUrl: extractClickThrough(vastResponse) || adSchedule.clickThroughUrl,
+                    duration: getAdDuration(vastResponse) || 30,
                     skipOffset,
                     hasBeenPlayed: false,
+                    apiAdId: adSchedule.apiAdId,
                 };
 
                 parsedAds.push(parsedAd);
