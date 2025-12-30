@@ -7,10 +7,6 @@
             type: Array,
             default: () => [],
         },
-        adConfig: {
-            type: Object,
-            default: () => ({}),
-        },
     })
 
     // Get current section from route (kamaina, investor, military)
