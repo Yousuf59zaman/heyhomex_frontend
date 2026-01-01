@@ -106,7 +106,7 @@ const shareVideo = async () => {
                 url: url,
             });
         } catch (e) {
-            console.log('Share cancelled');
+            // Share cancelled by user
         }
     } else {
         await navigator.clipboard.writeText(url);

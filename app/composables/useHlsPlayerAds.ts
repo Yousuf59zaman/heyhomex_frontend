@@ -129,7 +129,6 @@ export const useHlsPlayerAds = () => {
         for (const adSchedule of schedule) {
             try {
                 // Parse VAST tag (works with both static XML URLs and data URI from generateVastXml)
-                console.log('[HLS Ads] Parsing VAST tag for ad:', adSchedule.tagFilename || adSchedule.apiAdId || 'static');
                 const vastResponse = await parseVastTag(adSchedule.tag);
 
                 if (!vastResponse) {
@@ -143,8 +142,6 @@ export const useHlsPlayerAds = () => {
                     console.warn('[HLS Ads] No suitable media file found in VAST response');
                     continue;
                 }
-
-                console.log('[HLS Ads] Successfully parsed VAST, media URL:', mediaFileUrl);
 
                 const parsedAd: ParsedAd = {
                     id: `ad-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,

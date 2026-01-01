@@ -241,10 +241,9 @@ export const useHlsPlayerCore = (
 
     const trackApiImpression = async (apiAdId: number) => {
         try {
-            const response = await $fetchCitizen<any>(`/advertiser/advertisements/${apiAdId}/impression`, {
+            await $fetchCitizen<any>(`/advertiser/advertisements/${apiAdId}/impression`, {
                 method: 'POST',
             });
-            console.log('[HLS Ads] API Impression tracked:', response);
         } catch (error) {
             console.error('[HLS Ads] Error tracking API impression:', error);
         }
@@ -437,7 +436,6 @@ export const useHlsPlayerCore = (
             }
 
             const config = $buildAdConfig(ads, $generateVastXml);
-            console.log('[HLS Ads] Fetched ad config from API for video ID', videoId, config);
             return config as AdvertisingConfigHls;
         } catch (error) {
             console.error('[HLS Ads] Error fetching ads from API:', error);
