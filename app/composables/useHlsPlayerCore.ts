@@ -26,6 +26,19 @@ interface ApiAdvertisement {
     is_active: boolean;
 }
 
+interface ApiAdvertisement {
+    id: number;
+    title: string;
+    description?: string;
+    type: number;
+    type_label: string;
+    media_url: string;
+    redirect_url?: string;
+    starts_at: string;
+    ends_at: string;
+    is_active: boolean;
+}
+
 interface AdPlaybackState {
     isPlayingAd: boolean;
     currentAd: ParsedAd | null;

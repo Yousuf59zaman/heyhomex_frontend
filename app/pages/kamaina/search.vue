@@ -109,9 +109,6 @@ const handleTabClick = (tab) => {
             </div>
         </template>
         <template v-else>
-            <!-- Top Banner Ad -->
-            <AdvertisementDisplay placement-slug="kamaina-search-top-banner" />
-
             <div class="bg-white rounded-lg p-3 lg:p-4">
                 <div class="flex items-center gap-3">
                     <button
