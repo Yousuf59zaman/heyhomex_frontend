@@ -196,13 +196,12 @@
                     emit("verify-success", response.data)
                 } else {
                     errorMessage.value =
-                        response?.message || "Invalid OTP. Please try again."
+                        "Invalid OTP. Please try again."
                 }
             } catch (error: any) {
                 console.error("OTP verify error:", error)
                 errorMessage.value =
-                    error?.data?.message ||
-                    error?.message ||
+                
                     "Invalid OTP. Please try again."
             } finally {
                 isVerifying.value = false
@@ -404,13 +403,34 @@
             <div
                 v-if="errorMessage"
                 class="text-center space-y-3">
-                <p class="text-xs text-red-500">{{ errorMessage }}</p>
+                <div
+                    class="text-base leading-6 font-normal text-[var(--Colors-Red,#FF3B30)] font-['sf-pro-Regular'] bg-[rgba(255,59,48,0.05)] border border-[#FF0000] rounded-[10px] px-3 py-2 inline-flex items-center justify-between gap-2 w-full">
+                    <span>{{ errorMessage }}</span>
+                    <button
+                        type="button"
+                        aria-label="Dismiss error"
+                        @click="errorMessage = ''"
+                        class="p-0.5 text-[var(--Colors-Red,#FF3B30)]">
+                        <svg
+                            class="w-4 h-4"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M18 6L6 18M6 6l12 12"
+                                stroke="var(--Colors-Red,#FF3B30)"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </div>
 
                 <button
                     v-if="resendAttempts < maxResendAttempts"
                     @click="handleResend"
                     :disabled="isResending"
-                    class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                     <span v-if="isResending">Resending...</span>
                     <span v-else>Resend OTP</span>
                 </button>
