@@ -328,7 +328,7 @@
                         </svg>
                     </button>
 
-                    <h2 class="text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22]">
+                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
                         OTP Verification
                     </h2>
                 </div>
@@ -337,18 +337,18 @@
 
         <!-- Content -->
         <div class="px-6 pt-8 pb-2 space-y-7">
-            <div class="text-center space-y-2">
-                <p class="text-base font-medium text-[#121A22]">
+            <div class="text-center space-y-2 w-full">
+                <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
                     We have sent a 6-digit OTP to your email. Please enter it
                     below.
                 </p>
-                <p class="text-base font-medium text-[#121A22]">
+                <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
                     The OTP is valid for 5 minutes and you can request a maximum
                     of 3 times.
                 </p>
             </div>
 
-            <div class="flex justify-center gap-3 md:gap-5 ">
+            <div class="flex justify-center gap-3 md:gap-5">
                 <input
                     v-for="(digit, index) in otpDigits"
                     :key="index"
@@ -361,9 +361,7 @@
                     type="text"
                     inputmode="numeric"
                     maxlength="1"
-                    class="w-[3rem] h-14 text-center text-lg font-semibold border border-[#cfdbe8] rounded-lg text-[#121A22] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors
-                        md:w-[4rem] md:h-14
-                       "
+                    class="w-[3rem] h-14 px-[15px] flex items-center self-stretch text-center text-lg font-semibold border border-[#CFDBE8] rounded-[8px] bg-white text-[#121A22] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors md:w-[4rem] md:h-14"
                     @input="handleOtpInput(index, $event)"
                     @keydown="handleKeyDown(index, $event)"
                     @paste="index === 0 ? handlePaste($event) : null" />
@@ -373,30 +371,30 @@
                 <div
                     v-if="timeRemaining > 0 && !errorMessage"
                     class="text-base font-medium text-[#121A22]">
-                    <p>
+                    <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
                         Time remaining:
-                        <span class="font-bold">{{ formattedTime }}</span>
+                        <span class="font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">{{ formattedTime }}</span>
                     </p>
                 </div>
 
                 <div v-if="timeRemaining <= 0 && !errorMessage">
-                    <p class="text-sm text-gray-600 mb-3">
+                    <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] mb-3">
                         Didn't receive the code?
                     </p>
                     <button
                         v-if="resendAttempts < maxResendAttempts"
                         @click="handleResend"
                         :disabled="isResending"
-                        class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                        class="px-4 py-2 bg-white border border-gray-300 rounded-md text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                         <span v-if="isResending">Resending...</span>
                         <span v-else>Resend OTP</span>
                     </button>
                     <p
                         v-else
-                        class="text-sm text-red-600 font-medium">
+                        class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
                         Maximum resend attempts reached
                     </p>
-                    <p class="text-xs text-gray-500 mt-2">
+                    <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] mt-2">
                         Attempts used: {{ resendAttempts }} /
                         {{ maxResendAttempts }}
                     </p>
@@ -431,13 +429,13 @@
                     By using heyhomex, you agree to the
                     <a
                         href="/terms"
-                        class="text-[#121A22] font-bold hover:underline"
+                        class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
                         >Terms</a
                     >
                     and
                     <a
                         href="/privacy"
-                        class="text-[#121A22] font-bold hover:underline"
+                        class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
                         >Privacy Policy</a
                     >.
                 </p>
