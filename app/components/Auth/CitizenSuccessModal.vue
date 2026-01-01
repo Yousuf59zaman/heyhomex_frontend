@@ -50,19 +50,10 @@
             </div>
         </template>
 
-        <div class="text-center space-y-6 py-4">
-            <!-- Success Icon -->
-            <div class="flex justify-center">
-                <div
-                    class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
-                    <i class="pi pi-check text-4xl text-green-600"></i>
-                </div>
-            </div>
-
+        <div class="text-center space-y-6 py-4 flex flex-col items-center">
             <!-- Success Message -->
-            <div class="space-y-2">
-                <h2 class="text-2xl font-semibold text-gray-900">Success!</h2>
-                <p class="text-gray-600">
+            <div class="space-y-2 w-[408px] max-w-full">
+                <p class="text-[32px] leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
                     You have successfully created your account!
                 </p>
             </div>
@@ -70,7 +61,7 @@
             <!-- Continue Button -->
             <button
                 @click="handleNext"
-                class="w-full px-6 py-3 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center"
+                class="w-full px-6 py-3 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white lg:text-base font-bold rounded-lg transition-colors duration-200 flex items-center justify-center"
                 size="large">
                 Continue to login
             </button>
