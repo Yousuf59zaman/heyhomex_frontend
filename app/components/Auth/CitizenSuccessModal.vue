@@ -50,7 +50,7 @@
             </div>
         </template>
 
-        <div class="text-center space-y-6 py-4 flex flex-col items-center">
+        <div class="text-center space-y-6 pb-4 pt-0 flex flex-col items-center">
             <!-- Success Message -->
             <div class="space-y-2 w-[408px] max-w-full">
                 <p class="text-[32px] leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
