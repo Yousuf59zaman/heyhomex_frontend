@@ -153,7 +153,7 @@
             <div class="w-full px-6 pt-8 pb-0">
                 <div class="flex items-center justify-center">
                     <h2
-                        class="text-2xl md:text-3xl lg:text-4xl font-medium text-[#121A22] leading-tight">
+                        class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
                         Forgot password
                     </h2>
                 </div>
@@ -165,7 +165,7 @@
             <div
                 v-if="!isSuccess"
                 class="flex flex-col gap-10">
-                <p class="text-base text-[#121A22] leading-6">
+                <p class="text-base leading-6 font-normal text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
                     No worries! Enter your email address and we'll send you a
                     link to reset it.
                 </p>
@@ -173,7 +173,7 @@
                 <div class="flex flex-col gap-0.5">
                     <label
                         for="forgot-email"
-                        class="text-base font-medium text-[#121A22] leading-6 pb-2"
+                        class="text-base leading-6 pb-2 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]"
                         >Email Address</label
                     >
                     <InputText
@@ -185,11 +185,29 @@
                         :pt="{
                             root: 'w-full px-4 py-4 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors',
                         }" />
-                    <span
+                    <div
                         v-if="validations_errors.email"
-                        class="text-xs text-red-500">
-                        {{ validations_errors.email }}
-                    </span>
+                        class="text-base leading-6 font-normal text-[var(--Colors-Red,#FF3B30)] font-['sf-pro-Regular'] bg-[rgba(255,59,48,0.05)] border border-[#FF0000] rounded-[10px] px-3 py-2 mt-4 inline-flex items-center justify-between gap-2 w-full">
+                        <span>{{ validations_errors.email }}</span>
+                        <button
+                            type="button"
+                            aria-label="Dismiss error"
+                            @click="validations_errors.email = ''"
+                            class="p-0.5 text-[var(--Colors-Red,#FF3B30)]">
+                            <svg
+                                class="w-4 h-4"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M18 6L6 18M6 6l12 12"
+                                    stroke="var(--Colors-Red,#FF3B30)"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <div
@@ -239,7 +257,7 @@
                     <button
                         @click="handleBackToLogin"
                         type="button"
-                        class="text-base text-[#121A22] font-semibold leading-6 hover:underline">
+                        class="text-base leading-6 text-[#121A22] font-bold font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline">
                         Back to Sign in
                     </button>
                 </div>
