@@ -155,7 +155,7 @@
                         </svg>
                     </button>
 
-                    <h2 class="text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22]">
+                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
                         Select account type
                     </h2>
                 </div>
@@ -208,22 +208,22 @@
             <button
                 @click="handleNext"
                 type="button"
-                class="w-full h-[3.25rem] px-6 bg-[#18222c] hover:bg-[#101822] text-white font-bold rounded-xl transition-colors duration-200">
+                class="w-full h-[3.25rem] px-6 bg-[#18222C] hover:bg-[#101822] text-white font-bold rounded-[12px] transition-colors duration-200">
                 Next
             </button>
 
             <div class="text-center">
-                <p class="text-base font-medium text-[#121A22]">
+                <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] text-center">
                     By using heyhomex, you agree to the
                     <a
                         href="/terms"
-                        class="text-[#121A22] font-bold hover:underline"
+                        class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
                         >Terms</a
                     >
                     and
                     <a
                         href="/privacy"
-                        class="text-[#121A22] font-bold hover:underline"
+                        class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
                         >Privacy Policy</a
                     >.
                 </p>
