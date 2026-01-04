@@ -201,8 +201,8 @@
         :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4',
-            header: 'border-0 p-0',
-            content: 'border-0 p-0',
+            header: 'border-0 p-[0px!important]',
+            content: 'border-0 p-[0px!important]',
             closeButton:
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200',
         }">
