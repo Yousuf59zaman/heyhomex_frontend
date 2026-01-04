@@ -234,7 +234,7 @@
                         </svg>
                     </button>
 
-                    <h2 class="text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22]">
+                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
                         Create account
                     </h2>
                     <div aria-hidden="true" class="absolute right-0 h-6 w-6"></div>
@@ -257,7 +257,7 @@
                         @click="handleContinueWithEmail"
                         type="button"
                         :disabled="isLoading"
-                        class="flex h-[3.25rem] w-full items-center justify-center rounded-xl bg-[#18222c] px-5 text-base font-bold leading-6 text-white transition-colors duration-200 hover:bg-[#111822] disabled:cursor-not-allowed disabled:opacity-50">
+                        class="flex h-[3.25rem] w-full items-center justify-center rounded-[12px] bg-[#18222C] px-5 text-base font-bold leading-6 text-white transition-colors duration-200 hover:bg-[#111822] disabled:cursor-not-allowed disabled:opacity-50">
                         Continue with email
                     </button>
 
@@ -271,7 +271,7 @@
                         @click="handleContinueWithApple"
                         type="button"
                         :disabled="isAppleLoadingSSO"
-                        class="flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-xl border border-[#cfdbe8] bg-white px-5 text-base font-bold leading-6 text-[#18222c] transition-colors duration-200 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
+                        class="flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-[12px] border border-[#CFDBE8] bg-white px-5 text-base font-bold leading-6 text-[#18222c] transition-colors duration-200 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
                         <svg
                             v-if="!isAppleLoadingSSO"
                             class="h-5 w-5"
@@ -290,7 +290,7 @@
                         @click="handleContinueWithFacebook"
                         type="button"
                         :disabled="isFacebookLoadingSSO"
-                        class="flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-xl border border-[#cfdbe8] bg-white px-5 text-base font-bold leading-6 text-[#18222c] transition-colors duration-200 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
+                        class="flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-[12px] border border-[#CFDBE8] bg-white px-5 text-base font-bold leading-6 text-[#18222c] transition-colors duration-200 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
                         <svg
                             v-if="!isFacebookLoadingSSO"
                             class="h-5 w-5 text-[#1877F2]"
@@ -309,7 +309,7 @@
                         @click="handleContinueWithGoogle"
                         type="button"
                         :disabled="isGoogleLoadingSSO"
-                        class="flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-xl border border-[#cfdbe8] bg-white px-5 text-base font-bold leading-6 text-[#18222c] transition-colors duration-200 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
+                        class="flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-[12px] border border-[#CFDBE8] bg-white px-5 text-base font-bold leading-6 text-[#18222c] transition-colors duration-200 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
                         <svg
                             v-if="!isGoogleLoadingSSO"
                             class="h-5 w-5"
@@ -335,15 +335,15 @@
                 </div>
 
                 <div class="text-center">
-                    <p class="text-sm md:text-base leading-6 text-[#121a22]">
+                    <p class="text-sm md:text-base leading-6 text-[#121A22] md:font-[510] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] text-center">
                         By using heyhomex, you agree to the
                         <a
                             href="/terms"
-                            class="font-bold text-[#121a22] hover:underline">Terms</a>
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline">Terms</a>
                         and
                         <a
                             href="/privacy"
-                            class="font-bold text-[#121a22] hover:underline">Privacy Policy</a>.
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline">Privacy Policy</a>.
                     </p>
                 </div>
             </div>

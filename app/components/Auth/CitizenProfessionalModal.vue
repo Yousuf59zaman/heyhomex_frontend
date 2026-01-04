@@ -194,7 +194,7 @@
                         <i class="pi pi-chevron-left text-2xl text-[#121A22]"></i>
                     </button>
                     <h1
-                        class="flex-1 text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22] text-center">
+                        class="flex-1 text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
                         Add professional information
                     </h1>
                     <div class="w-[0.9375rem] h-6 shrink-0"></div>
@@ -209,7 +209,7 @@
                         <div class="pb-2">
                                 <label
                                     for="professionalType"
-                                    class="text-base font-medium text-[#121A22] leading-6">
+                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
                                     Professional type
                                 </label>
                         </div>
@@ -235,7 +235,7 @@
                             <div class="pb-2">
                                 <label
                                     for="licenseNumber"
-                                    class="text-base font-medium text-[#121A22] leading-6">
+                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
                                     License number
                                 </label>
                             </div>
@@ -253,7 +253,7 @@
                             <div class="pb-2">
                                 <label
                                     for="brokerId"
-                                    class="text-base font-medium text-[#121A22] leading-6">
+                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
                                     Broker ID
                                 </label>
                             </div>
@@ -272,7 +272,7 @@
                         <div class="pb-2">
                                 <label
                                     for="zipCode"
-                                    class="text-base font-medium text-[#121A22] leading-6">
+                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
                                 Zip code
                                 </label>
                             </div>
@@ -291,7 +291,7 @@
                             <div class="pb-2">
                                 <label
                                     for="mobilePhone"
-                                    class="text-base font-medium text-[#121A22] leading-6">
+                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
                                     Mobile/Phone number
                                 </label>
                             </div>
@@ -309,7 +309,7 @@
                             <div class="pb-2">
                                 <label
                                     for="extension"
-                                    class="text-base font-medium text-[#121A22] leading-6">
+                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
                                     Extension
                                 </label>
                             </div>

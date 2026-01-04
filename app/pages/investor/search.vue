@@ -18,31 +18,9 @@ const videosPaginationConfig = ref({
     action: "",
 });
 
-const adConfig = ref({
-    "client": "vast",
-    "schedule": [
-        {
-            "offset": "pre",
-            "tag": "http://localhost:3000/ads/pre-roll-ad.xml",
-            "type": "linear"
-        },
-        {
-            "offset": "50%",
-            "tag": "http://localhost:3000/ads/mid-roll-ad.xml",
-            "type": "linear"
-        },
-        {
-            "offset": "post",
-            "tag": "http://localhost:3000/ads/post-roll-ad.xml",
-            "type": "linear"
-        }
-    ],
-    "skipoffset": 5,
-    "admessage": "This ad will end in xx seconds",
-    "skipmessage": "Skip ad",
-    "vpaidcontrols": true,
-    "autoplayadsmuted": false
-});
+// Ad configuration - uses dynamic URLs based on current host
+const { getDefaultAdConfig } = useAdConfig();
+const adConfig = computed(() => getDefaultAdConfig());
 
 // Load videos from API
 const loadVideos = async () => {
@@ -100,9 +78,6 @@ const handleTabClick = (tab) => {
 
 <template>
     <div class="space-y-4 lg:space-y-6">
-        <!-- Top Banner Ad -->
-        <AdvertisementDisplay placement-slug="investor-search-top-banner" />
-
         <!-- Skeleton BEFORE hydration -->
         <template v-if="!hydrated">
             <!-- Tab Navigation Skeleton -->
@@ -202,7 +177,7 @@ const handleTabClick = (tab) => {
 
                 <!-- Videos Content -->
                 <div v-else>
-                    <SearchVideo :videos="videos" :adConfig="adConfig"/>
+                    <SearchVideo :videos="videos" />
 
                     <!-- Pagination -->
                     <LazyPagination
