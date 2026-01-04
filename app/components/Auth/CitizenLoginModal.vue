@@ -278,13 +278,13 @@
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
-            <div class="w-full text-center px-4 sm:px-6 pt-8 md:pt-9 pb-1">
-                <h1 class="text-[1.75rem] sm:text-3xl lg:text-[2.5rem] font-normal text-[#121A22] leading-snug">
-                    Welcome back! Let's get you
-                    <br />
-                    signed in.
-                </h1>
-            </div>
+              <div class="w-full text-center px-4 sm:px-6 pt-8 md:pt-9 pb-1">
+                  <h1 class="text-[1.75rem] sm:text-3xl lg:text-[32px] leading-snug lg:leading-[40px] font-[510] text-[#121A22] font-['sf-pro-Regular']">
+                      Welcome back! Let's get you
+                      <br />
+                      signed in.
+                  </h1>
+              </div>
         </template>
 
         <!-- Content -->
@@ -293,7 +293,7 @@
                 <div class="flex flex-col gap-2">
                     <label
                         for="email"
-                        class="text-base font-medium text-[#121A22] leading-6"
+                        class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]"
                         >Email Address</label
                     >
                     <LazyInputText
@@ -303,13 +303,13 @@
                         placeholder="Enter your email address"
                         required
                         autocomplete="off"
-                        class="w-full px-4 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                        class="w-full px-4 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 font-normal text-[#566573] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <label
                         for="password"
-                        class="text-base font-medium text-[#121A22] leading-6"
+                        class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]"
                         >Password</label
                     >
                     <div class="relative">
@@ -320,7 +320,7 @@
                             placeholder="Enter your password"
                             required
                             autocomplete="current-password"
-                            class="w-full px-4 pr-12 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                            class="w-full px-4 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 font-normal text-[#566573] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                         <button
                             type="button"
                             @click="password_view_status(!password_open)"
@@ -334,11 +334,11 @@
                                 ]"></i>
                         </button>
                     </div>
-                    <div class="text-left">
+                    <div class="text-left pt-3 pb-4">
                         <button
                             type="button"
                             @click="showForgotPassword"
-                            class="text-base text-[#121A22] hover:text-gray-700 font-semibold">
+                            class="text-base leading-6 text-[#121A22] font-bold font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:text-gray-700">
                             Forgot password?
                         </button>
                     </div>
@@ -362,7 +362,7 @@
                     :disabled="loading"
                     :loading="loading"
                     loadingIcon="pi pi-spin pi-spinner"
-                    class="w-full px-5 py-3.5 h-[3.25rem] bg-[#0C1822] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-bold text-base leading-6 rounded-lg transition-colors duration-200 flex items-center justify-center">
+                    class="w-full px-5 py-3.5 h-[3.25rem] bg-[#18222C] hover:bg-[#0F172A] disabled:bg-gray-400 text-white font-bold text-base leading-6 rounded-[12px] transition-colors duration-200 flex items-center justify-center">
                     {{ loading ? "Signing In..." : "Continue" }}
                 </button>
 
@@ -446,12 +446,12 @@
                 </div>
 
                 <div class="text-center">
-                    <p class="text-base text-[#121A22]">
+                    <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
                         New to heyhomex?
                         <button
                             type="button"
                             @click="showRegister"
-                            class="text-[#121A22] hover:text-gray-700 font-semibold">
+                            class="text-base leading-6 text-[#121A22] font-bold font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:text-gray-700">
                             Create account
                         </button>
                     </p>

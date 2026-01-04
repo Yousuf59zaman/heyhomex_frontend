@@ -173,7 +173,7 @@
                         </svg>
                     </button>
 
-                    <h2 class="text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22]">
+                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
                         Add your email
                     </h2>
                 </div>
@@ -197,11 +197,29 @@
                     :pt="{
                         root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-lg text-sm md:text-base text-[#566573] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                     }" />
-                <span
+                <div
                     v-if="validations_errors.email"
-                    class="text-xs text-red-500">
-                    {{ validations_errors.email }}
-                </span>
+                    class="text-base leading-6 font-normal text-[var(--Colors-Red,#FF3B30)] font-['sf-pro-Regular'] bg-[rgba(255,59,48,0.05)] border border-[#FF0000] rounded-[10px] px-3 py-2 mt-4 inline-flex items-center justify-between gap-2 w-full">
+                    <span>{{ validations_errors.email }}</span>
+                    <button
+                        type="button"
+                        aria-label="Dismiss error"
+                        @click="validations_errors.email = ''"
+                        class="p-0.5 text-[var(--Colors-Red,#FF3B30)]">
+                        <svg
+                            class="w-4 h-4"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M18 6L6 18M6 6l12 12"
+                                stroke="var(--Colors-Red,#FF3B30)"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <button
@@ -236,17 +254,17 @@
             </button>
 
             <div class="text-center">
-                <p class="text-base font-medium text-[#121A22]">
+                <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
                     By using heyhomex, you agree to the
                     <a
                         href="/terms"
-                        class="text-[#121A22] font-bold hover:underline"
+                        class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
                         >Terms</a
                     >
                     and
                     <a
                         href="/privacy"
-                        class="text-[#121A22] font-bold hover:underline"
+                        class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
                         >Privacy Policy</a
                     >.
                 </p>

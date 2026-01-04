@@ -280,7 +280,7 @@
                     </button>
 
                     <h1
-                        class="text-2xl md:text-3xl lg:text-4xl leading-tight font-medium text-[#121A22]">
+                        class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
                         Set up profile
                     </h1>
                 </div>
@@ -297,7 +297,7 @@
                     <div class="flex flex-col gap-3">
                         <label
                             for="firstName"
-                            class="text-base font-medium text-[#121A22]"
+                            class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]"
                             >First name</label
                         >
                         <InputText
@@ -319,7 +319,7 @@
                     <div class="flex flex-col gap-3">
                         <label
                             for="lastName"
-                            class="text-base font-medium text-[#121A22]"
+                            class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]"
                             >Last name</label
                         >
                         <InputText
@@ -342,7 +342,7 @@
                 <div class="flex flex-col gap-3">
                     <label
                         for="password"
-                        class="text-base font-medium text-[#121A22]"
+                        class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]"
                         >Password</label
                     >
                     <div class="relative">
@@ -411,7 +411,7 @@
                 <div class="flex flex-col gap-3">
                     <label
                         for="confirmPassword"
-                        class="text-base font-medium text-[#121A22]"
+                        class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]"
                         >Confirm password</label
                     >
                     <div class="relative">
@@ -507,7 +507,7 @@
                         </span>
                         <p
                             :class="[
-                                'text-sm leading-normal transition-colors duration-200',
+                                'text-base leading-normal transition-colors duration-200',
                                 hasMinimumLength
                                     ? 'text-[#121A22]'
                                     : 'text-[#566573]',
@@ -540,7 +540,7 @@
                         </span>
                         <p
                             :class="[
-                                'text-sm leading-normal transition-colors duration-200',
+                                'text-base leading-normal transition-colors duration-200',
                                 hasSymbol ? 'text-[#121A22]' : 'text-[#566573]',
                             ]">
                             Must have at least 1 symbol
@@ -571,7 +571,7 @@
                         </span>
                         <p
                             :class="[
-                                'text-sm leading-normal transition-colors duration-200',
+                                'text-base leading-normal transition-colors duration-200',
                                 hasCapitalLetter
                                     ? 'text-[#121A22]'
                                     : 'text-[#566573]',
@@ -604,7 +604,7 @@
                         </span>
                         <p
                             :class="[
-                                'text-sm leading-normal transition-colors duration-200',
+                                'text-base leading-normal transition-colors duration-200',
                                 passwordsMatch
                                     ? 'text-[#121A22]'
                                     : 'text-[#566573]',
