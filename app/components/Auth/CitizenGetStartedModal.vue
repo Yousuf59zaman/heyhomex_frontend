@@ -188,7 +188,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-get-started-modal"
-        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: '45rem', maxWidth: '720px'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4',
             header: 'border-0 p-[0px!important]',

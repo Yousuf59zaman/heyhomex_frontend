@@ -262,7 +262,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-login-modal"
-        :style="{width: '45rem', maxWidth: '95vw'}"
+        :style="{width: '45rem', maxWidth: '720px'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4 bg-white overflow-hidden',
             header: 'border-0 p-[0px!important] bg-white',

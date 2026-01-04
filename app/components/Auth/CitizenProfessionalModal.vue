@@ -170,7 +170,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-professional-modal"
-        :style="{width: '45rem', maxWidth: '95vw'}"
+        :style="{width: '45rem', maxWidth: '720px'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4 bg-white',
             header: 'border-0 pb-[0px!important]',

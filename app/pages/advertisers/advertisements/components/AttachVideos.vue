@@ -165,7 +165,7 @@ const closeModal = () => {
         modal
         :closable="false"
         :draggable="false"
-        :style="{ width: 'min(70rem, 95vw)', maxHeight: '90vh' }"
+        :style="{width: '45rem', maxWidth: '720px'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4 bg-white',
             header: 'border-0 pb-0 pt-6 px-6',
