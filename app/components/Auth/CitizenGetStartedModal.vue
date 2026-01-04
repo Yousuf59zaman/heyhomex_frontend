@@ -1,6 +1,7 @@
 <script setup lang="ts">
     interface Props {
         modelValue: boolean
+        preselectedAccountType?: number | null
     }
     const {googleLogin, facebookLogin, appleLogin, citizen_user} = citizenAuth()
     const props = defineProps<Props>()
@@ -105,7 +106,10 @@
                 if (data.user_role) {
                     responseFormat(response)
                 } else {
-                    emit("show-account-type", ssoData)
+                    const enrichedSsoData = props.preselectedAccountType 
+                        ? { ...ssoData, preselectedAccountType: props.preselectedAccountType }
+                        : ssoData
+                    emit("show-account-type", enrichedSsoData)
                 }
             } else {
                 throw new Error("Invalid Apple login response structure.")
@@ -134,7 +138,10 @@
                 if (data.user_role) {
                     responseFormat(response)
                 } else {
-                    emit("show-account-type", ssoData)
+                    const enrichedSsoData = props.preselectedAccountType 
+                        ? { ...ssoData, preselectedAccountType: props.preselectedAccountType }
+                        : ssoData
+                    emit("show-account-type", enrichedSsoData)
                 }
             } else {
                 throw new Error("Invalid Facebook login response.")
@@ -163,7 +170,10 @@
                 if (data.user_role) {
                     responseFormat(response)
                 } else {
-                    emit("show-account-type", ssoData)
+                    const enrichedSsoData = props.preselectedAccountType 
+                        ? { ...ssoData, preselectedAccountType: props.preselectedAccountType }
+                        : ssoData
+                    emit("show-account-type", enrichedSsoData)
                 }
             } else {
                 throw new Error("Invalid Google login response.")

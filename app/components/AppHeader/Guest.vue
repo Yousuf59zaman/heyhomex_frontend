@@ -6,6 +6,7 @@
     const isMobileMenuOpen = ref(false)
     const isOpenStartModal = ref(false)
     const initialStep = ref(0)
+    const preselectedAccountType = ref(null)
 
     const citizenProfile = computed(() => {
         const rawCitizen =
@@ -37,12 +38,28 @@
 
     const handleGetStarted = () => {
         initialStep.value = 0
+        preselectedAccountType.value = null
         isOpenStartModal.value = true
         isMobileMenuOpen.value = false
     }
 
     const handleSignIn = () => {
         initialStep.value = 6
+        preselectedAccountType.value = null
+        isOpenStartModal.value = true
+        isMobileMenuOpen.value = false
+    }
+
+    const handleAdvertiserPanel = () => {
+        initialStep.value = 6
+        preselectedAccountType.value = 1 // Advertiser
+        isOpenStartModal.value = true
+        isMobileMenuOpen.value = false
+    }
+
+    const handleAgentPanel = () => {
+        initialStep.value = 6
+        preselectedAccountType.value = 2 // Agent
         isOpenStartModal.value = true
         isMobileMenuOpen.value = false
     }
@@ -173,6 +190,16 @@
                     v-else
                     class="flex items-center gap-4">
                     <button
+                        @click="handleAdvertiserPanel"
+                        class="py-2 px-4 text-white text-sm font-semibold leading-5 border border-white rounded-lg hover:bg-white/10 transition-colors duration-200">
+                        Advertiser's Panel
+                    </button>
+                    <button
+                        @click="handleAgentPanel"
+                        class="py-2 px-4 text-white text-sm font-semibold leading-5 border border-white rounded-lg hover:bg-white/10 transition-colors duration-200">
+                        Agent Panel
+                    </button>
+                    <button
                         @click="handleSignIn"
                         class="text-white text-sm font-semibold leading-5 hover:text-gray-300 transition-colors no-underline">
                         Sign In
@@ -201,6 +228,16 @@
                 v-if="isMobileMenuOpen && !admin_user && !hasCitizenDashboardAccess"
                 class="md:hidden bg-[#1a2530] border-t border-gray-700">
                 <div class="px-4 py-4 space-y-3">
+                    <button
+                        @click="handleAdvertiserPanel"
+                        class="block w-full text-center py-[0.625rem] px-[1.5rem] text-base text-white border border-white rounded-lg hover:bg-white/10 transition-colors">
+                        Advertiser's Panel
+                    </button>
+                    <button
+                        @click="handleAgentPanel"
+                        class="block w-full text-center py-[0.625rem] px-[1.5rem] text-base text-white border border-white rounded-lg hover:bg-white/10 transition-colors">
+                        Agent Panel
+                    </button>
                     <button
                         @click="handleSignIn"
                         class="block w-full text-left text-white text-base py-2 px-3 rounded-lg hover:bg-[#2a3540] transition-colors">
@@ -245,7 +282,8 @@
 
     <AuthCitizenAuthModals
         v-model:isOpenStartModal="isOpenStartModal"
-        :initialStep="initialStep" />
+        :initialStep="initialStep"
+        :preselectedAccountType="preselectedAccountType" />
 </template>
 
 <style></style>
