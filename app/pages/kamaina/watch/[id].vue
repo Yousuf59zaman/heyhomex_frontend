@@ -15,6 +15,10 @@ const error = ref(null);
 const showFullDescription = ref(false);
 const playerRef = ref(null);
 
+// Ad configuration - uses dynamic URLs based on current host
+const { getDefaultAdConfig } = useAdConfig();
+const adConfig = computed(() => getDefaultAdConfig());
+
 // Load video details
 const loadVideoDetails = async () => {
     loading.value = true;

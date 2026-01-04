@@ -91,6 +91,12 @@ export default defineNuxtPlugin(() => {
             minutesToMilliseconds: (minutes: any) => {
                 return minutes * 60 * 1000
             },
+            getBaseUrl: (): string => {
+                if (typeof window !== 'undefined') {
+                    return window.location.origin;
+                }
+                return '';
+            },
         }
     };
 });

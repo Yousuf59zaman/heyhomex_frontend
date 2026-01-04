@@ -18,6 +18,10 @@ const videosPaginationConfig = ref({
     action: "",
 });
 
+// Ad configuration - uses dynamic URLs based on current host
+const { getDefaultAdConfig } = useAdConfig();
+const adConfig = computed(() => getDefaultAdConfig());
+
 // Load videos from API
 const loadVideos = async () => {
     videosLoading.value = true;

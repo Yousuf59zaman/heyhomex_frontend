@@ -11,31 +11,9 @@ const videos = ref([])
 const pending = ref(false)
 const error = ref(null)
 
-const adConfig = ref({
-    "client": "vast",
-    "schedule": [
-        {
-            "offset": "pre",
-            "tag": "http://localhost:3000/ads/pre-roll-ad.xml",
-            "type": "linear"
-        },
-        {
-            "offset": "50%",
-            "tag": "http://localhost:3000/ads/mid-roll-ad.xml",
-            "type": "linear"
-        },
-        {
-            "offset": "post",
-            "tag": "http://localhost:3000/ads/post-roll-ad.xml",
-            "type": "linear"
-        }
-    ],
-    "skipoffset": 5,
-    "admessage": "This ad will end in xx seconds",
-    "skipmessage": "Skip ad",
-    "vpaidcontrols": true,
-    "autoplayadsmuted": false
-})
+// Ad configuration - uses dynamic URLs based on current host
+const { getDefaultAdConfig } = useAdConfig()
+const adConfig = computed(() => getDefaultAdConfig())
 
 const currentPage = ref(1)
 const totalPages = ref(1)
