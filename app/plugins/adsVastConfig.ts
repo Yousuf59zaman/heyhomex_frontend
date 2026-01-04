@@ -244,7 +244,7 @@ export default defineNuxtPlugin(() => {
                         type: 'linear',
                         apiAdId: ad.id,
                         directMediaUrl: ad.media_url,
-                        clickThroughUrl: ad.media_url, // Using media_url as requested
+                        clickThroughUrl: ad.redirect_url ,
                         adTitle: ad.title,
                     });
                 });
@@ -310,7 +310,7 @@ export default defineNuxtPlugin(() => {
                         type: 'linear',
                         apiAdId: ad.id,
                         directMediaUrl: ad.media_url,
-                        clickThroughUrl: ad.media_url, // Using media_url as requested
+                        clickThroughUrl: ad.redirect_url,
                         adTitle: ad.title,
                     });
                 });

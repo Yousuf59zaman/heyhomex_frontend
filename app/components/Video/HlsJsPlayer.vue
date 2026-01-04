@@ -75,6 +75,7 @@ const {
     toggleAdPlayPause,
     toggleAdMute,
     skipAd,
+    handleAdClick,
 } = player;
 
 onMounted(async () => {
@@ -138,7 +139,7 @@ defineExpose({
             </div>
         </div>
         <div v-if="isReady && !adState.isPlayingAd" class="hls-video-hitarea" @click="handleVideoHitareaClick"></div>
-        <div v-if="adState.isPlayingAd" class="hls-ad-overlay" @click="toggleAdPlayPause">
+        <div v-if="adState.isPlayingAd" class="hls-ad-overlay" @click="handleAdClick">
             <div class="hls-ad-controls" @click.stop>
                 <div class="hls-ad-left">
                     <button
