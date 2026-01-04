@@ -206,7 +206,7 @@
                         </svg>
                     </button>
                     <h1
-                        class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
+                        class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Medium']">
                         Add professional information
                     </h1>
                     <div aria-hidden="true" class="absolute right-0 h-6 w-6"></div>
@@ -222,7 +222,7 @@
                         <div class="pb-2">
                                 <label
                                     for="professionalType"
-                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
                                     Professional type
                                 </label>
                         </div>
@@ -248,7 +248,7 @@
                             <div class="pb-2">
                                 <label
                                     for="licenseNumber"
-                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
                                     License number
                                 </label>
                             </div>
@@ -266,7 +266,7 @@
                             <div class="pb-2">
                                 <label
                                     for="brokerId"
-                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
                                     Broker ID
                                 </label>
                             </div>
@@ -285,7 +285,7 @@
                         <div class="pb-2">
                                 <label
                                     for="zipCode"
-                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
                                 Zip code
                                 </label>
                             </div>
@@ -304,7 +304,7 @@
                             <div class="pb-2">
                                 <label
                                     for="mobilePhone"
-                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
                                     Mobile/Phone number
                                 </label>
                             </div>
@@ -322,7 +322,7 @@
                             <div class="pb-2">
                                 <label
                                     for="extension"
-                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
                                     Extension
                                 </label>
                             </div>
@@ -391,3 +391,4 @@
         padding-top: 0;
     }
 </style>
+

@@ -57,7 +57,7 @@
         <div class="text-center space-y-6 pb-4 pt-4 flex flex-col items-center">
             <!-- Success Message -->
             <div class="space-y-2 w-[408px] max-w-full pb-2">
-                <p class="text-[32px] leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
+                <p class="text-[32px] leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Medium']">
                     You have successfully created your account!
                 </p>
             </div>

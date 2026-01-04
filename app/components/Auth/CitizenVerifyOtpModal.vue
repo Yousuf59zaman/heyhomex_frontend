@@ -327,7 +327,7 @@
                         </svg>
                     </button>
 
-                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
+                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Medium']">
                         OTP Verification
                     </h2>
                     <div aria-hidden="true" class="absolute right-0 h-6 w-6"></div>
@@ -339,11 +339,11 @@
         <div class="px-6 pb-8">
             <div class="mx-auto flex w-full max-w-[42rem] flex-col gap-8">
                 <div class="text-center space-y-2 w-full">
-                    <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                    <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
                         We have sent a 6-digit OTP to your email. Please enter it
                         below.
                     </p>
-                    <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                    <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
                         The OTP is valid for 5 minutes and you can request a maximum
                         of 3 times.
                     </p>
@@ -372,30 +372,30 @@
                     <div
                         v-if="timeRemaining > 0 && !errorMessage"
                         class="text-base font-medium text-[#121A22]">
-                        <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                        <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
                             Time remaining:
-                            <span class="font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">{{ formattedTime }}</span>
+                            <span class="font-bold text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">{{ formattedTime }}</span>
                         </p>
                     </div>
 
                     <div v-if="timeRemaining <= 0 && !errorMessage">
-                        <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] mb-3">
+                        <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] mb-3">
                             Didn't receive the code?
                         </p>
                         <button
                             v-if="resendAttempts < maxResendAttempts"
                             @click="handleResend"
                             :disabled="isResending"
-                            class="px-4 py-2 bg-white border border-gray-300 rounded-md text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                            class="px-4 py-2 bg-white border border-gray-300 rounded-md text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                             <span v-if="isResending">Resending...</span>
                             <span v-else>Resend OTP</span>
                         </button>
                         <p
                             v-else
-                            class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                            class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
                             Maximum resend attempts reached
                         </p>
-                        <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] mt-2">
+                        <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] mt-2">
                             Attempts used: {{ resendAttempts }} /
                             {{ maxResendAttempts }}
                         </p>
@@ -406,7 +406,7 @@
                     v-if="errorMessage"
                     class="text-center space-y-3">
                     <div
-                        class="text-base leading-6 font-normal text-[var(--Colors-Red,#FF3B30)] font-['sf-pro-Regular'] bg-[rgba(255,59,48,0.05)] border border-[#FF0000] rounded-[10px] px-3 py-2 inline-flex items-center justify-between gap-2 w-full">
+                        class="text-base leading-6 font-normal text-[var(--Colors-Red,#FF3B30)] font-['sf-pro-Medium'] bg-[rgba(255,59,48,0.05)] border border-[#FF0000] rounded-[10px] px-3 py-2 inline-flex items-center justify-between gap-2 w-full">
                         <span>{{ errorMessage }}</span>
                         <button
                             type="button"
@@ -451,13 +451,13 @@
                         By using heyhomex, you agree to the
                         <a
                             href="/terms"
-                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:underline"
                             >Terms</a
                         >
                         and
                         <a
                             href="/privacy"
-                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:underline"
                             >Privacy Policy</a
                         >.
                     </p>
@@ -493,3 +493,4 @@
         appearance: textfield;
     }
 </style>
+

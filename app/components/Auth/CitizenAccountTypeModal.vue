@@ -155,7 +155,7 @@
                         </svg>
                     </button>
 
-                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
+                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Medium']">
                         Select account type
                     </h2>
                     <div aria-hidden="true" class="absolute right-0 h-6 w-6"></div>
@@ -215,17 +215,17 @@
                 </button>
 
                 <div class="text-center">
-                    <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] text-center">
+                    <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] text-center">
                         By using heyhomex, you agree to the
                         <a
                             href="/terms"
-                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:underline"
                             >Terms</a
                         >
                         and
                         <a
                             href="/privacy"
-                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:underline"
                             >Privacy Policy</a
                         >.
                     </p>
@@ -249,3 +249,4 @@
         padding-top: 0;
     }
 </style>
+

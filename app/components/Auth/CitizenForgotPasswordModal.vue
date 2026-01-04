@@ -153,7 +153,7 @@
             <div class="w-full px-6 pt-8 pb-0">
                 <div class="flex items-center justify-center">
                     <h2
-                        class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
+                        class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Medium']">
                         Forgot password
                     </h2>
                 </div>
@@ -165,7 +165,7 @@
             <div
                 v-if="!isSuccess"
                 class="flex flex-col gap-10">
-                <p class="text-base leading-6 font-normal text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                <p class="text-base leading-6 font-normal text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
                     No worries! Enter your email address and we'll send you a
                     link to reset it.
                 </p>
@@ -173,7 +173,7 @@
                 <div class="flex flex-col gap-0.5">
                     <label
                         for="forgot-email"
-                        class="text-base leading-6 pb-2 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]"
+                        class="text-base leading-6 pb-2 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]"
                         >Email Address</label
                     >
                     <InputText
@@ -187,7 +187,7 @@
                         }" />
                     <div
                         v-if="validations_errors.email"
-                        class="text-base leading-6 font-normal text-[var(--Colors-Red,#FF3B30)] font-['sf-pro-Regular'] bg-[rgba(255,59,48,0.05)] border border-[#FF0000] rounded-[10px] px-3 py-2 mt-4 inline-flex items-center justify-between gap-2 w-full">
+                        class="text-base leading-6 font-normal text-[var(--Colors-Red,#FF3B30)] font-['sf-pro-Medium'] bg-[rgba(255,59,48,0.05)] border border-[#FF0000] rounded-[10px] px-3 py-2 mt-4 inline-flex items-center justify-between gap-2 w-full">
                         <span>{{ validations_errors.email }}</span>
                         <button
                             type="button"
@@ -257,7 +257,7 @@
                     <button
                         @click="handleBackToLogin"
                         type="button"
-                        class="text-base leading-6 text-[#121A22] font-bold font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline">
+                        class="text-base leading-6 text-[#121A22] font-bold font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:underline">
                         Back to Sign in
                     </button>
                 </div>
@@ -312,3 +312,4 @@
         padding: 0;
     }
 </style>
+

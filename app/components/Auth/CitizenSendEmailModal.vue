@@ -173,7 +173,7 @@
                         </svg>
                     </button>
 
-                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
+                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Medium']">
                         Add your email
                     </h2>
                     <div aria-hidden="true" class="absolute right-0 h-6 w-6"></div>
@@ -201,7 +201,7 @@
                         }" />
                     <div
                         v-if="validations_errors.email"
-                        class="text-base leading-6 font-normal text-[var(--Colors-Red,#FF3B30)] font-['sf-pro-Regular'] bg-[rgba(255,59,48,0.05)] border border-[#FF0000] rounded-[10px] px-3 py-2 mt-4 inline-flex items-center justify-between gap-2 w-full">
+                        class="text-base leading-6 font-normal text-[var(--Colors-Red,#FF3B30)] font-['sf-pro-Medium'] bg-[rgba(255,59,48,0.05)] border border-[#FF0000] rounded-[10px] px-3 py-2 mt-4 inline-flex items-center justify-between gap-2 w-full">
                         <span>{{ validations_errors.email }}</span>
                         <button
                             type="button"
@@ -256,17 +256,17 @@
                 </button>
 
                 <div class="text-center">
-                    <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                    <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
                         By using heyhomex, you agree to the
                         <a
                             href="/terms"
-                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:underline"
                             >Terms</a
                         >
                         and
                         <a
                             href="/privacy"
-                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:underline"
                             >Privacy Policy</a
                         >.
                     </p>
@@ -290,3 +290,4 @@
         padding-top: 0;
     }
 </style>
+
