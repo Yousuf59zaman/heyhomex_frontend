@@ -30,7 +30,11 @@
         :draggable="false"
         :closable="false"
         class="auth-modal"
-        :style="{width: '38rem'}">
+        :style="{width: '45rem', maxWidth: '720px'}"
+        :pt="{
+            header: 'border-0 p-[0px!important]',
+            content: 'border-0 px-[24px!important]',
+        }">
         <template #header>
             <div class="absolute right-0 top-0 z-50">
                 <button
@@ -50,9 +54,9 @@
             </div>
         </template>
 
-        <div class="text-center space-y-6 pb-4 pt-0 flex flex-col items-center">
+        <div class="text-center space-y-6 pb-4 pt-4 flex flex-col items-center">
             <!-- Success Message -->
-            <div class="space-y-2 w-[408px] max-w-full">
+            <div class="space-y-2 w-[408px] max-w-full pb-2">
                 <p class="text-[32px] leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
                     You have successfully created your account!
                 </p>
