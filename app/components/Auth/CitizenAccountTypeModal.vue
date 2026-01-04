@@ -124,8 +124,8 @@
         :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4',
-            header: 'border-0 pb-0',
-            content: 'border-0 pt-0 pb-8',
+            header: 'border-0 pb-[0px!important]',
+            content: 'border-0 pt-[0px!important] pb-[8px!important]',
         }">
         <template #header>
             <div class="absolute right-0 top-0 z-50">

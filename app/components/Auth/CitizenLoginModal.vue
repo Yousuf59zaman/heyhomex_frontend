@@ -265,8 +265,8 @@
         :style="{width: '45rem', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4 bg-white overflow-hidden',
-            header: 'border-0 p-0 bg-white',
-            content: 'border-0 p-0 bg-white',
+            header: 'border-0 p-[0px!important] bg-white',
+            content: 'border-0 p-[0px!important] bg-white',
             closeButton:
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200',
         }">
