@@ -90,6 +90,7 @@
             thumbnail: "/images/dashboard/video/1.png",
             duration: "3:45",
             videoUrl: demoVideoUrl,
+            isFavorite: false,
         },
         {
             id: 2,
@@ -98,6 +99,7 @@
             thumbnail: "/images/dashboard/video/2.png",
             duration: "5:12",
             videoUrl: demoVideoUrl,
+            isFavorite: false,
         },
         {
             id: 3,
@@ -106,6 +108,7 @@
             thumbnail: "/images/dashboard/video/3.png",
             duration: "2:58",
             videoUrl: demoVideoUrl,
+            isFavorite: false,
         },
     ])
 
@@ -308,6 +311,13 @@
 
     const handleVideoClick = (video) => {
         console.log("Video clicked:", video)
+    }
+
+    const toggleVideoFavorite = (video) => {
+        const targetVideo = videos.value.find((v) => v.id === video.id)
+        if (targetVideo) {
+            targetVideo.isFavorite = !targetVideo.isFavorite
+        }
     }
 
     const handleSeeAllProperties = () => {
@@ -517,7 +527,8 @@
             :videos="videos"
             :ad-config="adConfig"
             @see-all="handleSeeAllVideos"
-            @video-click="handleVideoClick" />
+            @video-click="handleVideoClick"
+            @favorite="toggleVideoFavorite" />
     </div>
 
     <!-- Toast Notifications -->

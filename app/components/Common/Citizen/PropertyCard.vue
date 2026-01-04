@@ -41,11 +41,9 @@
                     'absolute top-2 right-2 flex items-center justify-center p-2 rounded-[8px] bg-white/90 backdrop-blur-sm shadow-sm transition-colors',
                 ]">
                 <Icon
-                    name="lucide:heart"
-                    :class="[
-                        'w-5 h-5 text-[#2C3E50]',
-                        property.isFavorited ? 'fill-[#2C3E50]' : 'fill-transparent',
-                    ]" />
+                    :name="property.isFavorited ? 'mdi:heart' : 'mdi:heart-outline'"
+                    class="w-5 h-5 "
+                />
             </button>
         </div>
         <div class="mt-4 flex flex-col gap-3">
