@@ -296,8 +296,8 @@
         :style="{width: '45rem', maxWidth: '720px'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4',
-            header: 'border-0 pb-[0px!important]',
-            content: 'border-0 pt-[0px!important] pb-[8px!important]',
+            header: 'border-0 p-[0px!important]',
+            content: 'border-0 p-[0px!important]',
         }">
         <template #header>
             <div class="absolute right-0 top-0 z-50">
@@ -307,158 +307,161 @@
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
-            <div class="w-full px-6 pt-8">
-                <div class="flex items-center justify-center relative">
+            <div class="w-full px-6 pt-8 pb-10">
+                <div class="relative mx-auto flex w-full max-w-[42rem] items-center justify-center">
                     <button
                         @click="handleBack"
                         type="button"
-                        class="absolute left-0 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                        class="absolute left-0 flex h-6 w-6 items-center justify-center text-[#121A22]"
                         aria-label="Go back">
                         <svg
-                            class="w-5 h-5 text-gray-700"
+                            class="h-6 w-6"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15 19l-7-7 7-7" />
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
 
                     <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
                         OTP Verification
                     </h2>
+                    <div aria-hidden="true" class="absolute right-0 h-6 w-6"></div>
                 </div>
             </div>
         </template>
 
         <!-- Content -->
-        <div class="px-6 pt-8 pb-2 space-y-7">
-            <div class="text-center space-y-2 w-full">
-                <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
-                    We have sent a 6-digit OTP to your email. Please enter it
-                    below.
-                </p>
-                <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
-                    The OTP is valid for 5 minutes and you can request a maximum
-                    of 3 times.
-                </p>
-            </div>
-
-            <div class="flex justify-center gap-3 md:gap-5">
-                <input
-                    v-for="(digit, index) in otpDigits"
-                    :key="index"
-                    :ref="
-                        (el) => {
-                            if (el) otpInputRefs[index] = el as HTMLInputElement
-                        }
-                    "
-                    v-model="otpDigits[index]"
-                    type="text"
-                    inputmode="numeric"
-                    maxlength="1"
-                    class="w-[3rem] h-14 px-[15px] flex items-center self-stretch text-center text-lg font-semibold border border-[#CFDBE8] rounded-[8px] bg-white text-[#121A22] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors md:w-[4rem] md:h-14"
-                    @input="handleOtpInput(index, $event)"
-                    @keydown="handleKeyDown(index, $event)"
-                    @paste="index === 0 ? handlePaste($event) : null" />
-            </div>
-
-            <div class="text-center space-y-2">
-                <div
-                    v-if="timeRemaining > 0 && !errorMessage"
-                    class="text-base font-medium text-[#121A22]">
-                    <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
-                        Time remaining:
-                        <span class="font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">{{ formattedTime }}</span>
+        <div class="px-6 pb-8">
+            <div class="mx-auto flex w-full max-w-[42rem] flex-col gap-8">
+                <div class="text-center space-y-2 w-full">
+                    <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                        We have sent a 6-digit OTP to your email. Please enter it
+                        below.
+                    </p>
+                    <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                        The OTP is valid for 5 minutes and you can request a maximum
+                        of 3 times.
                     </p>
                 </div>
 
-                <div v-if="timeRemaining <= 0 && !errorMessage">
-                    <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] mb-3">
-                        Didn't receive the code?
-                    </p>
+                <div class="flex justify-center gap-3 md:gap-5">
+                    <input
+                        v-for="(digit, index) in otpDigits"
+                        :key="index"
+                        :ref="
+                            (el) => {
+                                if (el) otpInputRefs[index] = el as HTMLInputElement
+                            }
+                        "
+                        v-model="otpDigits[index]"
+                        type="text"
+                        inputmode="numeric"
+                        maxlength="1"
+                        class="w-[3rem] h-14 px-[15px] flex items-center self-stretch text-center text-lg font-semibold border border-[#CFDBE8] rounded-[8px] bg-white text-[#121A22] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors md:w-[4rem] md:h-14"
+                        @input="handleOtpInput(index, $event)"
+                        @keydown="handleKeyDown(index, $event)"
+                        @paste="index === 0 ? handlePaste($event) : null" />
+                </div>
+
+                <div class="text-center space-y-2">
+                    <div
+                        v-if="timeRemaining > 0 && !errorMessage"
+                        class="text-base font-medium text-[#121A22]">
+                        <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                            Time remaining:
+                            <span class="font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">{{ formattedTime }}</span>
+                        </p>
+                    </div>
+
+                    <div v-if="timeRemaining <= 0 && !errorMessage">
+                        <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] mb-3">
+                            Didn't receive the code?
+                        </p>
+                        <button
+                            v-if="resendAttempts < maxResendAttempts"
+                            @click="handleResend"
+                            :disabled="isResending"
+                            class="px-4 py-2 bg-white border border-gray-300 rounded-md text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                            <span v-if="isResending">Resending...</span>
+                            <span v-else>Resend OTP</span>
+                        </button>
+                        <p
+                            v-else
+                            class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
+                            Maximum resend attempts reached
+                        </p>
+                        <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] mt-2">
+                            Attempts used: {{ resendAttempts }} /
+                            {{ maxResendAttempts }}
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    v-if="errorMessage"
+                    class="text-center space-y-3">
+                    <div
+                        class="text-base leading-6 font-normal text-[var(--Colors-Red,#FF3B30)] font-['sf-pro-Regular'] bg-[rgba(255,59,48,0.05)] border border-[#FF0000] rounded-[10px] px-3 py-2 inline-flex items-center justify-between gap-2 w-full">
+                        <span>{{ errorMessage }}</span>
+                        <button
+                            type="button"
+                            aria-label="Dismiss error"
+                            @click="errorMessage = ''"
+                            class="p-0.5 text-[var(--Colors-Red,#FF3B30)]">
+                            <svg
+                                class="w-4 h-4"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M18 6L6 18M6 6l12 12"
+                                    stroke="var(--Colors-Red,#FF3B30)"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+
                     <button
                         v-if="resendAttempts < maxResendAttempts"
                         @click="handleResend"
                         :disabled="isResending"
-                        class="px-4 py-2 bg-white border border-gray-300 rounded-md text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                        class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                         <span v-if="isResending">Resending...</span>
                         <span v-else>Resend OTP</span>
-                    </button>
-                    <p
-                        v-else
-                        class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
-                        Maximum resend attempts reached
-                    </p>
-                    <p class="text-base leading-6 font-[510] text-[#121A22] text-center font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] mt-2">
-                        Attempts used: {{ resendAttempts }} /
-                        {{ maxResendAttempts }}
-                    </p>
-                </div>
-            </div>
-
-            <div
-                v-if="errorMessage"
-                class="text-center space-y-3">
-                <div
-                    class="text-base leading-6 font-normal text-[var(--Colors-Red,#FF3B30)] font-['sf-pro-Regular'] bg-[rgba(255,59,48,0.05)] border border-[#FF0000] rounded-[10px] px-3 py-2 inline-flex items-center justify-between gap-2 w-full">
-                    <span>{{ errorMessage }}</span>
-                    <button
-                        type="button"
-                        aria-label="Dismiss error"
-                        @click="errorMessage = ''"
-                        class="p-0.5 text-[var(--Colors-Red,#FF3B30)]">
-                        <svg
-                            class="w-4 h-4"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M18 6L6 18M6 6l12 12"
-                                stroke="var(--Colors-Red,#FF3B30)"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
                     </button>
                 </div>
 
                 <button
-                    v-if="resendAttempts < maxResendAttempts"
-                    @click="handleResend"
-                    :disabled="isResending"
-                    class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                    <span v-if="isResending">Resending...</span>
-                    <span v-else>Resend OTP</span>
+                    @click="handleVerify"
+                    :disabled="isVerifying"
+                    type="button"
+                    class="w-full h-[3.25rem] px-6 bg-[#18222c] hover:bg-[#101822] disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors duration-200 flex items-center justify-center">
+                    {{ isVerifying ? "Verifying..." : "Verify email" }}
                 </button>
-            </div>
 
-            <button
-                @click="handleVerify"
-                :disabled="isVerifying"
-                type="button"
-                class="w-full h-[3.25rem] px-6 bg-[#18222c] hover:bg-[#101822] disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors duration-200 flex items-center justify-center">
-                {{ isVerifying ? "Verifying..." : "Verify email" }}
-            </button>
-
-            <div class="text-center">
-                <p class="text-base font-medium text-[#121A22]">
-                    By using heyhomex, you agree to the
-                    <a
-                        href="/terms"
-                        class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
-                        >Terms</a
-                    >
-                    and
-                    <a
-                        href="/privacy"
-                        class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
-                        >Privacy Policy</a
-                    >.
-                </p>
+                <div class="text-center">
+                    <p class="text-base font-medium text-[#121A22]">
+                        By using heyhomex, you agree to the
+                        <a
+                            href="/terms"
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
+                            >Terms</a
+                        >
+                        and
+                        <a
+                            href="/privacy"
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
+                            >Privacy Policy</a
+                        >.
+                    </p>
+                </div>
             </div>
         </div>
     </Dialog>

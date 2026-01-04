@@ -173,8 +173,8 @@
         :style="{width: '45rem', maxWidth: '720px'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4 bg-white',
-            header: 'border-0 pb-[0px!important]',
-            content: 'border-0 pt-[0px!important] pb-[0px!important]',
+            header: 'border-0 p-[0px!important]',
+            content: 'border-0 p-[0px!important]',
             closeButton:
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-sm transition-colors duration-200',
         }">
@@ -186,24 +186,37 @@
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
-            <div class="w-full px-6 pt-8 pb-0">
-                <div class="flex items-center gap-12 w-full">
+            <div class="w-full px-6 pt-8 pb-10">
+                <div class="relative mx-auto flex w-full max-w-[42rem] items-center justify-center">
                     <button
                         @click="$emit('back')"
-                        class="flex items-center justify-center shrink-0">
-                        <i class="pi pi-chevron-left text-2xl text-[#121A22]"></i>
+                        type="button"
+                        class="absolute left-0 flex h-6 w-6 items-center justify-center text-[#121A22]"
+                        aria-label="Go back">
+                        <svg
+                            class="h-6 w-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 19l-7-7 7-7" />
+                        </svg>
                     </button>
                     <h1
-                        class="flex-1 text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
+                        class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
                         Add professional information
                     </h1>
-                    <div class="w-[0.9375rem] h-6 shrink-0"></div>
+                    <div aria-hidden="true" class="absolute right-0 h-6 w-6"></div>
                 </div>
             </div>
         </template>
 
-        <div class="px-6 pb-8 flex flex-col gap-12">
-            <div class="flex flex-col gap-5">
+        <div class="px-6 pb-8">
+            <div class="mx-auto flex w-full max-w-[42rem] flex-col gap-12">
+                <div class="flex flex-col gap-5">
                 <div class="flex flex-col gap-5">
                     <div class="flex flex-col w-full">
                         <div class="pb-2">
@@ -341,23 +354,24 @@
                     ">
                     {{ isSubmitting ? "Submitting..." : "Next" }}
                 </button>
-            </div>
+                </div>
 
-            <div class="text-center">
-                <p class="text-base text-[#121A22] leading-6">
-                    <span class="font-medium">By using heyhomex, you agree to the</span>
-                    <a
-                        href="/terms"
-                        class="font-bold hover:underline"
-                        >Terms</a
-                    >
-                    <span class="font-medium">and</span>
-                    <a
-                        href="/privacy"
-                        class="font-bold hover:underline"
-                        >Privacy Policy</a
-                    ><span class="font-medium">.</span>
-                </p>
+                <div class="text-center">
+                    <p class="text-base text-[#121A22] leading-6">
+                        <span class="font-medium">By using heyhomex, you agree to the</span>
+                        <a
+                            href="/terms"
+                            class="font-bold hover:underline"
+                            >Terms</a
+                        >
+                        <span class="font-medium">and</span>
+                        <a
+                            href="/privacy"
+                            class="font-bold hover:underline"
+                            >Privacy Policy</a
+                        ><span class="font-medium">.</span>
+                    </p>
+                </div>
             </div>
         </div>
     </Dialog>
