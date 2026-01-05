@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
     const {login, googleLogin, facebookLogin, appleLogin, citizen_user} =
         citizenAuth()
 
@@ -350,7 +350,7 @@
                         <button
                             type="button"
                             @click="showForgotPassword"
-                            class="text-base leading-6 text-[#121A22] font-bold font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:text-gray-700">
+                            class="text-base leading-6 text-[#121A22] font-medium font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:text-gray-700">
                             Forgot password?
                         </button>
                     </div>

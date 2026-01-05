@@ -102,8 +102,8 @@
             isPropertyDetails ? 'bg-white px-8 pt-5 pb-4' : 'bg-transparent',
         ]">
         <!-- {{ citizen_user.data.name }} -->
-        <div v-if="isPropertyDetails" class="flex flex-col gap-4">
-            <div class="flex items-center gap-4 lg:hidden">
+        <div v-if="isPropertyDetails" class="w-full max-w-[1316px] mx-auto flex flex-col gap-4">
+            <div class="flex items-center gap-4 md:hidden">
                 <button
                     type="button"
                     class="bg-[#F0F1F3] p-3 rounded-[30px] flex items-center justify-center"
@@ -119,7 +119,7 @@
                 </h1>
             </div>
 
-            <div class="hidden lg:flex items-center justify-between h-11">
+            <div class="hidden md:flex items-center justify-between h-11">
                 <div class="flex items-center gap-4">
                     <button
                         type="button"

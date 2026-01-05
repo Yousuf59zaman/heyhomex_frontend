@@ -273,7 +273,7 @@
         <!-- Skeleton BEFORE hydration -->
         <div
             v-if="!hydrated"
-            class="flex flex-col lg:flex-row mx-auto p-5 lg:p-4 gap-6 max-w-7xl animate-pulse">
+            class="flex flex-col lg:flex-row w-full max-w-[1316px] mx-auto p-5 md:px-4 md:py-6 lg:p-0 gap-6 animate-pulse">
             <div class="flex-1">
                 <!-- Property Images Skeleton -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
@@ -379,7 +379,7 @@
         <!-- Loading State -->
         <div
             v-else-if="pending"
-            class="flex flex-col lg:flex-row mx-auto p-5 lg:p-4 gap-6 max-w-7xl animate-pulse">
+            class="flex flex-col lg:flex-row w-full max-w-[1316px] mx-auto p-5 md:px-4 md:py-6 lg:p-0 gap-6 animate-pulse">
             <!-- Same skeleton as before hydration -->
             <div class="flex-1">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
@@ -408,9 +408,9 @@
         <!-- Real content AFTER hydration and data loaded -->
         <div
             v-else-if="propertyData"
-            class="flex flex-col lg:flex-row mx-auto p-5 lg:p-4 gap-6 max-w-7xl">
+            class="flex flex-col lg:flex-row w-full max-w-[1316px] mx-auto p-5 md:px-4 md:py-6 lg:p-0 gap-6">
             <div class="flex-1 max-w-[872px]">
-                <div class="flex items-start gap-4 lg:hidden mb-6">
+                <div class="flex items-start gap-4 md:hidden mb-6">
                     <button
                         type="button"
                         class="flex h-10 w-10 items-center justify-center rounded-full bg-[#f0f1f3] text-[#121a22]"
@@ -424,9 +424,9 @@
                     </p>
                 </div>
                 <!-- Image Grid - Figma layout (Desktop) -->
-                <div class="hidden lg:flex gap-4 mb-6">
+                <div class="hidden md:grid gap-3 lg:gap-4 mb-6 md:grid-cols-[minmax(0,1fr)_minmax(0,300px)] lg:grid-cols-[minmax(0,1fr)_minmax(0,360px)] xl:grid-cols-[488px_368px]">
                     <!-- Main large image -->
-                    <div class="relative w-[488px] h-[320px] shrink-0">
+                    <div class="relative w-full aspect-[488/320]">
                         <img
                             :src="propertyImage"
                             :alt="propertyData.title || propertyData.name"
@@ -434,15 +434,15 @@
                     </div>
 
                     <!-- Right column with 2 stacked images -->
-                    <div class="flex-1 flex flex-col gap-4">
-                        <div class="relative h-[151px]">
+                    <div class="flex flex-col gap-3 lg:gap-4">
+                        <div class="relative w-full aspect-[368/151]">
                             <img
                                 :src="allImages[1] || propertyImage"
                                 alt="Property Image 2"
                                 class="w-full h-full object-cover rounded-[18px]" />
                         </div>
 
-                        <div class="relative h-[151px]">
+                        <div class="relative w-full aspect-[368/151]">
                             <img
                                 :src="allImages[2] || propertyImage"
                                 alt="Property Image 3"
@@ -460,21 +460,21 @@
                 </div>
 
                 <!-- Mobile Image Grid -->
-                <div class="flex lg:hidden flex-col gap-4 mb-6">
-                    <div class="relative w-full h-[222px]">
+                <div class="flex md:hidden lg:hidden flex-col gap-4 md:gap-5 mb-6">
+                    <div class="relative w-full h-[222px] md:h-[280px]">
                         <img
                             :src="propertyImage"
                             :alt="propertyData.title || propertyData.name"
-                            class="w-full h-full object-cover rounded-[12px]" />
+                            class="w-full h-full object-cover rounded-[12px] md:rounded-[16px]" />
                     </div>
                     <div class="flex gap-4">
-                        <div class="relative flex-1 h-[120px]">
+                        <div class="relative flex-1 h-[120px] md:h-[70px]">
                             <img
                                 :src="allImages[1] || propertyImage"
                                 alt="Property Image 2"
-                                class="w-full h-full object-cover rounded-[10px]" />
+                                class="w-full h-full object-cover rounded-[10px] md:rounded-[14px]" />
                         </div>
-                        <div class="relative flex-1 h-[120px]">
+                        <div class="relative flex-1 h-[120px] md:h-[70px]">
                             <img
                                 :src="allImages[2] || propertyImage"
                                 alt="Property Image 3"
@@ -495,10 +495,10 @@
                 <div class="flex flex-col gap-4 mb-6">
                     <!-- Title and Price Row -->
                     <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                        <h1 class="text-[20px] leading-7 font-semibold text-[#121a22] w-full lg:text-2xl lg:leading-8 lg:max-w-[389px]">
+                        <h1 class="text-[20px] leading-7 font-semibold text-[#121a22] w-full md:text-[24px] md:leading-8 lg:text-2xl lg:leading-8 lg:max-w-[389px]">
                             {{ propertyData.title || propertyData.name }}
                         </h1>
-                        <p class="text-[20px] leading-7 font-semibold text-[#121a22] lg:text-[28px] lg:leading-10 lg:shrink-0">
+                        <p class="text-[20px] leading-7 font-semibold text-[#121a22] md:text-[24px] md:leading-8 lg:text-[28px] lg:leading-10 lg:shrink-0">
                             ${{ propertyData.price.toLocaleString() }}
                         </p>
                     </div>
@@ -633,7 +633,7 @@
                         class="bg-white rounded-xl p-4 flex flex-col gap-5">
                         <div class="flex flex-col gap-3">
                             <h3
-                                class="text-[20px] leading-7 font-semibold text-[#121A22] lg:text-2xl lg:leading-8">
+                                class="text-[20px] leading-7 font-semibold text-[#121A22] md:text-[22px] md:leading-8 lg:text-2xl lg:leading-8">
                                 {{ tabInsights.title }}
                             </h3>
                             <p class="text-sm text-[#283849] leading-5">
@@ -675,7 +675,7 @@
                     <div
                         v-if="activeTab === 'Features'"
                         class="bg-white rounded-xl p-4 flex flex-col gap-5">
-                        <h3 class="text-[20px] leading-7 font-semibold text-[#121a22] lg:text-2xl lg:leading-8">
+                        <h3 class="text-[20px] leading-7 font-semibold text-[#121a22] md:text-[22px] md:leading-8 lg:text-2xl lg:leading-8">
                             Features & Advantages
                         </h3>
                         <div class="flex flex-col gap-3">
@@ -688,7 +688,7 @@
                                     class="w-8 h-8 text-[#283849] flex-shrink-0" />
                                 <span class="text-[#283849] font-medium text-lg">
                                     {{ feature.text }}
-                                </p>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -733,20 +733,20 @@
             </div>
 
             <!-- Right Column - Sidebar -->
-            <div class="w-full lg:w-[420px] mt-6 lg:mt-0 flex flex-col gap-6">
+            <div class="w-full lg:w-[360px] xl:w-[420px] mt-6 lg:mt-0 flex flex-col gap-6">
                 <!-- Videos Section -->
                 <div class="bg-white rounded-xl p-4 flex flex-col gap-6">
-                    <h3 class="text-[20px] leading-7 font-semibold text-[#121a22] lg:text-2xl lg:leading-8">
+                    <h3 class="text-[20px] leading-7 font-semibold text-[#121a22] md:text-[22px] md:leading-8 lg:text-2xl lg:leading-8">
                         Videos you might like!
                     </h3>
-                    <div class="flex flex-col gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
                         <div
                             v-for="video in videos"
                             :key="video.id"
                             class="flex flex-col gap-4 cursor-pointer"
                             @click="playSidebarVideo(video)">
                             <!-- Video Thumbnail -->
-                            <div class="relative w-full h-[200px] rounded-[10px] overflow-hidden">
+                            <div class="relative w-full h-[200px] md:h-[180px] lg:h-[200px] rounded-[10px] overflow-hidden">
                                 <img
                                     :src="video.thumbnail"
                                     :alt="video.title"
@@ -785,7 +785,7 @@
                 <!-- Agent Highlight -->
                 <div class="bg-[#f7f7f8] rounded-[12px] p-2 lg:bg-white lg:rounded-xl lg:p-0 overflow-hidden">
                     <div class="bg-white rounded-[8px] p-4 flex flex-col gap-5 lg:bg-transparent lg:rounded-none">
-                        <h3 class="text-[20px] leading-7 font-semibold text-[#121a22] lg:text-2xl lg:leading-8">
+                        <h3 class="text-[20px] leading-7 font-semibold text-[#121a22] md:text-[22px] md:leading-8 lg:text-2xl lg:leading-8">
                             Agent Highlight
                         </h3>
 
