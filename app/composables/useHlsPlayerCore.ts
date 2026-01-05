@@ -249,6 +249,16 @@ export const useHlsPlayerCore = (
         }
     };
 
+    const trackApiClick = async (apiAdId: number) => {
+        try {
+            await $fetchCitizen<any>(`/advertiser/advertisements/${apiAdId}/click`, {
+                method: 'POST',
+            });
+        } catch (error) {
+            console.error('[HLS Ads] Error tracking API click:', error);
+        }
+    };
+
     const playAd = async (ad: ParsedAd) => {
         if (!adVideoEl.value || !hlsVideoEl.value || !ad.mediaFileUrl) return;
 
@@ -398,6 +408,27 @@ export const useHlsPlayerCore = (
         } else {
             adVideoEl.value.pause();
             adUiState.isPaused = true;
+        }
+    };
+
+    const handleAdClick = async () => {
+        if (!adState.currentAd) {
+            return;
+        }
+
+        if (adState.currentAd.vastResponse) {
+            trackEvent(adState.currentAd.vastResponse, 'click');
+        }
+
+        if (adState.currentAd.apiAdId) {
+            await trackApiClick(adState.currentAd.apiAdId);
+        }
+
+        emit('adClick', { tag: adState.currentAd.vastTag });
+
+        const targetUrl = adState.currentAd.clickThroughUrl;
+        if (targetUrl && typeof window !== 'undefined') {
+            window.open(targetUrl, '_blank', 'noopener');
         }
     };
 
@@ -1066,6 +1097,7 @@ export const useHlsPlayerCore = (
         toggleAdPlayPause,
         toggleAdMute,
         skipAd,
+        handleAdClick,
         adVideoEl,
     };
 };

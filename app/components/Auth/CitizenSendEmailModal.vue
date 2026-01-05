@@ -139,11 +139,11 @@
         :draggable="false"
         :resizable="false"
         class="citizen-send-otp-modal"
-        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: '45rem', maxWidth: '720px'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4',
-            header: 'border-0 pb-[0px!important]',
-            content: 'border-0 pt-[0px!important] pb-[8px!important]',
+            header: 'border-0 p-[0px!important]',
+            content: 'border-0 p-[0px!important]',
         }">
         <template #header>
             <div class="absolute right-0 top-0 z-50">
@@ -153,15 +153,15 @@
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
-            <div class="w-full px-6 pt-4">
-                <div class="flex items-center justify-center relative">
+            <div class="w-full px-6 pt-8 pb-10">
+                <div class="relative mx-auto flex w-full max-w-[42rem] items-center justify-center">
                     <button
                         @click="handleBack"
                         type="button"
-                        class="absolute left-0 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                        class="absolute left-0 flex h-6 w-6 items-center justify-center text-[#121A22]"
                         aria-label="Go back">
                         <svg
-                            class="w-5 h-5 text-gray-700"
+                            class="h-6 w-6"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24">
@@ -169,105 +169,108 @@
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
                                 stroke-width="2"
-                            d="M15 19l-7-7 7-7" />
+                                d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
 
-                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
+                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Medium']">
                         Add your email
                     </h2>
+                    <div aria-hidden="true" class="absolute right-0 h-6 w-6"></div>
                 </div>
             </div>
         </template>
 
         <!-- Content -->
-        <div class="px-6 pt-8 pb-2 space-y-12">
-            <div class="flex flex-col gap-2">
-                <label
-                    for="email"
-                    class="text-base font-medium text-[#121A22]"
-                    >Email Address</label
-                >
-                <InputText
-                    id="email"
-                    v-model="formData.email"
-                    type="email"
-                    placeholder="Enter your email address"
-                    @keyup.enter="handleSubmit"
-                    :pt="{
-                        root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-lg text-sm md:text-base text-[#566573] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
-                    }" />
-                <div
-                    v-if="validations_errors.email"
-                    class="text-base leading-6 font-normal text-[var(--Colors-Red,#FF3B30)] font-['sf-pro-Regular'] bg-[rgba(255,59,48,0.05)] border border-[#FF0000] rounded-[10px] px-3 py-2 mt-4 inline-flex items-center justify-between gap-2 w-full">
-                    <span>{{ validations_errors.email }}</span>
-                    <button
-                        type="button"
-                        aria-label="Dismiss error"
-                        @click="validations_errors.email = ''"
-                        class="p-0.5 text-[var(--Colors-Red,#FF3B30)]">
-                        <svg
-                            class="w-4 h-4"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M18 6L6 18M6 6l12 12"
-                                stroke="var(--Colors-Red,#FF3B30)"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <button
-                @click="handleSubmit"
-                :disabled="isLoading"
-                type="button"
-                class="w-full h-[3.25rem] px-6 font-bold rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
-                :class="
-                    isLoading
-                        ? 'bg-[#606e83] text-white cursor-not-allowed'
-                        : 'bg-[#18222c] hover:bg-[#101822] text-white'
-                ">
-                <svg
-                    v-if="isLoading"
-                    class="animate-spin h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24">
-                    <circle
-                        class="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        stroke-width="4"></circle>
-                    <path
-                        class="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                {{ isLoading ? "Loading..." : "Next" }}
-            </button>
-
-            <div class="text-center">
-                <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]">
-                    By using heyhomex, you agree to the
-                    <a
-                        href="/terms"
-                        class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
-                        >Terms</a
+        <div class="px-6 pb-8">
+            <div class="mx-auto flex w-full max-w-[42rem] flex-col gap-10">
+                <div class="flex flex-col gap-2">
+                    <label
+                        for="email"
+                        class="text-base font-medium text-[#121A22]"
+                        >Email Address</label
                     >
-                    and
-                    <a
-                        href="/privacy"
-                        class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
-                        >Privacy Policy</a
-                    >.
-                </p>
+                    <InputText
+                        id="email"
+                        v-model="formData.email"
+                        type="email"
+                        placeholder="Enter your email address"
+                        @keyup.enter="handleSubmit"
+                        :pt="{
+                            root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-lg text-sm md:text-base text-[#566573] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
+                        }" />
+                    <div
+                        v-if="validations_errors.email"
+                        class="text-base leading-6 font-normal text-[var(--Colors-Red,#FF3B30)] font-['sf-pro-Medium'] bg-[rgba(255,59,48,0.05)] border border-[#FF0000] rounded-[10px] px-3 py-2 mt-4 inline-flex items-center justify-between gap-2 w-full">
+                        <span>{{ validations_errors.email }}</span>
+                        <button
+                            type="button"
+                            aria-label="Dismiss error"
+                            @click="validations_errors.email = ''"
+                            class="p-0.5 text-[var(--Colors-Red,#FF3B30)]">
+                            <svg
+                                class="w-4 h-4"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M18 6L6 18M6 6l12 12"
+                                    stroke="var(--Colors-Red,#FF3B30)"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button
+                    @click="handleSubmit"
+                    :disabled="isLoading"
+                    type="button"
+                    class="w-full h-[3.25rem] px-6 font-bold rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
+                    :class="
+                        isLoading
+                            ? 'bg-[#606e83] text-white cursor-not-allowed'
+                            : 'bg-[#18222c] hover:bg-[#101822] text-white'
+                    ">
+                    <svg
+                        v-if="isLoading"
+                        class="animate-spin h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24">
+                        <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    {{ isLoading ? "Loading..." : "Next" }}
+                </button>
+
+                <div class="text-center">
+                    <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
+                        By using heyhomex, you agree to the
+                        <a
+                            href="/terms"
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:underline"
+                            >Terms</a
+                        >
+                        and
+                        <a
+                            href="/privacy"
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:underline"
+                            >Privacy Policy</a
+                        >.
+                    </p>
+                </div>
             </div>
         </div>
     </Dialog>
@@ -287,3 +290,4 @@
         padding-top: 0;
     }
 </style>
+
