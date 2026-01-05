@@ -13,7 +13,7 @@
         },
     })
 
-    const emit = defineEmits(["click"])
+    const emit = defineEmits(["click", "favorite"])
 
     const {openVideo} = useVideoPlayer()
 
@@ -23,6 +23,10 @@
         if (props.useModal) {
             openVideo(props.video)
         }
+    }
+
+    const handleFavoriteToggle = () => {
+        emit("favorite", props.video)
     }
 </script>
 
@@ -62,6 +66,17 @@
                 class="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs font-medium">
                 {{ video.duration }}
             </div>
+
+            <button
+                @click.stop="handleFavoriteToggle"
+                class="absolute top-2 left-2 flex items-center justify-center p-2 rounded-[8px] bg-white/90 backdrop-blur-[2px] shadow-sm transition-colors">
+                <Icon
+                    name="lucide:heart"
+                    :class="[
+                        'w-5 h-5',
+                        video.isFavorite ? 'text-[#2C3E50] fill-current' : 'text-[#2C3E50] fill-none',
+                    ]" />
+            </button>
         </div>
     </div>
 </template>

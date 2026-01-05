@@ -99,7 +99,7 @@
     <header
         :class="[
             'sticky top-0 z-10',
-            isPropertyDetails ? 'bg-white px-4 lg:px-8 py-3 lg:py-0' : 'bg-transparent',
+            isPropertyDetails ? 'bg-white px-8 pt-5 pb-4' : 'bg-transparent',
         ]">
         <!-- {{ citizen_user.data.name }} -->
         <div v-if="isPropertyDetails" class="flex flex-col gap-4">
@@ -182,7 +182,7 @@
             </div>
         </div>
 
-        <template v-else>
+        <template v-else  >
             <!-- Mobile Top Bar -->
             <div class="lg:hidden">
                 <div

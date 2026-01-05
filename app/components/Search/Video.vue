@@ -387,26 +387,26 @@
             v-if="viewMode === 'Map View'"
             class="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
             <div class="lg:col-span-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div
                         v-for="video in videos"
                         :key="video.id"
-                        class="video-card bg-white rounded-xl overflow-hidden cursor-pointer border border-gray-100"
+                        class="video-card flex flex-col"
                         @mouseenter="onVideoCardHover(video)"
-                        @mouseleave="onVideoCardLeave"
-                        @click="playVideo(video.id)">
-                        <div class="relative h-48 lg:h-52">
+                        @mouseleave="onVideoCardLeave">
+                        <!-- Thumbnail -->
+                        <div class="relative h-[200px] rounded-[10px] overflow-hidden cursor-pointer group" @click="playVideo(video.id)">
                             <img
                                 :src="video.thumbnail"
                                 :alt="video.title"
                                 class="w-full h-full object-cover" />
                             <div
-                                class="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors">
+                                class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
                                 <div
-                                    class="bg-red-600 hover:bg-red-700 flex items-center justify-center rounded-full w-12 h-12 transition-colors">
+                                    class="bg-red-600 group-hover:bg-red-700 flex items-center justify-center rounded-full w-10 h-10 transition-colors">
                                     <Icon
                                         name="lucide:play"
-                                        class="w-6 h-6 text-white" />
+                                        class="w-5 h-5 text-white" />
                                 </div>
                             </div>
                             <div
@@ -415,41 +415,52 @@
                             </div>
                             <button
                                 @click.stop="toggleFavorite(video.id)"
-                                class="absolute top-3 right-3 w-8 h-8 bg-white/80 flex items-center justify-center backdrop-blur-sm rounded-full hover:bg-white transition-all duration-200 shadow-sm">
+                                class="absolute top-2 left-2 flex items-center justify-center p-2 rounded-[8px] bg-white/90 backdrop-blur-[2px] shadow-sm transition-colors">
                                 <Icon
                                     name="lucide:heart"
                                     :class="[
-                                        'w-4 h-4 transition-colors',
-                                        video.isFavorite
-                                            ? 'text-red-500 fill-current'
-                                            : 'text-gray-600',
+                                        'w-5 h-5',
+                                        video.isFavorite ? 'text-[#2C3E50] fill-current' : 'text-[#2C3E50] fill-none',
                                     ]" />
                             </button>
                         </div>
 
                         <!-- Video Details -->
-                        <div class="p-4 lg:p-5">
-                            <div class="mb-3">
-                                <h3
-                                    class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 leading-snug">
-                                    {{ video.title }}
-                                </h3>
-                                <p class="text-sm text-gray-600 mb-1">
-                                    {{ video.channel }}
-                                </p>
-                                <div
-                                    class="flex items-center text-xs text-gray-500 gap-2">
-                                    <span>{{ video.views }}</span>
-                                    <span>•</span>
-                                    <span>{{ video.uploadTime }}</span>
+                        <div class="flex gap-1 items-start mt-4">
+                            <div class="flex-1 flex gap-4 items-start">
+                                <!-- Channel Avatar -->
+                                <div class="bg-[#283849] rounded-[10px] w-12 h-12 flex-shrink-0 flex items-center justify-center">
+                                    <p class="text-white text-sm font-semibold text-center leading-[16px]">
+                                        Hello
+                                    </p>
+                                </div>
+                                
+                                <!-- Title and Metadata -->
+                                <div class="flex-1 flex flex-col gap-1">
+                                    <h3
+                                        class="text-[#283849] text-base font-semibold leading-[1.5] line-clamp-2 cursor-pointer hover:text-[#121a22]"
+                                        @click="playVideo(video.id)">
+                                        {{ video.title }}
+                                    </h3>
+                                    <div
+                                        class="flex items-center text-xs text-[#283849] gap-1.5">
+                                        <span>{{ video.channel }}</span>
+                                        <div class="bg-[#d4d4d4] h-3 w-px"></div>
+                                        <span>{{ video.views }}</span>
+                                        <div class="bg-[#d4d4d4] h-3 w-px"></div>
+                                        <span>{{ video.uploadTime }}</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="mt-2">
-                                <span
-                                    class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                                    {{ video.category }}
-                                </span>
-                            </div>
+                            
+                            <!-- More Options Button -->
+                            <button
+                                class="w-5 h-5 flex items-center justify-center flex-shrink-0"
+                                @click.stop>
+                                <Icon
+                                    name="lucide:more-vertical"
+                                    class="w-5 h-5 text-[#283849]" />
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -491,25 +502,25 @@
             v-else
             class="space-y-6">
             <div
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-4">
                 <div
                     v-for="video in videos"
                     :key="video.id"
-                    class="video-card bg-white rounded-xl overflow-hidden cursor-pointer border border-gray-100"
-                    @click="playVideo(video.id)">
-                    <div class="relative h-48 lg:h-52">
+                    class="video-card flex flex-col">
+                    <!-- Thumbnail -->
+                    <div class="relative h-[200px] rounded-[10px] overflow-hidden cursor-pointer group" @click="playVideo(video.id)">
                         <img
                             :src="video.thumbnail"
                             :alt="video.title"
                             class="w-full h-full object-cover" />
 
                         <div
-                            class="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors">
+                            class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
                             <div
-                                class="bg-red-600 hover:bg-red-700 flex items-center justify-center rounded-full w-12 h-12 transition-colors">
+                                class="bg-red-600 group-hover:bg-red-700 flex items-center justify-center rounded-full w-10 h-10 transition-colors">
                                 <Icon
                                     name="lucide:play"
-                                    class="w-6 h-6 text-white" />
+                                    class="w-5 h-5 text-white" />
                             </div>
                         </div>
 
@@ -517,45 +528,54 @@
                             class="absolute bottom-2 right-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
                             {{ video.duration }}
                         </div>
-
                         <button
                             @click.stop="toggleFavorite(video.id)"
-                            class="absolute top-3 right-3 w-8 h-8 bg-white/80 flex items-center justify-center backdrop-blur-sm rounded-full hover:bg-white transition-all duration-200 shadow-sm">
+                            class="absolute top-2 left-2 flex items-center justify-center p-2 rounded-[8px] bg-white/90 backdrop-blur-[2px] shadow-sm transition-colors">
                             <Icon
                                 name="lucide:heart"
                                 :class="[
-                                    'w-4 h-4 transition-colors',
-                                    video.isFavorite
-                                        ? 'text-red-500 fill-current'
-                                        : 'text-gray-600',
+                                    'w-5 h-5',
+                                    video.isFavorite ? 'text-[#2C3E50] fill-current' : 'text-[#2C3E50] fill-none',
                                 ]" />
                         </button>
                     </div>
 
                     <!-- Video Details -->
-                    <div class="p-4 lg:p-5">
-                        <div class="mb-3">
-                            <h3
-                                class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 leading-snug">
-                                {{ video.title }}
-                            </h3>
-                            <p class="text-sm text-gray-600 mb-1">
-                                {{ video.channel }}
-                            </p>
-                            <div
-                                class="flex items-center text-xs text-gray-500 gap-2">
-                                <span>{{ video.views }}</span>
-                                <span>•</span>
-                                <span>{{ video.uploadTime }}</span>
+                    <div class="flex gap-1 items-start mt-4">
+                        <div class="flex-1 flex gap-4 items-start">
+                            <!-- Channel Avatar -->
+                            <div class="bg-[#283849] rounded-[10px] w-12 h-12 flex-shrink-0 flex items-center justify-center">
+                                <p class="text-white text-sm font-semibold text-center leading-[16px]">
+                                    Hello
+                                </p>
+                            </div>
+                            
+                            <!-- Title and Metadata -->
+                            <div class="flex-1 flex flex-col gap-1">
+                                <h3
+                                    class="text-[#283849] text-base font-semibold leading-[1.5] line-clamp-2 cursor-pointer hover:text-[#121a22]"
+                                    @click="playVideo(video.id)">
+                                    {{ video.title }}
+                                </h3>
+                                <div
+                                    class="flex items-center text-xs text-[#283849] gap-1.5">
+                                    <span>{{ video.channel }}</span>
+                                    <div class="bg-[#d4d4d4] h-3 w-px"></div>
+                                    <span>{{ video.views }}</span>
+                                    <div class="bg-[#d4d4d4] h-3 w-px"></div>
+                                    <span>{{ video.uploadTime }}</span>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="mt-2">
-                            <span
-                                class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                                {{ video.category }}
-                            </span>
-                        </div>
+                        
+                        <!-- More Options Button -->
+                        <button
+                            class="w-5 h-5 flex items-center justify-center flex-shrink-0"
+                            @click.stop>
+                            <Icon
+                                name="lucide:more-vertical"
+                                class="w-5 h-5 text-[#283849]" />
+                        </button>
                     </div>
                 </div>
             </div>
@@ -576,14 +596,17 @@
         overflow: hidden;
     }
 
-    .video-card {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
 
-    .video-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-            0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .video-card {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     @keyframes markerPulse {

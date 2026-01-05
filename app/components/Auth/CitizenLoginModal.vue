@@ -6,7 +6,10 @@
         emit("close")
     }
 
-    const props = defineProps<{modelValue: boolean}>()
+    const props = defineProps<{
+        modelValue: boolean
+        preselectedAccountType?: number | null
+    }>()
     const visible = ref(props.modelValue)
     watch(
         () => props.modelValue,
@@ -171,7 +174,10 @@
                 if (data.user_role) {
                     responseFormat(response)
                 } else {
-                    emit("show-account-type", ssoData)
+                    const enrichedSsoData = props.preselectedAccountType 
+                        ? { ...ssoData, preselectedAccountType: props.preselectedAccountType }
+                        : ssoData
+                    emit("show-account-type", enrichedSsoData)
                 }
             } else {
                 throw new Error("Invalid Google login response.")
@@ -199,7 +205,10 @@
                 if (data.user_role) {
                     responseFormat(response)
                 } else {
-                    emit("show-account-type", ssoData)
+                    const enrichedSsoData = props.preselectedAccountType 
+                        ? { ...ssoData, preselectedAccountType: props.preselectedAccountType }
+                        : ssoData
+                    emit("show-account-type", enrichedSsoData)
                 }
             } else {
                 throw new Error("Invalid Facebook login response.")
@@ -228,7 +237,10 @@
                 if (data.user_role) {
                     responseFormat(response)
                 } else {
-                    emit("show-account-type", ssoData)
+                    const enrichedSsoData = props.preselectedAccountType 
+                        ? { ...ssoData, preselectedAccountType: props.preselectedAccountType }
+                        : ssoData
+                    emit("show-account-type", enrichedSsoData)
                 }
             } else {
                 throw new Error("Invalid Apple login response structure.")

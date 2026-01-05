@@ -32,13 +32,9 @@
                     property.isFavorited ? 'bg-red-500 hover:bg-red-600' : 'bg-white hover:bg-gray-50'
                 ]">
                 <Icon
-                    name="lucide:heart"
-                    :class="[
-                        'w-4 h-4 transition-colors',
-                        property.isFavorited
-                            ? 'text-white fill-current'
-                            : 'text-gray-400 hover:text-red-500',
-                    ]" />
+                    :name="property.isFavorited ? 'mdi:heart' : 'mdi:heart-outline'"
+                    class="w-5 h-5 "
+                />
             </button>
         </div>
         <div class="p-3 sm:p-4">
