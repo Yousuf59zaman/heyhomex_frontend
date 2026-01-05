@@ -5,12 +5,28 @@ useHead({ title: "Subscription - Military Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "citizen" })
 
 
-const activeTab = ref('subscription')
-const completedTabs = ref(new Set(['subscription']))
+
+const route = useRoute()
+const router = useRouter()
+
+
+const validTabs = ['profile', 'subscription', 'billing', 'history']
+const defaultTab = 'subscription'
+
+
+const activeTab = ref(validTabs.includes(route.query.tab) ? route.query.tab : defaultTab)
+const completedTabs = ref(new Set([activeTab.value]))
+
 
 const switchTab = async (tab) => {
+    if (!validTabs.includes(tab)) return
+
     activeTab.value = tab
     completedTabs.value.add(tab)
+
+
+    await router.replace({ query: { tab } })
+
 
     if (tab === 'billing' && !billingHistory.value) {
         await fetchBillingHistory()

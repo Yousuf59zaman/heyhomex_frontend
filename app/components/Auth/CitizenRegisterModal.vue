@@ -33,12 +33,26 @@
         password_confirmation: string
         user_type : any
         uuid: string
+        mobile?: string
+        profession_id?: string
+        occupation?: string
     }
 
     interface ApiResponse<T> {
         status: string
         message: string
         data: T
+    }
+
+    interface ProfessionResponse {
+        status: string
+        message: string
+        data: Array<{
+            id: number
+            name: string
+            status: number
+            status_label: string
+        }>
     }
 
     interface RegistrationResponseData {
@@ -84,6 +98,12 @@
     const passwordMatchError = ref("")
     const showPassword = ref(false)
     const showConfirmPassword = ref(false)
+    const isLoadingProfessions = ref(false)
+    const professionalTypes = ref<Array<{label: string; value: string}>>([])
+    const showProfessionDropdown = ref(false)
+    const filteredProfessions = ref<Array<{label: string; value: string}>>([])
+    const professionSearchTerm = ref("")
+    const isProfessionFromAPI = ref(false)
 
     const formData = ref<RegisterFormData>({
         first_name: "",
@@ -92,7 +112,92 @@
         password_confirmation: "",
         user_type: props.accountType === 1 ? "advertisers" : props.accountType === 2 ? "agent" : "",
         uuid: getUuid.value?.uuid || "",
+        mobile: "",
+        profession_id: "",
+        occupation: "",
     })
+
+    // Check if this is agent or advertiser registration
+    const isAgentOrAdvertiser = computed(() => {
+        return props.accountType === 1 || props.accountType === 2
+    })
+
+    // Load professions from API
+    const loadProfessions = async () => {
+        if (!isAgentOrAdvertiser.value) return
+        
+        isLoadingProfessions.value = true
+        try {
+            const response = await $fetchCMS<ProfessionResponse>("admin/professions/all/active", {
+                method: 'GET'
+            })
+            if (response.status === "success" && response.data) {
+                professionalTypes.value = response.data.map(profession => ({
+                    label: profession.name,
+                    value: profession.id.toString()
+                }))
+                filteredProfessions.value = professionalTypes.value
+            }
+        } catch (error) {
+            console.error("Failed to load professions:", error)
+            professionalTypes.value = []
+        } finally {
+            isLoadingProfessions.value = false
+        }
+    }
+
+    // Filter professions based on search term
+    const filterProfessions = () => {
+        const searchLower = professionSearchTerm.value.toLowerCase()
+        filteredProfessions.value = professionalTypes.value.filter(profession =>
+            profession.label.toLowerCase().includes(searchLower)
+        )
+    }
+
+    // Handle profession selection from dropdown
+    const selectProfession = (profession: {label: string; value: string}) => {
+        professionSearchTerm.value = profession.label
+        formData.value.profession_id = profession.value
+        formData.value.occupation = ""
+        isProfessionFromAPI.value = true
+        showProfessionDropdown.value = false
+    }
+
+    // Handle manual profession entry
+    const handleProfessionInput = () => {
+        filterProfessions()
+        showProfessionDropdown.value = true
+        isProfessionFromAPI.value = false
+        formData.value.profession_id = ""
+        formData.value.occupation = professionSearchTerm.value
+    }
+
+    // Load professions when component mounts if agent or advertiser
+    onMounted(() => {
+        if (isAgentOrAdvertiser.value) {
+            loadProfessions()
+        }
+
+        // Close dropdown when clicking outside
+        if (import.meta.client) {
+            document.addEventListener('click', handleClickOutside)
+        }
+    })
+
+    onUnmounted(() => {
+        if (import.meta.client) {
+            document.removeEventListener('click', handleClickOutside)
+            document.body.style.overflow = ""
+        }
+    })
+
+    const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as HTMLElement
+        const professionInput = document.getElementById('profession')
+        if (professionInput && !professionInput.contains(target) && !target.closest('.profession-dropdown')) {
+            showProfessionDropdown.value = false
+        }
+    }
 
     const hasMinimumLength = computed(() => {
         return formData.value.password.length >= 8
@@ -171,11 +276,35 @@
         }
 
         try {
+            // Prepare request body
+            const requestBody: any = {
+                first_name: formData.value.first_name,
+                last_name: formData.value.last_name,
+                password: formData.value.password,
+                password_confirmation: formData.value.password_confirmation,
+                user_type: formData.value.user_type,
+                uuid: formData.value.uuid,
+            }
+
+            // Add mobile and profession fields only for agent/advertiser
+            if (isAgentOrAdvertiser.value) {
+                if (formData.value.mobile) {
+                    requestBody.mobile = formData.value.mobile
+                }
+                
+                // Send profession_id if selected from API, otherwise send occupation
+                if (isProfessionFromAPI.value && formData.value.profession_id) {
+                    requestBody.profession_id = formData.value.profession_id
+                } else if (professionSearchTerm.value) {
+                    requestBody.occupation = professionSearchTerm.value
+                }
+            }
+
             const response = await $fetchCMS<
                 ApiResponse<RegistrationResponseData>
             >("/register", {
                 method: "POST",
-                body: formData.value,
+                body: requestBody,
             })
 
             if (response.status) {
@@ -339,6 +468,78 @@
                         </span>
                     </div>
                 </div>
+
+                <!-- Mobile and Profession fields - only for agent/advertiser -->
+                <template v-if="isAgentOrAdvertiser">
+                    <div class="flex flex-col gap-3">
+                        <label
+                            for="mobile"
+                            class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]"
+                            >Mobile Phone</label
+                        >
+                        <InputText
+                            id="mobile"
+                            v-model="formData.mobile"
+                            placeholder="Enter your mobile phone"
+                            required
+                            autocomplete="off"
+                            type="tel"
+                            :pt="{
+                                root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-lg text-sm md:text-base text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
+                            }" />
+                        <span
+                            v-if="validationErrors.mobile"
+                            class="text-xs text-red-500">
+                            {{ validationErrors.mobile }}
+                        </span>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                        <label
+                            for="profession"
+                            class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]"
+                            >Profession</label
+                        >
+                        <div class="relative">
+                            <InputText
+                                id="profession"
+                                v-model="professionSearchTerm"
+                                @input="handleProfessionInput"
+                                @focus="showProfessionDropdown = true"
+                                placeholder="Select or type your profession"
+                                required
+                                autocomplete="off"
+                                :pt="{
+                                    root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-lg text-sm md:text-base text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
+                                }" />
+                            
+                            <!-- Profession dropdown -->
+                            <div 
+                                v-if="showProfessionDropdown && filteredProfessions.length > 0"
+                                class="profession-dropdown absolute z-50 w-full mt-1 bg-white border border-[#cfdbe8] rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                <div 
+                                    v-for="profession in filteredProfessions"
+                                    :key="profession.value"
+                                    @click="selectProfession(profession)"
+                                    class="px-4 py-3 hover:bg-gray-100 cursor-pointer transition-colors">
+                                    {{ profession.label }}
+                                </div>
+                            </div>
+
+                            <!-- Loading indicator -->
+                            <div 
+                                v-if="isLoadingProfessions"
+                                class="absolute right-4 top-1/2 -translate-y-1/2">
+                                <i class="pi pi-spin pi-spinner text-gray-400"></i>
+                            </div>
+                        </div>
+                        <span
+                            v-if="validationErrors.profession_id || validationErrors.occupation"
+                            class="text-xs text-red-500">
+                            {{ validationErrors.profession_id || validationErrors.occupation }}
+                        </span>
+                    </div>
+                </template>
 
                 <div class="flex flex-col gap-3">
                     <label
