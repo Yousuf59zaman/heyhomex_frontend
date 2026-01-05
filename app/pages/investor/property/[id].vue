@@ -204,7 +204,7 @@
 
     const tabMaps = computed(() => {
         return {
-            title: "Location & Maps",
+            title: "Map",
             mapUrl: propertyData.value?.location?.map_url || null,
             streetViewUrl:
                 propertyData.value?.location?.street_view_url || null,
@@ -682,12 +682,11 @@
                             <div
                                 v-for="feature in tabFeatures.items"
                                 :key="feature.id"
-                                class="bg-[#faf9f8] rounded-xl p-4 lg:p-5 flex items-center gap-4">
-                                <img
-                                    src="/svg/dashboard/card.bed.svg"
-                                    alt="Feature icon"
-                                    class="w-8 h-8" />
-                                <p class="capitalize text-base font-medium text-[#121a22] leading-6 lg:text-lg lg:leading-7">
+                                class="bg-[#faf9f8] rounded-xl p-5 flex items-center gap-4">
+                                <Icon
+                                    :name="feature.icon"
+                                    class="w-8 h-8 text-[#283849] flex-shrink-0" />
+                                <span class="text-[#283849] font-medium text-lg">
                                     {{ feature.text }}
                                 </p>
                             </div>
@@ -713,7 +712,7 @@
                                     loading="lazy"
                                     referrerpolicy="no-referrer-when-downgrade"></iframe>
                             </div>
-                            <div
+                            <!-- <div
                                 v-if="tabMaps.streetViewUrl"
                                 class="text-center">
                                 <a
@@ -722,7 +721,7 @@
                                     class="inline-block bg-gray-900 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
                                     View Street View
                                 </a>
-                            </div>
+                            </div> -->
                         </div>
                         <div
                             v-else
@@ -837,6 +836,8 @@
                         </form>
                     </div>
                 </div>
+
+               
             </div>
         </div>
 

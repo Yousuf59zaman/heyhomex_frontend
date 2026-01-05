@@ -233,7 +233,7 @@
 
     const tabMaps = computed(() => {
         return {
-            title: "Location & Maps",
+            title: "Map",
             mapUrl: propertyData.value?.location?.map_url || null,
             streetViewUrl:
                 propertyData.value?.location?.street_view_url || null,
@@ -545,13 +545,13 @@
                             {{ propertyData.title || propertyData.name }}
                         </h1>
                         <div
-                            class="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 w-full md:w-auto">
+                            class="flex flex-row items-center gap-3 md:gap-4">
                             <button
-                                class="w-full md:w-auto bg-[#18222c] text-white h-[52px] px-5 rounded-xl text-sm font-semibold hover:bg-[#111922] transition-colors flex items-center justify-center">
+                                class="flex-1 md:flex-none md:w-auto bg-[#18222c] text-white h-[52px] px-5 rounded-xl text-sm font-semibold hover:bg-[#111922] transition-colors flex items-center justify-center">
                                 Claim This Home
                             </button>
                             <button
-                                class="h-[52px] w-[52px] bg-[#f0f1f3] rounded-xl flex items-center justify-center hover:bg-[#e6e8eb] transition-colors self-center md:self-auto">
+                                class="h-[52px] w-[52px] flex-shrink-0 bg-[#f0f1f3] rounded-xl flex items-center justify-center hover:bg-[#e6e8eb] transition-colors">
                                 <Icon
                                     name="lucide:heart"
                                     class="w-6 h-6 text-[#121a22]" />
@@ -663,7 +663,7 @@
                                     : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
                             ]"
                             @click="activeTab = 'Maps'">
-                            Maps
+                            Map
                         </button>
                     </div>
 
@@ -747,15 +747,15 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">
                             {{ tabFeatures.title }}
                         </h3>
-                        <div class="space-y-3">
+                        <div class="flex flex-col gap-3">
                             <div
                                 v-for="feature in tabFeatures.items"
                                 :key="feature.id"
-                                class="flex items-center space-x-3">
+                                class="bg-[#faf9f8] rounded-xl p-5 flex items-center gap-4">
                                 <Icon
                                     :name="feature.icon"
-                                    class="w-5 h-5 text-gray-600" />
-                                <span class="text-gray-900 font-medium">
+                                    class="w-8 h-8 text-[#283849] flex-shrink-0" />
+                                <span class="text-[#283849] font-medium text-lg">
                                     {{ feature.text }}
                                 </span>
                             </div>
@@ -781,7 +781,7 @@
                                     loading="lazy"
                                     referrerpolicy="no-referrer-when-downgrade"></iframe>
                             </div>
-                            <div
+                            <!-- <div
                                 v-if="tabMaps.streetViewUrl"
                                 class="text-center">
                                 <a
@@ -790,7 +790,7 @@
                                     class="inline-block bg-gray-900 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
                                     View Street View
                                 </a>
-                            </div>
+                            </div> -->
                         </div>
                         <div
                             v-else
@@ -885,37 +885,28 @@
                             </div>
                         </div>
 
-                        <!-- Contact Form -->
-                        <form
-                            @submit.prevent="submitContactForm"
-                            class="space-y-4">
+                       <!-- Contact Form -->
+                        <form @submit.prevent="submitContactForm" class="space-y-4">
                             <div>
-                                <label
-                                    class="block text-sm font-medium text-gray-700 mb-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
                                     Full Name
                                 </label>
-                                <InputText
-                                    v-model="contactForm.fullName"
-                                    placeholder="Enter your full name"
+                                <InputText v-model="contactForm.fullName" placeholder="Enter your full name"
                                     class="w-full p-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                             </div>
 
                             <div>
-                                <label
-                                    class="block text-sm font-medium text-gray-700 mb-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
                                     Message
                                 </label>
-                                <Textarea
-                                    v-model="contactForm.message"
-                                    placeholder="Enter your message"
-                                    rows="4"
+                                <Textarea v-model="contactForm.message" placeholder="Enter your message" rows="4"
                                     class="w-full p-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" />
                             </div>
 
-                            <Button
-                                type="submit"
-                                label="Contact Agent"
-                                class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
+                            <div type="submit"
+                                class="md:flex-none md:w-auto bg-[#18222c] text-white px-5 cursor-pointer  py-2.5 rounded-md text-sm font-semibold hover:bg-[#111922] transition-colors flex items-center justify-center">
+                                Contact Agent
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -937,10 +928,11 @@
                             </p>
                         </div>
 
-                        <Button
-                            @click="bookTour"
-                            label="Book a Tour"
-                            class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-2.5 rounded-md text-sm font-medium transition-colors border-0" />
+
+                        <div @click="bookTour" type="submit"
+                            class="md:flex-none md:w-auto bg-[#18222c] text-white px-5 cursor-pointer  py-2.5 rounded-md text-sm font-semibold hover:bg-[#111922] transition-colors flex items-center justify-center">
+                            Book a Tour
+                        </div>
                     </div>
                 </div>
             </div>

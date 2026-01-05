@@ -4,10 +4,12 @@
     interface Props {
         isOpenStartModal: boolean
         initialStep?: number
+        preselectedAccountType?: number | null
     }
     const props = withDefaults(defineProps<Props>(), {
         initialStep: 0,
         isOpenStartModal: false,
+        preselectedAccountType: null,
     })
     const emit = defineEmits<{
         'update:isOpenStartModal': [value: boolean]
@@ -111,7 +113,13 @@
     const handleSsoSuccess = (data:any): void => {
         typeSource.value = "sso"
         console.log('check from test' , data)
-        ssoData.value = data;
+        const preselectedType = data.preselectedAccountType || props.preselectedAccountType
+        const { preselectedAccountType, ...cleanSsoData } = data
+        ssoData.value = cleanSsoData
+        console.log('sso data' , ssoData.value)
+        if (preselectedType && !data.user_role) {
+            accountType.value = preselectedType
+        }
         activeIndex.value = 3
     }
 
@@ -225,8 +233,11 @@
             <AuthCitizenGetStartedModal
                 v-if="isGetStartedVisible"
                 v-model="isGetStartedVisible"
+                :preselectedAccountType="props.preselectedAccountType"
                 @go-to-email="handleGoToEmail"
                 @show-login="handleShowLoginFromGetStarted"
+                @show-account-type="handleSsoSuccess"
+                @login-success="handleLoginSuccess"
                 @back="handleBack"
                 @close="handleModalClose" />
 
@@ -252,6 +263,7 @@
                 v-model="isAccountTypeVisible"
                 :source="typeSource"
                 :ssoData="ssoData"
+                :preselectedAccountType="props.preselectedAccountType"
                 @account-type="handleAccountType"
                 @auth-type="handleAuthType"
                 @login-success="handleLoginSuccess"
@@ -279,6 +291,7 @@
             <AuthCitizenLoginModal
                 v-if="isLoginVisible"
                 v-model="isLoginVisible"
+                :preselectedAccountType="props.preselectedAccountType"
                 @login-success="handleLoginSuccess"
                 @show-register="handleShowRegisterFromLogin"
                 @show-forgot-password="handleShowForgotPasswordFromLogin"

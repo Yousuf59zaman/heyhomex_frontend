@@ -3,6 +3,7 @@
         modelValue: boolean
         source?: string
         ssoData?: Record<string, any> | null
+        preselectedAccountType?: number | null
     }>()
     const visible = ref(props.modelValue)
     const loading = ref(false)
@@ -11,6 +12,9 @@
         () => props.modelValue,
         (newVal) => {
             visible.value = newVal
+            if (newVal && props.preselectedAccountType) {
+                selectedAccountType.value = props.preselectedAccountType
+            }
         }
     )
 
@@ -29,6 +33,10 @@
     }>()
 
     const selectedAccountType = ref(3)
+    
+    if (props.preselectedAccountType) {
+        selectedAccountType.value = props.preselectedAccountType
+    }
 
     const handleBack = () => {
         emit("back")

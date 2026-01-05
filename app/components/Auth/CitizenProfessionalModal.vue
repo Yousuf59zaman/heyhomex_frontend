@@ -70,7 +70,6 @@
             }
         } catch (error) {
             console.error("Failed to load professions:", error)
-            // Fallback to empty array if API fails
             professionalTypes.value = []
         } finally {
             isLoadingProfessions.value = false

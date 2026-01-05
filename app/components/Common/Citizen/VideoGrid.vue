@@ -1,7 +1,7 @@
 <script setup>
     import {useVideoPlayer} from "~/composables/useVideoPlayer"
 
-    const emit = defineEmits(["see-all", "video-click"])
+    const emit = defineEmits(["see-all", "video-click", "favorite"])
 
     const props = defineProps({
         title: {
@@ -33,6 +33,10 @@
             openVideo(video, props.videos)
         }
     }
+
+    const handleFavoriteToggle = (video) => {
+        emit("favorite", video)
+    }
 </script>
 
 <template>
@@ -54,7 +58,8 @@
                 v-for="video in videos"
                 :key="video.id"
                 :video="video"
-                @click="handleVideoClick" />
+                @click="handleVideoClick"
+                @favorite="handleFavoriteToggle" />
         </div>
 
         <ClientOnly>

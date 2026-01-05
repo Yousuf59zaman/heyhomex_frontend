@@ -227,9 +227,8 @@
                         bottomRight: 0,
                     },
                     borderSkipped: false,
-                    categoryPercentage: 0.5,
-                    barPercentage: 0.9,
-                    barThickness: 12,
+                    categoryPercentage: 0.8,
+                    barPercentage: 0.6,
                 },
                 {
                     label: "Best FHA Loans",
@@ -244,9 +243,8 @@
                         bottomRight: 0,
                     },
                     borderSkipped: false,
-                    categoryPercentage: 0.5,
-                    barPercentage: 0.9,
-                    barThickness: 12,
+                    categoryPercentage: 0.8,
+                    barPercentage: 0.6,
                 },
             ],
         }
@@ -274,8 +272,8 @@
         scales: {
             x: {
                 display: true,
-                categoryPercentage: 0.7,
-                barPercentage: 0.8,
+                categoryPercentage: 0.8,
+                barPercentage: 0.4,
                 grid: {
                     display: false,
                 },

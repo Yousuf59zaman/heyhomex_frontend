@@ -93,6 +93,7 @@
                 thumbnail: video.video_image || '/images/dashboard/video/1.png',
                 duration: video.duration || '0:00',
                 videoUrl: video.video_url || demoVideoUrl,
+                isFavorite: video.is_favorite || false,
             }))
         } catch (e) {
             console.log("Error loading videos:", e.message)
@@ -339,6 +340,13 @@
         console.log("Video clicked:", video)
     }
 
+    const toggleVideoFavorite = (video) => {
+        const targetVideo = videos.value.find((v) => v.id === video.id)
+        if (targetVideo) {
+            targetVideo.isFavorite = !targetVideo.isFavorite
+        }
+    }
+
     const handleSeeAllProperties = () => {
         console.log("See all properties")
     }
@@ -565,7 +573,8 @@
             :videos="videos"
             :ad-config="adConfig"
             @see-all="handleSeeAllVideos"
-            @video-click="handleVideoClick" />
+            @video-click="handleVideoClick"
+            @favorite="toggleVideoFavorite" />
     </div>
 
     <!-- Toast Notifications -->

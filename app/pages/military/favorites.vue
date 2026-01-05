@@ -203,7 +203,7 @@
 </script>
 
 <template>
-    <div class="space-y-4 md:space-y-6 p-4 md:p-6 lg:p-8">
+    <div class="space-y-4 md:space-y-6 py-4 md:py-6 lg:py-1">
         <!-- Top Banner Ad -->
         <AdvertisementDisplay placement-slug="military-favorites-top-banner" />
 
