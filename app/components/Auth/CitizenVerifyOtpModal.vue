@@ -263,7 +263,6 @@
                         }
                     }, 100)
                 } else {
-                    // Clean up timer when modal closes
                     if (timerInterval.value) {
                         clearInterval(timerInterval.value)
                         timerInterval.value = null
@@ -272,8 +271,7 @@
             }
         }
     )
-
-    // Cleanup timer on component unmount
+    
     onUnmounted(() => {
         if (timerInterval.value) {
             clearInterval(timerInterval.value)
