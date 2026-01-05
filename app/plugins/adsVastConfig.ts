@@ -47,6 +47,36 @@ const getMediaTypeForUrl = (mediaUrl: string): string => {
     return 'video/mp4';
 };
 
+const formatOffsetPercentage = (percentage: number): string => {
+    const rounded = Math.round(percentage * 100) / 100;
+    const formatted = Number.isInteger(rounded) ? rounded.toFixed(0) : rounded.toFixed(2);
+    return `${formatted.replace(/\.0+$/, '').replace(/(\.\d)0$/, '$1')}%`;
+};
+
+const buildAdOffsets = (adCount: number): string[] => {
+    if (adCount <= 0) {
+        return [];
+    }
+
+    if (adCount === 1) {
+        return ['pre'];
+    }
+
+    if (adCount === 2) {
+        return ['pre', 'post'];
+    }
+
+    const midrollCount = adCount - 2;
+    const offsets: string[] = ['pre', 'post'];
+
+    for (let index = 1; index <= midrollCount; index += 1) {
+        const percentage = (index / (midrollCount + 1)) * 100;
+        offsets.push(formatOffsetPercentage(percentage));
+    }
+
+    return offsets;
+};
+
 const isAdActive = (ad: ApiAdvertisement): boolean => {
     if (!ad.is_active) return false;
 
@@ -185,7 +215,7 @@ export default defineNuxtPlugin(() => {
                 }
 
                 const schedule: AdScheduleItem[] = [];
-                const offsets = ['pre', '50%', 'post'] as const;
+                const offsets = buildAdOffsets(activeAds.length);
 
                 activeAds.forEach((ad, index) => {
                     if (!isPlayableMediaUrl(ad.media_url)) {
@@ -197,8 +227,7 @@ export default defineNuxtPlugin(() => {
                         return;
                     }
 
-                    const offsetIndex = index % offsets.length;
-                    const offset = offsets[offsetIndex] ?? offsets[0];
+                    const offset = offsets[index] ?? offsets[0] ?? 'pre';
                     const mediaType = getMediaTypeForUrl(ad.media_url);
 
                     const { tag, tagFilename } = generateVastXmlFn(ad.media_url, {
@@ -215,7 +244,7 @@ export default defineNuxtPlugin(() => {
                         type: 'linear',
                         apiAdId: ad.id,
                         directMediaUrl: ad.media_url,
-                        clickThroughUrl: ad.media_url, // Using media_url as requested
+                        clickThroughUrl: ad.redirect_url ,
                         adTitle: ad.title,
                     });
                 });
@@ -252,7 +281,7 @@ export default defineNuxtPlugin(() => {
                 }
 
                 const schedule: AdScheduleItem[] = [];
-                const offsets = ['pre', '50%', 'post'] as const;
+                const offsets = buildAdOffsets(activeAds.length);
 
                 activeAds.forEach((ad, index) => {
                     if (!isPlayableMediaUrl(ad.media_url)) {
@@ -264,8 +293,7 @@ export default defineNuxtPlugin(() => {
                         return;
                     }
 
-                    const offsetIndex = index % offsets.length;
-                    const offset = offsets[offsetIndex] ?? offsets[0];
+                    const offset = offsets[index] ?? offsets[0] ?? 'pre';
                     const mediaType = getMediaTypeForUrl(ad.media_url);
 
                     const { tag, tagFilename } = generateVastXmlFn(ad.media_url, {
@@ -282,7 +310,7 @@ export default defineNuxtPlugin(() => {
                         type: 'linear',
                         apiAdId: ad.id,
                         directMediaUrl: ad.media_url,
-                        clickThroughUrl: ad.media_url, // Using media_url as requested
+                        clickThroughUrl: ad.redirect_url,
                         adTitle: ad.title,
                     });
                 });

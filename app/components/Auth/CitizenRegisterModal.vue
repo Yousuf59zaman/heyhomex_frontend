@@ -243,11 +243,11 @@
         :draggable="false"
         :resizable="false"
         class="citizen-register-modal"
-        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: '45rem', maxWidth: '720px'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4',
-            header: 'border-0 pb-[0px!important]',
-            content: 'border-0 pt-[0px!important] pb-[8px!important]',
+            header: 'border-0 p-[0px!important]',
+            content: 'border-0 p-[0px!important]',
             closeButton:
                 'absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-sm transition-colors duration-200',
         }">
@@ -259,15 +259,15 @@
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
-            <div class="w-full px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
-                <div class="flex items-center justify-center relative">
+            <div class="w-full px-6 pt-8 pb-10">
+                <div class="relative mx-auto flex w-full max-w-[42rem] items-center justify-center">
                     <button
                         @click="handleBack"
                         type="button"
-                        class="absolute left-0 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                        class="absolute left-0 flex h-6 w-6 items-center justify-center text-[#121A22]"
                         aria-label="Go back">
                         <svg
-                            class="w-5 h-5 text-gray-700"
+                            class="h-6 w-6"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24">
@@ -280,24 +280,25 @@
                     </button>
 
                     <h1
-                        class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
+                        class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Medium']">
                         Set up profile
                     </h1>
+                    <div aria-hidden="true" class="absolute right-0 h-6 w-6"></div>
                 </div>
             </div>
         </template>
 
         <!-- Content -->
-        <div class="px-4 sm:px-6 pb-8">
+        <div class="px-6 pb-8">
             <form
                 @submit.prevent="handleRegister"
                 autocomplete="off"
-                class="space-y-6">
+                class="mx-auto w-full max-w-[42rem] space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div class="flex flex-col gap-3">
                         <label
                             for="firstName"
-                            class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]"
+                            class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]"
                             >First name</label
                         >
                         <InputText
@@ -319,7 +320,7 @@
                     <div class="flex flex-col gap-3">
                         <label
                             for="lastName"
-                            class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]"
+                            class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]"
                             >Last name</label
                         >
                         <InputText
@@ -342,7 +343,7 @@
                 <div class="flex flex-col gap-3">
                     <label
                         for="password"
-                        class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]"
+                        class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]"
                         >Password</label
                     >
                     <div class="relative">
@@ -411,7 +412,7 @@
                 <div class="flex flex-col gap-3">
                     <label
                         for="confirmPassword"
-                        class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on]"
+                        class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]"
                         >Confirm password</label
                     >
                     <div class="relative">
@@ -660,3 +661,4 @@
         padding-bottom: 1.5rem;
     }
 </style>
+

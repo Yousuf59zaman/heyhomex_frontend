@@ -134,8 +134,8 @@
         :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4',
-            header: 'border-0 pb-[0px!important]',
-            content: 'border-0 pt-[0px!important] pb-[8px!important]',
+            header: 'border-0 p-[0px!important]',
+            content: 'border-0 p-[0px!important]',
         }">
         <template #header>
             <div class="absolute right-0 top-0 z-50">
@@ -145,98 +145,101 @@
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
-            <div class="w-full px-6 pt-8">
-                <div class="flex items-center justify-center relative">
+            <div class="w-full px-6 pt-8 pb-10">
+                <div class="relative mx-auto flex w-full max-w-[42rem] items-center justify-center">
                     <button
                         @click="handleBack"
                         type="button"
-                        class="absolute left-0 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                        class="absolute left-0 flex h-6 w-6 items-center justify-center text-[#121A22]"
                         aria-label="Go back">
                         <svg
-                            class="w-5 h-5 text-gray-700"
+                            class="h-6 w-6"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15 19l-7-7 7-7" />
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
 
-                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
+                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Medium']">
                         Select account type
                     </h2>
+                    <div aria-hidden="true" class="absolute right-0 h-6 w-6"></div>
                 </div>
             </div>
         </template>
 
         <!-- Content -->
-        <div class="px-6 pt-8 pb-6 space-y-10">
-            <div class="grid grid-cols-3 gap-5">
-                <button
-                    @click="selectAccountType(3)"
-                    type="button"
-                    :class="[
-                        'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
-                        'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
-                        selectedAccountType === 3
-                            ? 'bg-[#18222c] text-white'
-                            : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
-                    ]">
-                    I am a Buyer
-                </button>
+        <div class="px-6 pb-8">
+            <div class="mx-auto flex w-full max-w-[42rem] flex-col gap-10">
+                <div class="grid grid-cols-3 gap-5">
+                    <button
+                        @click="selectAccountType(3)"
+                        type="button"
+                        :class="[
+                            'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
+                            'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
+                            selectedAccountType === 3
+                                ? 'bg-[#18222c] text-white'
+                                : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
+                        ]">
+                        I am a Buyer
+                    </button>
+
+                    <button
+                        @click="selectAccountType(2)"
+                        type="button"
+                        :class="[
+                            'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
+                            'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
+                            selectedAccountType === 2
+                                ? 'bg-[#18222c] text-white'
+                                : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
+                        ]">
+                        I am an Agent
+                    </button>
+
+                    <button
+                        @click="selectAccountType(1)"
+                        type="button"
+                        :class="[
+                            'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
+                            'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
+                            selectedAccountType === 1
+                                ? 'bg-[#18222c] text-white'
+                                : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
+                        ]">
+                        I am an Advertiser
+                    </button>
+                </div>
 
                 <button
-                    @click="selectAccountType(2)"
+                    @click="handleNext"
                     type="button"
-                    :class="[
-                        'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
-                        'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
-                        selectedAccountType === 2
-                            ? 'bg-[#18222c] text-white'
-                            : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
-                    ]">
-                    I am an Agent
+                    class="w-full h-[3.25rem] px-6 bg-[#18222C] hover:bg-[#101822] text-white font-bold rounded-[12px] transition-colors duration-200">
+                    Next
                 </button>
 
-                <button
-                    @click="selectAccountType(1)"
-                    type="button"
-                    :class="[
-                        'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
-                        'h-[5.75rem] px-5 py-3.5 rounded-xl text-sm md:text-base font-bold transition-all duration-200',
-                        selectedAccountType === 1
-                            ? 'bg-[#18222c] text-white'
-                            : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
-                    ]">
-                    I am an Advertiser
-                </button>
-            </div>
-
-            <button
-                @click="handleNext"
-                type="button"
-                class="w-full h-[3.25rem] px-6 bg-[#18222C] hover:bg-[#101822] text-white font-bold rounded-[12px] transition-colors duration-200">
-                Next
-            </button>
-
-            <div class="text-center">
-                <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] text-center">
-                    By using heyhomex, you agree to the
-                    <a
-                        href="/terms"
-                        class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
-                        >Terms</a
-                    >
-                    and
-                    <a
-                        href="/privacy"
-                        class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline"
-                        >Privacy Policy</a
-                    >.
-                </p>
+                <div class="text-center">
+                    <p class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] text-center">
+                        By using heyhomex, you agree to the
+                        <a
+                            href="/terms"
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:underline"
+                            >Terms</a
+                        >
+                        and
+                        <a
+                            href="/privacy"
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:underline"
+                            >Privacy Policy</a
+                        >.
+                    </p>
+                </div>
             </div>
         </div>
     </Dialog>
@@ -256,3 +259,4 @@
         padding-top: 0;
     }
 </style>
+

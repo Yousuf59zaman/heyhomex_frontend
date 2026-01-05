@@ -198,7 +198,7 @@
         :draggable="false"
         :resizable="false"
         class="citizen-get-started-modal"
-        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: '45rem', maxWidth: '720px'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4',
             header: 'border-0 p-[0px!important]',
@@ -234,7 +234,7 @@
                         </svg>
                     </button>
 
-                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Regular']">
+                    <h2 class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Medium']">
                         Create account
                     </h2>
                     <div aria-hidden="true" class="absolute right-0 h-6 w-6"></div>
@@ -335,15 +335,15 @@
                 </div>
 
                 <div class="text-center">
-                    <p class="text-sm md:text-base leading-6 text-[#121A22] md:font-[510] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] text-center">
+                    <p class="text-sm md:text-base leading-6 text-[#121A22] md:font-[510] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] text-center">
                         By using heyhomex, you agree to the
                         <a
                             href="/terms"
-                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline">Terms</a>
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:underline">Terms</a>
                         and
                         <a
                             href="/privacy"
-                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] hover:underline">Privacy Policy</a>.
+                            class="text-base leading-6 font-bold text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on] hover:underline">Privacy Policy</a>.
                     </p>
                 </div>
             </div>
@@ -364,3 +364,4 @@
         padding-top: 0;
     }
 </style>
+

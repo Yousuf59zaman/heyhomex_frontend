@@ -487,10 +487,10 @@ watch(
         :draggable="false"
         :resizable="false"
         class="citizen-onboarding-modal"
-        :style="{width: 'min(44rem, 95vw)', maxWidth: '95vw'}"
+        :style="{width: '45rem', maxWidth: '720px'}"
         :pt="{
             root: 'border-0 rounded-xl shadow-2xl m-4 bg-white',
-            header: 'border-0 pb-[0px!important]',
+            header: 'border-0 pb-[0px!important] pt-[0px!important]',
             content: 'border-0 pt-[0px!important] pb-[0px!important]',
         }">
         <template #header>
@@ -501,7 +501,7 @@ watch(
                     <i class="pi pi-times text-2xl"></i>
                 </button>
             </div>
-            <div class="w-full text-center px-6 pt-8 pb-0">
+            <div class="w-full text-center px-6 pt-8 pb-12">
                 <h1
                     class="text-2xl md:text-3xl lg:text-4xl leading-tight max-w-[25.25rem] mx-auto text-[#121A22] font-medium">
                     {{ getCurrentStepConfig().title }}
@@ -514,11 +514,11 @@ watch(
             <div class="flex items-center justify-between w-full">
                 <div
                     v-if="getCurrentStepConfig().stepLabel"
-                    class="text-xs sm:text-sm leading-normal text-[#121A22]">
+                    class="text-xs sm:text-[14px] leading-normal sm:leading-[20px] text-[#121A22] sm:font-normal sm:font-['sf-pro-Regular']">
                     <span class="font-normal">Steps: </span>
-                    <span class="font-bold">{{ currentProgressIndex + 1 }}</span>
+                    <span class="font-bold sm:font-normal">{{ currentProgressIndex + 1 }}</span>
                     <span class="font-normal">/</span>
-                    <span class="font-normal text-[#283849]">{{ progressSteps.length }}</span>
+                    <span class="font-normal text-[#283849] sm:text-[#121A22]">{{ progressSteps.length }}</span>
                 </div>
 
                 <div
@@ -543,7 +543,7 @@ watch(
                 <div class="flex flex-col gap-4">
                     <p
                         v-if="getCurrentStepConfig().subtitle"
-                        class="text-xl md:text-2xl lg:text-3xl leading-tight text-[#121A22] font-medium">
+                        class="text-xl md:text-2xl lg:text-[28px] leading-tight lg:leading-[40px] text-[#121A22] font-medium lg:font-[510] lg:font-['sf-pro-Medium']">
                         {{ getCurrentStepConfig().subtitle }}
                     </p>
                 </div>
@@ -566,13 +566,13 @@ watch(
                     </div>
                     <div
                         v-else
-                        class="flex flex-wrap gap-3 max-w-full sm:max-w-[39.8125rem]">
+                        class="flex flex-wrap gap-3 max-w-full sm:max-w-full">
                         <div
                             v-for="option in motivationOptions"
                             :key="option.value"
                             @click="formData.motivation = option.value"
                             :class="[
-                                'inline-flex min-h-14 items-center px-5 py-2.5 rounded-[6.1875rem] cursor-pointer transition-all duration-200 text-xs sm:text-sm font-medium leading-tight whitespace-pre',
+                                'inline-flex min-h-14 items-center px-5 py-2.5 rounded-[6.1875rem] cursor-pointer transition-all duration-200 text-xs sm:text-[14px] font-medium leading-tight sm:leading-[20px] sm:font-[510] sm:font-[sf-pro-Medium] whitespace-pre',
                                 formData.motivation === option.value
                                     ? 'bg-[#18222c] text-white'
                                     : 'bg-[#F0F1F3] text-[#283849] hover:bg-[#e5e7eb]',
@@ -586,7 +586,7 @@ watch(
                     <button
                         @click="handleStartOver"
                         outlined
-                        class="flex-1 basis-0 w-full h-[3.25rem] px-4 py-3 bg-[#F0F1F3] hover:bg-[#e5e7eb] disabled:bg-gray-300 text-[#121a22] text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center">
+                        class="flex-1 basis-0 w-full h-[3.25rem] px-4 py-3 bg-[#F0F1F3] hover:bg-[#e5e7eb] disabled:bg-gray-300 text-[#121a22] text-base font-bold font-['sf-pro-Bold'] leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center">
                         Start Over
                     </button>
 
@@ -595,7 +595,7 @@ watch(
                         :disabled="!formData.motivation || loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#121A22] hover:bg-[#0F172A] text-white disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold font-['sf-pro-Bold'] leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#18222C] hover:bg-[#0F172A] text-white disabled:opacity-50 disabled:cursor-not-allowed">
                         Next
                     </button>
                 </div>
@@ -608,7 +608,7 @@ watch(
                 <div class="flex flex-col gap-4">
                     <p
                         v-if="getCurrentStepConfig().subtitle"
-                        class="text-xl md:text-2xl lg:text-3xl leading-tight text-[#121A22] font-medium">
+                        class="text-xl md:text-2xl lg:text-[28px] leading-tight lg:leading-[40px] text-[#121A22] font-medium lg:font-[510] lg:font-['sf-pro-Medium']">
                         {{ getCurrentStepConfig().subtitle }}
                     </p>
                 </div>
@@ -631,13 +631,13 @@ watch(
                     </div>
                     <div
                         v-else
-                        class="flex flex-wrap gap-3 max-w-full sm:max-w-[39.8125rem]">
+                        class="flex flex-wrap gap-3 max-w-full sm:max-w-full">
                         <div
                             v-for="option in budgetOptions"
                             :key="option.value"
                             @click="formData.budget = option.value"
                             :class="[
-                                'inline-flex min-h-14 items-center px-5 py-2.5 rounded-[6.1875rem] cursor-pointer transition-all duration-200 text-xs sm:text-sm font-medium leading-tight whitespace-pre',
+                                'inline-flex min-h-14 items-center px-5 py-2.5 rounded-[6.1875rem] cursor-pointer transition-all duration-200 text-xs sm:text-[14px] font-medium leading-tight sm:leading-[20px] sm:font-[510] sm:font-[sf-pro-Medium] whitespace-pre',
                                 formData.budget === option.value
                                     ? 'bg-[#18222c] text-white'
                                     : 'bg-[#F0F1F3] text-[#283849] hover:bg-[#e5e7eb]',
@@ -660,7 +660,7 @@ watch(
                         :disabled="!formData.budget || loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#121A22] hover:bg-[#0F172A] text-white disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold font-['sf-pro-Bold'] leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#121A22] hover:bg-[#0F172A] text-white disabled:opacity-50 disabled:cursor-not-allowed">
                         Next
                     </button>
                 </div>
@@ -673,7 +673,7 @@ watch(
                 <div class="flex flex-col gap-4">
                     <p
                         v-if="getCurrentStepConfig().subtitle"
-                        class="text-xl md:text-2xl lg:text-3xl leading-tight text-[#121A22] font-medium">
+                        class="text-xl md:text-2xl lg:text-[28px] leading-tight lg:leading-[40px] text-[#121A22] font-medium lg:font-[510] lg:font-['sf-pro-Medium']">
                         {{ getCurrentStepConfig().subtitle }}
                     </p>
                 </div>
@@ -696,13 +696,13 @@ watch(
                     </div>
                     <div
                         v-else
-                        class="flex flex-wrap gap-3 max-w-full sm:max-w-[39.8125rem]">
+                        class="flex flex-wrap gap-3 max-w-full sm:max-w-full">
                         <div
                             v-for="option in locationTypeOptions"
                             :key="option.value"
                             @click="formData.locationType = option.value"
                             :class="[
-                                'inline-flex min-h-14 items-center px-5 py-2.5 rounded-[6.1875rem] cursor-pointer transition-all duration-200 text-xs sm:text-sm font-medium leading-tight whitespace-pre',
+                                'inline-flex min-h-14 items-center px-5 py-2.5 rounded-[6.1875rem] cursor-pointer transition-all duration-200 text-xs sm:text-[14px] font-medium leading-tight sm:leading-[20px] sm:font-[510] sm:font-[sf-pro-Medium] whitespace-pre',
                                 formData.locationType === option.value
                                     ? 'bg-[#18222c] text-white'
                                     : 'bg-[#F0F1F3] text-[#283849] hover:bg-[#e5e7eb]',
@@ -725,7 +725,7 @@ watch(
                         :disabled="!formData.locationType || loading"
                         :loading="loading"
                         loadingIcon="pi pi-spin pi-spinner"
-                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#121A22] hover:bg-[#0F172A] text-white disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="flex-1 basis-0 w-full h-[3.25rem] px-5 py-3.5 text-base font-bold font-['sf-pro-Bold'] leading-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 bg-[#121A22] hover:bg-[#0F172A] text-white disabled:opacity-50 disabled:cursor-not-allowed">
                         Next
                     </button>
                 </div>
