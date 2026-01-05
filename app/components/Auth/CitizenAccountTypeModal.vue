@@ -12,7 +12,6 @@
         () => props.modelValue,
         (newVal) => {
             visible.value = newVal
-            // Auto-select account type when modal opens with preselected type
             if (newVal && props.preselectedAccountType) {
                 selectedAccountType.value = props.preselectedAccountType
             }
@@ -34,8 +33,7 @@
     }>()
 
     const selectedAccountType = ref(3)
-
-    // Initialize selectedAccountType with preselected value if available
+    
     if (props.preselectedAccountType) {
         selectedAccountType.value = props.preselectedAccountType
     }

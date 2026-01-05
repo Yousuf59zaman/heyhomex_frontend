@@ -38,7 +38,7 @@
         password_confirmation: "",
     })
 
-    // Password validation computeds (same as CitizenRegisterModal)
+   
     const hasMinimumLength = computed(() => {
         return formData.password.length >= 8
     })
