@@ -4,8 +4,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
     if (!citizen_user.value) return navigateTo("/", {replace: true})
 
-    // const userRole = (citizen_user.value as any)?.data.user_role
-    const userTypeSlug = (citizen_user.value as any)?.data.user_type?.[0]?.slug
+    const userData = (citizen_user.value as any)?.data
+    const userRole = userData?.user_role
+    const userTypeSlug = userData?.user_type?.[0]?.slug
+    const onboardingStatus = userData?.user_onboard_profile_status
 
     const pathSegment = to.path.split("/")[1]
 
@@ -16,6 +18,16 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         "agent",
         "advertisers",
     ]
+
+    // Check if agent or advertiser needs profile completion
+    if ((userRole === 'agent' || userRole === 'advertiser') && onboardingStatus === 0) {
+        const subscriptionPath = userRole === 'agent' ? '/agent/subscription' : '/advertisers/subscription'
+        
+        // Allow access to subscription page but redirect other pages to subscription
+        if (!to.path.includes('/subscription')) {
+            return navigateTo(subscriptionPath, {replace: true})
+        }
+    }
 
     if (pathSegment && protectedSegments.includes(pathSegment)) {
         let allowedSegment: string | null = null

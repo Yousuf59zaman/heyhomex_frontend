@@ -91,7 +91,21 @@
                     const needsOnboarding =
                         userData.user_onboard_profile_status === 0
                     const userSlug = userData.user_type?.[0]?.slug
+                    const userRole = userData.user_role
 
+                    // Check if agent or advertiser
+                    if (userRole === 'agent' || userRole === 'advertiser') {
+                        if (needsOnboarding) {
+                            // Redirect to subscription page for profile update
+                            window.location.href = userRole === 'agent' ? '/agent/subscription' : '/advertisers/subscription'
+                        } else {
+                            // Redirect to dashboard
+                            window.location.href = userRole === 'agent' ? '/agent/' : '/advertiser/'
+                        }
+                        return
+                    }
+
+                    // Handle other user types
                     if (!needsOnboarding && userSlug) {
                         const redirectMap: Record<string, string> = {
                             kamaaina: "/kamaina/",

@@ -138,7 +138,12 @@
 
                 const targetPath = roleRouteMap[userData.user_role]
                 if (targetPath) {
-                    window.location.href = targetPath
+                    // If agent/advertiser needs onboarding (profile incomplete), redirect to subscription page with profile tab
+                    if (needsOnboarding) {
+                        window.location.href = userData.user_role === 'agent' ? '/agent/subscription' : '/advertisers/subscription'
+                    } else {
+                        window.location.href = targetPath
+                    }
                     return
                 }
             }
