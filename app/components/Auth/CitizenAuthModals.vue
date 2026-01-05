@@ -113,15 +113,10 @@
     const handleSsoSuccess = (data:any): void => {
         typeSource.value = "sso"
         console.log('check from test' , data)
-        
-        // Extract preselected account type from SSO data if available
         const preselectedType = data.preselectedAccountType || props.preselectedAccountType
-        
-        // Store ssoData without the preselectedAccountType field
-        const { preselectedAccountType: _, ...cleanSsoData } = data
+        const { preselectedAccountType, ...cleanSsoData } = data
         ssoData.value = cleanSsoData
-        
-        // If preselected account type exists and data doesn't have user_role, set the account type
+        console.log('sso data' , ssoData.value)
         if (preselectedType && !data.user_role) {
             accountType.value = preselectedType
         }
