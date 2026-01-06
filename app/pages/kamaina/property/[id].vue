@@ -462,48 +462,50 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <div class="mb-6">
-                    <div class="flex items-start mb-4 md:hidden">
-                        <Icon name="lucide:map-pin" class="w-4 h-4 mt-1 mr-2 text-gray-600" />
-                        <span class="text-sm text-gray-600">
+                <!-- Property Info Section -->
+                <div class="flex flex-col gap-4 mb-6">
+                    <!-- Location Badge -->
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white lg:bg-[#f6f6fa] p-2 rounded-full">
+                            <Icon
+                                name="lucide:map-pin"
+                                class="w-5 h-5 text-[#121a22]" />
+                        </div>
+                        <span class="text-sm leading-5 text-[#121a22] capitalize">
                             {{ propertyData.address }}
+                        </span>
+                        <!-- Price on same line - Desktop only -->
+                        <span class="hidden md:block ml-auto text-[24px] leading-8 font-semibold text-[#121a22] lg:text-[28px] lg:leading-10 lg:shrink-0">
+                            ${{ propertyData.price.toLocaleString() }}
                         </span>
                     </div>
 
-                    <div class="hidden md:flex md:flex-row md:items-start md:justify-between mb-4">
-                        <div class="flex-1 mb-4 md:mb-0">
-                            <div class="hidden md:flex items-start mb-2">
-                                <Icon name="lucide:map-pin" class="w-4 h-4 mt-1 mr-2 text-gray-600" />
-                                <span class="text-sm text-gray-600">
-                                    {{ propertyData.address }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col md:items-end">
-                            <div class="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-                                ${{ propertyData.price.toLocaleString() }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-                        <h1 class="text-xl md:text-md max-w-sm font-bold text-gray-900 mb-2 md:mb-0">
+                    <!-- Title with Action Buttons on same row -->
+                    <div class="flex items-center justify-between gap-4">
+                        <h1 class="text-[20px] leading-7 font-semibold text-[#121a22] md:text-[24px] md:leading-8 lg:text-2xl lg:leading-8">
                             {{ propertyData.title || propertyData.name }}
                         </h1>
-                        <p class="text-2xl font-bold text-gray-900 md:hidden">
-                            ${{ propertyData.price.toLocaleString() }}
-                        </p>
-                        <div class="flex w-full flex-row items-center gap-3 md:gap-4">
+                        <div class="flex items-center gap-3 shrink-0">
                             <button
-                                class="flex-1 md:flex-none md:w-auto bg-[#18222c] text-white h-[52px] px-5 rounded-xl text-sm font-semibold hover:bg-[#111922] transition-colors flex items-center justify-center">
+                                class="bg-[#18222c] text-white h-[44px] px-5 rounded-xl text-sm font-bold leading-[1.46] hover:bg-[#111922] transition-colors">
                                 Claim This Home
                             </button>
                             <button
-                                class="h-[52px] w-[52px] flex-shrink-0 bg-[#f0f1f3] rounded-xl flex items-center justify-center hover:bg-[#e6e8eb] transition-colors">
-                                <Icon name="lucide:heart" class="w-6 h-6 text-[#121a22]" />
+                                class="h-[44px] w-[44px] flex-shrink-0 bg-white border border-[#e5e7eb] rounded-xl flex items-center justify-center hover:bg-[#f9fafb] transition-colors">
+                                <Icon
+                                    name="lucide:heart"
+                                    class="w-5 h-5 text-[#6b7280]" />
                             </button>
                         </div>
                     </div>
+
+                    <!-- Price - Mobile only (below title row) -->
+                    <p class="md:hidden text-[20px] leading-7 font-semibold text-[#121a22]">
+                        ${{ propertyData.price.toLocaleString() }}
+                    </p>
+
+                    <!-- Divider -->
+                    <div class="hidden lg:block h-px w-full bg-[#EAECEE]"></div>
 
                     <div class="bg-white rounded-xl p-4 flex flex-col gap-6">
                         <div class="flex flex-col sm:flex-row gap-3">
