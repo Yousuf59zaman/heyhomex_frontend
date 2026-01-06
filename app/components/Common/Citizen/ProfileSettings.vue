@@ -246,7 +246,7 @@ const loadProfileData = async () => {
                 pre_street_address: userInfo.pre_street_address || '',
                 pre_province: userInfo.pre_provience || '',
                 zip_code: userInfo.zip_code || '',
-                profession_id: userInfo.profession_id.id || '',
+                profession_id: userInfo.profession_id?.id || '',
                 license_number: userInfo.license_number || '',
                 broker_id: userInfo.broker_id || '',
                 extension: userInfo.extension || '',
@@ -256,7 +256,7 @@ const loadProfileData = async () => {
                 role: props.userRole
             }
 
-            if (userInfo.profession_id.id) {
+            if (userInfo.profession_id?.id) {
                 profileForm.value.profession_id = userInfo.profession_id.id
             }
         }

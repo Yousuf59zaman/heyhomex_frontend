@@ -169,7 +169,7 @@
                 <!-- Desktop Menu -->
                 <div
                     v-if="admin_user"
-                    class="flex items-center gap-[16px]">
+                    class="hidden md:flex items-center gap-[16px]">
                     <NuxtLink
                         to="/admin-panel"
                         class="py-[10px] px-[24px] text-[#121a22] text-[0.875rem] font-semibold leading-[20px] bg-white rounded-[12px] hover:bg-gray-50 transition-colors duration-200">
@@ -179,7 +179,7 @@
                 <div
                     v-else-if="hasCitizenDashboardAccess"
                     style="cursor: pointer"
-                    class="flex cursor-pointer items-center space-x-4">
+                    class="hidden md:flex cursor-pointer items-center space-x-4">
                     <div
                         @click="handleDashboardRedirect(citizen_user)"
                         class="py-[10px] px-[24px] text-[#121a22] text-[0.875rem] font-semibold leading-[20px] bg-white rounded-[12px] hover:bg-gray-50 transition-colors duration-200">
@@ -188,27 +188,27 @@
                 </div>
                 <div
                     v-else
-                    class="flex items-center gap-4">
+                    class="hidden lg:flex items-center gap-3 xl:gap-4">
                     <button
                         @click="handleAdvertiserPanel"
-                        class="py-2 px-4 text-white text-sm font-semibold leading-5 border border-white rounded-lg hover:bg-white/10 transition-colors duration-200">
+                        class="py-2 px-3 lg:px-4 text-white text-xs lg:text-sm font-semibold leading-5 border border-white rounded-lg hover:bg-white/10 transition-colors duration-200 whitespace-nowrap">
                         Advertiser's Panel
                     </button>
                     <button
                         @click="handleAgentPanel"
-                        class="py-2 px-4 text-white text-sm font-semibold leading-5 border border-white rounded-lg hover:bg-white/10 transition-colors duration-200">
+                        class="py-2 px-3 lg:px-4 text-white text-xs lg:text-sm font-semibold leading-5 border border-white rounded-lg hover:bg-white/10 transition-colors duration-200 whitespace-nowrap">
                         Agent Panel
                     </button>
                     <button
                         @click="handleSignIn"
-                        class="text-white text-sm font-semibold leading-5 hover:text-gray-300 transition-colors no-underline">
+                        class="text-white text-xs lg:text-sm font-semibold leading-5 hover:text-gray-300 transition-colors no-underline whitespace-nowrap">
                         Sign In
                     </button>
                     <!-- Vertical Divider -->
                     <div class="w-px h-5 bg-[#566573]"></div>
                     <button
                         @click="handleGetStarted"
-                        class="py-2 px-5 text-[#121A22] text-sm font-semibold leading-5 bg-white rounded-lg hover:bg-gray-50 transition-colors duration-200 border border-white">
+                        class="py-2 px-4 lg:px-5 text-[#121A22] text-xs lg:text-sm font-semibold leading-5 bg-white rounded-lg hover:bg-gray-50 transition-colors duration-200 border border-white whitespace-nowrap">
                         Get Started
                     </button>
                 </div>
