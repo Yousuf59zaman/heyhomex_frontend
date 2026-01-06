@@ -406,7 +406,7 @@ onMounted(() => {
                 </div>
                 <!-- Image Grid - Figma layout (Desktop) -->
                 <div
-                    class="hidden md:grid items-stretch gap-3 lg:gap-4 mb-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-[488px_320px] md:h-[320px]">
+                    class="hidden md:grid items-stretch gap-3 lg:gap-4 mb-6 grid-cols-[1fr_0.6fr] h-[320px]">
                     <!-- Main large image -->
                     <div class="relative w-full h-full overflow-hidden rounded-[18px]">
                         <img :src="propertyImage" :alt="propertyData.title || propertyData.name"
