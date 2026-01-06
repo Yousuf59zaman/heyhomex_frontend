@@ -424,29 +424,29 @@
                     </p>
                 </div>
                 <!-- Image Grid - Figma layout (Desktop) -->
-                <div class="hidden md:grid gap-3 lg:gap-4 mb-6 md:grid-cols-[minmax(0,1fr)_minmax(0,300px)] lg:grid-cols-[minmax(0,1fr)_minmax(0,360px)] xl:grid-cols-[488px_368px]">
+                <div class="hidden md:grid items-stretch gap-3 lg:gap-4 mb-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-[488px_320px] md:h-[320px]">
                     <!-- Main large image -->
-                    <div class="relative w-full aspect-[488/320]">
+                    <div class="relative w-full h-full overflow-hidden rounded-[18px]">
                         <img
                             :src="propertyImage"
                             :alt="propertyData.title || propertyData.name"
-                            class="w-full h-full object-cover rounded-[18px]" />
+                            class="absolute inset-0 w-full h-full object-cover" />
                     </div>
 
                     <!-- Right column with 2 stacked images -->
-                    <div class="flex flex-col gap-3 lg:gap-4">
-                        <div class="relative w-full aspect-[368/151]">
+                    <div class="grid h-full min-h-0 grid-rows-[1fr_1fr] gap-3 lg:gap-4">
+                        <div class="relative h-full min-h-0 overflow-hidden rounded-[18px]">
                             <img
                                 :src="allImages[1] || propertyImage"
                                 alt="Property Image 2"
-                                class="w-full h-full object-cover rounded-[18px]" />
+                                class="absolute inset-0 w-full h-full object-cover" />
                         </div>
 
-                        <div class="relative w-full aspect-[368/151]">
+                        <div class="relative h-full min-h-0 overflow-hidden rounded-[18px]">
                             <img
                                 :src="allImages[2] || propertyImage"
                                 alt="Property Image 3"
-                                class="w-full h-full object-cover rounded-[18px]" />
+                                class="absolute inset-0 w-full h-full object-cover" />
                             <div class="absolute inset-0 bg-black/50 rounded-[18px]"></div>
                             <div
                                 class="absolute inset-0 backdrop-blur-[1px] bg-white/[0.14] flex items-center justify-center rounded-[16px] cursor-pointer"
