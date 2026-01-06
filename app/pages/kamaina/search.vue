@@ -77,71 +77,87 @@ const handleTabClick = (tab) => {
 </script>
 
 <template>
-    <div class="space-y-4 lg:space-y-6">
+    <div class="flex flex-col gap-4 lg:gap-6 w-full max-w-[1316px]">
         <template v-if="!hydrated">
-            <div class="bg-white rounded-lg p-3 lg:p-4 animate-pulse">
+            <div class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px] animate-pulse">
                 <div class="flex items-center gap-3">
-                    <div class="h-10 w-20 bg-gray-200 rounded-lg"></div>
-                    <div class="h-10 w-20 bg-gray-200 rounded-lg"></div>
+                    <div class="h-10 flex-1 bg-gray-200 rounded-[8px]"></div>
+                    <div class="h-10 flex-1 bg-gray-200 rounded-[8px]"></div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg p-4 lg:p-6 animate-pulse">
-                <div class="space-y-4">
-                    <div class="h-12 bg-gray-200 rounded-lg w-full"></div>
-                    <div class="flex flex-wrap gap-3">
-                        <div class="h-10 w-24 bg-gray-200 rounded-lg"></div>
-                        <div class="h-10 w-28 bg-gray-200 rounded-lg"></div>
-                        <div class="h-10 w-32 bg-gray-200 rounded-lg"></div>
-                        <div class="h-10 w-24 bg-gray-200 rounded-lg"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg p-4 lg:p-6 animate-pulse">
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    <div class="h-6 w-48 bg-gray-200 rounded"></div>
-                    <div class="flex items-center gap-4">
+            <div class="bg-white rounded-[12px] p-3 lg:p-4 animate-pulse">
+                <div class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-3">
+                        <div class="h-8 w-3/4 bg-gray-200 rounded"></div>
                         <div class="h-5 w-32 bg-gray-200 rounded"></div>
-                        <div class="flex gap-2">
-                            <div class="h-10 w-24 bg-gray-200 rounded-lg"></div>
-                            <div class="h-10 w-24 bg-gray-200 rounded-lg"></div>
-                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 w-full lg:w-auto">
+                        <div class="h-10 flex-1 lg:flex-none lg:w-24 bg-gray-200 rounded-[8px]"></div>
+                        <div class="h-10 flex-1 lg:flex-none lg:w-24 bg-gray-200 rounded-[8px]"></div>
                     </div>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
-                <CommonCitizenPropertyCardSkeleton v-for="n in 8" :key="n" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <CommonCitizenPropertyCardSkeleton v-for="n in 9" :key="n" />
             </div>
         </template>
         <template v-else>
-            <div class="bg-white rounded-lg p-3 lg:p-4">
+            <div v-if="activeTab === 'videos'" class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px]">
                 <div class="flex items-center gap-3">
                     <button
                         @click="handleTabClick('home')"
                         :class="[
-                            'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                            'flex-1 px-4 py-2 rounded-[8px] text-[14px] leading-[20px] font-bold transition-colors',
                             activeTab === 'home'
-                                ? 'bg-gray-900 text-white'
-                                : 'text-gray-600 hover:text-gray-900',
+                                ? 'bg-[#18222C] text-white'
+                                : 'bg-[#F0F1F3] text-[#121A22] hover:bg-[#E3E5E8]',
                         ]">
                         Home
                     </button>
                     <button
                         @click="handleTabClick('videos')"
                         :class="[
-                            'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                            'flex-1 px-4 py-2 rounded-[8px] text-[14px] leading-[20px] font-bold transition-colors',
                             activeTab === 'videos'
-                                ? 'bg-gray-900 text-white'
-                                : 'text-gray-600 hover:text-gray-900',
+                                ? 'bg-[#18222C] text-white'
+                                : 'bg-[#F0F1F3] text-[#121A22] hover:bg-[#E3E5E8]',
                         ]">
                         Videos
                     </button>
                 </div>
             </div>
-            <SearchProperty v-if="activeTab === 'home'" />
+            <SearchProperty v-if="activeTab === 'home'" filters-variant="figma">
+                <template #tabs>
+                    <div class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px]">
+                        <div class="flex items-center gap-3">
+                            <button
+                                @click="handleTabClick('home')"
+                                :class="[
+                                    'flex-1 px-4 py-2 rounded-[8px] text-[14px] leading-[20px] font-bold transition-colors',
+                                    activeTab === 'home'
+                                        ? 'bg-[#18222C] text-white'
+                                        : 'bg-[#F0F1F3] text-[#121A22] hover:bg-[#E3E5E8]',
+                                ]">
+                                Home
+                            </button>
+                            <button
+                                @click="handleTabClick('videos')"
+                                :class="[
+                                    'flex-1 px-4 py-2 rounded-[8px] text-[14px] leading-[20px] font-bold transition-colors',
+                                    activeTab === 'videos'
+                                        ? 'bg-[#18222C] text-white'
+                                        : 'bg-[#F0F1F3] text-[#121A22] hover:bg-[#E3E5E8]',
+                                ]">
+                                Videos
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </SearchProperty>
             <div v-else-if="activeTab === 'videos'">
                 <!-- Loading State -->
-                <div v-if="videosLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
-                    <div v-for="n in 8" :key="n" class="bg-white rounded-lg shadow-sm overflow-hidden animate-pulse">
+                <div v-if="videosLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <div v-for="n in 8" :key="n" class="bg-white rounded-[8px] border border-[#D9D9D9] overflow-hidden animate-pulse">
                         <div class="aspect-video bg-gray-200"></div>
                         <div class="p-4 space-y-3">
                             <div class="h-5 bg-gray-200 rounded w-3/4"></div>
@@ -151,22 +167,22 @@ const handleTabClick = (tab) => {
                 </div>
 
                 <!-- Error State -->
-                <div v-else-if="videosError" class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                <div v-else-if="videosError" class="bg-red-50 border border-red-200 rounded-[8px] p-6 text-center">
                     <p class="text-red-600 mb-2">Error loading videos. Please try again later.</p>
                     <p class="text-sm text-red-500">{{ videosError.message }}</p>
-                    <button @click="loadVideos" class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                    <button @click="loadVideos" class="mt-4 px-4 py-2 bg-red-600 text-white rounded-[8px] hover:bg-red-700 transition-colors">
                         Retry
                     </button>
                 </div>
 
                 <!-- Videos Content -->
-                <div v-else>
+                <div v-else class="flex flex-col gap-4">
                     <SearchVideo :videos="videos" />
-                    
+
                     <!-- Pagination -->
                     <LazyPagination
                         v-if="videos.length > 0"
-                        class="px-4 mt-6"
+                        class="px-4"
                         :config="videosPaginationConfig" />
                 </div>
             </div>

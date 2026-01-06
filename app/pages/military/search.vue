@@ -77,7 +77,7 @@ const handleTabClick = (tab) => {
 </script>
 
 <template>
-    <div class="space-y-4 lg:space-y-6">
+    <div class="space-y-4 lg:space-y-6 w-full max-w-[1316px]">
         <!-- Skeleton BEFORE hydration -->
         <template v-if="!hydrated">
             <!-- Tab Navigation Skeleton -->
@@ -119,7 +119,7 @@ const handleTabClick = (tab) => {
             </div>
 
             <!-- Property Cards Grid Skeleton -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                 <CommonCitizenPropertyCardSkeleton v-for="n in 8" :key="n" />
             </div>
         </template>
@@ -127,25 +127,25 @@ const handleTabClick = (tab) => {
         <!-- Real content AFTER hydration -->
         <template v-else>
             <!-- Tab Navigation -->
-            <div class="bg-white rounded-lg p-3 lg:p-4">
+            <div v-if="activeTab === 'videos'" class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px]">
                 <div class="flex items-center gap-3">
                     <button
                         @click="handleTabClick('home')"
                         :class="[
-                            'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                            'flex-1 px-4 py-2 rounded-[8px] text-[14px] leading-[20px] font-bold transition-colors',
                             activeTab === 'home'
-                                ? 'bg-gray-900 text-white'
-                                : 'text-gray-600 hover:text-gray-900',
+                                ? 'bg-[#18222C] text-white'
+                                : 'bg-[#F0F1F3] text-[#121A22] hover:bg-[#E3E5E8]',
                         ]">
                         Home
                     </button>
                     <button
                         @click="handleTabClick('videos')"
                         :class="[
-                            'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                            'flex-1 px-4 py-2 rounded-[8px] text-[14px] leading-[20px] font-bold transition-colors',
                             activeTab === 'videos'
-                                ? 'bg-gray-900 text-white'
-                                : 'text-gray-600 hover:text-gray-900',
+                                ? 'bg-[#18222C] text-white'
+                                : 'bg-[#F0F1F3] text-[#121A22] hover:bg-[#E3E5E8]',
                         ]">
                         Videos
                     </button>
@@ -153,7 +153,34 @@ const handleTabClick = (tab) => {
             </div>
 
             <!-- Content based on active tab -->
-            <SearchProperty v-if="activeTab === 'home'" segment="military" />
+            <SearchProperty v-if="activeTab === 'home'" segment="military" filters-variant="figma">
+                <template #tabs>
+                    <div class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px]">
+                        <div class="flex items-center gap-3">
+                            <button
+                                @click="handleTabClick('home')"
+                                :class="[
+                                    'flex-1 px-4 py-2 rounded-[8px] text-[14px] leading-[20px] font-bold transition-colors',
+                                    activeTab === 'home'
+                                        ? 'bg-[#18222C] text-white'
+                                        : 'bg-[#F0F1F3] text-[#121A22] hover:bg-[#E3E5E8]',
+                                ]">
+                                Home
+                            </button>
+                            <button
+                                @click="handleTabClick('videos')"
+                                :class="[
+                                    'flex-1 px-4 py-2 rounded-[8px] text-[14px] leading-[20px] font-bold transition-colors',
+                                    activeTab === 'videos'
+                                        ? 'bg-[#18222C] text-white'
+                                        : 'bg-[#F0F1F3] text-[#121A22] hover:bg-[#E3E5E8]',
+                                ]">
+                                Videos
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </SearchProperty>
             <div v-else-if="activeTab === 'videos'">
                 <!-- Loading State -->
                 <div v-if="videosLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">

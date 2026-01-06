@@ -7,6 +7,10 @@
             validator: (value) =>
                 ["military", "investor", "kamaina"].includes(value),
         },
+        filtersVariant: {
+            type: String,
+            default: "default",
+        },
     })
 
   
@@ -106,6 +110,8 @@
     })
 
     const resultsFound = computed(() => properties.value.length)
+    const searchPlaceholder = "123 Aloha Lane, Honolulu, HI 96818"
+    const displayQuery = computed(() => searchQuery.value || searchPlaceholder)
 
  
     const toggleFavorite = async (property) => {
@@ -136,6 +142,12 @@
 
     const handleSearch = () => {
         console.log("Searching for:", searchQuery.value)
+        loadData()
+    }
+
+    const clearSearch = () => {
+        if (!searchQuery.value) return
+        searchQuery.value = ""
         loadData()
     }
 
@@ -339,40 +351,79 @@
 </script>
 
 <template>
-    <div class="space-y-4 lg:space-y-6">
-       
+    <div class="flex flex-col gap-4">
+        <!-- Row 1: Tabs (left) + Search bar & Save Search (right) -->
+        <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div class="w-full lg:w-auto">
+                <slot name="tabs" />
+            </div>
+            <div class="flex flex-col sm:flex-row items-stretch gap-3 lg:gap-6 w-full lg:w-auto">
+                <div class="flex items-center gap-2 w-full">
+                    <div class="relative flex-1 lg:flex-none lg:w-[440px]">
+                        <Icon
+                            name="lucide:search"
+                            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-[#6C6C6C]" />
+                        <input
+                            v-model="searchQuery"
+                            type="text"
+                            :placeholder="searchPlaceholder"
+                            class="w-full h-[44px] pl-10 pr-9 text-[14px] leading-[20px] text-[#121A22] bg-white border border-[#D9D9D9] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20 focus:border-[#2C3E50]/30"
+                            @keyup.enter="handleSearch" />
+                        <button
+                            v-if="searchQuery"
+                            @click="clearSearch"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-[#6C6C6C] hover:text-[#283849]">
+                            <Icon
+                                name="lucide:x"
+                                class="w-4 h-4 sm:w-5 sm:h-5" />
+                        </button>
+                    </div>
+                    <button
+                        type="button"
+                        class="md:hidden w-[44px] h-[44px] border border-[#D4D4D4] rounded-[8px] bg-white flex items-center justify-center text-[#121A22]">
+                        <Icon
+                            name="lucide:sliders-horizontal"
+                            class="w-4 h-4" />
+                    </button>
+                </div>
+                <button
+                    @click="saveSearch"
+                    class="w-full sm:w-auto h-[44px] px-4 bg-[#18222C] text-white rounded-[8px] text-[14px] leading-[20px] font-semibold hover:bg-[#1f2b36] transition-colors whitespace-nowrap">
+                    Save Search
+                </button>
+            </div>
+        </div>
+
+        <!-- Row 2: Filter section (no search bar) -->
         <CommonCitizenSearchAdvancedFilterSection
-            v-model="searchQuery"
             v-model:category="selectedCategory"
             v-model:price-range="selectedPriceRange"
             v-model:home-type="selectedHomeType"
             v-model:others="selectedOthers"
             v-model:beds-and-baths="selectedBedsAndBaths"
-            @search="handleSearch"
-            @save-search="saveSearch"
+            :variant="props.filtersVariant"
+            :hide-search="true"
             @filter-change="handleFilterChange" />
 
-       
-        <div
-            class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-white rounded-lg p-4 lg:p-6">
-            <div class="flex items-center gap-4">
-                <h2 class="text-lg lg:text-xl font-semibold text-gray-900">
-                    {{ searchQuery }}
-                </h2>
-            </div>
+        <!-- Row 3: Results header + cards -->
+        <div class="bg-white rounded-[12px] p-3 sm:p-4 flex flex-col gap-4">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div class="flex flex-col gap-3 flex-1">
+                    <h2 class="text-[20px] lg:text-[24px] leading-[28px] lg:leading-[32px] font-semibold text-[#121A22]">
+                        {{ displayQuery }}
+                    </h2>
+                    <span class="text-[14px] leading-[20px] text-[#283849]">
+                        {{ resultsFound }} Results Found
+                    </span>
+                </div>
 
-            <div class="flex items-center gap-4">
-                <span class="text-sm text-gray-600">
-                    {{ resultsFound }} Results Found
-                </span>
-
-                <div class="flex items-center gap-2">
+                <div class="bg-[#F0F1F3] rounded-[8px] p-[6px] flex items-center gap-1 w-full sm:w-auto">
                     <button
                         :class="[
-                            'px-3 py-2 text-sm font-medium rounded-lg transition-colors',
+                            'flex-1 sm:flex-none px-5 py-1.5 text-[14px] leading-[20px] font-medium rounded-[8px] transition-colors text-center',
                             viewMode === 'List View'
-                                ? 'bg-gray-900 text-white'
-                                : 'text-gray-600 hover:text-gray-900',
+                                ? 'bg-[#18222C] text-white border border-[#121A22]'
+                                : 'text-[#121A22]',
                         ]"
                         @click="viewMode = 'List View'">
                         List View
@@ -380,124 +431,115 @@
 
                     <button
                         :class="[
-                            'px-3 py-2 text-sm font-medium rounded-lg transition-colors',
+                            'flex-1 sm:flex-none px-5 py-1.5 text-[14px] leading-[20px] font-medium rounded-[8px] transition-colors text-center',
                             viewMode === 'Map View'
-                                ? 'bg-gray-900 text-white'
-                                : 'text-gray-600 hover:text-gray-900',
+                                ? 'bg-[#18222C] text-white border border-[#121A22]'
+                                : 'text-[#121A22]',
                         ]"
                         @click="viewMode = 'Map View'">
                         Map View
                     </button>
                 </div>
             </div>
-        </div>
 
-      
-        <div v-if="pending">
-           
-            <div
-                v-if="viewMode === 'Map View'"
-                class="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
-                <div class="lg:col-span-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-                        <CommonCitizenPropertyCardSkeleton
-                            v-for="n in 4"
-                            :key="n" />
+            <div v-if="pending">
+                <div
+                    v-if="viewMode === 'Map View'"
+                    class="flex flex-col lg:grid lg:grid-cols-12 gap-4">
+                    <div class="lg:col-span-7">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <CommonCitizenPropertyCardSkeleton
+                                v-for="n in 4"
+                                :key="n" />
+                        </div>
+                    </div>
+                    <div class="lg:col-span-5">
+                        <div
+                            class="h-96 lg:h-[600px] bg-gray-200 rounded-lg animate-pulse"></div>
                     </div>
                 </div>
-                <div class="lg:col-span-4">
-                    <div
-                        class="h-96 lg:h-[600px] bg-gray-200 rounded-lg animate-pulse"></div>
+
+                <div
+                    v-else
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-4">
+                    <CommonCitizenPropertyCardSkeleton
+                        v-for="n in 9"
+                        :key="n" />
                 </div>
             </div>
-         
+
+            <div
+                v-else-if="error"
+                class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                <p class="text-red-600 mb-2">
+                    Error loading properties. Please try again later.
+                </p>
+                <p class="text-sm text-red-500">{{ error.message }}</p>
+            </div>
+
+            <div
+                v-else-if="viewMode === 'Map View'"
+                class="flex flex-col lg:grid lg:grid-cols-12 gap-4">
+                <div class="lg:col-span-7">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div
+                            v-for="property in properties"
+                            :key="property.id"
+                            @mouseenter="onPropertyCardHover(property)"
+                            @mouseleave="onPropertyCardLeave">
+                            <CommonCitizenPropertyCard
+                                :property="property"
+                                @click="handlePropertyClick"
+                                @favorite="toggleFavorite" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5">
+                    <div
+                        class="bg-white rounded-xl overflow-hidden h-96 lg:h-[600px] lg:sticky lg:top-6">
+                        <div class="w-full h-full relative">
+                            <div
+                                id="property-map"
+                                ref="mapContainer"
+                                class="w-full h-full rounded-xl"></div>
+
+                            <Teleport to="body">
+                                <div
+                                    v-if="showPopup && hoveredProperty"
+                                    class="fixed z-[10000] pointer-events-none"
+                                    :style="{
+                                        left: popupPosition.x + 'px',
+                                        top: popupPosition.y + 'px',
+                                        transform: 'translate(-50%, -100%)',
+                                    }">
+                                    <CommonCitizenMapPopup
+                                        :property="hoveredProperty" />
+                                </div>
+                            </Teleport>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div
                 v-else
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
-                <CommonCitizenPropertyCardSkeleton
-                    v-for="n in 8"
-                    :key="n" />
-            </div>
-        </div>
-
-      
-        <div
-            v-else-if="error"
-            class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-            <p class="text-red-600 mb-2">
-                Error loading properties. Please try again later.
-            </p>
-            <p class="text-sm text-red-500">{{ error.message }}</p>
-        </div>
-
-     
-        <div
-            v-else-if="viewMode === 'Map View'"
-            class="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
-           
-            <div class="lg:col-span-7">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-                    <div
+                class="flex flex-col gap-4">
+                <div
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-4">
+                    <CommonCitizenPropertyCard
                         v-for="property in properties"
                         :key="property.id"
-                        @mouseenter="onPropertyCardHover(property)"
-                        @mouseleave="onPropertyCardLeave">
-                        <CommonCitizenPropertyCard
-                            :property="property"
-                            @click="handlePropertyClick"
-                            @favorite="toggleFavorite" />
-                    </div>
+                        :property="property"
+                        @click="handlePropertyClick"
+                        @favorite="toggleFavorite" />
                 </div>
+
+                <LazyPagination
+                    v-if="!pending && properties.length > 0"
+                    class="px-4"
+                    :config="paginationConfig" />
             </div>
-
-         
-            <div class="lg:col-span-5">
-                <div
-                    class="bg-white rounded-xl overflow-hidden h-96 lg:h-[600px] lg:sticky lg:top-6">
-                    <div class="w-full h-full relative">
-                        <div
-                            id="property-map"
-                            ref="mapContainer"
-                            class="w-full h-full rounded-xl"></div>
-
-                      
-                        <Teleport to="body">
-                            <div
-                                v-if="showPopup && hoveredProperty"
-                                class="fixed z-[10000] pointer-events-none"
-                                :style="{
-                                    left: popupPosition.x + 'px',
-                                    top: popupPosition.y + 'px',
-                                    transform: 'translate(-50%, -100%)',
-                                }">
-                                <CommonCitizenMapPopup
-                                    :property="hoveredProperty" />
-                            </div>
-                        </Teleport>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-       
-        <div
-            v-else
-            class="space-y-6">
-            <div
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
-                <CommonCitizenPropertyCard
-                    v-for="property in properties"
-                    :key="property.id"
-                    :property="property"
-                    @click="handlePropertyClick"
-                    @favorite="toggleFavorite" />
-            </div>
-
-           
-            <LazyPagination
-                v-if="!pending && properties.length > 0"
-                class="px-4"
-                :config="paginationConfig" />
         </div>
     </div>
 </template>
