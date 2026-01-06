@@ -533,28 +533,34 @@
                         <span class="text-sm leading-5 text-[#121a22] capitalize">
                             {{ propertyData.address }}
                         </span>
-                        <span class="ml-auto text-[20px] leading-7 font-semibold text-[#121a22] md:text-[24px] md:leading-8 lg:text-[28px] lg:leading-10 lg:shrink-0">
+                        <!-- Price on same line - Desktop only -->
+                        <span class="hidden md:block ml-auto text-[24px] leading-8 font-semibold text-[#121a22] lg:text-[28px] lg:leading-10 lg:shrink-0">
                             ${{ propertyData.price.toLocaleString() }}
                         </span>
                     </div>
 
-                    <!-- Title and Action Buttons Row -->
-                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                        <h1 class="text-[20px] leading-7 font-semibold text-[#121a22] w-full md:text-[24px] md:leading-8 lg:text-2xl lg:leading-8 lg:max-w-[389px]">
-                            {{ propertyData.title || propertyData.name }}
-                        </h1>
-                        <div class="flex items-center gap-4">
-                            <button
-                                class="flex-1 lg:flex-none bg-[#18222c] text-white h-[52px] px-5 rounded-xl text-sm font-bold leading-[1.46] hover:bg-[#111922] transition-colors">
-                                Claim This Home
-                            </button>
-                            <button
-                                class="h-[52px] w-[52px] flex-shrink-0 bg-[#f0f1f3] rounded-xl flex items-center justify-center hover:bg-[#e6e8eb] transition-colors">
-                                <Icon
-                                    name="lucide:heart"
-                                    class="w-6 h-6 text-[#121a22]" />
-                            </button>
-                        </div>
+                    <!-- Title - Mobile: comes first before price -->
+                    <h1 class="text-[20px] leading-7 font-semibold text-[#121a22] w-full md:text-[24px] md:leading-8 lg:text-2xl lg:leading-8 lg:max-w-[389px]">
+                        {{ propertyData.title || propertyData.name }}
+                    </h1>
+
+                    <!-- Price - Mobile only (below title) -->
+                    <p class="md:hidden text-[20px] leading-7 font-semibold text-[#121a22]">
+                        ${{ propertyData.price.toLocaleString() }}
+                    </p>
+
+                    <!-- Action Buttons Row -->
+                    <div class="flex items-center gap-3">
+                        <button
+                            class="flex-1 lg:flex-none bg-[#18222c] text-white h-[52px] px-5 rounded-xl text-sm font-bold leading-[1.46] hover:bg-[#111922] transition-colors">
+                            Claim This Home
+                        </button>
+                        <button
+                            class="h-[52px] w-[52px] flex-shrink-0 bg-white border border-[#e5e7eb] rounded-xl flex items-center justify-center hover:bg-[#f9fafb] transition-colors">
+                            <Icon
+                                name="lucide:heart"
+                                class="w-5 h-5 text-[#6b7280]" />
+                        </button>
                     </div>
 
                     <!-- Divider -->

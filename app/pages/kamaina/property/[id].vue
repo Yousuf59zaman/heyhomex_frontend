@@ -470,7 +470,7 @@ onMounted(() => {
                         </span>
                     </div>
 
-                    <div class="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
+                    <div class="hidden md:flex md:flex-row md:items-start md:justify-between mb-4">
                         <div class="flex-1 mb-4 md:mb-0">
                             <div class="hidden md:flex items-start mb-2">
                                 <Icon name="lucide:map-pin" class="w-4 h-4 mt-1 mr-2 text-gray-600" />
@@ -490,9 +490,12 @@ onMounted(() => {
                         <h1 class="text-xl md:text-md max-w-sm font-bold text-gray-900 mb-2 md:mb-0">
                             {{ propertyData.title || propertyData.name }}
                         </h1>
-                        <div class="flex flex-row items-center gap-3 md:gap-4">
+                        <p class="text-2xl font-bold text-gray-900 md:hidden">
+                            ${{ propertyData.price.toLocaleString() }}
+                        </p>
+                        <div class="flex w-full flex-row items-center gap-3 md:gap-4">
                             <button
-                                class="md:flex-none md:w-auto bg-[#18222c] text-white h-[52px] px-5 rounded-xl text-sm font-semibold hover:bg-[#111922] transition-colors flex items-center justify-center">
+                                class="flex-1 md:flex-none md:w-auto bg-[#18222c] text-white h-[52px] px-5 rounded-xl text-sm font-semibold hover:bg-[#111922] transition-colors flex items-center justify-center">
                                 Claim This Home
                             </button>
                             <button
