@@ -539,29 +539,29 @@
                         </span>
                     </div>
 
-                    <!-- Title - Mobile: comes first before price -->
-                    <h1 class="text-[20px] leading-7 font-semibold text-[#121a22] w-full md:text-[24px] md:leading-8 lg:text-2xl lg:leading-8 lg:max-w-[389px]">
-                        {{ propertyData.title || propertyData.name }}
-                    </h1>
+                    <!-- Title with Action Buttons on same row -->
+                    <div class="flex items-center justify-between gap-4">
+                        <h1 class="text-[20px] leading-7 font-semibold text-[#121a22] md:text-[24px] md:leading-8 lg:text-2xl lg:leading-8">
+                            {{ propertyData.title || propertyData.name }}
+                        </h1>
+                        <div class="flex items-center gap-3 shrink-0">
+                            <button
+                                class="bg-[#18222c] text-white h-[44px] px-5 rounded-xl text-sm font-bold leading-[1.46] hover:bg-[#111922] transition-colors">
+                                Claim This Home
+                            </button>
+                            <button
+                                class="h-[44px] w-[44px] flex-shrink-0 bg-white border border-[#e5e7eb] rounded-xl flex items-center justify-center hover:bg-[#f9fafb] transition-colors">
+                                <Icon
+                                    name="lucide:heart"
+                                    class="w-5 h-5 text-[#6b7280]" />
+                            </button>
+                        </div>
+                    </div>
 
-                    <!-- Price - Mobile only (below title) -->
+                    <!-- Price - Mobile only (below title row) -->
                     <p class="md:hidden text-[20px] leading-7 font-semibold text-[#121a22]">
                         ${{ propertyData.price.toLocaleString() }}
                     </p>
-
-                    <!-- Action Buttons Row -->
-                    <div class="flex items-center gap-3">
-                        <button
-                            class="flex-1 lg:flex-none bg-[#18222c] text-white h-[52px] px-5 rounded-xl text-sm font-bold leading-[1.46] hover:bg-[#111922] transition-colors">
-                            Claim This Home
-                        </button>
-                        <button
-                            class="h-[52px] w-[52px] flex-shrink-0 bg-white border border-[#e5e7eb] rounded-xl flex items-center justify-center hover:bg-[#f9fafb] transition-colors">
-                            <Icon
-                                name="lucide:heart"
-                                class="w-5 h-5 text-[#6b7280]" />
-                        </button>
-                    </div>
 
                     <!-- Divider -->
                     <div class="hidden lg:block h-px w-full bg-[#EAECEE]"></div>
