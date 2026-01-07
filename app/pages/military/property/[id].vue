@@ -450,7 +450,7 @@
                             class="h-4 w-4" />
                     </button>
                     <p class="text-[20px] leading-7 font-semibold text-[#2c3e50]">
-                        Your next "big thing" is right herethe
+                        Your next "big thing" is right here
                     </p>
                 </div>
                 <!-- Image Grid - Figma layout (Desktop) -->
