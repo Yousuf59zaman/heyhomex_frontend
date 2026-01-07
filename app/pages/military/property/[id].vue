@@ -450,11 +450,11 @@
                             class="h-4 w-4" />
                     </button>
                     <p class="text-[20px] leading-7 font-semibold text-[#2c3e50]">
-                        Your next "big thing" is right here
+                        Your next "big thing" is right herethe
                     </p>
                 </div>
                 <!-- Image Grid - Figma layout (Desktop) -->
-                <div class="hidden md:grid items-stretch gap-3 lg:gap-4 mb-6 grid-cols-[1fr_0.6fr] h-[320px]">
+                <div class="hidden md:grid items-stretch gap-3 lg:gap-4 mb-6 grid-cols-[1fr_0.76fr] h-[320px]">
                     <!-- Main large image -->
                     <div class="relative w-full h-full overflow-hidden rounded-[18px]">
                         <img
@@ -905,7 +905,7 @@
                             <Button
                                 type="submit"
                                 label="Contact Agent"
-                                class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-3.5 px-6 rounded-xl text-base font-bold transition-colors border border-[#2c3e50]" />
+                                class="contact-agent-btn w-full bg-[#18222c] hover:bg-[#121a22] text-white py-3.5 px-6 rounded-xl text-base font-bold transition-colors border border-[#2c3e50]" />
                         </form>
                     </div>
                 </div>
@@ -933,7 +933,7 @@
                             @click="bookTour"
                             type="button"
                             label="Book a Tour"
-                            class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-3.5 px-6 rounded-xl text-base font-bold transition-colors border border-[#2c3e50]" />
+                            class="book-tour-btn w-full bg-[#18222c] hover:bg-[#121a22] text-white py-3.5 px-6 rounded-xl text-base font-bold transition-colors border border-[#2c3e50]" />
                     </div>
                 </div>
             </div>
@@ -1016,5 +1016,19 @@
         .h-32 {
             height: 8rem;
         }
+    }
+
+    :deep(.contact-agent-btn),
+    :deep(.book-tour-btn) {
+        background-color: #18222c;
+        border-color: #2c3e50;
+        color: #ffffff;
+    }
+
+    :deep(.contact-agent-btn:hover),
+    :deep(.book-tour-btn:hover) {
+        background-color: #121a22;
+        border-color: #2c3e50;
+        color: #ffffff;
     }
 </style>
