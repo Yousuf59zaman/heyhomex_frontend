@@ -368,12 +368,12 @@
                                     <!-- Title and Metadata -->
                                     <div class="flex-1 flex flex-col gap-1">
                                         <h3
-                                            class="text-[#283849] text-base font-semibold leading-[1.5] line-clamp-2 cursor-pointer hover:text-[#121a22]"
+                                            class="font-['sf-pro-Medium'] text-[#283849] text-[16px] leading-[24px] font-[590] line-clamp-2 cursor-pointer hover:text-[#121a22]"
                                             @click="playVideo(video.id)">
                                             {{ video.title }}
                                         </h3>
                                         <div
-                                            class="flex items-center text-xs text-[#283849] gap-1.5">
+                                            class="flex items-center gap-1.5 font-['sf-pro-Medium'] text-[12px] leading-[18px] font-normal text-[#283849]">
                                             <span>{{ video.channel }}</span>
                                             <div class="bg-[#d4d4d4] h-3 w-px"></div>
                                             <span>{{ video.views }}</span>
@@ -482,13 +482,13 @@
 
                                 <!-- Title and Metadata -->
                                 <div class="flex-1 flex flex-col gap-1">
-                                    <h3
-                                        class="text-[#283849] text-base font-semibold leading-[1.5] line-clamp-2 cursor-pointer hover:text-[#121a22]"
-                                        @click="playVideo(video.id)">
-                                        {{ video.title }}
-                                    </h3>
+                                <h3
+                                    class="font-['sf-pro-Medium'] text-[#283849] text-[16px] leading-[24px] font-[590] line-clamp-2 cursor-pointer hover:text-[#121a22]"
+                                    @click="playVideo(video.id)">
+                                    {{ video.title }}
+                                </h3>
                                     <div
-                                        class="flex items-center text-xs text-[#283849] gap-1.5">
+                                        class="flex items-center gap-1.5 font-['sf-pro-Medium'] text-[12px] leading-[18px] font-normal text-[#283849]">
                                         <span>{{ video.channel }}</span>
                                         <div class="bg-[#d4d4d4] h-3 w-px"></div>
                                         <span>{{ video.views }}</span>

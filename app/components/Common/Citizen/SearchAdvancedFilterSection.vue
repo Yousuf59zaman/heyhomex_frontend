@@ -135,6 +135,29 @@
         })
     }
 
+    const categoryDisplayValue = computed(() => {
+        const option = categories.find((category) => category.value === selectedCategory.value)
+        return option ? option.label : "Category"
+    })
+
+    const priceRangeDisplayValue = computed(() => {
+        const option = priceRanges.find((range) => range.value === selectedPriceRange.value)
+        return option ? option.label : "Price Range"
+    })
+
+    const bedsAndBathsDisplayValue = computed(() => {
+        return selectedBedsAndBaths.value || "Beds & Baths"
+    })
+
+    const homeTypeDisplayValue = computed(() => {
+        const option = homeTypes.find((type) => type.value === selectedHomeType.value)
+        return option ? option.label : "Home Type"
+    })
+
+    const othersDisplayValue = computed(() => {
+        return selectedOthers.value || "More"
+    })
+
     const isFigma = computed(() => props.variant === "figma")
 </script>
 
@@ -187,107 +210,162 @@
 
         <div class="hidden md:flex flex-wrap items-center gap-2">
             <div class="relative w-full md:w-auto md:min-w-[170px]">
-                <select
-                    v-model="selectedCategory"
-                    @change="handleFilterChange"
-                    class="w-full h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] text-[16px] leading-[20px] font-medium text-[#121A22] bg-white focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20 focus:border-[#2C3E50]/30 appearance-none">
-                    <option
-                        value=""
-                        disabled
-                        selected>
-                        Category
-                    </option>
-                    <option
-                        v-for="category in categories"
-                        :key="category.value"
-                        :value="category.value">
-                        {{ category.label }}
-                    </option>
-                </select>
-                <Icon
-                    name="lucide:chevron-down"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
+                <div
+                    class="relative flex items-center gap-2 h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] bg-white focus-within:ring-2 focus-within:ring-[#2C3E50]/20 focus-within:border-[#2C3E50]/30">
+                    <select
+                        v-model="selectedCategory"
+                        @change="handleFilterChange"
+                        class="absolute inset-0 w-full h-full cursor-pointer appearance-none opacity-0">
+                        <option
+                            value=""
+                            disabled
+                            selected>
+                            Category
+                        </option>
+                        <option
+                            v-for="category in categories"
+                            :key="category.value"
+                            :value="category.value">
+                            {{ category.label }}
+                        </option>
+                    </select>
+                    <div class="flex items-center gap-2 pointer-events-none whitespace-nowrap">
+                        <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
+                            Category:
+                        </span>
+                        <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22]">
+                            {{ categoryDisplayValue }}
+                        </span>
+                    </div>
+                    <Icon
+                        name="lucide:chevron-down"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
+                </div>
             </div>
 
             <div class="relative w-full md:w-auto md:min-w-[170px]">
-                <select
-                    v-model="selectedPriceRange"
-                    @change="handleFilterChange"
-                    class="w-full h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] text-[16px] leading-[20px] font-medium text-[#121A22] bg-white focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20 focus:border-[#2C3E50]/30 appearance-none">
-                    <option
-                        value=""
-                        disabled
-                        selected>
-                        Price Range
-                    </option>
-                    <option
-                        v-for="range in priceRanges"
-                        :key="range.value"
-                        :value="range.value">
-                        {{ range.label }}
-                    </option>
-                </select>
-                <Icon
-                    name="lucide:chevron-down"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
+                <div
+                    class="relative flex items-center gap-2 h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] bg-white focus-within:ring-2 focus-within:ring-[#2C3E50]/20 focus-within:border-[#2C3E50]/30">
+                    <select
+                        v-model="selectedPriceRange"
+                        @change="handleFilterChange"
+                        class="absolute inset-0 w-full h-full cursor-pointer appearance-none opacity-0">
+                        <option
+                            value=""
+                            disabled
+                            selected>
+                            Price Range
+                        </option>
+                        <option
+                            v-for="range in priceRanges"
+                            :key="range.value"
+                            :value="range.value">
+                            {{ range.label }}
+                        </option>
+                    </select>
+                    <div class="flex items-center gap-2 pointer-events-none whitespace-nowrap">
+                        <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
+                            Price Range:
+                        </span>
+                        <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22]">
+                            {{ priceRangeDisplayValue }}
+                        </span>
+                    </div>
+                    <Icon
+                        name="lucide:chevron-down"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
+                </div>
             </div>
 
             <div class="relative w-full md:w-auto md:min-w-[210px]">
-                <select
-                    v-model="selectedBedsAndBaths"
-                    @change="handleFilterChange"
-                    class="w-full h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] text-[16px] leading-[20px] font-medium text-[#121A22] bg-white focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20 focus:border-[#2C3E50]/30 appearance-none">
-                    <option value="">Beds & Baths</option>
-                    <option
-                        v-for="option in bedsAndBathsOptions"
-                        :key="option"
-                        :value="option">
-                        {{ option }}
-                    </option>
-                </select>
-                <Icon
-                    name="lucide:chevron-down"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
+                <div
+                    class="relative flex items-center gap-2 h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] bg-white focus-within:ring-2 focus-within:ring-[#2C3E50]/20 focus-within:border-[#2C3E50]/30">
+                    <select
+                        v-model="selectedBedsAndBaths"
+                        @change="handleFilterChange"
+                        class="absolute inset-0 w-full h-full cursor-pointer appearance-none opacity-0">
+                        <option value="">Beds & Baths</option>
+                        <option
+                            v-for="option in bedsAndBathsOptions"
+                            :key="option"
+                            :value="option">
+                            {{ option }}
+                        </option>
+                    </select>
+                    <div class="flex items-center gap-2 pointer-events-none whitespace-nowrap">
+                        <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
+                            Beds & Baths:
+                        </span>
+                        <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22]">
+                            {{ bedsAndBathsDisplayValue }}
+                        </span>
+                    </div>
+                    <Icon
+                        name="lucide:chevron-down"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
+                </div>
             </div>
 
             <div class="relative w-full md:w-auto md:min-w-[170px]">
-                <select
-                    v-model="selectedHomeType"
-                    @change="handleFilterChange"
-                    class="w-full h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] text-[16px] leading-[20px] font-medium text-[#121A22] bg-white focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20 focus:border-[#2C3E50]/30 appearance-none">
-                    <option
-                        value=""
-                        disabled
-                        selected>
-                        Home Type
-                    </option>
-                    <option
-                        v-for="type in homeTypes"
-                        :key="type.value"
-                        :value="type.value">
-                        {{ type.label }}
-                    </option>
-                </select>
-                <Icon
-                    name="lucide:chevron-down"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
+                <div
+                    class="relative flex items-center gap-2 h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] bg-white focus-within:ring-2 focus-within:ring-[#2C3E50]/20 focus-within:border-[#2C3E50]/30">
+                    <select
+                        v-model="selectedHomeType"
+                        @change="handleFilterChange"
+                        class="absolute inset-0 w-full h-full cursor-pointer appearance-none opacity-0">
+                        <option
+                            value=""
+                            disabled
+                            selected>
+                            Home Type
+                        </option>
+                        <option
+                            v-for="type in homeTypes"
+                            :key="type.value"
+                            :value="type.value">
+                            {{ type.label }}
+                        </option>
+                    </select>
+                    <div class="flex items-center gap-2 pointer-events-none whitespace-nowrap">
+                        <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
+                            Home Type:
+                        </span>
+                        <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22]">
+                            {{ homeTypeDisplayValue }}
+                        </span>
+                    </div>
+                    <Icon
+                        name="lucide:chevron-down"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
+                </div>
             </div>
 
             <div class="relative w-full md:w-auto md:min-w-[150px]">
-                <select
-                    v-model="selectedOthers"
-                    @change="handleFilterChange"
-                    class="w-full h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] text-[16px] leading-[20px] font-medium text-[#121A22] bg-white focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20 focus:border-[#2C3E50]/30 appearance-none">
-                    <option
-                        v-for="option in othersOptions"
-                        :key="option"
-                        :value="option">
-                        {{ option }}
-                    </option>
-                </select>
-                <Icon
-                    name="lucide:chevron-down"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
+                <div
+                    class="relative flex items-center gap-2 h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] bg-white focus-within:ring-2 focus-within:ring-[#2C3E50]/20 focus-within:border-[#2C3E50]/30">
+                    <select
+                        v-model="selectedOthers"
+                        @change="handleFilterChange"
+                        class="absolute inset-0 w-full h-full cursor-pointer appearance-none opacity-0">
+                        <option
+                            v-for="option in othersOptions"
+                            :key="option"
+                            :value="option">
+                            {{ option }}
+                        </option>
+                    </select>
+                    <div class="flex items-center gap-2 pointer-events-none whitespace-nowrap">
+                        <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
+                            Others:
+                        </span>
+                        <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22]">
+                            {{ othersDisplayValue }}
+                        </span>
+                    </div>
+                    <Icon
+                        name="lucide:chevron-down"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
+                </div>
             </div>
         </div>
     </div>
