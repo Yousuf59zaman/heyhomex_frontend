@@ -21,6 +21,8 @@ const videosPaginationConfig = ref({
 // Ad configuration - uses dynamic URLs based on current host
 const { getDefaultAdConfig } = useAdConfig();
 const adConfig = computed(() => getDefaultAdConfig());
+const tabButtonBase =
+    "flex-1 px-4 py-2 rounded-[8px] text-[14px] leading-[20px] font-bold transition-colors";
 
 // Load videos from API
 const loadVideos = async () => {
@@ -77,7 +79,7 @@ const handleTabClick = (tab) => {
 </script>
 
 <template>
-    <div class="space-y-4 lg:space-y-6 w-full max-w-[1316px]">
+    <div class="space-y-4 lg:space-y-6 w-full max-w-[1316px] mx-auto">
         <!-- Skeleton BEFORE hydration -->
         <template v-if="!hydrated">
             <!-- Tab Navigation Skeleton -->
@@ -126,54 +128,28 @@ const handleTabClick = (tab) => {
 
         <!-- Real content AFTER hydration -->
         <template v-else>
-            <!-- Tab Navigation -->
-            <div v-if="activeTab === 'videos'" class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px]">
-                <div class="flex items-center gap-3">
-                    <button
-                        @click="handleTabClick('home')"
-                        :class="[
-                            'flex-1 px-4 py-2 rounded-[8px] text-[14px] leading-[20px] font-bold transition-colors',
-                            activeTab === 'home'
-                                ? 'bg-[#18222C] text-white'
-                                : 'bg-[#F0F1F3] text-[#121A22] hover:bg-[#E3E5E8]',
-                        ]">
-                        Home
-                    </button>
-                    <button
-                        @click="handleTabClick('videos')"
-                        :class="[
-                            'flex-1 px-4 py-2 rounded-[8px] text-[14px] leading-[20px] font-bold transition-colors',
-                            activeTab === 'videos'
-                                ? 'bg-[#18222C] text-white'
-                                : 'bg-[#F0F1F3] text-[#121A22] hover:bg-[#E3E5E8]',
-                        ]">
-                        Videos
-                    </button>
-                </div>
-            </div>
-
             <!-- Content based on active tab -->
             <SearchProperty v-if="activeTab === 'home'" segment="investor" filters-variant="figma">
                 <template #tabs>
-                    <div class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px]">
+                    <div class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px] lg:w-[340px]">
                         <div class="flex items-center gap-3">
                             <button
                                 @click="handleTabClick('home')"
                                 :class="[
-                                    'flex-1 px-4 py-2 rounded-[8px] text-[14px] leading-[20px] font-bold transition-colors',
+                                    tabButtonBase,
                                     activeTab === 'home'
-                                        ? 'bg-[#18222C] text-white'
-                                        : 'bg-[#F0F1F3] text-[#121A22] hover:bg-[#E3E5E8]',
+                                        ? 'bg-[#18222c] text-white'
+                                        : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e3e5e8]',
                                 ]">
                                 Home
                             </button>
                             <button
                                 @click="handleTabClick('videos')"
                                 :class="[
-                                    'flex-1 px-4 py-2 rounded-[8px] text-[14px] leading-[20px] font-bold transition-colors',
+                                    tabButtonBase,
                                     activeTab === 'videos'
-                                        ? 'bg-[#18222C] text-white'
-                                        : 'bg-[#F0F1F3] text-[#121A22] hover:bg-[#E3E5E8]',
+                                        ? 'bg-[#18222c] text-white'
+                                        : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e3e5e8]',
                                 ]">
                                 Videos
                             </button>
@@ -204,7 +180,34 @@ const handleTabClick = (tab) => {
 
                 <!-- Videos Content -->
                 <div v-else>
-                    <SearchVideo :videos="videos" />
+                    <SearchVideo :videos="videos" filters-variant="figma">
+                        <template #tabs>
+                            <div class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px] lg:w-[340px]">
+                                <div class="flex items-center gap-3">
+                                    <button
+                                        @click="handleTabClick('home')"
+                                        :class="[
+                                            tabButtonBase,
+                                            activeTab === 'home'
+                                                ? 'bg-[#18222c] text-white'
+                                                : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e3e5e8]',
+                                        ]">
+                                        Home
+                                    </button>
+                                    <button
+                                        @click="handleTabClick('videos')"
+                                        :class="[
+                                            tabButtonBase,
+                                            activeTab === 'videos'
+                                                ? 'bg-[#18222c] text-white'
+                                                : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e3e5e8]',
+                                        ]">
+                                        Videos
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </SearchVideo>
 
                     <!-- Pagination -->
                     <LazyPagination
