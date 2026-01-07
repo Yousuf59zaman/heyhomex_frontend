@@ -82,6 +82,86 @@
     const selectedOthers = ref(props.others)
     const selectedBedsAndBaths = ref(props.bedsAndBaths)
 
+    const categoryRef = ref(null)
+    const priceRangeRef = ref(null)
+    const bedsAndBathsRef = ref(null)
+    const homeTypeRef = ref(null)
+    const othersRef = ref(null)
+
+    const isCategoryOpen = ref(false)
+    const isPriceRangeOpen = ref(false)
+    const isBedsAndBathsOpen = ref(false)
+    const isHomeTypeOpen = ref(false)
+    const isOthersOpen = ref(false)
+
+    const closeAllDropdowns = () => {
+        isCategoryOpen.value = false
+        isPriceRangeOpen.value = false
+        isBedsAndBathsOpen.value = false
+        isHomeTypeOpen.value = false
+        isOthersOpen.value = false
+    }
+
+    const toggleCategoryDropdown = () => {
+        const nextValue = !isCategoryOpen.value
+        closeAllDropdowns()
+        isCategoryOpen.value = nextValue
+    }
+
+    const togglePriceRangeDropdown = () => {
+        const nextValue = !isPriceRangeOpen.value
+        closeAllDropdowns()
+        isPriceRangeOpen.value = nextValue
+    }
+
+    const toggleBedsAndBathsDropdown = () => {
+        const nextValue = !isBedsAndBathsOpen.value
+        closeAllDropdowns()
+        isBedsAndBathsOpen.value = nextValue
+    }
+
+    const toggleHomeTypeDropdown = () => {
+        const nextValue = !isHomeTypeOpen.value
+        closeAllDropdowns()
+        isHomeTypeOpen.value = nextValue
+    }
+
+    const toggleOthersDropdown = () => {
+        const nextValue = !isOthersOpen.value
+        closeAllDropdowns()
+        isOthersOpen.value = nextValue
+    }
+
+    const selectCategory = (option) => {
+        selectedCategory.value = option.value
+        isCategoryOpen.value = false
+        handleFilterChange()
+    }
+
+    const selectPriceRange = (option) => {
+        selectedPriceRange.value = option.value
+        isPriceRangeOpen.value = false
+        handleFilterChange()
+    }
+
+    const selectBedsAndBaths = (option) => {
+        selectedBedsAndBaths.value = option
+        isBedsAndBathsOpen.value = false
+        handleFilterChange()
+    }
+
+    const selectHomeType = (option) => {
+        selectedHomeType.value = option.value
+        isHomeTypeOpen.value = false
+        handleFilterChange()
+    }
+
+    const selectOthers = (option) => {
+        selectedOthers.value = option
+        isOthersOpen.value = false
+        handleFilterChange()
+    }
+
     watch(
         () => props.modelValue,
         (newValue) => {
@@ -159,6 +239,32 @@
     })
 
     const isFigma = computed(() => props.variant === "figma")
+
+    const handleClickOutside = (event) => {
+        if (categoryRef.value && !categoryRef.value.contains(event.target)) {
+            isCategoryOpen.value = false
+        }
+        if (priceRangeRef.value && !priceRangeRef.value.contains(event.target)) {
+            isPriceRangeOpen.value = false
+        }
+        if (bedsAndBathsRef.value && !bedsAndBathsRef.value.contains(event.target)) {
+            isBedsAndBathsOpen.value = false
+        }
+        if (homeTypeRef.value && !homeTypeRef.value.contains(event.target)) {
+            isHomeTypeOpen.value = false
+        }
+        if (othersRef.value && !othersRef.value.contains(event.target)) {
+            isOthersOpen.value = false
+        }
+    }
+
+    onMounted(() => {
+        document.addEventListener("click", handleClickOutside)
+    })
+
+    onUnmounted(() => {
+        document.removeEventListener("click", handleClickOutside)
+    })
 </script>
 
 <template>
@@ -209,163 +315,225 @@
         </div>
 
         <div class="hidden md:flex flex-wrap items-center gap-2">
-            <div class="relative w-full md:w-auto md:min-w-[170px]">
-                <div
-                    class="relative flex items-center gap-2 h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] bg-white focus-within:ring-2 focus-within:ring-[#2C3E50]/20 focus-within:border-[#2C3E50]/30">
-                    <select
-                        v-model="selectedCategory"
-                        @change="handleFilterChange"
-                        class="absolute inset-0 w-full h-full cursor-pointer appearance-none opacity-0">
-                        <option
-                            value=""
-                            disabled
-                            selected>
-                            Category
-                        </option>
-                        <option
+            <div ref="categoryRef" class="relative w-full md:w-auto md:min-w-[170px]">
+                <button
+                    type="button"
+                    @click="toggleCategoryDropdown"
+                    class="relative flex w-full md:w-auto h-[44px] items-center gap-2 rounded-[8px] border border-[#D4D4D4] bg-white px-4 pr-10 text-left focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20 focus:border-[#2C3E50]/30">
+                    <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
+                        Category:
+                    </span>
+                    <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22] whitespace-nowrap">
+                        {{ categoryDisplayValue }}
+                    </span>
+                    <Icon
+                        name="lucide:chevron-down"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
+                </button>
+                <Transition
+                    enter-active-class="transition duration-150 ease-out"
+                    enter-from-class="opacity-0 scale-95 -translate-y-1"
+                    enter-to-class="opacity-100 scale-100 translate-y-0"
+                    leave-active-class="transition duration-100 ease-in"
+                    leave-from-class="opacity-100 scale-100 translate-y-0"
+                    leave-to-class="opacity-0 scale-95 -translate-y-1">
+                    <div
+                        v-if="isCategoryOpen"
+                        class="absolute left-0 md:left-auto md:right-0 top-[calc(100%+4px)] z-50 w-full overflow-hidden rounded-[8px] bg-white py-1 shadow-lg ring-1 ring-black/5">
+                        <button
                             v-for="category in categories"
                             :key="category.value"
-                            :value="category.value">
+                            type="button"
+                            @click="selectCategory(category)"
+                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[14px] leading-[20px] transition-colors"
+                            :class="
+                                selectedCategory === category.value
+                                    ? 'bg-[#2C3E50] text-white font-medium'
+                                    : 'text-[#2C3E50] hover:bg-[#F5F6F7]'
+                            ">
                             {{ category.label }}
-                        </option>
-                    </select>
-                    <div class="flex items-center gap-2 pointer-events-none whitespace-nowrap">
-                        <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
-                            Category:
-                        </span>
-                        <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22]">
-                            {{ categoryDisplayValue }}
-                        </span>
+                        </button>
                     </div>
+                </Transition>
+            </div>
+
+            <div ref="priceRangeRef" class="relative w-full md:w-auto md:min-w-[170px]">
+                <button
+                    type="button"
+                    @click="togglePriceRangeDropdown"
+                    class="relative flex w-full md:w-auto h-[44px] items-center gap-2 rounded-[8px] border border-[#D4D4D4] bg-white px-4 pr-10 text-left focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20 focus:border-[#2C3E50]/30">
+                    <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
+                        Price Range:
+                    </span>
+                    <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22] whitespace-nowrap">
+                        {{ priceRangeDisplayValue }}
+                    </span>
                     <Icon
                         name="lucide:chevron-down"
                         class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
-                </div>
-            </div>
-
-            <div class="relative w-full md:w-auto md:min-w-[170px]">
-                <div
-                    class="relative flex items-center gap-2 h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] bg-white focus-within:ring-2 focus-within:ring-[#2C3E50]/20 focus-within:border-[#2C3E50]/30">
-                    <select
-                        v-model="selectedPriceRange"
-                        @change="handleFilterChange"
-                        class="absolute inset-0 w-full h-full cursor-pointer appearance-none opacity-0">
-                        <option
-                            value=""
-                            disabled
-                            selected>
-                            Price Range
-                        </option>
-                        <option
+                </button>
+                <Transition
+                    enter-active-class="transition duration-150 ease-out"
+                    enter-from-class="opacity-0 scale-95 -translate-y-1"
+                    enter-to-class="opacity-100 scale-100 translate-y-0"
+                    leave-active-class="transition duration-100 ease-in"
+                    leave-from-class="opacity-100 scale-100 translate-y-0"
+                    leave-to-class="opacity-0 scale-95 -translate-y-1">
+                    <div
+                        v-if="isPriceRangeOpen"
+                        class="absolute left-0 md:left-auto md:right-0 top-[calc(100%+4px)] z-50 w-full overflow-hidden rounded-[8px] bg-white py-1 shadow-lg ring-1 ring-black/5">
+                        <button
                             v-for="range in priceRanges"
                             :key="range.value"
-                            :value="range.value">
+                            type="button"
+                            @click="selectPriceRange(range)"
+                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[14px] leading-[20px] transition-colors"
+                            :class="
+                                selectedPriceRange === range.value
+                                    ? 'bg-[#2C3E50] text-white font-medium'
+                                    : 'text-[#2C3E50] hover:bg-[#F5F6F7]'
+                            ">
                             {{ range.label }}
-                        </option>
-                    </select>
-                    <div class="flex items-center gap-2 pointer-events-none whitespace-nowrap">
-                        <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
-                            Price Range:
-                        </span>
-                        <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22]">
-                            {{ priceRangeDisplayValue }}
-                        </span>
+                        </button>
                     </div>
+                </Transition>
+            </div>
+
+            <div ref="bedsAndBathsRef" class="relative w-full md:w-auto md:min-w-[210px]">
+                <button
+                    type="button"
+                    @click="toggleBedsAndBathsDropdown"
+                    class="relative flex w-full md:w-auto h-[44px] items-center gap-2 rounded-[8px] border border-[#D4D4D4] bg-white px-4 pr-10 text-left focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20 focus:border-[#2C3E50]/30">
+                    <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
+                        Beds & Baths:
+                    </span>
+                    <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22] whitespace-nowrap">
+                        {{ bedsAndBathsDisplayValue }}
+                    </span>
                     <Icon
                         name="lucide:chevron-down"
                         class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
-                </div>
-            </div>
-
-            <div class="relative w-full md:w-auto md:min-w-[210px]">
-                <div
-                    class="relative flex items-center gap-2 h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] bg-white focus-within:ring-2 focus-within:ring-[#2C3E50]/20 focus-within:border-[#2C3E50]/30">
-                    <select
-                        v-model="selectedBedsAndBaths"
-                        @change="handleFilterChange"
-                        class="absolute inset-0 w-full h-full cursor-pointer appearance-none opacity-0">
-                        <option value="">Beds & Baths</option>
-                        <option
+                </button>
+                <Transition
+                    enter-active-class="transition duration-150 ease-out"
+                    enter-from-class="opacity-0 scale-95 -translate-y-1"
+                    enter-to-class="opacity-100 scale-100 translate-y-0"
+                    leave-active-class="transition duration-100 ease-in"
+                    leave-from-class="opacity-100 scale-100 translate-y-0"
+                    leave-to-class="opacity-0 scale-95 -translate-y-1">
+                    <div
+                        v-if="isBedsAndBathsOpen"
+                        class="absolute left-0 md:left-auto md:right-0 top-[calc(100%+4px)] z-50 w-full overflow-hidden rounded-[8px] bg-white py-1 shadow-lg ring-1 ring-black/5">
+                        <button
+                            type="button"
+                            @click="selectBedsAndBaths('')"
+                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[14px] leading-[20px] transition-colors"
+                            :class="
+                                selectedBedsAndBaths === ''
+                                    ? 'bg-[#2C3E50] text-white font-medium'
+                                    : 'text-[#2C3E50] hover:bg-[#F5F6F7]'
+                            ">
+                            Beds & Baths
+                        </button>
+                        <button
                             v-for="option in bedsAndBathsOptions"
                             :key="option"
-                            :value="option">
+                            type="button"
+                            @click="selectBedsAndBaths(option)"
+                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[14px] leading-[20px] transition-colors"
+                            :class="
+                                selectedBedsAndBaths === option
+                                    ? 'bg-[#2C3E50] text-white font-medium'
+                                    : 'text-[#2C3E50] hover:bg-[#F5F6F7]'
+                            ">
                             {{ option }}
-                        </option>
-                    </select>
-                    <div class="flex items-center gap-2 pointer-events-none whitespace-nowrap">
-                        <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
-                            Beds & Baths:
-                        </span>
-                        <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22]">
-                            {{ bedsAndBathsDisplayValue }}
-                        </span>
+                        </button>
                     </div>
+                </Transition>
+            </div>
+
+            <div ref="homeTypeRef" class="relative w-full md:w-auto md:min-w-[170px]">
+                <button
+                    type="button"
+                    @click="toggleHomeTypeDropdown"
+                    class="relative flex w-full md:w-auto h-[44px] items-center gap-2 rounded-[8px] border border-[#D4D4D4] bg-white px-4 pr-10 text-left focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20 focus:border-[#2C3E50]/30">
+                    <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
+                        Home Type:
+                    </span>
+                    <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22] whitespace-nowrap">
+                        {{ homeTypeDisplayValue }}
+                    </span>
                     <Icon
                         name="lucide:chevron-down"
                         class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
-                </div>
-            </div>
-
-            <div class="relative w-full md:w-auto md:min-w-[170px]">
-                <div
-                    class="relative flex items-center gap-2 h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] bg-white focus-within:ring-2 focus-within:ring-[#2C3E50]/20 focus-within:border-[#2C3E50]/30">
-                    <select
-                        v-model="selectedHomeType"
-                        @change="handleFilterChange"
-                        class="absolute inset-0 w-full h-full cursor-pointer appearance-none opacity-0">
-                        <option
-                            value=""
-                            disabled
-                            selected>
-                            Home Type
-                        </option>
-                        <option
+                </button>
+                <Transition
+                    enter-active-class="transition duration-150 ease-out"
+                    enter-from-class="opacity-0 scale-95 -translate-y-1"
+                    enter-to-class="opacity-100 scale-100 translate-y-0"
+                    leave-active-class="transition duration-100 ease-in"
+                    leave-from-class="opacity-100 scale-100 translate-y-0"
+                    leave-to-class="opacity-0 scale-95 -translate-y-1">
+                    <div
+                        v-if="isHomeTypeOpen"
+                        class="absolute left-0 md:left-auto md:right-0 top-[calc(100%+4px)] z-50 w-full overflow-hidden rounded-[8px] bg-white py-1 shadow-lg ring-1 ring-black/5">
+                        <button
                             v-for="type in homeTypes"
                             :key="type.value"
-                            :value="type.value">
+                            type="button"
+                            @click="selectHomeType(type)"
+                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[14px] leading-[20px] transition-colors"
+                            :class="
+                                selectedHomeType === type.value
+                                    ? 'bg-[#2C3E50] text-white font-medium'
+                                    : 'text-[#2C3E50] hover:bg-[#F5F6F7]'
+                            ">
                             {{ type.label }}
-                        </option>
-                    </select>
-                    <div class="flex items-center gap-2 pointer-events-none whitespace-nowrap">
-                        <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
-                            Home Type:
-                        </span>
-                        <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22]">
-                            {{ homeTypeDisplayValue }}
-                        </span>
+                        </button>
                     </div>
-                    <Icon
-                        name="lucide:chevron-down"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
-                </div>
+                </Transition>
             </div>
 
-            <div class="relative w-full md:w-auto md:min-w-[150px]">
-                <div
-                    class="relative flex items-center gap-2 h-[44px] px-4 pr-10 border border-[#D4D4D4] rounded-[8px] bg-white focus-within:ring-2 focus-within:ring-[#2C3E50]/20 focus-within:border-[#2C3E50]/30">
-                    <select
-                        v-model="selectedOthers"
-                        @change="handleFilterChange"
-                        class="absolute inset-0 w-full h-full cursor-pointer appearance-none opacity-0">
-                        <option
-                            v-for="option in othersOptions"
-                            :key="option"
-                            :value="option">
-                            {{ option }}
-                        </option>
-                    </select>
-                    <div class="flex items-center gap-2 pointer-events-none whitespace-nowrap">
-                        <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
-                            Others:
-                        </span>
-                        <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22]">
-                            {{ othersDisplayValue }}
-                        </span>
-                    </div>
+            <div ref="othersRef" class="relative w-full md:w-auto md:min-w-[150px]">
+                <button
+                    type="button"
+                    @click="toggleOthersDropdown"
+                    class="relative flex w-full md:w-auto h-[44px] items-center gap-2 rounded-[8px] border border-[#D4D4D4] bg-white px-4 pr-10 text-left focus:outline-none focus:ring-2 focus:ring-[#2C3E50]/20 focus:border-[#2C3E50]/30">
+                    <span class="font-['sf-pro-Regular'] text-[16px] leading-[20px] font-normal text-[#283849]">
+                        Others:
+                    </span>
+                    <span class="font-['sf-pro-Medium'] text-[16px] leading-[20px] font-[510] text-[#121A22] whitespace-nowrap">
+                        {{ othersDisplayValue }}
+                    </span>
                     <Icon
                         name="lucide:chevron-down"
                         class="absolute right-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6C6C6C] pointer-events-none" />
-                </div>
+                </button>
+                <Transition
+                    enter-active-class="transition duration-150 ease-out"
+                    enter-from-class="opacity-0 scale-95 -translate-y-1"
+                    enter-to-class="opacity-100 scale-100 translate-y-0"
+                    leave-active-class="transition duration-100 ease-in"
+                    leave-from-class="opacity-100 scale-100 translate-y-0"
+                    leave-to-class="opacity-0 scale-95 -translate-y-1">
+                    <div
+                        v-if="isOthersOpen"
+                        class="absolute left-0 md:left-auto md:right-0 top-[calc(100%+4px)] z-50 w-full overflow-hidden rounded-[8px] bg-white py-1 shadow-lg ring-1 ring-black/5">
+                        <button
+                            v-for="option in othersOptions"
+                            :key="option"
+                            type="button"
+                            @click="selectOthers(option)"
+                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[14px] leading-[20px] transition-colors"
+                            :class="
+                                selectedOthers === option
+                                    ? 'bg-[#2C3E50] text-white font-medium'
+                                    : 'text-[#2C3E50] hover:bg-[#F5F6F7]'
+                            ">
+                            {{ option }}
+                        </button>
+                    </div>
+                </Transition>
             </div>
         </div>
     </div>
