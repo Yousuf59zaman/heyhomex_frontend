@@ -131,7 +131,7 @@ const handleTabClick = (tab) => {
             <!-- Content based on active tab -->
             <SearchProperty v-if="activeTab === 'home'" segment="investor" filters-variant="figma">
                 <template #tabs>
-                    <div class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px] lg:w-[340px]">
+                    <div class="bg-white rounded-[8px] p-[6px] sm:w-full md:w-[340px] sm:max-w-[640px] md:max-w-[340px]">
                         <div class="flex items-center gap-3">
                             <button
                                 @click="handleTabClick('home')"
@@ -182,7 +182,7 @@ const handleTabClick = (tab) => {
                 <div v-else>
                     <SearchVideo :videos="videos" filters-variant="figma">
                         <template #tabs>
-                            <div class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px] lg:w-[340px]">
+                            <div class="bg-white rounded-[8px] p-[6px] sm:w-full md:w-[340px] sm:max-w-[640px] md:max-w-[340px]">
                                 <div class="flex items-center gap-3">
                                     <button
                                         @click="handleTabClick('home')"

@@ -417,7 +417,7 @@
                     </span>
                 </div>
 
-                <div class="bg-[#F0F1F3] rounded-[8px] p-[6px] flex items-center gap-1 w-full sm:w-auto">
+                <div class="bg-[#F0F1F3] rounded-[8px] p-[6px] flex items-center gap-1 w-full sm:w-auto sm:self-start">
                     <button
                         :class="[
                             'flex-1 sm:flex-none px-5 py-1.5 text-[14px] leading-[20px] font-medium rounded-[8px] transition-colors text-center',

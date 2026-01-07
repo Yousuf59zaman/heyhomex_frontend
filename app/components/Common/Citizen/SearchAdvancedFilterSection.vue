@@ -345,7 +345,7 @@
                             :key="category.value"
                             type="button"
                             @click="selectCategory(category)"
-                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[14px] leading-[20px] transition-colors"
+                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[16px] leading-[22px] transition-colors"
                             :class="
                                 selectedCategory === category.value
                                     ? 'bg-[#2C3E50] text-white font-medium'
@@ -387,7 +387,7 @@
                             :key="range.value"
                             type="button"
                             @click="selectPriceRange(range)"
-                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[14px] leading-[20px] transition-colors"
+                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[16px] leading-[22px] transition-colors"
                             :class="
                                 selectedPriceRange === range.value
                                     ? 'bg-[#2C3E50] text-white font-medium'
@@ -427,7 +427,7 @@
                         <button
                             type="button"
                             @click="selectBedsAndBaths('')"
-                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[14px] leading-[20px] transition-colors"
+                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[16px] leading-[22px] transition-colors"
                             :class="
                                 selectedBedsAndBaths === ''
                                     ? 'bg-[#2C3E50] text-white font-medium'
@@ -440,7 +440,7 @@
                             :key="option"
                             type="button"
                             @click="selectBedsAndBaths(option)"
-                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[14px] leading-[20px] transition-colors"
+                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[16px] leading-[22px] transition-colors"
                             :class="
                                 selectedBedsAndBaths === option
                                     ? 'bg-[#2C3E50] text-white font-medium'
@@ -482,7 +482,7 @@
                             :key="type.value"
                             type="button"
                             @click="selectHomeType(type)"
-                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[14px] leading-[20px] transition-colors"
+                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[16px] leading-[22px] transition-colors"
                             :class="
                                 selectedHomeType === type.value
                                     ? 'bg-[#2C3E50] text-white font-medium'
@@ -524,7 +524,7 @@
                             :key="option"
                             type="button"
                             @click="selectOthers(option)"
-                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[14px] leading-[20px] transition-colors"
+                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[16px] leading-[22px] transition-colors"
                             :class="
                                 selectedOthers === option
                                     ? 'bg-[#2C3E50] text-white font-medium'
