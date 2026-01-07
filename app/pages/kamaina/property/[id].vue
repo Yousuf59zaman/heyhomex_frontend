@@ -7,6 +7,7 @@ definePageMeta({ middleware: ["auth-citizen"], layout: "citizen" })
 const hydrated = ref(false)
 
 const route = useRoute()
+const router = useRouter()
 const propertyId = route.params.id
 
 const activeTab = ref("Insights")
@@ -252,6 +253,10 @@ const openGalleryAt = (index = 0) => {
     })
 }
 
+const goBack = () => {
+    router.back()
+}
+
 // Set hydrated to true after component is mounted on client
 onMounted(() => {
     hydrated.value = true
@@ -261,9 +266,10 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="min-h-screen bg-gray-50">
+    <div class="min-h-screen bg-[#faf9f8] lg:bg-gray-50">
         <!-- Skeleton BEFORE hydration -->
-        <div v-if="!hydrated" class="flex flex-col lg:flex-row mx-auto p-4 gap-6 max-w-7xl animate-pulse">
+        <div v-if="!hydrated"
+            class="flex flex-col lg:flex-row w-full max-w-[1316px] mx-auto p-5 md:px-4 md:py-6 lg:p-0 gap-6 animate-pulse">
             <div class="flex-1">
                 <!-- Property Images Skeleton -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
@@ -360,7 +366,8 @@ onMounted(() => {
         </div>
 
         <!-- Loading State -->
-        <div v-else-if="pending" class="flex flex-col lg:flex-row mx-auto p-4 gap-6 max-w-7xl animate-pulse">
+        <div v-else-if="pending"
+            class="flex flex-col lg:flex-row w-full max-w-[1316px] mx-auto p-5 md:px-4 md:py-6 lg:p-0 gap-6 animate-pulse">
             <!-- Same skeleton as before hydration -->
             <div class="flex-1">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
@@ -384,109 +391,125 @@ onMounted(() => {
         </div>
 
         <!-- Real content AFTER hydration and data loaded -->
-        <div v-else-if="propertyData" class="flex flex-col lg:flex-row mx-auto p-4 gap-6 max-w-7xl">
-            <div class="flex-1">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
-                    <div class="relative h-full order-1">
+        <div v-else-if="propertyData"
+            class="flex flex-col lg:flex-row w-full max-w-[1316px] mx-auto p-5 md:px-4 md:py-6 lg:p-0 gap-6">
+            <div class="flex-1 max-w-[872px]">
+                <div class="flex items-start gap-4 md:hidden mb-6">
+                    <button type="button"
+                        class="flex h-10 w-10 items-center justify-center rounded-full bg-[#f0f1f3] text-[#121a22]"
+                        @click="goBack">
+                        <Icon name="lucide:arrow-left" class="h-4 w-4" />
+                    </button>
+                    <p class="text-[20px] leading-7 font-semibold text-[#2c3e50]">
+                        Your next "big thing" is right here
+                    </p>
+                </div>
+                <!-- Image Grid - Figma layout (Desktop) -->
+                <div
+                    class="hidden md:grid items-stretch gap-3 lg:gap-4 mb-6 grid-cols-[1fr_0.6fr] h-[320px]">
+                    <!-- Main large image -->
+                    <div class="relative w-full h-full overflow-hidden rounded-[18px]">
                         <img :src="propertyImage" :alt="propertyData.title || propertyData.name"
-                            class="w-full h-48 md:h-64 object-cover rounded-lg" />
+                            class="absolute inset-0 w-full h-full object-cover" />
                     </div>
 
-                    <div class="hidden md:grid grid-rows-2 gap-1 h-full order-2">
-                        <div class="relative h-full">
+                    <!-- Right column with 2 stacked images -->
+                    <div class="grid h-full min-h-0 grid-rows-[1fr_1fr] gap-3 lg:gap-4">
+                        <div class="relative h-full min-h-0 overflow-hidden rounded-[18px]">
                             <img :src="allImages[1] || propertyImage" alt="Property Image 2"
-                                class="w-full h-32 object-cover rounded-lg" />
+                                class="absolute inset-0 w-full h-full object-cover" />
                         </div>
 
-                        <div class="relative h-32">
+                        <div class="relative h-full min-h-0 overflow-hidden rounded-[18px]">
                             <img :src="allImages[2] || propertyImage" alt="Property Image 3"
-                                class="w-full h-32 object-cover rounded-lg" />
+                                class="absolute inset-0 w-full h-full object-cover" />
 
+                            <div class="absolute inset-0 bg-black/50 rounded-[18px]"></div>
                             <div
-                                class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center rounded-lg">
-                                <div class="text-white text-center">
-                                    <div class="text-sm font-medium">
-                                        <button type="button"
-                                            class="text-white text-center px-4 py-2 rounded font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-white"
-                                            @click="openGalleryAt(0)" aria-label="Open photo gallery">
-                                            See All
-                                            {{ allImages.length }} Photos
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="md:hidden flex gap-2 order-3">
-                        <div class="relative flex-1">
-                            <img :src="allImages[1] || propertyImage" alt="Property Image 2"
-                                class="w-full h-20 object-cover rounded-lg" />
-                        </div>
-                        <div class="relative flex-1">
-                            <img :src="allImages[2] || propertyImage" alt="Property Image 3"
-                                class="w-full h-20 object-cover rounded-lg" />
-
-                            <div
-                                class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center rounded-lg">
-                                <div class="text-white text-center">
-                                    <div class="text-xs font-medium">
-                                        <button type="button"
-                                            class="text-white text-center px-3 py-1 rounded font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-white"
-                                            @click="openGalleryAt(0)" aria-label="Open photo gallery">
-                                            See All
-                                            {{ allImages.length }} Photos
-                                        </button>
-                                    </div>
-                                </div>
+                                class="absolute inset-0 backdrop-blur-[1px] bg-white/[0.14] flex items-center justify-center rounded-[16px] cursor-pointer"
+                                @click="openGalleryAt(0)">
+                                <p class="text-white font-bold text-base">
+                                    See All {{ allImages.length }} Photos
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="mb-6">
-                    <div class="flex items-start mb-4 md:hidden">
-                        <Icon name="lucide:map-pin" class="w-4 h-4 mt-1 mr-2 text-gray-600" />
-                        <span class="text-sm text-gray-600">
+                <!-- Mobile Image Grid -->
+                <div class="flex md:hidden lg:hidden flex-col gap-4 md:gap-5 mb-6">
+                    <div class="relative w-full h-[222px] md:h-[280px]">
+                        <img :src="propertyImage" :alt="propertyData.title || propertyData.name"
+                            class="w-full h-full object-cover rounded-[12px] md:rounded-[16px]" />
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="relative flex-1 h-[120px] md:h-[70px]">
+                            <img :src="allImages[1] || propertyImage" alt="Property Image 2"
+                                class="w-full h-full object-cover rounded-[10px] md:rounded-[14px]" />
+                        </div>
+                        <div class="relative flex-1 h-[120px] md:h-[70px]">
+                            <img :src="allImages[2] || propertyImage" alt="Property Image 3"
+                                class="w-full h-full object-cover rounded-[18px]" />
+                            <div class="absolute inset-0 bg-black/50 rounded-[18px]"></div>
+                            <div
+                                class="absolute inset-0 backdrop-blur-[1px] bg-white/[0.14] flex items-center justify-center rounded-[12px] cursor-pointer"
+                                @click="openGalleryAt(0)">
+                                <p class="text-white font-bold text-sm leading-5">
+                                    See All {{ allImages.length }} Photos
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property Info Section -->
+                <div class="flex flex-col gap-4 mb-6">
+                    <!-- Location Badge -->
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white lg:bg-[#f6f6fa] p-2 rounded-full">
+                            <Icon
+                                name="lucide:map-pin"
+                                class="w-5 h-5 text-[#121a22]" />
+                        </div>
+                        <span class="text-sm leading-5 text-[#121a22] capitalize">
                             {{ propertyData.address }}
+                        </span>
+                        <!-- Price on same line - Desktop only -->
+                        <span class="hidden md:block ml-auto text-[24px] leading-8 font-semibold text-[#121a22] lg:text-[28px] lg:leading-10 lg:shrink-0">
+                            ${{ propertyData.price.toLocaleString() }}
                         </span>
                     </div>
 
-                    <div class="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
-                        <div class="flex-1 mb-4 md:mb-0">
-                            <div class="hidden md:flex items-start mb-2">
-                                <Icon name="lucide:map-pin" class="w-4 h-4 mt-1 mr-2 text-gray-600" />
-                                <span class="text-sm text-gray-600">
-                                    {{ propertyData.address }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col md:items-end">
-                            <div class="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-                                ${{ propertyData.price.toLocaleString() }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-                        <h1 class="text-xl md:text-md max-w-sm font-bold text-gray-900 mb-2 md:mb-0">
+                    <!-- Title with Action Buttons on same row -->
+                    <div class="flex items-center justify-between gap-4">
+                        <h1 class="text-[20px] leading-7 font-semibold text-[#121a22] md:text-[24px] md:leading-8 lg:text-2xl lg:leading-8">
                             {{ propertyData.title || propertyData.name }}
                         </h1>
-                        <div class="flex flex-row items-center gap-3 md:gap-4">
+                        <div class="flex items-center gap-3 shrink-0">
                             <button
-                                class="md:flex-none md:w-auto bg-[#18222c] text-white h-[52px] px-5 rounded-xl text-sm font-semibold hover:bg-[#111922] transition-colors flex items-center justify-center">
+                                class="bg-[#18222c] text-white h-[44px] px-5 rounded-xl text-sm font-bold leading-[1.46] hover:bg-[#111922] transition-colors">
                                 Claim This Home
                             </button>
                             <button
-                                class="h-[52px] w-[52px] flex-shrink-0 bg-[#f0f1f3] rounded-xl flex items-center justify-center hover:bg-[#e6e8eb] transition-colors">
-                                <Icon name="lucide:heart" class="w-6 h-6 text-[#121a22]" />
+                                class="h-[44px] w-[44px] flex-shrink-0 bg-white border border-[#e5e7eb] rounded-xl flex items-center justify-center hover:bg-[#f9fafb] transition-colors">
+                                <Icon
+                                    name="lucide:heart"
+                                    class="w-5 h-5 text-[#6b7280]" />
                             </button>
                         </div>
                     </div>
 
+                    <!-- Price - Mobile only (below title row) -->
+                    <p class="md:hidden text-[20px] leading-7 font-semibold text-[#121a22]">
+                        ${{ propertyData.price.toLocaleString() }}
+                    </p>
+
+                    <!-- Divider -->
+                    <div class="hidden lg:block h-px w-full bg-[#EAECEE]"></div>
+
                     <div class="bg-white rounded-xl p-4 flex flex-col gap-6">
                         <div class="flex flex-col sm:flex-row gap-3">
-                            <div class="flex-1 bg-[#FAF9F8] rounded-xl px-8 py-5 flex items-center justify-center">
+                            <div class="flex-1 bg-[#FAF9F8] rounded-xl px-8 py-4 lg:py-5 flex items-center justify-center">
                                 <div class="flex flex-col items-center justify-center gap-4">
                                     <img src="/svg/dashboard/card.bed.svg" alt="Beds" class="w-8 h-8" />
                                     <p class="capitalize text-[20px] leading-[28px] font-medium text-[#121A22]">
@@ -494,7 +517,7 @@ onMounted(() => {
                                     </p>
                                 </div>
                             </div>
-                            <div class="flex-1 bg-[#FAF9F8] rounded-xl px-8 py-5 flex items-center justify-center">
+                            <div class="flex-1 bg-[#FAF9F8] rounded-xl px-8 py-4 lg:py-5 flex items-center justify-center">
                                 <div class="flex flex-col items-center justify-center gap-4">
                                     <img src="/svg/dashboard/card-bath.svg" alt="Baths" class="w-8 h-8" />
                                     <p class="capitalize text-[20px] leading-[28px] font-medium text-[#121A22]">
@@ -502,7 +525,7 @@ onMounted(() => {
                                     </p>
                                 </div>
                             </div>
-                            <div class="flex-1 bg-[#FAF9F8] rounded-xl px-8 py-5 flex items-center justify-center">
+                            <div class="flex-1 bg-[#FAF9F8] rounded-xl px-8 py-4 lg:py-5 flex items-center justify-center">
                                 <div class="flex flex-col items-center justify-center gap-4">
                                     <img src="/svg/dashboard/card-cube.svg" alt="Sqft" class="w-8 h-8" />
                                     <p class="capitalize text-[20px] leading-[28px] font-medium text-[#121A22]">
@@ -527,27 +550,27 @@ onMounted(() => {
                 </div>
 
                 <div class="pt-4 flex flex-col gap-6">
-                    <div class="flex items-center gap-3 rounded-lg bg-white p-1.5 overflow-x-auto">
+                    <div class="flex items-center gap-3 rounded-lg bg-white p-1.5 overflow-hidden">
                         <button :class="[
-                            'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-4 py-3',
+                            'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-1 lg:flex-none px-5 lg:px-4 py-3 text-center',
                             activeTab === 'Insights'
-                                ? 'bg-[#18222c] text-white px-5 hover:bg-[#111922]'
+                                ? 'bg-[#18222c] text-white hover:bg-[#111922] lg:px-5'
                                 : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
                         ]" @click="activeTab = 'Insights'">
                             Insights
                         </button>
                         <button :class="[
-                            'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-4 py-3',
+                            'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-1 lg:flex-none px-5 lg:px-4 py-3 text-center',
                             activeTab === 'Features'
-                                ? 'bg-[#18222c] text-white px-5 hover:bg-[#111922]'
+                                ? 'bg-[#18222c] text-white hover:bg-[#111922] lg:px-5'
                                 : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
                         ]" @click="activeTab = 'Features'">
                             Features
                         </button>
                         <button :class="[
-                            'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-4 py-3',
+                            'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-1 lg:flex-none px-5 lg:px-4 py-3 text-center',
                             activeTab === 'Maps'
-                                ? 'bg-[#18222c] text-white px-5 hover:bg-[#111922]'
+                                ? 'bg-[#18222c] text-white hover:bg-[#111922] lg:px-5'
                                 : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
                         ]" @click="activeTab = 'Maps'">
                             Map
@@ -556,7 +579,8 @@ onMounted(() => {
 
                     <div v-if="activeTab === 'Insights'" class="bg-white rounded-xl p-4 flex flex-col gap-5">
                         <div class="flex flex-col gap-3">
-                            <h3 class="text-2xl font-semibold text-[#121A22] leading-8">
+                            <h3
+                                class="text-[20px] leading-7 font-semibold text-[#121A22] md:text-[22px] md:leading-8 lg:text-2xl lg:leading-8">
                                 {{ tabInsights.title }}
                             </h3>
                             <p class="text-sm text-[#283849] leading-5">
@@ -564,13 +588,14 @@ onMounted(() => {
                             </p>
                         </div>
 
-                        <div class="bg-[#FAF9F8] rounded-[10px] p-5 flex flex-col gap-4">
+                        <div class="bg-[#FAF9F8] rounded-[10px] p-4 lg:p-5 flex flex-col gap-4">
                             <template v-for="(item, index) in tabInsights.items" :key="item.id">
-                                <div class="flex items-start justify-between text-[#283849] text-base leading-6">
-                                    <p class="font-medium flex-1 pr-4">
+                                <div
+                                    class="flex flex-col gap-3 text-[#283849] text-sm leading-5 lg:flex-row lg:items-start lg:justify-between lg:text-base lg:leading-6">
+                                    <p class="font-medium w-full lg:flex-1 lg:pr-4">
                                         {{ item.label }}
                                     </p>
-                                    <p class="font-bold text-right w-full sm:w-[340px]">
+                                    <p class="font-bold w-full lg:w-[340px] lg:text-right">
                                         {{ item.value }}
                                     </p>
                                 </div>
@@ -581,30 +606,32 @@ onMounted(() => {
                         </div>
 
                         <div class="flex justify-end">
-                            <button class="bg-[#121A22] text-white px-4 py-3 rounded-lg text-sm font-bold leading-5">
+                            <button
+                                class="bg-[#121A22] text-white px-4 py-3 rounded-[12px] lg:rounded-lg text-sm font-bold leading-5">
                                 {{ tabInsights.downloadButtonText }}
                             </button>
                         </div>
                     </div>
 
-                    <div v-if="activeTab === 'Features'" class="bg-white rounded-xl p-4 md:p-5 flex flex-col gap-5">
-                        <h3 class="text-lg md:text-2xl font-semibold text-[#121A22] leading-8">
+                    <div v-if="activeTab === 'Features'" class="bg-white rounded-xl p-4 flex flex-col gap-5">
+                        <h3
+                            class="text-[20px] leading-7 font-semibold text-[#121a22] md:text-[22px] md:leading-8 lg:text-2xl lg:leading-8">
                             Features & Advantages
                         </h3>
                         <div class="flex flex-col gap-3">
                             <div v-for="feature in tabFeatures.items" :key="feature.id"
                                 class="bg-[#faf9f8] rounded-xl p-5 flex items-center gap-4">
-                                <Icon :name="feature.icon" class="w-8 h-8 text-[#121a22] flex-shrink-0" />
-                                <span class="text-[#121a22] font-medium text-base md:text-lg capitalize leading-7">
+                                <Icon :name="feature.icon" class="w-8 h-8 text-[#283849] flex-shrink-0" />
+                                <span class="text-[#283849] font-medium text-lg">
                                     {{ feature.text }}
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    <div v-if="activeTab === 'Maps'" class="bg-white rounded-xl p-4 md:p-5">
-                        <h3 class="text-lg md:text-2xl font-semibold text-[#121A22] leading-8 mb-4">
-                            Map
+                    <div v-if="activeTab === 'Maps'" class="bg-white p-3">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                            {{ tabMaps.title }}
                         </h3>
                         <div v-if="tabMaps.mapUrl" class="space-y-4">
                             <div class="rounded-lg overflow-hidden">
@@ -633,48 +660,46 @@ onMounted(() => {
             </div>
 
             <!-- Right Column - Sidebar -->
-            <div class="w-full lg:w-80 mt-6 lg:mt-0">
+            <div class="w-full lg:w-[360px] xl:w-[420px] mt-6 lg:mt-0 flex flex-col gap-6">
                 <!-- Videos Section -->
-                <div class="bg-white rounded-lg shadow-sm mb-6">
-                    <div class="px-4 py-3 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">
-                            Videos you might like!
-                        </h3>
-                    </div>
-                    <div
-                        class="p-4 space-y-4 md:grid md:grid-cols-2 md:gap-4 md:space-y-0 lg:flex lg:flex-col lg:space-y-4">
-                        <div v-for="video in videos" :key="video.id" class="group cursor-pointer"
+                <div class="bg-white rounded-xl p-4 flex flex-col gap-6">
+                    <h3
+                        class="text-[20px] leading-7 font-semibold text-[#121a22] md:text-[22px] md:leading-8 lg:text-2xl lg:leading-8">
+                        Videos you might like!
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
+                        <div v-for="video in videos" :key="video.id" class="flex flex-col gap-4 cursor-pointer"
                             @click="playSidebarVideo(video)">
                             <!-- Video Thumbnail -->
-                            <div class="relative w-full h-32 md:h-48 lg:h-32 mb-3">
-                                <img :src="video.thumbnail" :alt="video.title"
-                                    class="w-full h-full object-cover rounded-md" />
-
+                            <div
+                                class="relative w-full h-[200px] md:h-[180px] lg:h-[200px] rounded-[10px] overflow-hidden">
+                                <img :src="video.thumbnail" :alt="video.title" class="w-full h-full object-cover" />
                                 <!-- Duration Badge -->
                                 <div
                                     class="absolute bottom-2 right-2 bg-black/90 text-white px-2 py-1 rounded text-xs font-medium">
                                     {{ video.duration }}
                                 </div>
-
-                                <!-- Channel Avatar with "Hello" -->
-                                <div class="absolute bottom-2 left-2 flex items-center gap-1">
-                                    <div class="w-5 h-5 bg-gray-800 rounded-full flex items-center justify-center">
-                                        <span class="text-white text-xs font-medium">{{ video.channelInitial }}</span>
-                                    </div>
-                                    <span
-                                        class="text-white text-xs font-medium bg-black/70 px-1.5 py-0.5 rounded">Hello</span>
-                                </div>
                             </div>
 
                             <!-- Video Info -->
-                            <div class="px-1">
-                                <h4 class="text-sm font-medium text-gray-900 mb-2 line-clamp-2 leading-tight">
-                                    {{ video.title }}
-                                </h4>
-                                <div class="text-xs text-gray-500">
-                                    {{ video.channelName }} •
-                                    {{ video.views }} •
-                                    {{ video.timeAgo }}
+                            <div class="flex items-start gap-4">
+                                <!-- Hello Badge -->
+                                <div
+                                    class="bg-[#283849] w-12 h-12 rounded-[10px] flex items-center justify-center shrink-0">
+                                    <span class="text-white text-sm font-semibold">Hello</span>
+                                </div>
+                                <!-- Title and Meta -->
+                                <div class="flex-1 flex flex-col gap-1">
+                                    <p class="text-base font-semibold text-[#283849] leading-6 line-clamp-2">
+                                        {{ video.title }}
+                                    </p>
+                                    <div class="flex items-center gap-1.5 text-xs text-[#283849]">
+                                        <span>{{ video.channelName }}</span>
+                                        <div class="w-px h-3 bg-[#d4d4d4]"></div>
+                                        <span>{{ video.views }}</span>
+                                        <div class="w-px h-3 bg-[#d4d4d4]"></div>
+                                        <span>{{ video.timeAgo }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -682,77 +707,70 @@ onMounted(() => {
                 </div>
 
                 <!-- Agent Highlight -->
-                <div class="bg-white rounded-lg shadow-sm mb-6">
-                    <div class="px-4 py-3 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">
+                <div class="bg-[#f7f7f8] rounded-[12px] p-2 lg:bg-white lg:rounded-xl lg:p-0 overflow-hidden">
+                    <div class="bg-white rounded-[8px] p-4 flex flex-col gap-5 lg:bg-transparent lg:rounded-none">
+                        <h3
+                            class="text-[20px] leading-7 font-semibold text-[#121a22] md:text-[22px] md:leading-8 lg:text-2xl lg:leading-8">
                             Agent Highlight
                         </h3>
-                    </div>
-                    <div class="p-4">
+
+                        <!-- Divider -->
+                        <div class="h-px w-full bg-[#EAECEE]"></div>
+
                         <!-- Agent Info -->
-                        <div class="flex items-center space-x-3 mb-4">
+                        <div class="flex items-center gap-3">
                             <Avatar :image="agentData.avatar" :label="agentData.initials" class="w-10 h-10"
                                 shape="circle" />
-                            <div>
-                                <p class="font-medium text-gray-900 text-sm">
-                                    {{ agentData.name }}
-                                </p>
-                            </div>
+                            <p class="text-base font-semibold text-[#000121]">
+                                {{ agentData.name }}
+                            </p>
                         </div>
 
                         <!-- Contact Form -->
-                        <form @submit.prevent="submitContactForm" class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <form @submit.prevent="submitContactForm" class="flex flex-col gap-5">
+                            <div class="flex flex-col">
+                                <label class="text-sm font-medium text-[#121a22] pb-2">
                                     Full Name
                                 </label>
-                                <InputText v-model="contactForm.fullName" placeholder="Enter your full name"
-                                    class="w-full p-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                                <InputText v-model="contactForm.fullName" placeholder="Enter  your full name"
+                                    class="w-full px-4 py-3.5 border border-[#cfdbe8] rounded-lg text-sm text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                             </div>
 
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <div class="flex flex-col">
+                                <label class="text-sm font-medium text-[#121a22] pb-2">
                                     Message
                                 </label>
-                                <Textarea v-model="contactForm.message" placeholder="Enter your message" rows="4"
-                                    class="w-full p-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" />
+                                <Textarea v-model="contactForm.message" placeholder="Enter your message" rows="5"
+                                    class="w-full px-4 py-3.5 border border-[#cfdbe8] rounded-lg text-sm text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" />
                             </div>
 
-                            <div type="submit"
-                                class="md:flex-none md:w-auto bg-[#18222c] text-white px-5 cursor-pointer  py-2.5 rounded-md text-sm font-semibold hover:bg-[#111922] transition-colors flex items-center justify-center">
-                                Contact Agent
-                            </div>
+                            <Button type="submit" label="Contact Agent"
+                                class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-3.5 px-6 rounded-xl text-base font-bold transition-colors border border-[#2c3e50]" />
                         </form>
                     </div>
                 </div>
 
                 <!-- Request a Tour -->
-                <div class="bg-white rounded-lg shadow-sm">
-                    <div class="px-4 py-3 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">
-                            Request a Tour
-                        </h3>
+                <div class="bg-white rounded-xl p-4 flex flex-col gap-5">
+                    <h3
+                        class="text-[20px] leading-7 font-semibold text-[#121a22] md:text-[22px] md:leading-8 lg:text-2xl lg:leading-8">
+                        Request a Tour
+                    </h3>
+                    <div class="bg-[#FAF9F8] rounded-[12px] p-4 text-center">
+                        <p class="text-sm text-[#283849] mb-2">
+                            Request a tour at
+                        </p>
+                        <p class="text-lg font-semibold text-[#121A22]">
+                            {{ tourTime }}
+                        </p>
                     </div>
-                    <div class="p-4">
-                        <div class="text-center mb-4">
-                            <p class="text-sm text-gray-600 mb-2">
-                                Request a tour at
-                            </p>
-                            <p class="text-lg font-semibold text-gray-900">
-                                {{ tourTime }}
-                            </p>
-                        </div>
-
-
-                        <div @click="bookTour" type="submit"
-                            class="md:flex-none md:w-auto bg-[#18222c] text-white px-5 cursor-pointer  py-2.5 rounded-md text-sm font-semibold hover:bg-[#111922] transition-colors flex items-center justify-center">
-                            Book a Tour
-                        </div>
-                    </div>
+                    <button type="button" @click="bookTour"
+                        class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-3.5 px-6 rounded-xl text-base font-bold transition-colors">
+                        Book a Tour
+                    </button>
                 </div>
             </div>
         </div>
-
         <!-- Video Player Modal with Ads -->
         <ClientOnly>
             <VideoPlayerModal :adConfig="adConfig" />
