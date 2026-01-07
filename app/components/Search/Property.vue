@@ -15,6 +15,7 @@
 
   
     const route = useRoute()
+    const toast = useToast()
 
   
     const searchQuery = ref(
@@ -127,11 +128,27 @@
             })
 
             if (response.status === "success") {
-                console.log("Favorite toggled successfully")
+                prop.isFavorited = response.data.is_favorite
+                toast.add({
+                    severity: response.data.is_favorite ? "success" : "info",
+                    summary: response.data.is_favorite ? "Added to Favorites" : "Removed from Favorites",
+                    detail: response.data.is_favorite
+                        ? "Property has been added to your favorite list"
+                        : "Property has been removed from your favorite list",
+                    life: 3000,
+                })
+            } else {
+                prop.isFavorited = previousState
             }
         } catch (e) {
             console.error("Error toggling favorite:", e.message)
             prop.isFavorited = previousState
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: "Failed to update favorite status",
+                life: 3000,
+            })
         }
     }
 
@@ -542,6 +559,8 @@
             </div>
         </div>
     </div>
+
+    <Toast position="top-right" />
 </template>
 
 <style scoped>
