@@ -375,7 +375,7 @@
 </script>
 
 <template>
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-6 w-full max-w-[1316px] mx-auto">
         <div class="lg:hidden flex flex-col gap-2 items-start justify-center pt-2">
             <div class="flex items-center gap-2">
                 <img
