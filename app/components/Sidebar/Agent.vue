@@ -51,7 +51,7 @@
         return "Agent"
     })
 
-    // Main navigation items (above separator line)
+    
     const mainNavigationItems = ref([
         {
             id: "dashboard",
@@ -65,46 +65,32 @@
             label: "Leads",
             icon: "lucide:users",
             iconType: "lucide",
-            path: "#",
-        },
-        {
-            id: "properties",
-            label: "Properties",
-            icon: "/svg/menubar/search.svg",
-            iconType: "svg",
-            path: "#",
-        },
-        {
-            id: "analytics",
-            label: "Analytics",
-            icon: "lucide:bar-chart-3",
-            iconType: "lucide",
-            path: "#",
-        },
-        {
-            id: "clients",
-            label: "Clients",
-            icon: "lucide:user-check",
-            iconType: "lucide",
-            path: "#",
+            path: "/agent/leads",
         },
         {
             id: "calendar",
             label: "Calendar",
             icon: "lucide:calendar",
             iconType: "lucide",
-            path: "#",
+            path: "/agent/calendar",
         },
         {
-            id: "reports",
-            label: "Reports",
-            icon: "lucide:file-text",
+            id: "listings",
+            label: "Listings",
+            icon: "/svg/menubar/search.svg",
+            iconType: "svg",
+            path: "/agent/listings",
+        },
+        {
+            id: "messages",
+            label: "Messages",
+            icon: "lucide:message-square",
             iconType: "lucide",
             path: "#",
         },
     ])
 
-    // Settings item (below separator line)
+   
     const settingsItem = ref({
         id: "settings",
         label: "Settings",
@@ -113,7 +99,7 @@
         path: "/agent/settings",
     })
 
-    // All navigation items for mobile (combined, no separator)
+    
     const navigationItems = computed(() => [
         ...mainNavigationItems.value,
         settingsItem.value,
