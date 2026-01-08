@@ -23,7 +23,7 @@ const loadData = async () => {
     isLoading.value = true;
     permissions.value = {};
     try {
-        const getData = await $fetchAdmin(`admin/ads-places/list`, {
+        const getData = await $fetchAdmin(`admin/lead-statuses/list`, {
             method: 'GET',
             params: {
                 page: route.query.page ? route.query.page : 1,
@@ -89,7 +89,7 @@ const openDeleteModal = (id) => {
 const deleteHandler = async () => {
     response_modal.value = {};
     try {
-        const getData = await $fetchAdmin(`admin/ads-places/${deleteId.value}/delete`, {
+        const getData = await $fetchAdmin(`admin/lead-statuses/${deleteId.value}/delete`, {
             method: 'POST',
             body: {
                 _method: 'DELETE'
@@ -98,8 +98,8 @@ const deleteHandler = async () => {
         if (getData.status == true || getData.status == 'success') {
             response_modal.value = {
                 status: true,
-                message: 'Ad place deleted successfully.'
-            };
+                message: 'Lead status deleted successfully.',
+            }
             data.value = data.value.filter(item => item.id !== deleteId.value);
         }
     } catch (e) {
@@ -137,13 +137,12 @@ const onChangeHandler = () => {
                     </div>
                 </div>
                 <Skeleton v-if="isLoading" width="9rem" height="2.5rem" borderRadius="10px"></Skeleton>
-                <!-- <Button v-else-if="permissions?.add" label="Create Placement" @click="addNew" class="text-xs" /> -->
-                <Button  label="Create Placement" @click="addNew" class="text-xs" />
+                <Button v-else label="Create Lead Status" @click="addNew" class="text-xs" />
             </div>
             <div class="pb-2 flex flex-col justify-between w-full">
                 <div class="mt-4 border border-gray-200 rounded-lg bg-white dark:bg-gray-800">
                     <div class="border-b border-gray-200">
-                        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200 py-2 px-4">Ad Placements
+                        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200 py-2 px-4">Lead Statuses
                         </h4>
                     </div>
                     <div class="p-4">
@@ -151,31 +150,19 @@ const onChangeHandler = () => {
                             <table class="table table-auto">
                                 <thead class="sticky z-10 top-0">
                                     <tr>
-                                        <th width="50%">
+                                        <th width="60%">
                                             <div
                                                 class="flex flex-row items-center justify-start gap-2 text-gray-800 dark:text-gray-200">
-                                                <span>Placement</span>
+                                                <span>Name</span>
                                             </div>
                                         </th>
-                                        <th width="30%">
-                                            <div
-                                                class="flex flex-row items-center justify-start gap-2 text-gray-800 dark:text-gray-200">
-                                                <span>Slug</span>
-                                            </div>
-                                        </th>
-                                        <th width="10%">
+                                        <th width="20%">
                                             <div
                                                 class="flex flex-row items-center justify-center gap-2 text-gray-800 dark:text-gray-200">
                                                 <span>Status</span>
                                             </div>
                                         </th>
-                                        <!-- <th width="10%" v-if="(permissions.edit || permissions.delete) || isLoading">
-                                            <div
-                                                class="flex flex-row items-center justify-center gap-2 text-gray-800 dark:text-gray-200">
-                                                <span>Action</span>
-                                            </div>
-                                        </th> -->
-                                        <th width="10%" >
+                                        <th width="20%">
                                             <div
                                                 class="flex flex-row items-center justify-center gap-2 text-gray-800 dark:text-gray-200">
                                                 <span>Action</span>
@@ -190,9 +177,6 @@ const onChangeHandler = () => {
                                                 <Skeleton width="12rem" class="mb-2"></Skeleton>
                                                 <Skeleton width="8rem" class="mb-2"></Skeleton>
                                             </div>
-                                        </td>
-                                        <td class="text-gray-800 dark:text-gray-200 text-start">
-                                            <Skeleton width="15rem" class="mb-2"></Skeleton>
                                         </td>
                                         <td>
                                             <div class="flex justify-center items-center">
@@ -215,9 +199,6 @@ const onChangeHandler = () => {
                                                 <span class="text-xs text-gray-500 dark:text-gray-400">Created: {{ item.created_at }}</span>
                                             </div>
                                         </td>
-                                        <td class="text-gray-800 dark:text-gray-200 text-start">
-                                            <span class="text-sm font-mono text-gray-600 dark:text-gray-400">{{ item.slug }}</span>
-                                        </td>
                                         <td>
                                             <div class="flex justify-center items-center">
                                                 <span v-if="item.status == 1" class="text-green-600"><i
@@ -226,19 +207,11 @@ const onChangeHandler = () => {
                                                         aria-hidden="true"></i></span>
                                             </div>
                                         </td>
-                                        <!-- <td v-if="permissions.edit || permissions.delete">
+                                        <td>
                                             <div class="flex justify-center items-center gap-2">
-                                                <i @click="editHandler(item)" v-if="permissions.edit"
+                                                <i @click="editHandler(item)"
                                                     class="fa-solid fa-pen-to-square text-gray-800 dark:text-gray-200 hover:text-green-500 cursor-pointer transition duration-150 ease-in-out"></i>
-                                                <i @click="openDeleteModal(item.id)" v-if="permissions.delete"
-                                                    class="fa-solid fa-trash text-red-500 hover:text-red-800 cursor-pointer transition duration-150 ease-in-out"></i>
-                                            </div>
-                                        </td> -->
-                                        <td >
-                                            <div class="flex justify-center items-center gap-2">
-                                                <i @click="editHandler(item)" 
-                                                    class="fa-solid fa-pen-to-square text-gray-800 dark:text-gray-200 hover:text-green-500 cursor-pointer transition duration-150 ease-in-out"></i>
-                                                <i @click="openDeleteModal(item.id)" 
+                                                <i @click="openDeleteModal(item.id)"
                                                     class="fa-solid fa-trash text-red-500 hover:text-red-800 cursor-pointer transition duration-150 ease-in-out"></i>
                                             </div>
                                         </td>

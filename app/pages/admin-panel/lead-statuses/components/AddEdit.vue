@@ -16,7 +16,6 @@ watch(() => props.isOpenModal, (newVal) => {
 const formData = ref({
     id: null,
     name: '',
-    slug: '',
     status: 1,
 });
 
@@ -28,7 +27,6 @@ watch(() => props.item, (value) => {
         formData.value = {
             id: value.id || null,
             name: value.name || '',
-            slug: value.slug || '',
             status: value.status ?? 1,
         };
         isChecked.value = value.status == 1 ? true : false;
@@ -36,7 +34,6 @@ watch(() => props.item, (value) => {
         formData.value = {
             id: null,
             name: '',
-            slug: '',
             status: 1,
         };
         isChecked.value = true;
@@ -73,15 +70,15 @@ const updateHandler = async () => {
             _method: 'PATCH'
         };
         
-        const getData = await $fetchAdmin(`admin/ads-places/${props.item.id}/update`, {
+        const getData = await $fetchAdmin(`admin/lead-statuses/${props.item.id}/update`, {
             method: 'POST',
             body: submitData
         });
         
         response_modal.value = {
                 status: true,
-                message: 'Ad place updated successfully.'
-            };
+                message: 'Lead status updated successfully.',
+            }
         if (getData.status == true || getData.status == 'success') {
             emit('add_emit', getData.data);
         }
@@ -128,15 +125,15 @@ const createHandler = async () => {
             ...formData.value,
         };
         
-        const getData = await $fetchAdmin(`admin/ads-places/store`, {
+        const getData = await $fetchAdmin(`admin/lead-statuses/store`, {
             method: 'POST',
             body: submitData,
         });
         
         response_modal.value = {
                 status: true,
-                message: 'Ad place created successfully.'
-            };
+                message: 'Lead status created successfully.',
+            }
         if (getData.status == true || getData.status == 'success') {
             emit('add_emit', getData.data);
         }
@@ -173,29 +170,17 @@ const createHandler = async () => {
         @update:visible="$emit('close')">
         <template #header>
             <div class="flex items-center justify-center w-full gap-2">
-                <h4 class="text-xl font-semibold">{{ modalTitle }} Ad Placement</h4>
+                <h4 class="text-xl font-semibold">{{ modalTitle }} Lead Status</h4>
             </div>
         </template>
         <form class="grid grid-cols-1 gap-4">
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Name</label>
-                    <InputText v-model="formData.name" class="w-full" placeholder="e.g., Dashboard Top Banner"
+                    <InputText v-model="formData.name" class="w-full" placeholder="e.g., New, Contacted, Closed"
                         :class="validations_errors.name ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="validations_errors.name = ''" />
                     <InputError class="text-sm mt-1" :message="validations_errors.name" />
-                </div>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="flex-auto">
-                    <label class="font-semibold">Slug</label>
-                    <InputText v-model="formData.slug" class="w-full" placeholder="e.g., dashboard-top-banner"
-                        :class="validations_errors.slug ? 'border-[#f44336!important]' : ''" autocomplete="off"
-                        @focus="validations_errors.slug = ''" />
-                    <InputError class="text-sm mt-1" :message="validations_errors.slug" />
-                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                        Unique identifier for this placement (lowercase, use hyphens)
-                    </p>
                 </div>
             </div>
             <div class="flex items-center gap-4">

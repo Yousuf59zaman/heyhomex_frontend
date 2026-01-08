@@ -3,7 +3,7 @@ useHead({ title: "Lead Details - Agent Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "agent" })
 
 const route = useRoute()
-const leadId = route.params.id
+// const leadId = route.params.id
 
 
 const leadInfo = ref({
@@ -46,29 +46,6 @@ const activities = ref([
     }
 ])
 
-
-const formatRelativeTime = (isoDate) => {
-    const date = new Date(isoDate)
-    const now = new Date()
-    const diffMs = now - date
-    const diffMins = Math.floor(diffMs / 60000)
-    const diffHours = Math.floor(diffMs / 3600000)
-    const diffDays = Math.floor(diffMs / 86400000)
-
-    if (diffMins < 60) return `${diffMins} minutes ago`
-    if (diffHours < 24) return `${diffHours} hours ago`
-    if (diffDays === 1) return `${diffDays} day ago`
-    if (diffDays < 7) return `${diffDays} days ago`
-
-    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })
-}
-
-
-const formatBudgetRange = () => {
-    const min = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(leadInfo.value.budget_min)
-    const max = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(leadInfo.value.budget_max)
-    return `${min} - ${max}`
-}
 
 const handleScheduleAppointment = () => {
     console.log('Schedule appointment')
@@ -174,7 +151,7 @@ const goBack = () => {
 
                         <div class="flex items-center justify-between py-3">
                             <span class="text-sm text-gray-600">Budget Range:</span>
-                            <span class="text-sm font-medium text-gray-900">{{ formatBudgetRange() }}</span>
+                            <span class="text-sm font-medium text-gray-900">{{ $formatBudgetRange(leadInfo) }}</span>
                         </div>
                     </div>
                 </div>
@@ -196,7 +173,7 @@ const goBack = () => {
                                 <div class="flex items-center gap-2">
                                     <span class="text-sm font-semibold text-gray-900">{{ activity.activity_title
                                     }}</span>
-                                    <span class="text-xs text-gray-500">{{ formatRelativeTime(activity.created_at)
+                                    <span class="text-xs text-gray-500">{{ $formatRelativeTime(activity.created_at)
                                     }}</span>
                                 </div>
                             </div>

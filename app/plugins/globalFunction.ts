@@ -97,6 +97,31 @@ export default defineNuxtPlugin(() => {
                 }
                 return '';
             },
+            formatBudgetRange: (leadInfo: any) => {
+                const min = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(leadInfo.budget_min)
+                const max = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(leadInfo.budget_max)
+                return `${min} - ${max}`
+            },
+            formatRelativeTime : (isoDate: any) => {
+                const date = new Date(isoDate).getTime()
+                const now = new Date().getTime()
+                const diffMs = now - date
+                const diffMins = Math.floor(diffMs / 60000)
+                const diffHours = Math.floor(diffMs / 3600000)
+                const diffDays = Math.floor(diffMs / 86400000)
+
+                if (diffMins < 60) return `${diffMins} minutes ago`
+                if (diffHours < 24) return `${diffHours} hours ago`
+                if (diffDays === 1) return `${diffDays} day ago`
+                if (diffDays < 7) return `${diffDays} days ago`
+
+                return new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })
+            },
+            formatDate: (isoDate: any) => {
+                const date = new Date(isoDate)
+                return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+            },
+           
         }
     };
 });
