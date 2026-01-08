@@ -424,7 +424,7 @@
 
         <!-- Row 3: Results header + cards -->
         <div class="bg-white rounded-[12px] p-3 sm:p-4 flex flex-col gap-4">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div class="relative z-1 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div class="flex flex-col gap-3 flex-1">
                     <h2 class="text-[20px] lg:text-[24px] leading-[28px] lg:leading-[32px] font-semibold text-[#121A22]">
                         {{ displayQuery }}
@@ -460,19 +460,10 @@
             </div>
 
             <div v-if="pending">
-                <div
-                    v-if="viewMode === 'Map View'"
-                    class="flex flex-col lg:grid lg:grid-cols-12 gap-4">
-                    <div class="lg:col-span-7">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <CommonCitizenPropertyCardSkeleton
-                                v-for="n in 4"
-                                :key="n" />
-                        </div>
-                    </div>
-                    <div class="lg:col-span-5">
-                        <div
-                            class="h-96 lg:h-[600px] bg-gray-200 rounded-lg animate-pulse"></div>
+                <div v-if="viewMode === 'Map View'" class="flex flex-col gap-4">
+                    <div class="w-full h-[400px] sm:h-[500px] lg:h-[600px] bg-gray-200 rounded-xl animate-pulse"></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <CommonCitizenPropertyCardSkeleton v-for="n in 6" :key="n" />
                     </div>
                 </div>
 
@@ -494,27 +485,9 @@
                 <p class="text-sm text-red-500">{{ error.message }}</p>
             </div>
 
-            <div
-                v-else-if="viewMode === 'Map View'"
-                class="flex flex-col lg:grid lg:grid-cols-12 gap-4">
-                <div class="lg:col-span-7">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div
-                            v-for="property in properties"
-                            :key="property.id"
-                            @mouseenter="onPropertyCardHover(property)"
-                            @mouseleave="onPropertyCardLeave">
-                            <CommonCitizenPropertyCard
-                                :property="property"
-                                @click="handlePropertyClick"
-                                @favorite="toggleFavorite" />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-5">
-                    <div
-                        class="bg-white rounded-xl overflow-hidden h-96 lg:h-[600px] lg:sticky lg:top-6">
+            <div v-else-if="viewMode === 'Map View'" class="flex flex-col gap-4">
+                <div class="w-full">
+                    <div class="relative z-0 bg-white rounded-xl overflow-hidden h-[400px] sm:h-[500px] lg:h-[600px]">
                         <div class="w-full h-full relative">
                             <div
                                 id="property-map"
@@ -524,19 +497,36 @@
                             <Teleport to="body">
                                 <div
                                     v-if="showPopup && hoveredProperty"
-                                    class="fixed z-[10000] pointer-events-none"
+                                    class="fixed z-[10] pointer-events-none"
                                     :style="{
                                         left: popupPosition.x + 'px',
                                         top: popupPosition.y + 'px',
                                         transform: 'translate(-50%, -100%)',
                                     }">
-                                    <CommonCitizenMapPopup
-                                        :property="hoveredProperty" />
+                                    <CommonCitizenMapPopup :property="hoveredProperty" />
                                 </div>
                             </Teleport>
                         </div>
                     </div>
                 </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div
+                        v-for="property in properties"
+                        :key="property.id"
+                        @mouseenter="onPropertyCardHover(property)"
+                        @mouseleave="onPropertyCardLeave">
+                        <CommonCitizenPropertyCard
+                            :property="property"
+                            @click="handlePropertyClick"
+                            @favorite="toggleFavorite" />
+                    </div>
+                </div>
+
+                <LazyPagination
+                    v-if="!pending && properties.length > 0"
+                    class="px-4"
+                    :config="paginationConfig" />
             </div>
 
             <div

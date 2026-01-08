@@ -277,7 +277,7 @@
 
         <!-- Row 3: Results header + cards -->
         <div class="bg-white rounded-[12px] p-3 sm:p-4 flex flex-col gap-4">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div class="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div class="flex flex-col gap-3 flex-1">
                     <h2 class="text-[20px] lg:text-[24px] leading-[28px] lg:leading-[32px] font-semibold text-[#121A22]">
                         {{ displayQuery }}
@@ -312,101 +312,16 @@
                 </div>
             </div>
 
-            <!-- Map View: 2-column grid + Map -->
-            <div
-                v-if="viewMode === 'Map View'"
-                class="flex flex-col lg:grid lg:grid-cols-12 gap-4">
-                <div class="lg:col-span-7">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div
-                            v-for="video in videos"
-                            :key="video.id"
-                            class="video-card flex flex-col"
-                            @mouseenter="onVideoCardHover(video)"
-                            @mouseleave="onVideoCardLeave">
-                            <!-- Thumbnail -->
-                            <div class="relative h-[200px] rounded-[10px] overflow-hidden cursor-pointer group" @click="playVideo(video.id)">
-                                <img
-                                    :src="video.thumbnail"
-                                    :alt="video.title"
-                                    class="w-full h-full object-cover" />
-                                <div
-                                    class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
-                                    <div
-                                        class="bg-red-600 group-hover:bg-red-700 flex items-center justify-center rounded-full w-10 h-10 transition-colors">
-                                        <Icon
-                                            name="lucide:play"
-                                            class="w-5 h-5 text-white" />
-                                    </div>
-                                </div>
-                                <div
-                                    class="absolute bottom-2 right-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
-                                    {{ video.duration }}
-                                </div>
-                                <button
-                                    @click.stop="toggleFavorite(video.id)"
-                                    class="absolute top-2 right-2 flex items-center justify-center p-2 rounded-[8px] bg-white/90 backdrop-blur-[2px] shadow-sm transition-colors">
-                                    <Icon
-                                        name="lucide:heart"
-                                        :class="[
-                                            'w-5 h-5',
-                                            video.isFavorite ? 'text-[#2C3E50] fill-current' : 'text-[#2C3E50] fill-none',
-                                        ]" />
-                                </button>
-                            </div>
-
-                            <!-- Video Details -->
-                            <div class="flex gap-1 items-start mt-4">
-                                <div class="flex-1 flex gap-4 items-start">
-                                    <!-- Channel Avatar -->
-                                    <div class="bg-[#283849] rounded-[10px] w-12 h-12 flex-shrink-0 flex items-center justify-center">
-                                        <p class="text-white text-sm font-semibold text-center leading-[16px]">
-                                            Hello
-                                        </p>
-                                    </div>
-
-                                    <!-- Title and Metadata -->
-                                    <div class="flex-1 flex flex-col gap-1">
-                                        <h3
-                                            class="font-['sf-pro-Medium'] text-[#283849] text-[16px] leading-[24px] font-[590] line-clamp-2 cursor-pointer hover:text-[#121a22]"
-                                            @click="playVideo(video.id)">
-                                            {{ video.title }}
-                                        </h3>
-                                        <div
-                                            class="flex items-center gap-1.5 font-['sf-pro-Medium'] text-[12px] leading-[18px] font-normal text-[#283849]">
-                                            <span>{{ video.channel }}</span>
-                                            <div class="bg-[#d4d4d4] h-3 w-px"></div>
-                                            <span>{{ video.views }}</span>
-                                            <div class="bg-[#d4d4d4] h-3 w-px"></div>
-                                            <span>{{ video.uploadTime }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- More Options Button -->
-                                <button
-                                    class="w-5 h-5 flex items-center justify-center flex-shrink-0"
-                                    @click.stop>
-                                    <Icon
-                                        name="lucide:more-vertical"
-                                        class="w-5 h-5 text-[#283849]" />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Map Section -->
-                <div class="lg:col-span-5">
-                    <div
-                        class="bg-white rounded-xl overflow-hidden h-96 lg:h-[600px] lg:sticky lg:top-6">
+            <!-- Map View: Full-width map on top + cards below -->
+            <div v-if="viewMode === 'Map View'" class="flex flex-col gap-4">
+                <div class="w-full">
+                    <div class="relative z-0 bg-white rounded-xl overflow-hidden h-[400px] sm:h-[500px] lg:h-[600px]">
                         <div class="w-full h-full relative">
                             <div
                                 id="video-map"
                                 ref="mapContainer"
                                 class="w-full h-full rounded-xl"></div>
 
-                            <!-- Popup overlay for video details on map hover -->
                             <Teleport to="body">
                                 <div
                                     v-if="showPopup && hoveredVideo"
@@ -418,10 +333,78 @@
                                     }"
                                     @mouseenter="onPopupHover"
                                     @mouseleave="onPopupLeave">
-                                    <CommonCitizenVideoPopup
-                                        :video="hoveredVideo" />
+                                    <CommonCitizenVideoPopup :video="hoveredVideo" />
                                 </div>
                             </Teleport>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div
+                        v-for="video in videos"
+                        :key="video.id"
+                        class="video-card flex flex-col"
+                        @mouseenter="onVideoCardHover(video)"
+                        @mouseleave="onVideoCardLeave">
+                        <div
+                            class="relative h-[200px] rounded-[10px] overflow-hidden cursor-pointer group"
+                            @click="playVideo(video.id)">
+                            <img
+                                :src="video.thumbnail"
+                                :alt="video.title"
+                                class="w-full h-full object-cover" />
+                            <div
+                                class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
+                                <div
+                                    class="bg-red-600 group-hover:bg-red-700 flex items-center justify-center rounded-full w-10 h-10 transition-colors">
+                                    <Icon
+                                        name="lucide:play"
+                                        class="w-5 h-5 text-white" />
+                                </div>
+                            </div>
+                            <div
+                                class="absolute bottom-2 right-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
+                                {{ video.duration }}
+                            </div>
+                            <button
+                                @click.stop="toggleFavorite(video.id)"
+                                class="absolute top-2 right-2 flex items-center justify-center p-2 rounded-[8px] bg-white/90 backdrop-blur-[2px] shadow-sm transition-colors">
+                                <Icon
+                                    name="lucide:heart"
+                                    :class="[
+                                        'w-5 h-5',
+                                        video.isFavorite ? 'text-[#2C3E50] fill-current' : 'text-[#2C3E50] fill-none',
+                                    ]" />
+                            </button>
+                        </div>
+
+                        <div class="flex gap-1 items-start mt-4">
+                            <div class="flex-1 flex gap-4 items-start">
+                                <div class="bg-[#283849] rounded-[10px] w-12 h-12 flex-shrink-0 flex items-center justify-center">
+                                    <p class="text-white text-sm font-semibold text-center leading-[16px]">Hello</p>
+                                </div>
+                                <div class="flex-1 flex flex-col gap-1">
+                                    <h3
+                                        class="font-['sf-pro-Medium'] text-[#283849] text-[16px] leading-[24px] font-[590] line-clamp-2 cursor-pointer hover:text-[#121a22]"
+                                        @click="playVideo(video.id)">
+                                        {{ video.title }}
+                                    </h3>
+                                    <div
+                                        class="flex items-center gap-1.5 font-['sf-pro-Medium'] text-[12px] leading-[18px] font-normal text-[#283849]">
+                                        <span>{{ video.channel }}</span>
+                                        <div class="bg-[#d4d4d4] h-3 w-px"></div>
+                                        <span>{{ video.views }}</span>
+                                        <div class="bg-[#d4d4d4] h-3 w-px"></div>
+                                        <span>{{ video.uploadTime }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                class="w-5 h-5 flex items-center justify-center flex-shrink-0"
+                                @click.stop>
+                                <Icon name="lucide:more-vertical" class="w-5 h-5 text-[#283849]" />
+                            </button>
                         </div>
                     </div>
                 </div>
