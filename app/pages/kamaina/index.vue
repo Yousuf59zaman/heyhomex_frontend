@@ -89,6 +89,9 @@
             subtitle: "AIRLINES",
             thumbnail: "/images/dashboard/video/1.png",
             duration: "3:45",
+            channelName: "AIRLINES",
+            views: "0 Views",
+            timeAgo: new Date().toLocaleDateString(),
             videoUrl: demoVideoUrl,
             isFavorite: false,
         },
@@ -98,6 +101,9 @@
             subtitle: "HOUSE",
             thumbnail: "/images/dashboard/video/2.png",
             duration: "5:12",
+            channelName: "HOUSE",
+            views: "0 Views",
+            timeAgo: new Date().toLocaleDateString(),
             videoUrl: demoVideoUrl,
             isFavorite: false,
         },
@@ -107,6 +113,9 @@
             subtitle: "ONE ARE YOU?",
             thumbnail: "/images/dashboard/video/3.png",
             duration: "2:58",
+            channelName: "ONE ARE YOU?",
+            views: "0 Views",
+            timeAgo: new Date().toLocaleDateString(),
             videoUrl: demoVideoUrl,
             isFavorite: false,
         },
@@ -525,6 +534,7 @@
         <CommonCitizenVideoGrid
             v-else
             :videos="videos"
+            show-info
             :ad-config="adConfig"
             @see-all="handleSeeAllVideos"
             @video-click="handleVideoClick"

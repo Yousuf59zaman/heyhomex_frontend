@@ -92,6 +92,9 @@
                 subtitle: video.channel?.name || '',
                 thumbnail: video.video_image || '/images/dashboard/video/1.png',
                 duration: video.duration || '0:00',
+                channelName: video.channel?.name || "Unknown Channel",
+                views: "0 Views",
+                timeAgo: new Date(video.created_at).toLocaleDateString(),
                 videoUrl: video.video_url || demoVideoUrl,
                 isFavorite: video.is_favorite || false,
             }))
@@ -571,6 +574,7 @@
         <CommonCitizenVideoGrid
             v-else
             :videos="videos"
+            show-info
             :ad-config="adConfig"
             @see-all="handleSeeAllVideos"
             @video-click="handleVideoClick"
