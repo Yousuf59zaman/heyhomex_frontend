@@ -424,7 +424,7 @@
                     </p>
                 </div>
                 <!-- Image Grid - Figma layout (Desktop) -->
-                <div class="hidden md:grid items-stretch gap-3 lg:gap-4 mb-6 grid-cols-[1fr_0.6fr] h-[320px]">
+                <div class="hidden md:grid items-stretch gap-3 lg:gap-4 mb-6 grid-cols-[1fr_0.76fr] h-[320px]">
                     <!-- Main large image -->
                     <div class="relative w-full h-full overflow-hidden rounded-[18px]">
                         <img

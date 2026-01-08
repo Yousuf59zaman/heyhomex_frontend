@@ -406,7 +406,7 @@ onMounted(() => {
                 </div>
                 <!-- Image Grid - Figma layout (Desktop) -->
                 <div
-                    class="hidden md:grid items-stretch gap-3 lg:gap-4 mb-6 grid-cols-[1fr_0.6fr] h-[320px]">
+                    class="hidden md:grid items-stretch gap-3 lg:gap-4 mb-6 grid-cols-[1fr_0.76fr] h-[320px]">
                     <!-- Main large image -->
                     <div class="relative w-full h-full overflow-hidden rounded-[18px]">
                         <img :src="propertyImage" :alt="propertyData.title || propertyData.name"
@@ -745,7 +745,7 @@ onMounted(() => {
                             </div>
 
                             <Button type="submit" label="Contact Agent"
-                                class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-3.5 px-6 rounded-xl text-base font-bold transition-colors border border-[#2c3e50]" />
+                                class="contact-agent-btn w-full bg-[#18222c] hover:bg-[#121a22] text-white py-3.5 px-6 rounded-xl text-base font-bold transition-colors border border-[#2c3e50]" />
                         </form>
                     </div>
                 </div>
@@ -836,5 +836,17 @@ onMounted(() => {
     .h-32 {
         height: 8rem;
     }
+}
+
+:deep(.contact-agent-btn) {
+    background-color: #18222c;
+    border-color: #2c3e50;
+    color: #ffffff;
+}
+
+:deep(.contact-agent-btn:hover) {
+    background-color: #121a22;
+    border-color: #2c3e50;
+    color: #ffffff;
 }
 </style>
