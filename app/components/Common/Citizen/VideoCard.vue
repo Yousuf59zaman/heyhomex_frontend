@@ -76,22 +76,31 @@
         </div>
 
         <div v-if="showInfo" class="px-0 pb-4">
-            <div class="flex items-start gap-4 mt-4">
-                <div class="bg-[#283849] w-12 h-12 rounded-[10px] flex items-center justify-center shrink-0">
-                    <span class="text-white text-sm font-semibold">Hello</span>
-                </div>
-                <div class="flex-1 flex flex-col gap-1">
-                    <p class="text-base font-semibold text-[#283849] leading-6 line-clamp-2">
-                        {{ video.title }}
-                    </p>
-                    <div class="flex items-center gap-1.5 text-xs text-[#283849]">
-                        <span>{{ video.channelName || video.subtitle || "Unknown Channel" }}</span>
-                        <div class="w-px h-3 bg-[#d4d4d4]"></div>
-                        <span>{{ video.views || "0 Views" }}</span>
-                        <div class="w-px h-3 bg-[#d4d4d4]"></div>
-                        <span>{{ video.timeAgo || "" }}</span>
+            <div class="flex gap-1 items-start mt-4">
+                <div class="flex-1 flex gap-4 items-start">
+                    <div class="bg-[#283849] w-12 h-12 rounded-[10px] flex items-center justify-center shrink-0">
+                        <span class="text-white text-sm font-semibold">Hello</span>
+                    </div>
+                    <div class="flex-1 flex flex-col gap-1">
+                        <p class="text-base font-semibold text-[#283849] leading-6 line-clamp-2">
+                            {{ video.title }}
+                        </p>
+                        <div class="flex items-center gap-1.5 text-xs text-[#283849]">
+                            <span>{{ video.channelName || video.subtitle || "Unknown Channel" }}</span>
+                            <div class="w-px h-3 bg-[#d4d4d4]"></div>
+                            <span>{{ video.views || "0 Views" }}</span>
+                            <div class="w-px h-3 bg-[#d4d4d4]"></div>
+                            <span>{{ video.timeAgo || "" }}</span>
+                        </div>
                     </div>
                 </div>
+                <button
+                    class="w-5 h-5 flex items-center justify-center flex-shrink-0"
+                    @click.stop>
+                    <Icon
+                        name="lucide:more-vertical"
+                        class="w-5 h-5 text-[#283849]" />
+                </button>
             </div>
         </div>
     </div>

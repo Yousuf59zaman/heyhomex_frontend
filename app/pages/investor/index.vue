@@ -420,8 +420,8 @@
         <!-- Advertisement Placement (Top Banner) -->
         <AdvertisementDisplay 
             v-if="hydrated"
-            placement-slug="kamaina-dashboard-row1-col-4-8" 
-            
+            placement-slug="kamaina-dashboard-row1-col-4-8"
+            class="investor-ad-banner" 
         />      
 
         <!-- Chart and Saved List Section -->
@@ -591,3 +591,11 @@
         message="This property will be removed from your saved list."
         @confirm="confirmRemoveFavorite" />
 </template>
+
+<style scoped>
+@media (min-width: 768px) {
+    .investor-ad-banner :deep(.advertisement-content) {
+        height: clamp(96px, 12vw, 176px);
+    }
+}
+</style>
