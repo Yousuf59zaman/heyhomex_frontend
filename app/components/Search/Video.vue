@@ -345,7 +345,7 @@
                                 </div>
                                 <button
                                     @click.stop="toggleFavorite(video.id)"
-                                    class="absolute top-2 left-2 flex items-center justify-center p-2 rounded-[8px] bg-white/90 backdrop-blur-[2px] shadow-sm transition-colors">
+                                    class="absolute top-2 right-2 flex items-center justify-center p-2 rounded-[8px] bg-white/90 backdrop-blur-[2px] shadow-sm transition-colors">
                                     <Icon
                                         name="lucide:heart"
                                         :class="[
@@ -460,7 +460,7 @@
                             </div>
                             <button
                                 @click.stop="toggleFavorite(video.id)"
-                                class="absolute top-2 left-2 flex items-center justify-center p-2 rounded-[8px] bg-white/90 backdrop-blur-[2px] shadow-sm transition-colors">
+                                class="absolute top-2 right-2 flex items-center justify-center p-2 rounded-[8px] bg-white/90 backdrop-blur-[2px] shadow-sm transition-colors">
                                 <Icon
                                     name="lucide:heart"
                                     :class="[
