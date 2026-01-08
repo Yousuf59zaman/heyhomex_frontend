@@ -356,14 +356,23 @@
 <template>
     <div class="flex flex-col gap-6 w-full max-w-[1316px] mx-auto">
         <!-- Search Filter Section Skeleton BEFORE hydration -->
-        <div
-            v-if="!hydrated"
-            class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
-            <div class="flex flex-col md:flex-row gap-4">
-                <div class="flex-1 h-12 bg-gray-200 rounded"></div>
-                <div class="w-full md:w-40 h-12 bg-gray-200 rounded"></div>
-                <div class="w-full md:w-40 h-12 bg-gray-200 rounded"></div>
-                <div class="w-full md:w-32 h-12 bg-gray-200 rounded"></div>
+        <div v-if="!hydrated" class="animate-pulse">
+            <div class="lg:hidden flex flex-col gap-4">
+                <div class="flex items-center gap-2">
+                    <div class="flex-1 h-[44px] bg-gray-200 rounded-lg"></div>
+                    <div class="w-[44px] h-[44px] bg-gray-200 rounded-lg"></div>
+                </div>
+                <div class="w-full h-[44px] bg-gray-200 rounded-lg"></div>
+            </div>
+            <div class="hidden lg:flex lg:items-center lg:justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-[400px] h-[44px] bg-gray-200 rounded-lg"></div>
+                    <div class="w-[120px] h-[44px] bg-gray-200 rounded-lg"></div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-[150px] h-[44px] bg-gray-200 rounded-lg border border-[#D4D4D4]"></div>
+                    <div class="w-[140px] h-[44px] bg-gray-200 rounded-lg border border-[#D4D4D4]"></div>
+                </div>
             </div>
         </div>
 
@@ -393,16 +402,12 @@
                 <!-- Market Chart Skeleton BEFORE hydration -->
                 <div
                     v-if="!hydrated"
-                    class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="h-6 w-40 bg-gray-200 rounded"></div>
-                        <div class="flex gap-2">
-                            <div class="h-8 w-20 bg-gray-200 rounded"></div>
-                            <div class="h-8 w-20 bg-gray-200 rounded"></div>
-                            <div class="h-8 w-20 bg-gray-200 rounded"></div>
-                        </div>
+                    class="bg-white rounded-[10px] p-5 flex flex-col gap-5 animate-pulse">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                        <div class="h-6 w-64 bg-gray-200 rounded"></div>
+                        <div class="h-[32px] w-24 bg-[#EAECEE] rounded-[32px]"></div>
                     </div>
-                    <div class="h-64 bg-gray-200 rounded"></div>
+                    <div class="h-[320px] sm:h-64 md:h-80 bg-gray-200 rounded"></div>
                 </div>
 
                 <!-- Real Market Chart AFTER hydration -->
@@ -417,15 +422,26 @@
                 <!-- Saved List Skeleton BEFORE hydration -->
                 <div
                     v-if="!hydrated"
-                    class="bg-white rounded-lg shadow-sm p-4 md:p-6 animate-pulse">
-                    <div class="flex gap-2 mb-4">
-                        <div class="h-10 flex-1 bg-gray-200 rounded"></div>
-                        <div class="h-10 flex-1 bg-gray-200 rounded"></div>
+                    class="bg-white border border-[#F4F4F6] rounded-[12px] p-4 flex flex-col gap-8 animate-pulse">
+                    <div class="flex flex-col gap-5">
+                        <div class="flex items-center justify-between">
+                            <div class="h-7 w-28 bg-gray-200 rounded"></div>
+                            <div class="hidden lg:block h-5 w-14 bg-gray-200 rounded"></div>
+                        </div>
+                        <div class="flex gap-3 bg-[#F0F1F3] rounded-[8px] p-[6px]">
+                            <div class="flex-1 h-[32px] bg-gray-300 rounded-[8px]"></div>
+                            <div class="flex-1 h-[32px] bg-gray-200 rounded-[8px]"></div>
+                        </div>
                     </div>
-                    <div class="space-y-3">
-                        <div class="h-20 bg-gray-200 rounded"></div>
-                        <div class="h-20 bg-gray-200 rounded"></div>
-                        <div class="h-20 bg-gray-200 rounded"></div>
+                    <div class="space-y-4">
+                        <div v-for="n in 3" :key="n" class="flex items-center gap-3">
+                            <div class="w-16 h-16 bg-gray-200 rounded-lg shrink-0"></div>
+                            <div class="flex-1 space-y-2">
+                                <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                                <div class="h-3 bg-gray-200 rounded w-full"></div>
+                            </div>
+                            <div class="w-5 h-5 bg-gray-200 rounded"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -444,18 +460,13 @@
         <!-- Skeleton BEFORE hydration (SSR/Initial Load) -->
         <div
             v-if="!hydrated"
-            class="space-y-4 md:space-y-6">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl md:text-2xl font-bold text-gray-900">
-                    Homes in Your Favorite Areas
-                </h2>
-                <div class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
+            class="animate-pulse">
+            <div class="flex items-end justify-between mb-4">
+                <div class="h-8 w-72 bg-gray-200 rounded"></div>
+                <div class="hidden sm:block h-6 w-16 bg-gray-200 rounded"></div>
             </div>
-            <div
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
-                <CommonCitizenPropertyCardSkeleton
-                    v-for="n in 3"
-                    :key="n" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <CommonCitizenPropertyCardSkeleton v-for="n in 3" :key="n" />
             </div>
         </div>
 
@@ -464,19 +475,13 @@
             <!-- Loading State with Skeleton Loaders -->
             <div
                 v-if="pending"
-                class="space-y-4 md:space-y-6">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl md:text-2xl font-bold text-gray-900">
-                        Homes in Your Favorite Areas
-                    </h2>
-                    <div
-                        class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
+                class="animate-pulse">
+                <div class="flex items-end justify-between mb-4">
+                    <div class="h-8 w-72 bg-gray-200 rounded"></div>
+                    <div class="hidden sm:block h-6 w-16 bg-gray-200 rounded"></div>
                 </div>
-                <div
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
-                    <CommonCitizenPropertyCardSkeleton
-                        v-for="n in 3"
-                        :key="n" />
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <CommonCitizenPropertyCardSkeleton v-for="n in 3" :key="n" />
                 </div>
             </div>
 
@@ -508,23 +513,30 @@
         <!-- Video Grid Skeleton BEFORE hydration -->
         <div
             v-if="!hydrated"
-            class="space-y-4 md:space-y-6">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl md:text-2xl font-bold text-gray-900">
-                    Videos you might like!
-                </h2>
-                <div class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
+            class="rounded-lg mb-10 animate-pulse">
+            <div class="flex items-center justify-between mb-4">
+                <div class="h-5 sm:h-6 w-48 bg-gray-200 rounded"></div>
+                <div class="h-4 w-14 bg-gray-200 rounded"></div>
             </div>
-            <div
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
                 <div
                     v-for="n in 3"
                     :key="n"
-                    class="bg-white rounded-lg shadow-sm overflow-hidden animate-pulse">
-                    <div class="aspect-video bg-gray-200"></div>
-                    <div class="p-4 space-y-3">
-                        <div class="h-5 bg-gray-200 rounded w-3/4"></div>
-                        <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                    class="rounded-lg overflow-hidden">
+                    <div class="relative h-40 sm:h-48 md:h-52 bg-gray-200">
+                        <div class="absolute bottom-2 right-2 h-5 w-10 bg-gray-300 rounded"></div>
+                    </div>
+                    <div class="px-0 pb-4">
+                        <div class="flex gap-1 items-start mt-4">
+                            <div class="flex-1 flex gap-4 items-start">
+                                <div class="w-12 h-12 bg-gray-200 rounded-[10px] shrink-0"></div>
+                                <div class="flex-1 space-y-2">
+                                    <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                                    <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+                                </div>
+                            </div>
+                            <div class="w-5 h-5 bg-gray-200 rounded"></div>
+                        </div>
                     </div>
                 </div>
             </div>
