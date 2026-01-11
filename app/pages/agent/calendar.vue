@@ -194,7 +194,7 @@ const calendarDays = computed(() => {
     }
 
 
-    const remainingDays = 42 - days.length 
+    const remainingDays = 42 - days.length
     for (let i = 1; i <= remainingDays; i++) {
         days.push({
             date: i,
@@ -232,21 +232,6 @@ const getStatusColor = (color) => {
     }
     return colors[color] || 'bg-gray-100 text-gray-700'
 }
-
-
-const formatAppointmentDate = (isoDate) => {
-    const date = new Date(isoDate)
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-}
-
-const formatAppointmentTime = (startDate, endDate) => {
-    const start = new Date(startDate)
-    const end = new Date(endDate)
-    const startTime = start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
-    const endTime = end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
-    return `${startTime}-${endTime}`
-}
-
 
 const getAppointmentActions = (appointment) => {
     if (appointment.appointment_status === 'requested') {
@@ -320,6 +305,13 @@ const confirmReschedule = () => {
     rescheduleDateTime.value = null
 }
 
+const formatAppointmentTime = (startDate, endDate) => {
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    const startTime = start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+    const endTime = end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+    return `${startTime}-${endTime}`
+}
 
 const cancelReschedule = () => {
     showRescheduleModal.value = false
@@ -402,7 +394,7 @@ const handleDateClick = (day) => {
                             </td>
                             <td class="py-4 px-6">
                                 <div class="text-sm text-gray-900">
-                                    {{ formatAppointmentDate(appointment.scheduled_at) }}
+                                    {{ $formatDate(appointment.scheduled_at) }}
                                     {{ formatAppointmentTime(appointment.scheduled_at, appointment.scheduled_end_at) }}
                                 </div>
                             </td>

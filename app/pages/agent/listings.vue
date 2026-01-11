@@ -7,7 +7,7 @@ const searchQuery = ref('')
 const statusFilter = ref('All')
 const sortBy = ref('All')
 
-const isLoading = ref(false)
+// const isLoading = ref(false)
 
 
 const listings = ref([
@@ -75,7 +75,7 @@ const listings = ref([
 
 
 const currentPage = ref(1)
-const itemsPerPage = ref(10)
+// const itemsPerPage = ref(10)
 const totalItems = computed(() => listings.value.length)
 
 
