@@ -19,18 +19,36 @@
     const pending = ref(false)
     const error = ref(null)
 
-    const agentData = ref({
-        name: "John Doeh",
-        initials: "JD",
-        avatar: null,
+    const agentData = computed(() => {
+        if (!propertyData.value?.agent_id) {
+            return {
+                id: null,
+                name: "Agent",
+                initials: "A",
+                avatar: null,
+            }
+        }
+        const agent = propertyData.value.agent_id
+        const firstName = agent.name?.split(' ')[0] || agent.name || 'Agent'
+        const lastName = agent.name?.split(' ')[1] || ''
+        return {
+            id: agent.id,
+            name: agent.name || 'Agent',
+            initials: `${firstName.charAt(0)}${lastName.charAt(0) || firstName.charAt(1) || ''}`.toUpperCase(),
+            avatar: agent.photo || agent.profile_pic || null,
+        }
     })
+
+    const { citizen_user } = citizenAuth()
 
     const contactForm = ref({
         fullName: "",
         message: "",
     })
 
-    const tourTime = ref("Today 3:45")
+    const showTourModal = ref(false)
+    const contactLoading = ref(false)
+    const toast = useToast()
 
     const loadPropertyDetail = async () => {
         pending.value = true
@@ -60,6 +78,7 @@
                 other_images: data.other_images || [],
                 insights: data.insights || {},
                 amenities: data.amenities || [],
+                agent_id: data.agent_id || null,
                 created_at: data.created_at,
                 updated_at: data.updated_at,
             }
@@ -71,12 +90,77 @@
         }
     }
 
-    const submitContactForm = () => {
-        console.log("Contact form submitted:", contactForm.value)
+    const submitContactForm = async () => {
+        if (!contactForm.value.fullName || !contactForm.value.message) {
+            toast.add({
+                severity: 'warn',
+                summary: 'Required Fields',
+                detail: 'Please fill in your name and message',
+                life: 3000
+            })
+            return
+        }
+
+        if (!agentData.value.id) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Agent information not available',
+                life: 3000
+            })
+            return
+        }
+
+        contactLoading.value = true
+        try {
+            await $fetchCitizen('/v1/leads/store', {
+                method: 'POST',
+                body: {
+                    user_id: citizen_user.value?.data?.id,
+                    property_id: propertyData.value?.id,
+                    agent_id: agentData.value.id,
+                    name: contactForm.value.fullName,
+                    email: citizen_user.value?.data?.email,
+                    phone: citizen_user.value?.data?.user_info?.mobile || '',
+                    message: contactForm.value.message,
+                    type: 1,
+                },
+            })
+
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Your message has been sent to the agent',
+                life: 3000
+            })
+
+            contactForm.value.fullName = ''
+            contactForm.value.message = ''
+        } catch (error) {
+            console.error('Error sending message:', error)
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: error.message || 'Failed to send message',
+                life: 3000
+            })
+        } finally {
+            contactLoading.value = false
+        }
     }
 
     const bookTour = () => {
-        console.log("Tour booking requested for:", tourTime.value)
+        showTourModal.value = true
+    }
+
+    const handleTourBooked = (data) => {
+        console.log('Tour booked:', data)
+        toast.add({
+            severity: 'success',
+            summary: 'Tour Requested',
+            detail: 'Your tour request has been submitted successfully',
+            life: 3000
+        })
     }
 
     const propertyImage = computed(
@@ -832,6 +916,7 @@
                             <Button
                                 type="submit"
                                 label="Contact Agent"
+                                :loading="contactLoading"
                                 class="w-full bg-[#18222c] hover:bg-[#121a22] text-white py-3.5 px-6 rounded-xl text-base font-bold transition-colors border border-[#2c3e50]" />
                         </form>
                     </div>
@@ -873,6 +958,17 @@
                 </template>
             </Galleria>
         </ClientOnly>
+
+        <!-- Tour Request Modal -->
+        <LazyTourRequestModal
+            :visible="showTourModal"
+            :property="propertyData"
+            :agent-id="propertyData?.agent_id?.id"
+            @update:visible="showTourModal = $event"
+            @success="handleTourSuccess" />
+
+        <!-- Toast for notifications -->
+        <Toast position="top-right" />
     </div>
 </template>
 
