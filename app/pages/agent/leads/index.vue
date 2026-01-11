@@ -169,11 +169,6 @@ const getStatusColor = (color) => {
     return colors[color] || 'bg-gray-100 text-gray-700 border border-gray-200'
 }
 
-const formatDate = (isoDate) => {
-    const date = new Date(isoDate)
-    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-}
-
 const handleAddLead = () => {
     console.log('Add new lead')
 }
@@ -302,7 +297,7 @@ const handleActionMenu = (lead) => {
 
                             <!-- Date -->
                             <td class="py-4 px-6">
-                                <span class="text-sm text-gray-600">{{ formatDate(lead.created_at) }}</span>
+                                <span class="text-sm text-gray-600">{{ $formatDate(lead.created_at) }}</span>
                             </td>
 
                             <!-- Contact Info -->

@@ -49,7 +49,10 @@ const submitHandler = async () => {
         });
 
         if (response.status === 'success') {
-            response_modal.value = response;
+            response_modal.value = {
+                status: true,
+                message: 'Ad settings updated successfully.'
+            };
             form.value.cpc_value = response.data.cpc_value;
             form.value.cpm_value = response.data.cpm_value;
         }
@@ -89,14 +92,14 @@ const submitHandler = async () => {
                                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                             <span class="text-gray-500 dark:text-gray-400 text-sm">$</span>
                                         </div>
-                                        <InputText 
+                                        <input 
                                             id="cpc_value" 
                                             v-model="form.cpc_value" 
                                             type="number" 
                                             step="0.00001"
-                                            class="pl-7 w-full" 
+                                            class="pl-7 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 transition-colors duration-200" 
                                             placeholder="0.05"
-                                            :class="errors.cpc_value ? 'border-[#f44336!important]' : ''"
+                                            :class="errors.cpc_value ? '!border-[#f44336]' : ''"
                                             @focus="errors.cpc_value = ''"
                                         />
                                     </div>
@@ -115,14 +118,14 @@ const submitHandler = async () => {
                                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                             <span class="text-gray-500 dark:text-gray-400 text-sm">$</span>
                                         </div>
-                                        <InputText 
+                                        <input 
                                             id="cpm_value" 
                                             v-model="form.cpm_value" 
                                             type="number" 
                                             step="0.00001"
-                                            class="pl-7 w-full" 
+                                            class="pl-7 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 transition-colors duration-200" 
                                             placeholder="0.001"
-                                            :class="errors.cpm_value ? 'border-[#f44336!important]' : ''"
+                                            :class="errors.cpm_value ? '!border-[#f44336]' : ''"
                                             @focus="errors.cpm_value = ''"
                                         />
                                     </div>
