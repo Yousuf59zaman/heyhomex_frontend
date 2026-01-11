@@ -7,17 +7,17 @@
                 class="absolute top-2 right-2 w-9 h-9 bg-gray-300 rounded-[8px]"></div>
         </div>
 
-        <div class="mt-4 flex flex-col gap-3">
+        <div class="mt-4 flex flex-col gap-4">
             <div class="flex items-center justify-between gap-3">
                 <div class="h-5 bg-gray-200 rounded w-3/4"></div>
                 <div class="h-6 bg-gray-200 rounded w-20"></div>
             </div>
             <div class="h-4 bg-gray-200 rounded w-full"></div>
-            <div class="h-px bg-gray-200"></div>
+            <div class="h-px bg-[#EAECEE]"></div>
             <div class="flex items-center gap-2">
-                <div class="flex-1 h-8 bg-gray-200 rounded-[4px]"></div>
-                <div class="flex-1 h-8 bg-gray-200 rounded-[4px]"></div>
-                <div class="flex-1 h-8 bg-gray-200 rounded-[4px]"></div>
+                <div class="flex-1 h-9 bg-gray-200 rounded-[4px]"></div>
+                <div class="flex-1 h-9 bg-gray-200 rounded-[4px]"></div>
+                <div class="flex-1 h-9 bg-gray-200 rounded-[4px]"></div>
             </div>
         </div>
     </div>

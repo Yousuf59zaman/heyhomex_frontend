@@ -219,7 +219,7 @@
             </div>
 
             <!-- Desktop Header -->
-            <div class="hidden lg:flex items-center justify-between bg-white px-8 pt-5 pb-4">
+            <div class="hidden lg:flex items-center justify-between bg-white px-8 pt-5 pb-4 z-[10000]">
                 <div class="flex flex-col gap-2 items-start">
                     <div class="flex items-center gap-2">
                         <NuxtLink :to="propertyBasePath">

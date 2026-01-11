@@ -81,26 +81,63 @@ const handleTabClick = (tab) => {
 <template>
     <div class="flex flex-col gap-4 lg:gap-6 w-full max-w-[1316px] mx-auto">
         <template v-if="!hydrated">
-            <div class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px] animate-pulse">
-                <div class="flex items-center gap-3">
-                    <div class="h-10 flex-1 bg-gray-200 rounded-[8px]"></div>
-                    <div class="h-10 flex-1 bg-gray-200 rounded-[8px]"></div>
-                </div>
-            </div>
-            <div class="bg-white rounded-[12px] p-3 lg:p-4 animate-pulse">
-                <div class="flex flex-col gap-4">
-                    <div class="flex flex-col gap-3">
-                        <div class="h-8 w-3/4 bg-gray-200 rounded"></div>
-                        <div class="h-5 w-32 bg-gray-200 rounded"></div>
+            <div class="flex flex-col gap-4 animate-pulse">
+                <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                    <div class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px] lg:w-[340px]">
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 h-[36px] bg-gray-200 rounded-[8px]"></div>
+                            <div class="flex-1 h-[36px] bg-gray-200 rounded-[8px]"></div>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-3 w-full lg:w-auto">
-                        <div class="h-10 flex-1 lg:flex-none lg:w-24 bg-gray-200 rounded-[8px]"></div>
-                        <div class="h-10 flex-1 lg:flex-none lg:w-24 bg-gray-200 rounded-[8px]"></div>
+
+                    <div class="flex flex-col sm:flex-row items-stretch gap-3 lg:gap-6 w-full lg:w-auto">
+                        <div class="flex items-center gap-2 w-full">
+                            <div class="relative flex-1 lg:flex-none lg:w-[440px]">
+                                <div class="w-full h-[44px] bg-gray-200 rounded-[8px]"></div>
+                            </div>
+                            <div class="md:hidden w-[44px] h-[44px] border border-[#D4D4D4] rounded-[8px] bg-white flex items-center justify-center">
+                                <div class="w-4 h-4 bg-gray-200 rounded"></div>
+                            </div>
+                        </div>
+                        <div class="w-full sm:w-auto h-[44px] px-4 bg-gray-200 rounded-[8px]"></div>
                     </div>
                 </div>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <CommonCitizenPropertyCardSkeleton v-for="n in 9" :key="n" />
+
+                <div class="hidden md:flex flex-wrap items-center gap-2">
+                    <div class="h-[44px] min-w-[170px] border border-[#D4D4D4] rounded-[8px] bg-white flex items-center px-3">
+                        <div class="h-4 w-20 bg-gray-200 rounded"></div>
+                    </div>
+                    <div class="h-[44px] min-w-[170px] border border-[#D4D4D4] rounded-[8px] bg-white flex items-center px-3">
+                        <div class="h-4 w-24 bg-gray-200 rounded"></div>
+                    </div>
+                    <div class="h-[44px] min-w-[210px] border border-[#D4D4D4] rounded-[8px] bg-white flex items-center px-3">
+                        <div class="h-4 w-28 bg-gray-200 rounded"></div>
+                    </div>
+                    <div class="h-[44px] min-w-[170px] border border-[#D4D4D4] rounded-[8px] bg-white flex items-center px-3">
+                        <div class="h-4 w-24 bg-gray-200 rounded"></div>
+                    </div>
+                    <div class="h-[44px] min-w-[150px] border border-[#D4D4D4] rounded-[8px] bg-white flex items-center px-3">
+                        <div class="h-4 w-16 bg-gray-200 rounded"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-[12px] p-3 sm:p-4 flex flex-col gap-4">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                        <div class="flex flex-col gap-3 flex-1">
+                            <div class="h-[28px] lg:h-[32px] w-56 bg-gray-200 rounded"></div>
+                            <div class="h-5 w-32 bg-gray-200 rounded"></div>
+                        </div>
+
+                        <div class="bg-[#F0F1F3] rounded-[8px] p-[6px] flex items-center gap-1 w-full sm:w-auto sm:self-start">
+                            <div class="flex-1 sm:flex-none h-[32px] bg-gray-200 rounded-[8px]"></div>
+                            <div class="flex-1 sm:flex-none h-[32px] bg-gray-200 rounded-[8px]"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <CommonCitizenPropertyCardSkeleton v-for="n in 9" :key="n" />
+                    </div>
+                </div>
             </div>
         </template>
         <template v-else>
@@ -134,12 +171,77 @@ const handleTabClick = (tab) => {
             </SearchProperty>
             <div v-else-if="activeTab === 'videos'">
                 <!-- Loading State -->
-                <div v-if="videosLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    <div v-for="n in 8" :key="n" class="bg-white rounded-[8px] border border-[#D9D9D9] overflow-hidden animate-pulse">
-                        <div class="aspect-video bg-gray-200"></div>
-                        <div class="p-4 space-y-3">
-                            <div class="h-5 bg-gray-200 rounded w-3/4"></div>
-                            <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div v-if="videosLoading" class="flex flex-col gap-4 animate-pulse">
+                    <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                        <div class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px] lg:w-[340px]">
+                            <div class="flex items-center gap-3">
+                                <div class="flex-1 h-[36px] bg-gray-200 rounded-[8px]"></div>
+                                <div class="flex-1 h-[36px] bg-gray-200 rounded-[8px]"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row items-stretch gap-3 lg:gap-6 w-full lg:w-auto">
+                            <div class="flex items-center gap-2 w-full">
+                                <div class="relative flex-1 lg:flex-none lg:w-[440px]">
+                                    <div class="w-full h-[44px] bg-gray-200 rounded-[8px]"></div>
+                                </div>
+                                <div class="md:hidden w-[44px] h-[44px] border border-[#D4D4D4] rounded-[8px] bg-white flex items-center justify-center">
+                                    <div class="w-4 h-4 bg-gray-200 rounded"></div>
+                                </div>
+                            </div>
+                            <div class="w-full sm:w-auto h-[44px] px-4 bg-gray-200 rounded-[8px]"></div>
+                        </div>
+                    </div>
+
+                    <div class="hidden md:flex flex-wrap items-center gap-2">
+                        <div class="h-[44px] min-w-[170px] border border-[#D4D4D4] rounded-[8px] bg-white flex items-center px-3">
+                            <div class="h-4 w-20 bg-gray-200 rounded"></div>
+                        </div>
+                        <div class="h-[44px] min-w-[170px] border border-[#D4D4D4] rounded-[8px] bg-white flex items-center px-3">
+                            <div class="h-4 w-24 bg-gray-200 rounded"></div>
+                        </div>
+                        <div class="h-[44px] min-w-[210px] border border-[#D4D4D4] rounded-[8px] bg-white flex items-center px-3">
+                            <div class="h-4 w-28 bg-gray-200 rounded"></div>
+                        </div>
+                        <div class="h-[44px] min-w-[170px] border border-[#D4D4D4] rounded-[8px] bg-white flex items-center px-3">
+                            <div class="h-4 w-24 bg-gray-200 rounded"></div>
+                        </div>
+                        <div class="h-[44px] min-w-[150px] border border-[#D4D4D4] rounded-[8px] bg-white flex items-center px-3">
+                            <div class="h-4 w-16 bg-gray-200 rounded"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-[12px] p-3 sm:p-4 flex flex-col gap-4">
+                        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                            <div class="flex flex-col gap-3 flex-1">
+                                <div class="h-[28px] lg:h-[32px] w-56 bg-gray-200 rounded"></div>
+                                <div class="h-5 w-32 bg-gray-200 rounded"></div>
+                            </div>
+
+                            <div class="bg-[#F0F1F3] rounded-[8px] p-[6px] flex items-center gap-1 w-full md:w-auto md:self-start">
+                                <div class="flex-1 sm:flex-none h-[32px] bg-gray-200 rounded-[8px]"></div>
+                                <div class="flex-1 sm:flex-none h-[32px] bg-gray-200 rounded-[8px]"></div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-4">
+                            <div v-for="n in 9" :key="n" class="video-card flex flex-col">
+                                <div class="relative h-[200px] rounded-[10px] overflow-hidden bg-gray-200"></div>
+                                <div class="flex gap-1 items-start mt-4">
+                                    <div class="flex-1 flex gap-4 items-start">
+                                        <div class="bg-gray-200 rounded-[10px] w-12 h-12 flex-shrink-0"></div>
+                                        <div class="flex-1 flex flex-col gap-2">
+                                            <div class="h-5 bg-gray-200 rounded w-3/4"></div>
+                                            <div class="flex items-center gap-1.5">
+                                                <div class="h-3 bg-gray-200 rounded w-16"></div>
+                                                <div class="h-3 bg-gray-200 rounded w-10"></div>
+                                                <div class="h-3 bg-gray-200 rounded w-14"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="w-5 h-5 bg-gray-200 rounded"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
