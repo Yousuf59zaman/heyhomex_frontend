@@ -47,7 +47,7 @@
                     />
                 </button>
             </div>
-            <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-3 font-['sf-pro-Medium']">
                 <div class="flex flex-col gap-2">
                     <div class="flex items-center justify-between gap-3 text-[#283849]">
                         <h3

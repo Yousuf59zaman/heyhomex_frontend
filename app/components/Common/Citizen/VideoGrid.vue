@@ -12,6 +12,10 @@
             type: Array,
             default: () => [],
         },
+        showInfo: {
+            type: Boolean,
+            default: false,
+        },
 
         enablePlaylist: {
             type: Boolean,
@@ -58,6 +62,7 @@
                 v-for="video in videos"
                 :key="video.id"
                 :video="video"
+                :show-info="props.showInfo"
                 @click="handleVideoClick"
                 @favorite="handleFavoriteToggle" />
         </div>
