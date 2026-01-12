@@ -1,11 +1,10 @@
 <script setup>
-import { useVideoPlayer } from "~/composables/useVideoPlayer"
 
-useHead({ title: "Videos - Kamaina Panel" })
+useHead({ title: "Videos - Investor Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "citizen" })
 
-const { openVideo } = useVideoPlayer()
 const route = useRoute()
+const router = useRouter()
 const toast = useToast()
 const videos = ref([])
 const pending = ref(false)
@@ -29,11 +28,6 @@ const clearSearch = () => {
     searchQuery.value = ""
 }
 
-// Ad configuration - uses dynamic URLs based on current host
-const { getDefaultAdConfig } = useAdConfig()
-const adConfig = computed(() => getDefaultAdConfig())
-
-// Pagination
 const currentPage = ref(1)
 const totalPages = ref(1)
 const totalResults = ref(0)
@@ -47,7 +41,6 @@ const loadVideos = async () => {
             page: route.query.page ? route.query.page : 1,
         }
 
-        // TODO: Replace with actual API endpoint when available
         const response = await $fetchCitizen("/videos/list", {
             method: "GET",
             params,
@@ -68,7 +61,6 @@ const loadVideos = async () => {
             videoUrl: video.video_url,
         })) || []
         
-        // Update pagination
         currentPage.value = response.data.meta?.current_page || 1
         totalPages.value = response.data.meta?.last_page || 1
         totalResults.value = response.data.meta?.total || 0
@@ -94,7 +86,8 @@ const playVideo = (videoId) => {
     if (!video) {
         return
     }
-    openVideo(video, videos.value)
+
+    router.push(`/kamaina/watch/${videoId}`)
 }
 
 onMounted(() => {
@@ -110,12 +103,11 @@ watch(
 </script>
 
 <template>
-    <div class="space-y-4 md:space-y-6 py-4 md:py-6 lg:py-1">
+    <div class="space-y-4 lg:space-y-6 w-full max-w-[1316px] mx-auto">
         <!-- Top Banner Ad -->
-        <AdvertisementDisplay placement-slug="kamaina-videos-top-banner" />
+        <AdvertisementDisplay placement-slug="investor-videos-top-banner" />
 
-        <!-- Header -->
-       <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-xl md:text-2xl font-semibold text-gray-900">Community Videos</h1>
                 <!-- <p class="text-sm text-gray-600 mt-1">Browse educational and informational videos</p> -->
@@ -160,7 +152,6 @@ watch(
                     </button>
                 </div>
 
-        <!-- Loading State -->
         <div v-if="pending" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <div v-for="n in 8" :key="n" class="animate-pulse">
                 <div class="bg-gray-200 rounded-lg h-48"></div>
@@ -169,29 +160,18 @@ watch(
             </div>
         </div>
 
-        <!-- Error State -->
         <div v-else-if="error" class="text-center py-12">
             <Icon name="lucide:alert-circle" class="w-12 h-12 text-red-500 mx-auto mb-4" />
             <p class="text-gray-600 mb-4">Failed to load videos</p>
-            <button
-                @click="loadVideos"
-                class="px-4 py-2 bg-[#FF6666] text-white rounded-lg hover:bg-[#FF5555]">
-                Retry
-            </button>
+            <button @click="loadVideos" class="px-4 py-2 bg-[#333365] text-white rounded-lg hover:bg-[#232355]">Retry</button>
         </div>
 
-        <!-- Empty State -->
         <div v-else-if="videos.length === 0" class="text-center py-12">
             <Icon name="lucide:video" class="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">
-                No Videos Available
-            </h3>
-            <p class="text-gray-600">
-                Check back later for new content
-            </p>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">No Videos Available</h3>
+            <p class="text-gray-600">Check back later for new content</p>
         </div>
 
-        <!-- Videos Grid -->
         <div v-else>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div
@@ -261,26 +241,11 @@ watch(
                     </div>
                 </div>
             </div>
-
-            <!-- Pagination -->
-            <div v-if="totalResults > 0" class="mt-6">
-                <!-- <LazyPagination
-                    :current-page="currentPage"
-                    :total-pages="totalPages"
-                    :show-text="true"
-                    :total-results="totalResults"
-                    :results-per-page="perPage"
-                    @page-change="(page) => navigateTo({ query: { ...route.query, page } })" /> -->
-            </div>
         </div>
     </div>
 
-    <!-- Toast Notifications -->
     <Toast position="top-right" />
     
-    <ClientOnly>
-        <VideoPlayerModal :adConfig="adConfig" />
-    </ClientOnly>
 </template>
 
 <style scoped>

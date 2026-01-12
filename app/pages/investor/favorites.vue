@@ -197,7 +197,7 @@ watch(
 </script>
 
 <template>
-    <div class="space-y-4 md:space-y-6 py-4 md:py-6 lg:py-1">
+    <div class="space-y-4 lg:space-y-6 w-full max-w-[1316px] mx-auto">
         <!-- Top Banner Ad -->
         <AdvertisementDisplay placement-slug="investor-favorites-top-banner" />
 
@@ -247,7 +247,7 @@ watch(
 
         <!-- Properties Tab Content -->
         <div v-if="activeTab === 'property'">
-            <div v-if="pending" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div v-if="pending" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <CommonCitizenPropertyCardSkeleton v-for="n in 8" :key="n" />
             </div>
 
@@ -278,7 +278,7 @@ watch(
             </div>
 
             <div v-else>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <CommonCitizenPropertyCard
                         v-for="property in properties"
                         :key="property.id"
@@ -301,7 +301,7 @@ watch(
 
         <!-- Videos Tab Content -->
         <div v-else-if="activeTab === 'video'">
-            <div v-if="pendingVideos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div v-if="pendingVideos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div v-for="n in 8" :key="n" class="animate-pulse">
                     <div class="bg-gray-200 rounded-lg h-48"></div>
                 </div>
@@ -325,7 +325,7 @@ watch(
                 </NuxtLink>
             </div>
 
-            <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div v-for="video in videos" :key="video.id" @click="handleVideoClick(video)" class="cursor-pointer group">
                     <div class="relative bg-gray-100 rounded-lg overflow-hidden">
                         <img 

@@ -1,11 +1,10 @@
 <script setup>
-import { useVideoPlayer } from "~/composables/useVideoPlayer"
 
 useHead({ title: "Videos - Investor Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "citizen" })
 
-const { openVideo } = useVideoPlayer()
 const route = useRoute()
+const router = useRouter()
 const toast = useToast()
 const videos = ref([])
 const pending = ref(false)
@@ -28,10 +27,6 @@ const categories = ref([
 const clearSearch = () => {
     searchQuery.value = ""
 }
-
-// Ad configuration - uses dynamic URLs based on current host
-const { getDefaultAdConfig } = useAdConfig()
-const adConfig = computed(() => getDefaultAdConfig())
 
 const currentPage = ref(1)
 const totalPages = ref(1)
@@ -91,7 +86,8 @@ const playVideo = (videoId) => {
     if (!video) {
         return
     }
-    openVideo(video, videos.value)
+
+    router.push(`/investor/watch/${videoId}`)
 }
 
 onMounted(() => {
@@ -107,7 +103,7 @@ watch(
 </script>
 
 <template>
-    <div class="space-y-4 md:space-y-6 p-4 md:p-6 lg:p-8">
+    <div class="space-y-4 lg:space-y-6 w-full max-w-[1316px] mx-auto">
         <!-- Top Banner Ad -->
         <AdvertisementDisplay placement-slug="investor-videos-top-banner" />
 
@@ -250,9 +246,6 @@ watch(
 
     <Toast position="top-right" />
     
-    <ClientOnly>
-        <VideoPlayerModal :adConfig="adConfig" />
-    </ClientOnly>
 </template>
 
 <style scoped>

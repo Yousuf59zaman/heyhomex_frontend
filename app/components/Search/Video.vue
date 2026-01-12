@@ -40,6 +40,8 @@
     const hoveredVideo = ref(null)
     const showPopup = ref(false)
     const popupPosition = ref({x: 0, y: 0})
+    const zoomHintVisible = ref(true)
+    let zoomHintTimeout = null
 
     const resultsFound = computed(() => props.videos.length)
     const toggleFavorite = (videoId) => {
@@ -74,6 +76,63 @@
         console.log("Filters changed:", filters)
     }
 
+    const showZoomHint = () => {
+        zoomHintVisible.value = true
+        if (zoomHintTimeout) {
+            clearTimeout(zoomHintTimeout)
+        }
+        zoomHintTimeout = setTimeout(() => {
+            zoomHintVisible.value = false
+            zoomHintTimeout = null
+        }, 2500)
+    }
+
+    const hideZoomHint = () => {
+        zoomHintVisible.value = false
+        if (zoomHintTimeout) {
+            clearTimeout(zoomHintTimeout)
+            zoomHintTimeout = null
+        }
+    }
+
+    const handleMapWheel = (event) => {
+        if (!map.value) return
+        const zoomModifier = event.ctrlKey || event.metaKey
+        if (zoomModifier) {
+            event.preventDefault()
+            hideZoomHint()
+            const wheelPoint = map.value.mouseEventToLatLng(event)
+            const zoomDelta = map.value.options.zoomDelta || 1
+            const zoomChange = event.deltaY < 0 ? zoomDelta : -zoomDelta
+            const targetZoom = map.value.getZoom() + zoomChange
+            map.value.setZoomAround(wheelPoint, targetZoom)
+        } else {
+            showZoomHint()
+        }
+    }
+
+    const attachMapWheelListener = () => {
+        const mapElement = document.getElementById("video-map")
+        mapElement && mapElement.removeEventListener("wheel", handleMapWheel, {
+            capture: true,
+        })
+        if (mapElement) {
+            mapElement.addEventListener("wheel", handleMapWheel, {
+                passive: false,
+                capture: true,
+            })
+        }
+    }
+
+    const detachMapWheelListener = () => {
+        const mapElement = document.getElementById("video-map")
+        if (mapElement) {
+            mapElement.removeEventListener("wheel", handleMapWheel, {
+                capture: true,
+            })
+        }
+    }
+
     const initializeMap = async () => {
         if (!process.client) return
         const mapElement = document.getElementById("video-map")
@@ -101,6 +160,10 @@
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             attribution: "© OpenStreetMap contributors",
         }).addTo(map.value)
+
+        map.value.scrollWheelZoom.disable()
+        detachMapWheelListener()
+        attachMapWheelListener()
 
         addVideoMarkers(L)
         setTimeout(() => fitBoundsToMarkers(), 100)
@@ -198,11 +261,50 @@
             marker.getElement().classList.remove("highlighted")
         })
     }
+
+    const refreshMapBounds = async () => {
+        if (viewMode.value !== "Map View" || !map.value) return
+        await nextTick()
+        map.value?.invalidateSize()
+        setTimeout(() => fitBoundsToMarkers(), 100)
+    }
+
+    watch(
+        () => route.query,
+        (newQuery) => {
+            if (newQuery.q !== undefined) {
+                searchQuery.value = newQuery.q
+            }
+            if (newQuery.view) {
+                viewMode.value =
+                    newQuery.view === "map" ? "Map View" : "List View"
+            }
+            if (newQuery.category) {
+                selectedCategory.value = newQuery.category
+            }
+            if (newQuery.priceRange) {
+                selectedPriceRange.value = newQuery.priceRange
+            }
+            if (newQuery.homeType) {
+                selectedHomeType.value = newQuery.homeType
+            }
+            if (newQuery.others) {
+                selectedOthers.value = newQuery.others
+            }
+            if (newQuery.bedsAndBaths) {
+                selectedBedsAndBaths.value = newQuery.bedsAndBaths
+            }
+        }
+    )
+
     watch(viewMode, async (newMode, oldMode) => {
         if (newMode === "Map View") {
+            showZoomHint()
             await nextTick()
             setTimeout(() => initializeMap(), 150)
         } else if (oldMode === "Map View" && map.value) {
+            hideZoomHint()
+            detachMapWheelListener()
             try {
                 map.value.remove()
                 map.value = null
@@ -212,7 +314,32 @@
             }
         }
     })
+
+    watch(
+        () => route.query.page,
+        async () => {
+            await refreshMapBounds()
+        }
+    )
+
+    watch(
+        () => route.query.videoPage,
+        async () => {
+            await refreshMapBounds()
+        }
+    )
+
+    watch(
+        () => props.videos,
+        async () => {
+            if (viewMode.value !== "Map View" || !map.value) return
+            const L = await import("leaflet")
+            addVideoMarkers(L)
+            setTimeout(() => fitBoundsToMarkers(), 100)
+        }
+    )
     onUnmounted(() => {
+        detachMapWheelListener()
         if (map.value) {
             map.value.remove()
             map.value = null
@@ -277,7 +404,7 @@
 
         <!-- Row 3: Results header + cards -->
         <div class="bg-white rounded-[12px] p-3 sm:p-4 flex flex-col gap-4">
-            <div class="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div class="relative z-1 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div class="flex flex-col gap-3 flex-1">
                     <h2 class="text-[20px] lg:text-[24px] leading-[28px] lg:leading-[32px] font-semibold text-[#121A22]">
                         {{ displayQuery }}
@@ -320,7 +447,13 @@
                             <div
                                 id="video-map"
                                 ref="mapContainer"
-                                class="w-full h-full rounded-xl"></div>
+                                class="w-full h-full rounded-xl relative">
+                                <div
+                                    v-if="zoomHintVisible"
+                                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-max bg-[rgba(24,34,44,0.85)] text-white text-[26px] px-4 py-1.5 rounded-full pointer-events-none tracking-[0.02em] shadow-[0_6px_18px_rgba(0,0,0,0.3)] z-[9999]">
+                                    use ctrl + scroll to zoom the map
+                                </div>
+                            </div>
 
                             <Teleport to="body">
                                 <div
