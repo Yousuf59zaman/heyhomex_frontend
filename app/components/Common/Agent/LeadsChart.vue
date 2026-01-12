@@ -24,30 +24,60 @@ ChartJS.register(
 )
 
 const props = defineProps({
-    period: {
-        type: String,
-        default: 'December'
+    chartData: {
+        type: Array,
+        default: () => []
+    },
+    dateRange: {
+        type: Object,
+        default: () => ({ startDate: '', endDate: '' })
     }
 })
 
+// Process chart data from API
+const processedChartData = computed(() => {
+    if (!props.chartData || props.chartData.length === 0) {
+        return {
+            labels: [],
+            datasets: [{
+                label: 'Leads',
+                data: [],
+                borderColor: '#3B82F6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointRadius: 0,
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: '#3B82F6',
+                pointHoverBorderColor: '#fff',
+                pointHoverBorderWidth: 2
+            }]
+        }
+    }
 
-const chartData = ref({
-    labels: ['Dec 1', '', 'Dec 2', '', 'Dec 3', '', 'Dec 4', '', 'Dec 5', '', 'Dec 6', '', 'Dec 7', '', 'Dec 8', '', 'Dec 9', '', 'Dec 10', '', 'Dec 11', '', 'Dec 12', ''],
-    datasets: [
-        {
+    const labels = props.chartData.map(item => {
+        const date = new Date(item.date)
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    })
+
+    const data = props.chartData.map(item => item.count)
+
+    return {
+        labels,
+        datasets: [{
             label: 'Leads',
-            data: [12, 15, 20, 18, 25, 30, 28, 35, 70, 32, 28, 33, 30, 35, 38, 42, 50, 45, 48, 52, 55, 50, 45, 42],
+            data,
             borderColor: '#3B82F6',
             backgroundColor: 'rgba(59, 130, 246, 0.1)',
             tension: 0.4,
             fill: true,
-            pointRadius: 0,
+            pointRadius: 4,
             pointHoverRadius: 6,
             pointHoverBackgroundColor: '#3B82F6',
             pointHoverBorderColor: '#fff',
             pointHoverBorderWidth: 2
-        }
-    ]
+        }]
+    }
 })
 
 const chartOptions = ref({
@@ -115,18 +145,18 @@ const chartOptions = ref({
     <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
 
         <div class="flex items-center justify-between mb-6">
-            <h3 class="text-base font-semibold text-gray-900">Leads</h3>
-            <select :value="period"
-                class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 cursor-pointer">
-                <option value="December">December</option>
-                <option value="January">January</option>
-                <option value="February">February</option>
-            </select>
+            <h3 class="text-base font-semibold text-gray-900">Leads Activity</h3>
+            <div class="text-sm text-gray-600">
+                {{ dateRange.startDate }} to {{ dateRange.endDate }}
+            </div>
         </div>
 
 
-        <div class="relative h-64">
-            <Line :data="chartData" :options="chartOptions" />
+        <div v-if="processedChartData.labels.length === 0" class="relative h-64 flex items-center justify-center">
+            <p class="text-gray-500 text-sm">No data available for the selected period</p>
+        </div>
+        <div v-else class="relative h-64">
+            <Line :data="processedChartData" :options="chartOptions" />
         </div>
     </div>
 </template>

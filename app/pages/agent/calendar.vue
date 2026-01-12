@@ -2,155 +2,131 @@
 useHead({ title: "Calendar - Agent Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "agent" })
 
-
-const currentDate = ref(new Date(2026, 0, 3))
-const selectedDate = ref(new Date(2026, 0, 3))
+const currentDate = ref(new Date())
+const selectedDate = ref(new Date())
 const viewMode = ref('Month')
-
+const loading = ref(false)
+const loadingUpcoming = ref(false)
+const allAppointments = ref([])
+const upcomingAppointmentsData = ref([])
+const leadStatuses = ref([])
+const responseModal = ref({})
 
 const selectedDateFormatted = computed(() => {
     return selectedDate.value.toLocaleDateString('en-US', {
         month: 'long',
         day: 'numeric',
-        year: 'numeric'
+        year: 'numeric',
+        weekday: 'long'
     })
 })
 
 
-const upcomingAppointments = ref([
-    {
-        id: 1,
-        appointment_status: 'accepted',
-        scheduled_at: '2026-01-03T10:00:00Z',
-        scheduled_end_at: '2026-01-03T11:00:00Z',
-        client_name: 'Annette Black',
-        client_avatar: '/images/dashboard/1.png',
-        property_address: '123A Elm Street',
-        contact_info: '(555) 123-4567',
-        contact_type: 'phone',
-        created_at: '2026-01-01T10:00:00Z',
-        updated_at: '2026-01-02T15:30:00Z'
-    },
-    {
-        id: 2,
-        appointment_status: 'pending',
-        scheduled_at: '2026-01-03T10:00:00Z',
-        scheduled_end_at: '2026-01-03T11:00:00Z',
-        client_name: 'Ralph Edwards',
-        client_avatar: '/images/dashboard/2.png',
-        property_address: '450 Pine Avenue',
-        contact_info: 'jane@example.com',
-        contact_type: 'email',
-        created_at: '2026-01-02T10:00:00Z',
-        updated_at: '2026-01-02T15:30:00Z'
-    },
-    {
-        id: 3,
-        appointment_status: 'pending',
-        scheduled_at: '2026-01-03T10:00:00Z',
-        scheduled_end_at: '2026-01-03T11:00:00Z',
-        client_name: 'Darlene Robertson',
-        client_avatar: '/images/dashboard/3.png',
-        property_address: '7C Sunset Blvd',
-        contact_info: '(555) 888-9999',
-        contact_type: 'phone',
-        created_at: '2026-01-02T10:00:00Z',
-        updated_at: '2026-01-02T15:30:00Z'
+const fetchLeadStatuses = async () => {
+    try {
+        const response = await $fetchCMS('admin/lead-statuses/all/active', {
+            method: 'GET'
+        })
+        leadStatuses.value = response.data || []
+    } catch (error) {
+        console.error('Error fetching lead statuses:', error)
     }
-])
+}
 
 
-const allAppointments = ref([
-    {
-        id: 1,
-        appointment_status: 'confirmed',
-        scheduled_at: '2026-01-03T08:00:00Z',
-        scheduled_end_at: '2026-01-03T09:00:00Z',
-        client_name: 'John Johnson',
-        property_address: '56 Easton Melalin Suite 157',
-        client_phone: '(555) 123-4567',
-        is_request: false,
-        is_added_to_calendar: true,
-        created_at: '2026-01-01T10:00:00Z',
-        updated_at: '2026-01-01T15:30:00Z'
-    },
-    {
-        id: 2,
-        appointment_status: 'confirmed',
-        scheduled_at: '2026-01-03T10:00:00Z',
-        scheduled_end_at: '2026-01-03T11:00:00Z',
-        client_name: 'Bill Johnson',
-        property_address: '56 Easton Melalin Suite 157',
-        client_phone: '(555) 123-4567',
-        is_request: false,
-        is_added_to_calendar: false,
-        created_at: '2026-01-02T10:00:00Z',
-        updated_at: '2026-01-02T15:30:00Z'
-    },
-    {
-        id: 3,
-        appointment_status: 'requested',
-        scheduled_at: '2026-01-03T13:00:00Z',
-        scheduled_end_at: '2026-01-03T14:00:00Z',
-        client_name: 'Sarah Williams',
-        property_address: '56 Easton Melalin Suite 157',
-        client_phone: '(555) 123-4567',
-        is_request: true,
-        is_added_to_calendar: false,
-        created_at: '2026-01-03T10:00:00Z',
-        updated_at: '2026-01-03T10:00:00Z'
-    },
-    {
-        id: 4,
-        appointment_status: 'confirmed',
-        scheduled_at: '2026-01-05T09:00:00Z',
-        scheduled_end_at: '2026-01-05T10:00:00Z',
-        client_name: 'Michael Brown',
-        property_address: '789 Oak Street',
-        client_phone: '(555) 234-5678',
-        is_request: false,
-        is_added_to_calendar: true,
-        created_at: '2026-01-02T10:00:00Z',
-        updated_at: '2026-01-02T15:30:00Z'
-    },
-    {
-        id: 5,
-        appointment_status: 'accepted',
-        scheduled_at: '2026-01-05T14:00:00Z',
-        scheduled_end_at: '2026-01-05T15:00:00Z',
-        client_name: 'Emily Davis',
-        property_address: '321 Maple Avenue',
-        client_phone: '(555) 345-6789',
-        is_request: false,
-        is_added_to_calendar: false,
-        created_at: '2026-01-03T10:00:00Z',
-        updated_at: '2026-01-04T15:30:00Z'
-    },
-    {
-        id: 6,
-        appointment_status: 'requested',
-        scheduled_at: '2026-01-07T11:00:00Z',
-        scheduled_end_at: '2026-01-07T12:00:00Z',
-        client_name: 'James Wilson',
-        property_address: '654 Pine Road',
-        client_phone: '(555) 456-7890',
-        is_request: true,
-        is_added_to_calendar: false,
-        created_at: '2026-01-05T10:00:00Z',
-        updated_at: '2026-01-05T10:00:00Z'
+const fetchMonthAppointments = async () => {
+    loading.value = true
+    try {
+        const year = currentDate.value.getFullYear()
+        const month = currentDate.value.getMonth()
+
+
+        const startDate = year + '-' + String(month + 1).padStart(2, '0') + '-01'
+        const lastDay = new Date(year, month + 1, 0).getDate()
+        const endDate = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(lastDay).padStart(2, '0')
+
+        const response = await $fetchCitizen('agent/v1/leads/list', {
+            method: 'GET',
+            params: {
+                type: '2',
+                start_date: startDate,
+                end_date: endDate
+            }
+        })
+
+        allAppointments.value = response.data.data || []
+    } catch (error) {
+        console.error('Error fetching appointments:', error)
+    } finally {
+        loading.value = false
     }
-])
+}
+
+
+const fetchUpcomingAppointments = async () => {
+    loadingUpcoming.value = true
+    try {
+        const now = new Date()
+        const currentDateTime = now.getFullYear() + '-' +
+            String(now.getMonth() + 1).padStart(2, '0') + '-' +
+            String(now.getDate()).padStart(2, '0') + ' ' +
+            String(now.getHours()).padStart(2, '0') + ':' +
+            String(now.getMinutes()).padStart(2, '0') + ':' +
+            String(now.getSeconds()).padStart(2, '0')
+
+        const response = await $fetchCitizen('agent/v1/leads/list', {
+            method: 'GET',
+            params: {
+                current_date_time: currentDateTime
+            }
+        })
+
+        upcomingAppointmentsData.value = response.data.data || []
+    } catch (error) {
+        console.error('Error fetching upcoming appointments:', error)
+    } finally {
+        loadingUpcoming.value = false
+    }
+}
 
 
 const todayAppointments = computed(() => {
-    return allAppointments.value.filter(appointment => {
-        const appointmentDate = new Date(appointment.scheduled_at)
-        return appointmentDate.getDate() === selectedDate.value.getDate() &&
-            appointmentDate.getMonth() === selectedDate.value.getMonth() &&
-            appointmentDate.getFullYear() === selectedDate.value.getFullYear()
-    }).sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at))
+    const filtered = allAppointments.value.filter(appointment => {
+        if (!appointment.date) return false
+        const appointmentDate = appointment.date
+
+        const selectedDateStr = selectedDate.value.getFullYear() + '-' +
+            String(selectedDate.value.getMonth() + 1).padStart(2, '0') + '-' +
+            String(selectedDate.value.getDate()).padStart(2, '0')
+        return appointmentDate === selectedDateStr
+    }).sort((a, b) => {
+        if (!a.time || !b.time) return 0
+        return a.time.localeCompare(b.time)
+    })
+
+    return filtered
 })
 
+
+const getAppointmentCount = (dateStr) => {
+    return allAppointments.value.filter(apt =>
+        apt.date === dateStr && apt.add_to_calendar
+    ).length
+}
+
+
+const getPendingAppointmentCount = (dateStr) => {
+    return allAppointments.value.filter(apt =>
+        apt.date === dateStr && !apt.add_to_calendar
+    ).length
+}
+
+
+const getClosedAppointmentCount = (dateStr) => {
+    return allAppointments.value.filter(apt =>
+        apt.date === dateStr && apt.lead_status?.name.toLowerCase() === 'closed'
+    ).length
+}
 
 const calendarDays = computed(() => {
     const year = currentDate.value.getFullYear()
@@ -158,9 +134,14 @@ const calendarDays = computed(() => {
     const firstDay = new Date(year, month, 1)
     const lastDay = new Date(year, month + 1, 0)
     const daysInMonth = lastDay.getDate()
-    const startingDayOfWeek = firstDay.getDay()
+
+
+    let startingDayOfWeek = firstDay.getDay()
+    startingDayOfWeek = startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1
 
     const days = []
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
 
 
     const prevMonthLastDay = new Date(year, month, 0).getDate()
@@ -168,28 +149,35 @@ const calendarDays = computed(() => {
         days.push({
             date: prevMonthLastDay - i,
             isCurrentMonth: false,
-            isToday: false
+            isToday: false,
+            hasEvent: false,
+            appointmentCount: 0,
+            pendingCount: 0
         })
     }
 
 
     for (let i = 1; i <= daysInMonth; i++) {
         const date = new Date(year, month, i)
-        const isToday = date.toDateString() === new Date(2026, 0, 3).toDateString()
+        date.setHours(0, 0, 0, 0)
+        const isToday = date.getTime() === today.getTime()
 
 
-        const hasAppointments = allAppointments.value.some(appointment => {
-            const appointmentDate = new Date(appointment.scheduled_at)
-            return appointmentDate.getDate() === i &&
-                appointmentDate.getMonth() === month &&
-                appointmentDate.getFullYear() === year
-        })
+        const dateStr = date.toISOString().split('T')[0]
+        const appointmentCount = getAppointmentCount(dateStr)
+        const pendingCount = getPendingAppointmentCount(dateStr)
+        const closedCount = getClosedAppointmentCount(dateStr)
+        const hasEvent = appointmentCount > 0 || pendingCount > 0 || closedCount > 0
 
         days.push({
             date: i,
             isCurrentMonth: true,
             isToday,
-            hasEvent: hasAppointments
+            hasEvent,
+            appointmentCount,
+            pendingCount,
+            closedCount,
+            fullDate: dateStr
         })
     }
 
@@ -210,16 +198,21 @@ const monthName = computed(() => {
     return currentDate.value.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 })
 
-const getStatusInfo = (status) => {
+const getStatusInfo = (leadStatus) => {
+    if (!leadStatus) return { text: 'Unknown', color: 'gray' }
+
+    const statusName = typeof leadStatus === 'string' ? leadStatus : leadStatus.name
+    const lowerStatus = statusName.toLowerCase()
+
     const statusMap = {
-        'accepted': { text: 'Accepted', color: 'green' },
-        'pending': { text: 'Pending', color: 'orange' },
-        'confirmed': { text: 'Confirmed', color: 'blue' },
-        'requested': { text: 'Requested', color: 'orange' },
-        'cancelled': { text: 'Cancelled', color: 'red' },
-        'completed': { text: 'Completed', color: 'blue' }
+        'new': { text: 'New', color: 'orange' },
+        'contacted': { text: 'Contacted', color: 'blue' },
+        'scheduled': { text: 'Scheduled', color: 'green' },
+        'closed': { text: 'Closed', color: 'red' },
+        'active': { text: 'Active', color: 'blue' },
+        'pending': { text: 'Pending', color: 'orange' }
     }
-    return statusMap[status] || { text: 'Unknown', color: 'gray' }
+    return statusMap[lowerStatus] || { text: statusName, color: 'gray' }
 }
 
 const getStatusColor = (color) => {
@@ -233,15 +226,15 @@ const getStatusColor = (color) => {
     return colors[color] || 'bg-gray-100 text-gray-700'
 }
 
-const getAppointmentActions = (appointment) => {
-    if (appointment.appointment_status === 'requested') {
-        return ['Accept', 'Decline']
-    }
-    if (appointment.is_added_to_calendar) {
-        return ['Reschedule']
-    }
-    return ['Reschedule', 'Add To Calendar']
-}
+// const getAppointmentActions = (appointment) => {
+//     if (appointment.appointment_status === 'requested') {
+//         return ['Accept', 'Decline']
+//     }
+//     if (appointment.is_added_to_calendar) {
+//         return ['Reschedule']
+//     }
+//     return ['Reschedule', 'Add To Calendar']
+// }
 
 
 const showRescheduleModal = ref(false)
@@ -266,51 +259,185 @@ const handleDeclineAppointment = (appointment) => {
     }
 }
 
-const handleAddToCalendar = (appointment) => {
-    const index = allAppointments.value.findIndex(apt => apt.id === appointment.id)
-    if (index !== -1) {
-        allAppointments.value[index].is_added_to_calendar = true
+// const updateAppointmentStatus = async (appointment, newStatusId) => {
+//     try {
+//         const formData = new FormData()
+//         formData.append('_method', 'PATCH')
+//         formData.append('status', newStatusId)
+
+
+//         const scheduledStatus = leadStatuses.value.find(s => s.name.toLowerCase() === 'scheduled')
+//         const scheduledStatusId = scheduledStatus ? scheduledStatus.id : 3
+
+//         if (newStatusId === scheduledStatusId) {
+//             formData.append('add_to_calendar', '1')
+//         } else {
+//             formData.append('add_to_calendar', '0')
+//         }
+
+//         await $fetchCitizen(`agent/v1/leads/${appointment.id}/update`, {
+//             method: 'POST',
+//             body: formData
+//         })
+
+//        
+//         await fetchMonthAppointments()
+//     } catch (error) {
+//         console.error('Error updating appointment status:', error)
+//     }
+// }
+
+const handleAddToCalendar = async (appointment) => {
+    try {
+        const formData = new FormData()
+        formData.append('_method', 'PATCH')
+        formData.append('add_to_calendar', appointment.add_to_calendar ? '0' : '1')
+
+        await $fetchCitizen(`agent/v1/leads/${appointment.id}/update`, {
+            method: 'POST',
+            body: formData
+        })
+
+
+        await fetchMonthAppointments()
+
+
+        showToast('Calendar updated successfully', 'success')
+    } catch (error) {
+        console.error('Error toggling calendar:', error)
+        showToast('Failed to update calendar', 'error')
+    }
+}
+
+const updateLeadStatusToActive = async (appointment) => {
+    try {
+        const activeStatus = leadStatuses.value.find(s => s.name.toLowerCase() === 'active')
+        if (!activeStatus) return
+
+        const formData = new FormData()
+        formData.append('_method', 'PATCH')
+        formData.append('status', activeStatus.id)
+        formData.append('add_to_calendar', '0')
+
+        await $fetchCitizen(`agent/v1/leads/${appointment.id}/update`, {
+            method: 'POST',
+            body: formData
+        })
+
+
+        await fetchMonthAppointments()
+
+
+        showToast('Lead marked as Active', 'success')
+    } catch (error) {
+        console.error('Error updating lead status:', error)
+        showToast('Failed to update status', 'error')
+    }
+}
+
+const declineLead = async (appointment) => {
+    try {
+        const closedStatus = leadStatuses.value.find(s => s.name.toLowerCase() === 'closed')
+        if (!closedStatus) return
+
+        const formData = new FormData()
+        formData.append('_method', 'PATCH')
+        formData.append('status', closedStatus.id)
+        formData.append('add_to_calendar', '0')
+
+        await $fetchCitizen(`agent/v1/leads/${appointment.id}/update`, {
+            method: 'POST',
+            body: formData
+        })
+
+
+        await fetchMonthAppointments()
+
+
+        showToast('Lead declined', 'success')
+    } catch (error) {
+        console.error('Error declining lead:', error)
+        showToast('Failed to decline lead', 'error')
+    }
+}
+
+const showToast = (message, type = 'success') => {
+    responseModal.value = {
+        status: type === 'success',
+        message: message,
+        error: type === 'error' ? { message: [message] } : null
     }
 }
 
 const handleRescheduleAppointment = (appointment) => {
     selectedAppointmentForReschedule.value = appointment
-    rescheduleDateTime.value = new Date(appointment.scheduled_at)
+
+
+    if (appointment.date && appointment.time) {
+        const dateTimeStr = `${appointment.date}T${appointment.time}`
+        rescheduleDateTime.value = new Date(dateTimeStr)
+    } else {
+        rescheduleDateTime.value = new Date()
+    }
+
     showRescheduleModal.value = true
 }
 
-const confirmReschedule = () => {
+const confirmReschedule = async () => {
     if (!rescheduleDateTime.value || !selectedAppointmentForReschedule.value) return
 
-    const index = allAppointments.value.findIndex(
-        apt => apt.id === selectedAppointmentForReschedule.value.id
-    )
+    try {
+        const newDateTime = new Date(rescheduleDateTime.value)
 
-    if (index !== -1) {
-        const originalStart = new Date(allAppointments.value[index].scheduled_at)
-        const originalEnd = new Date(allAppointments.value[index].scheduled_end_at)
-        const duration = originalEnd - originalStart
 
-        const newStart = new Date(rescheduleDateTime.value)
-        const newEnd = new Date(newStart.getTime() + duration)
+        const newDate = newDateTime.getFullYear() + '-' +
+            String(newDateTime.getMonth() + 1).padStart(2, '0') + '-' +
+            String(newDateTime.getDate()).padStart(2, '0')
 
-        allAppointments.value[index].scheduled_at = newStart.toISOString()
-        allAppointments.value[index].scheduled_end_at = newEnd.toISOString()
-        allAppointments.value[index].updated_at = new Date().toISOString()
-        selectedDate.value = newStart
+
+        const newTime = String(newDateTime.getHours()).padStart(2, '0') + ':' +
+            String(newDateTime.getMinutes()).padStart(2, '0') + ':00'
+
+        const formData = new FormData()
+        formData.append('_method', 'PATCH')
+        formData.append('date', newDate)
+        formData.append('time', newTime)
+
+        await $fetchCitizen(`agent/v1/leads/${selectedAppointmentForReschedule.value.id}/update`, {
+            method: 'POST',
+            body: formData
+        })
+
+
+        selectedDate.value = newDateTime
+
+
+        await fetchMonthAppointments()
+
+        showToast('Appointment rescheduled successfully', 'success')
+    } catch (error) {
+        console.error('Error rescheduling appointment:', error)
+        showToast('Failed to reschedule appointment', 'error')
+    } finally {
+        showRescheduleModal.value = false
+        selectedAppointmentForReschedule.value = null
+        rescheduleDateTime.value = null
     }
-
-    showRescheduleModal.value = false
-    selectedAppointmentForReschedule.value = null
-    rescheduleDateTime.value = null
 }
 
-const formatAppointmentTime = (startDate, endDate) => {
-    const start = new Date(startDate)
-    const end = new Date(endDate)
-    const startTime = start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
-    const endTime = end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
-    return `${startTime}-${endTime}`
+const formatAppointmentTime = (date, time) => {
+    if (!date || !time) return 'N/A'
+
+
+    const timeParts = time.split(':')
+    if (timeParts.length < 2) return time
+
+    const hours = parseInt(timeParts[0])
+    const minutes = timeParts[1]
+    const ampm = hours >= 12 ? 'PM' : 'AM'
+    const displayHours = hours % 12 || 12
+
+    return `${displayHours}:${minutes} ${ampm}`
 }
 
 const cancelReschedule = () => {
@@ -320,22 +447,22 @@ const cancelReschedule = () => {
 }
 
 
-const handleAppointmentAction = (appointment, action) => {
-    switch (action) {
-        case 'Accept':
-            handleAcceptAppointment(appointment)
-            break
-        case 'Decline':
-            handleDeclineAppointment(appointment)
-            break
-        case 'Reschedule':
-            handleRescheduleAppointment(appointment)
-            break
-        case 'Add To Calendar':
-            handleAddToCalendar(appointment)
-            break
-    }
-}
+// const handleAppointmentAction = (appointment, action) => {
+//     switch (action) {
+//         case 'Accept':
+//             handleAcceptAppointment(appointment)
+//             break
+//         case 'Decline':
+//             handleDeclineAppointment(appointment)
+//             break
+//         case 'Reschedule':
+//             handleRescheduleAppointment(appointment)
+//             break
+//         case 'Add To Calendar':
+//             handleAddToCalendar(appointment)
+//             break
+//     }
+// }
 
 const previousMonth = () => {
     currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() - 1, 1)
@@ -356,6 +483,18 @@ const handleDateClick = (day) => {
         selectedDate.value = new Date(year, month, day.date)
     }
 }
+
+onMounted(() => {
+    fetchLeadStatuses()
+    fetchMonthAppointments()
+    fetchUpcomingAppointments()
+})
+
+
+watch(currentDate, () => {
+    fetchMonthAppointments()
+})
+
 </script>
 
 <template>
@@ -384,39 +523,55 @@ const handleDateClick = (day) => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="appointment in upcomingAppointments" :key="appointment.id"
-                            class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                        <tr v-if="loadingUpcoming">
+                            <td colspan="6" class="py-8 text-center text-gray-500">
+                                Loading...
+                            </td>
+                        </tr>
+                        <tr v-else-if="upcomingAppointmentsData.length === 0">
+                            <td colspan="6" class="py-8 text-center text-gray-500">
+                                No upcoming appointments
+                            </td>
+                        </tr>
+                        <tr v-else v-for="appointment in upcomingAppointmentsData" :key="appointment.id"
+                            @click="navigateTo(`/agent/leads/${appointment.id}`)"
+                            class="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
                             <td class="py-4 px-6">
                                 <span class="px-3 py-1 text-xs font-medium rounded-md"
-                                    :class="getStatusColor(getStatusInfo(appointment.appointment_status).color)">
-                                    {{ getStatusInfo(appointment.appointment_status).text }}
+                                    :class="getStatusColor(getStatusInfo(appointment.lead_status).color)">
+                                    {{ getStatusInfo(appointment.lead_status).text }}
                                 </span>
                             </td>
                             <td class="py-4 px-6">
                                 <div class="text-sm text-gray-900">
-                                    {{ $formatDate(appointment.scheduled_at) }}
-                                    {{ formatAppointmentTime(appointment.scheduled_at, appointment.scheduled_end_at) }}
+                                    {{ formatAppointmentTime(appointment.date, appointment.time) }}
                                 </div>
                             </td>
                             <td class="py-4 px-6">
                                 <div class="flex items-center space-x-3">
-                                    <img :src="appointment.client_avatar" :alt="appointment.client_name"
-                                        class="w-8 h-8 rounded-full object-cover" />
-                                    <span class="text-sm text-gray-900">{{ appointment.client_name }}</span>
+                                    <img :src="appointment.customer?.photo || '/images/dashboard/1.png'"
+                                        :alt="appointment.name" class="w-8 h-8 rounded-full object-cover"
+                                        @error="$event.target.src = '/images/dashboard/1.png'" />
+                                    <span class="text-sm text-gray-900">{{ appointment.name }}</span>
                                 </div>
                             </td>
                             <td class="py-4 px-6">
-                                <span class="text-sm text-gray-600">{{ appointment.property_address }}</span>
+                                <div class="max-w-xs truncate">
+                                    <div class="text-sm font-medium text-gray-900">{{ appointment.property?.name ||
+                                        'N/A' }}</div>
+                                    <div class="text-xs text-gray-500">{{ appointment.property?.address || '' }}</div>
+                                </div>
                             </td>
                             <td class="py-4 px-6">
                                 <div class="flex items-center space-x-2">
-                                    <Icon :name="appointment.contact_type === 'phone' ? 'lucide:phone' : 'lucide:mail'"
+                                    <Icon :name="appointment.phone ? 'lucide:phone' : 'lucide:mail'"
                                         class="w-4 h-4 text-gray-400" />
-                                    <span class="text-sm text-gray-600">{{ appointment.contact_info }}</span>
+                                    <span class="text-sm text-gray-600">{{ appointment.phone || appointment.email
+                                        }}</span>
                                 </div>
                             </td>
                             <td class="py-4 px-6">
-                                <button @click="handleActionMenu(appointment)"
+                                <button @click.stop="handleActionMenu(appointment)"
                                     class="text-gray-400 hover:text-gray-600 transition-colors">
                                     <Icon name="lucide:more-vertical" class="w-5 h-5" />
                                 </button>
@@ -478,19 +633,18 @@ const handleDateClick = (day) => {
                         ]">
                             {{ day.date }}
                         </div>
-                        <div v-if="day.hasEvent" class="mt-2">
-                            <div class="text-[10px] bg-blue-500 text-white px-1.5 py-0.5 rounded text-center">
-                                {{allAppointments.filter(apt => {
-                                    const aptDate = new Date(apt.scheduled_at)
-                                    return aptDate.getDate() === day.date &&
-                                        aptDate.getMonth() === currentDate.getMonth() &&
-                                        aptDate.getFullYear() === currentDate.getFullYear()
-                                }).length}} appointment{{allAppointments.filter(apt => {
-                                    const aptDate = new Date(apt.scheduled_at)
-                                    return aptDate.getDate() === day.date &&
-                                        aptDate.getMonth() === currentDate.getMonth() &&
-                                        aptDate.getFullYear() === currentDate.getFullYear()
-                                }).length > 1 ? 's' : ''}}
+                        <div v-if="day.hasEvent && day.isCurrentMonth" class="mt-2 space-y-1">
+                            <div v-if="day.appointmentCount > 0"
+                                class="text-[10px] bg-blue-500 text-white px-1.5 py-0.5 rounded text-center">
+                                {{ day.appointmentCount }} appointment{{ day.appointmentCount > 1 ? 's' : '' }}
+                            </div>
+                            <div v-if="day.pendingCount > 0"
+                                class="text-[10px] bg-orange-500 text-white px-1.5 py-0.5 rounded text-center">
+                                {{ day.pendingCount }} pending
+                            </div>
+                            <div v-if="day.closedCount > 0"
+                                class="text-[10px] bg-gray-500 text-white px-1.5 py-0.5 rounded text-center">
+                                {{ day.closedCount }} closed
                             </div>
                         </div>
                     </div>
@@ -512,30 +666,56 @@ const handleDateClick = (day) => {
                     <div v-for="appointment in todayAppointments" :key="appointment.id"
                         class="pb-5 border-b border-gray-100 last:border-0 last:pb-0">
                         <div class="mb-3">
-                            <div class="text-sm font-semibold text-gray-900 mb-2">
-                                {{ formatAppointmentTime(appointment.scheduled_at, appointment.scheduled_end_at) }}
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="text-sm font-semibold text-gray-900">
+                                    {{ formatAppointmentTime(appointment.date, appointment.time) }}
+                                </div>
+                                <span class="px-2 py-1 text-xs font-medium rounded-md"
+                                    :class="getStatusColor(getStatusInfo(appointment.lead_status).color)">
+                                    {{ getStatusInfo(appointment.lead_status).text }}
+                                </span>
                             </div>
-                            <div class="text-sm font-medium text-gray-900 mb-1">{{ appointment.client_name }}</div>
-                            <div class="text-xs text-gray-600 mb-0.5">{{ appointment.property_address }}</div>
-                            <div class="text-xs text-gray-600">{{ appointment.client_phone }}</div>
+                            <div class="text-sm font-medium text-gray-900 mb-1">{{ appointment.name }}</div>
+                            <div class="text-xs text-gray-600 mb-0.5">{{ appointment.property?.name || 'N/A' }}</div>
+                            <div class="text-xs text-gray-600 mb-0.5">{{ appointment.property?.address || '' }}</div>
+                            <div class="text-xs text-gray-600">{{ appointment.phone || appointment.email }}</div>
                         </div>
 
-                        <div class="flex gap-2">
-                            <button v-for="action in getAppointmentActions(appointment)" :key="action"
-                                @click="handleAppointmentAction(appointment, action)" :class="[
-                                    'flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors',
-                                    action === 'Accept'
-                                        ? 'bg-gray-900 text-white hover:bg-gray-800'
-                                        : action === 'Decline'
-                                            ? 'bg-white border border-red-200 text-red-600 hover:bg-red-50'
-                                            : 'bg-gray-900 text-white hover:bg-gray-800'
-                                ]">
-                                {{ action }}
+                        <!-- Conditional Buttons -->
+                        <div v-if="appointment.lead_status?.name.toLowerCase() === 'new' && !appointment.add_to_calendar"
+                            class="flex gap-2">
+                            <button @click="updateLeadStatusToActive(appointment)"
+                                class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors bg-green-600 text-white hover:bg-green-700">
+                                Active
+                            </button>
+                            <button @click="declineLead(appointment)"
+                                class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors bg-red-600 text-white hover:bg-red-700">
+                                Decline
                             </button>
                         </div>
-
-                        <div v-if="appointment.is_request" class="text-xs text-gray-500 text-center mt-3">
-                            End of schedule
+                        <div v-else-if="appointment.lead_status?.name.toLowerCase() === 'closed'" class="flex gap-2">
+                            <button disabled
+                                class="flex-1 px-3 py-2 text-xs font-medium rounded-lg bg-gray-300 text-gray-600 cursor-not-allowed">
+                                Closed
+                            </button>
+                            <button @click="updateLeadStatusToActive(appointment)"
+                                class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors bg-green-600 text-white hover:bg-green-700">
+                                Active
+                            </button>
+                        </div>
+                        <div v-else class="flex gap-2">
+                            <button @click="handleRescheduleAppointment(appointment)"
+                                class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors bg-gray-900 text-white hover:bg-gray-800">
+                                Reschedule
+                            </button>
+                            <button @click="handleAddToCalendar(appointment)" :class="[
+                                'flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors',
+                                appointment.add_to_calendar
+                                    ? 'bg-white border border-red-200 text-red-600 hover:bg-red-50'
+                                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                            ]">
+                                {{ appointment.add_to_calendar ? 'Remove from Calendar' : 'Add to Calendar' }}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -557,10 +737,11 @@ const handleDateClick = (day) => {
                 <div v-if="selectedAppointmentForReschedule" class="mb-4">
                     <p class="text-sm text-gray-600 mb-2">
                         Rescheduling appointment with <span class="font-medium text-gray-900">{{
-                            selectedAppointmentForReschedule.client_name }}</span>
+                            selectedAppointmentForReschedule.name }}</span>
                     </p>
                     <p class="text-xs text-gray-500">
-                        {{ selectedAppointmentForReschedule.property_address }}
+                        {{ selectedAppointmentForReschedule.property?.address ||
+                            selectedAppointmentForReschedule.property?.name || 'N/A' }}
                     </p>
                 </div>
 
@@ -584,5 +765,8 @@ const handleDateClick = (day) => {
                 </div>
             </div>
         </div>
+
+      
+        <ResponseModal :response_modal="responseModal" />
     </div>
 </template>
