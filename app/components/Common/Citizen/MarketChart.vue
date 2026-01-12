@@ -257,8 +257,8 @@
             padding: {
                 top: 20,
                 bottom: 10,
-                left: 40,
-                right: 40,
+                left: 10,
+                right: 10,
             },
         },
         plugins: {
@@ -319,31 +319,16 @@
             },
         },
         interaction: {
-            intersect: false,
+            intersect: true,
             mode: "nearest",
-            axis: "x",
-        },
-        hover: {
-            intersect: false,
-            mode: "nearest",
-            axis: "x",
         },
         onHover: (event, elements, chart) => {
-            const activeElements = elements?.length
-                ? elements
-                : chart.getElementsAtEventForMode(
-                      event,
-                      "nearest",
-                      {intersect: false, axis: "x"},
-                      false
-                  )
-
-            if (!activeElements.length) {
+            if (!elements.length) {
                 showTooltip.value = false
                 return
             }
 
-            const element = activeElements[0]
+            const element = elements[0]
             const datasetIndex = element.datasetIndex
             const index = element.index
             const dataset = chart.data.datasets?.[datasetIndex]
@@ -469,8 +454,8 @@
                 class="overflow-x-auto scrollbar-hide sm:overflow-visible"
                 @scroll="handleScroll">
                 <!-- Wide chart wrapper for mobile scroll -->
-                <div class="min-w-[550px] sm:min-w-0 sm:w-full overflow-visible">
-                    <div class="h-[320px] sm:h-64 md:h-80 relative overflow-visible">
+                <div class="min-w-[550px] sm:min-w-0 sm:w-full">
+                    <div class="h-[320px] sm:h-64 md:h-80 relative">
                         <Chart
                             type="bar"
                             :data="chartData"
