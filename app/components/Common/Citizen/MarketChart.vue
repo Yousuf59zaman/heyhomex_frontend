@@ -257,8 +257,8 @@
             padding: {
                 top: 20,
                 bottom: 10,
-                left: 10,
-                right: 10,
+                left: 30,
+                right: 30,
             },
         },
         plugins: {
@@ -319,8 +319,9 @@
             },
         },
         interaction: {
-            intersect: true,
-            mode: "nearest",
+            intersect: false,
+            mode: "index",
+            axis: "x",
         },
         onHover: (event, elements, chart) => {
             if (!elements.length) {
@@ -455,7 +456,7 @@
                 @scroll="handleScroll">
                 <!-- Wide chart wrapper for mobile scroll -->
                 <div class="min-w-[550px] sm:min-w-0 sm:w-full">
-                    <div class="h-[320px] sm:h-64 md:h-80 relative">
+                    <div class="h-[320px] sm:h-64 md:h-80 relative overflow-visible">
                         <Chart
                             type="bar"
                             :data="chartData"

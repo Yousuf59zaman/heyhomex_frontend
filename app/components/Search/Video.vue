@@ -277,7 +277,7 @@
 
         <!-- Row 3: Results header + cards -->
         <div class="bg-white rounded-[12px] p-3 sm:p-4 flex flex-col gap-4">
-            <div class="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div class="relative z-1 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div class="flex flex-col gap-3 flex-1">
                     <h2 class="text-[20px] lg:text-[24px] leading-[28px] lg:leading-[32px] font-semibold text-[#121A22]">
                         {{ displayQuery }}
