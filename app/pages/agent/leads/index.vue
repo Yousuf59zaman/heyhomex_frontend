@@ -2,152 +2,53 @@
 useHead({ title: "Leads - Agent Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "agent" })
 
-
 const searchQuery = ref('')
 const statusFilter = ref('All')
 const sortBy = ref('All')
 
-
-const leads = ref([
-    {
-        id: 1,
-        lead_status: 'new',
-        client_name: 'Annette Black',
-        client_avatar: '/images/dashboard/1.png',
-        property_address: '123A Elm Street',
-        contact_info: '(555) 123-4567',
-        contact_type: 'phone',
-        created_at: '2026-01-03T10:00:00Z',
-        updated_at: '2026-01-03T10:00:00Z'
-    },
-    {
-        id: 2,
-        lead_status: 'claimed',
-        client_name: 'Ralph Edwards',
-        client_avatar: '/images/dashboard/2.png',
-        property_address: '450 Pine Avenue',
-        contact_info: 'jane@example.com',
-        contact_type: 'email',
-        created_at: '2026-01-03T10:00:00Z',
-        updated_at: '2026-01-03T10:00:00Z'
-    },
-    {
-        id: 3,
-        lead_status: 'claimed',
-        client_name: 'Darlene Robertson',
-        client_avatar: '/images/dashboard/3.png',
-        property_address: '7C Sunset Blvd',
-        contact_info: '(555) 888-9999',
-        contact_type: 'phone',
-        created_at: '2026-01-03T10:00:00Z',
-        updated_at: '2026-01-03T10:00:00Z'
-    },
-    {
-        id: 4,
-        lead_status: 'contacted',
-        client_name: 'Jerome Bell',
-        client_avatar: '/images/dashboard/3.png',
-        property_address: '90 Oak Lane',
-        contact_info: '(555) 777-8888',
-        contact_type: 'phone',
-        created_at: '2026-01-02T10:00:00Z',
-        updated_at: '2026-01-03T10:00:00Z'
-    },
-    {
-        id: 5,
-        lead_status: 'new',
-        client_name: 'Kristin Watson',
-        client_avatar: '/images/dashboard/3.png',
-        property_address: '200 Maple Drive',
-        contact_info: '(555) 444-5555',
-        contact_type: 'phone',
-        created_at: '2026-01-02T10:00:00Z',
-        updated_at: '2026-01-02T10:00:00Z'
-    },
-    {
-        id: 6,
-        lead_status: 'claimed',
-        client_name: 'Wade Warren',
-        client_avatar: '/images/dashboard/3.png',
-        property_address: '15 Beach Road',
-        contact_info: '(555) 333-2222',
-        contact_type: 'phone',
-        created_at: '2026-01-01T10:00:00Z',
-        updated_at: '2026-01-02T10:00:00Z'
-    },
-    {
-        id: 7,
-        lead_status: 'contacted',
-        client_name: 'Cameron Williamson',
-        client_avatar: '/images/dashboard/3.png',
-        property_address: '300 Cedar Street',
-        contact_info: 'cameron@example.com',
-        contact_type: 'email',
-        created_at: '2026-01-01T10:00:00Z',
-        updated_at: '2026-01-03T10:00:00Z'
-    },
-    {
-        id: 8,
-        lead_status: 'new',
-        client_name: 'Brooklyn Simmons',
-        client_avatar: '/images/dashboard/3.png',
-        property_address: '88 Palm Avenue',
-        contact_info: 'brooklyn@example.com',
-        contact_type: 'email',
-        created_at: '2025-12-31T10:00:00Z',
-        updated_at: '2025-12-31T10:00:00Z'
-    },
-    {
-        id: 9,
-        lead_status: 'claimed',
-        client_name: 'Courtney Henry',
-        client_avatar: '/images/dashboard/3.png',
-        property_address: '400 Willow Way',
-        contact_info: '(555) 111-0000',
-        contact_type: 'phone',
-        created_at: '2025-12-30T10:00:00Z',
-        updated_at: '2026-01-01T10:00:00Z'
-    },
-    {
-        id: 10,
-        lead_status: 'contacted',
-        client_name: 'Esther Howard',
-        client_avatar: '/images/dashboard/3.png',
-        property_address: '55 Valley View',
-        contact_info: 'esther@example.com',
-        contact_type: 'email',
-        created_at: '2025-12-29T10:00:00Z',
-        updated_at: '2026-01-02T10:00:00Z'
-    },
-    {
-        id: 11,
-        lead_status: 'new',
-        client_name: 'Dianne Russell',
-        client_avatar: '/images/dashboard/3.png',
-        property_address: '777 Ridge Road',
-        contact_info: '(555) 999-8888',
-        contact_type: 'phone',
-        created_at: '2025-12-28T10:00:00Z',
-        updated_at: '2025-12-28T10:00:00Z'
-    },
-    {
-        id: 12,
-        lead_status: 'claimed',
-        client_name: 'Albert Flores',
-        client_avatar: '/images/dashboard/3.png',
-        property_address: '99 Mountain Pass',
-        contact_info: 'albert@example.com',
-        contact_type: 'email',
-        created_at: '2025-12-27T10:00:00Z',
-        updated_at: '2025-12-29T10:00:00Z'
-    }
-])
-
-
+const leads = ref([])
+const loading = ref(false)
 const currentPage = ref(1)
-const totalItems = computed(() => leads.value.length)
+const totalItems = ref(0)
+const perPage = ref(10)
+const totalPages = ref(0)
 
-const getLeadStatusInfo = (status) => {
+// Fetch leads from API
+const fetchLeads = async () => {
+    loading.value = true
+    try {
+        const response = await $fetchCitizen('v1/leads/list', {
+            method: 'GET',
+            // params: {
+            //     page: currentPage.value,
+            //     per_page: perPage.value
+            // }
+        })
+
+        leads.value = response.data.data
+        totalItems.value = response.data.meta.total
+        totalPages.value = response.data.meta.last_page
+    } catch (error) {
+        console.error('Error fetching leads:', error)
+    } finally {
+        loading.value = false
+    }
+}
+
+onMounted(() => {
+    fetchLeads()
+})
+
+watch(currentPage, () => {
+    fetchLeads()
+})
+
+const getLeadStatusInfo = (leadStatus) => {
+    if (!leadStatus) {
+        return { text: 'Unknown', color: 'gray' }
+    }
+
+    const status = leadStatus.name?.toLowerCase() || ''
     const statusMap = {
         'new': { text: 'New', color: 'green' },
         'claimed': { text: 'Claimed', color: 'blue' },
@@ -155,7 +56,7 @@ const getLeadStatusInfo = (status) => {
         'converted': { text: 'Converted', color: 'green' },
         'lost': { text: 'Lost', color: 'red' }
     }
-    return statusMap[status] || { text: 'Unknown', color: 'gray' }
+    return statusMap[status] || { text: leadStatus.name || 'Unknown', color: 'gray' }
 }
 
 const getStatusColor = (color) => {
@@ -188,7 +89,6 @@ const handleActionMenu = (lead) => {
 
 <template>
     <div class="space-y-6">
-        <!-- Header -->
         <div class="flex items-center justify-between">
             <h1 class="text-2xl font-semibold text-gray-900">Leads</h1>
             <div class="flex items-center gap-2">
@@ -270,29 +170,36 @@ const handleActionMenu = (lead) => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="lead in leads" :key="lead.id" @click="handleLeadClick(lead.id)"
+                        <tr v-if="loading">
+                            <td colspan="6" class="py-8 text-center text-gray-500">
+                                Loading leads...
+                            </td>
+                        </tr>
+                        <tr v-else-if="leads.length === 0">
+                            <td colspan="6" class="py-8 text-center text-gray-500">
+                                No leads found
+                            </td>
+                        </tr>
+                        <tr v-else v-for="lead in leads" :key="lead.id" @click="handleLeadClick(lead.id)"
                             class="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
-                            <!-- Status -->
                             <td class="py-4 px-6">
                                 <span class="px-3 py-1 text-xs font-medium rounded-md"
                                     :class="getStatusColor(getLeadStatusInfo(lead.lead_status).color)">
                                     {{ getLeadStatusInfo(lead.lead_status).text }}
                                 </span>
                             </td>
-
-                            <!-- Name with Avatar -->
                             <td class="py-4 px-6">
                                 <div class="flex items-center space-x-3">
-                                    <img :src="lead.client_avatar" :alt="lead.client_name"
+                                    <img :src="lead.customer?.photo || '/images/dashboard/1.png'" :alt="lead.name"
                                         class="w-8 h-8 rounded-full object-cover"
                                         @error="$event.target.src = '/images/dashboard/1.png'" />
-                                    <span class="text-sm text-gray-900">{{ lead.client_name }}</span>
+                                    <span class="text-sm text-gray-900">{{ lead.name }}</span>
                                 </div>
                             </td>
 
                             <!-- Property -->
                             <td class="py-4 px-6">
-                                <span class="text-sm text-gray-600">{{ lead.property_address }}</span>
+                                <span class="text-sm text-gray-600">{{ lead.property?.address || 'N/A' }}</span>
                             </td>
 
                             <!-- Date -->
@@ -303,9 +210,9 @@ const handleActionMenu = (lead) => {
                             <!-- Contact Info -->
                             <td class="py-4 px-6">
                                 <div class="flex items-center space-x-2">
-                                    <Icon :name="lead.contact_type === 'phone' ? 'lucide:phone' : 'lucide:mail'"
+                                    <Icon :name="lead.phone ? 'lucide:phone' : 'lucide:mail'"
                                         class="w-4 h-4 text-gray-400" />
-                                    <span class="text-sm text-gray-600">{{ lead.contact_info }}</span>
+                                    <span class="text-sm text-gray-600">{{ lead.phone || lead.email }}</span>
                                 </div>
                             </td>
 
@@ -324,17 +231,17 @@ const handleActionMenu = (lead) => {
             <!-- Pagination -->
             <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
                 <div class="text-sm text-gray-600">
-                    Showing {{ totalItems }} of {{ totalItems }}
+                    Showing {{ leads.length }} of {{ totalItems }}
                 </div>
                 <div class="flex items-center gap-2">
-                    <button :disabled="currentPage === 1"
+                    <button @click="currentPage--" :disabled="currentPage === 1"
                         class="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">
                         Previous
                     </button>
                     <button class="px-3 py-1 text-sm bg-gray-900 text-white rounded">
                         {{ currentPage }}
                     </button>
-                    <button :disabled="true"
+                    <button @click="currentPage++" :disabled="currentPage >= totalPages"
                         class="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">
                         Next
                     </button>

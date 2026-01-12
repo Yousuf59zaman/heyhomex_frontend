@@ -18,21 +18,7 @@ const settingsSections = ref([
         title: 'Profile Settings',
         description: 'Update your personal information',
         icon: 'lucide:user',
-        path: '#'
-    },
-    {
-        id: 'notifications',
-        title: 'Notifications',
-        description: 'Manage notification preferences',
-        icon: 'lucide:bell',
-        path: '#'
-    },
-    {
-        id: 'privacy',
-        title: 'Privacy & Security',
-        description: 'Control your privacy settings',
-        icon: 'lucide:shield',
-        path: '#'
+        path: '/investor/subscription?tab=profile'
     }
 ])
 
@@ -63,39 +49,87 @@ const navigateToSection = (section) => {
             </NuxtLink>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div
-                v-for="section in settingsSections"
-                :key="section.id"
-                @click="navigateToSection(section)"
-                class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-all duration-200 cursor-pointer group">
-                <div class="flex items-start gap-4">
-                    <div class="p-3 bg-[#333365]/10 rounded-lg group-hover:bg-[#333365]/20 transition-colors">
-                        <Icon :name="section.icon" class="w-6 h-6 text-[#333365]" />
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Left Side - Account Information -->
+            <div class="lg:col-span-1">
+                <div class="bg-white border border-gray-200 rounded-lg p-8">
+                    <div class="flex flex-col items-center">
+                        <!-- Profile Image -->
+                        <div class="relative mb-4">
+                            <img
+                                v-if="citizen_user?.data?.profile_pic"
+                                :src="citizen_user.data.profile_pic"
+                                alt="Profile"
+                                class="w-32 h-32 rounded-full object-cover border-4 border-[#333365] shadow-lg"
+                                @error="$event.target.style.display='none'" />
+                            <div
+                                v-if="!citizen_user?.data?.profile_pic"
+                                class="w-32 h-32 rounded-full bg-gradient-to-br from-[#333365] to-[#4A4A8F] flex items-center justify-center shadow-lg">
+                                <Icon name="lucide:user" class="w-16 h-16 text-white" />
+                            </div>
+                        </div>
+                        
+                        <!-- User Name -->
+                        <h2 class="text-2xl font-bold text-gray-900 mb-1 text-center">
+                            {{ citizen_user?.data?.name || 'User' }}
+                        </h2>
+                        <p class="text-sm text-[#333365] font-medium mb-6">
+                            {{ citizen_user?.data?.user_type?.[0]?.name || 'Citizen' }}
+                        </p>
                     </div>
-                    <div class="flex-1">
-                        <h3 class="text-lg font-semibold text-gray-900 group-hover:text-[#333365] transition-colors">{{ section.title }}</h3>
-                        <p class="text-sm text-gray-600 mt-1">{{ section.description }}</p>
+                    
+                    <!-- Account Details -->
+                    <div class="space-y-4 pt-6 border-t border-gray-200">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-[#333365]/10 flex items-center justify-center flex-shrink-0">
+                                <Icon name="lucide:mail" class="w-5 h-5 text-[#333365]" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs text-gray-500 mb-0.5">Email Address</p>
+                                <p class="text-sm font-medium text-gray-900 truncate">
+                                    {{ citizen_user?.data?.email || 'Not set' }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-[#333365]/10 flex items-center justify-center flex-shrink-0">
+                                <Icon name="lucide:calendar" class="w-5 h-5 text-[#333365]" />
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-xs text-gray-500 mb-0.5">Member Since</p>
+                                <p class="text-sm font-medium text-gray-900">
+                                    {{ new Date(citizen_user?.data?.user_info?.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) || 'N/A' }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <Icon name="lucide:chevron-right" class="w-5 h-5 text-gray-400 group-hover:text-[#333365] transition-colors" />
                 </div>
             </div>
-        </div>
 
-        <div class="bg-white border border-gray-200 rounded-lg p-6 mt-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Account Information</h2>
-            <div class="space-y-3">
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm text-gray-600">Email</span>
-                    <span class="text-sm font-medium text-gray-900">{{ citizen_user?.data?.email || 'Not set' }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm text-gray-600">Account Type</span>
-                    <span class="text-sm font-medium text-gray-900">{{ citizen_user?.data?.user_type?.[0]?.name || 'Citizen' }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2">
-                    <span class="text-sm text-gray-600">Member Since</span>
-                    <span class="text-sm font-medium text-gray-900">{{ new Date(citizen_user?.data?.created_at).toLocaleDateString() || 'N/A' }}</span>
+            <!-- Right Side - Settings Options -->
+            <div class="lg:col-span-1">
+                <div class="grid grid-cols-1 gap-4">
+                    <div
+                        v-for="section in settingsSections"
+                        :key="section.id"
+                        @click="navigateToSection(section)"
+                        class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg hover:border-[#333365]/30 transition-all duration-200 cursor-pointer group">
+                        <div class="flex items-center gap-4">
+                            <div class="p-4 bg-[#333365]/10 rounded-xl group-hover:bg-[#333365] group-hover:scale-110 transition-all duration-200">
+                                <Icon 
+                                    :name="section.icon" 
+                                    class="w-7 h-7 text-[#333365] group-hover:text-white transition-colors" />
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-900 group-hover:text-[#333365] transition-colors mb-1">{{ section.title }}</h3>
+                                <p class="text-sm text-gray-600">{{ section.description }}</p>
+                            </div>
+                            <Icon 
+                                name="lucide:chevron-right" 
+                                class="w-6 h-6 text-gray-400 group-hover:text-[#333365] group-hover:translate-x-1 transition-all" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
