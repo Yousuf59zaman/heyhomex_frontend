@@ -3,44 +3,47 @@ const props = defineProps({
     appointments: {
         type: Array,
         default: () => []
+    },
+    loading: {
+        type: Boolean,
+        default: false
     }
 })
 
-
-const getStatusInfo = (status) => {
-    const statusMap = {
-        'accepted': { text: 'Accepted', color: 'green' },
-        'pending': { text: 'Pending', color: 'orange' },
-        'confirmed': { text: 'Confirmed', color: 'blue' },
-        'requested': { text: 'Requested', color: 'orange' },
-        'cancelled': { text: 'Cancelled', color: 'red' },
-        'completed': { text: 'Completed', color: 'blue' }
+const getStatusInfo = (leadStatus) => {
+    if (!leadStatus) {
+        return { text: 'Unknown', color: 'gray' }
     }
-    return statusMap[status] || { text: 'Unknown', color: 'gray' }
+
+    const status = leadStatus.name?.toLowerCase() || ''
+    const statusMap = {
+        'new': { text: 'New', color: 'green' },
+        'claimed': { text: 'Claimed', color: 'blue' },
+        'contacted': { text: 'Contacted', color: 'yellow' },
+        'schedule': { text: 'Scheduled', color: 'purple' },
+        'converted': { text: 'Converted', color: 'green' },
+        'lost': { text: 'Lost', color: 'red' }
+    }
+    return statusMap[status] || { text: leadStatus.name || 'Unknown', color: 'gray' }
 }
 
 const getStatusColor = (color) => {
     const colors = {
         green: 'bg-green-100 text-green-700',
-        orange: 'bg-orange-100 text-orange-700',
         blue: 'bg-blue-100 text-blue-700',
+        yellow: 'bg-yellow-100 text-yellow-700',
+        purple: 'bg-purple-100 text-purple-700',
         red: 'bg-red-100 text-red-700',
         gray: 'bg-gray-100 text-gray-700'
     }
     return colors[color] || 'bg-gray-100 text-gray-700'
 }
 
-const formatAppointmentDate = (isoDate) => {
-    const date = new Date(isoDate)
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-}
-
-const formatAppointmentTime = (startDate, endDate) => {
-    const start = new Date(startDate)
-    const end = new Date(endDate)
-    const startTime = start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
-    const endTime = end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
-    return `${startTime}-${endTime}`
+const formatAppointmentDate = (date, time) => {
+    if (!date) return 'N/A'
+    const dateObj = new Date(date)
+    const formatted = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    return time ? `${formatted} ${time}` : formatted
 }
 
 const handleActionMenu = (appointment) => {
@@ -48,7 +51,11 @@ const handleActionMenu = (appointment) => {
 }
 
 const handleSeeAll = () => {
-    navigateTo('/agent/calendar')
+    navigateTo('/agent/leads?type=2')
+}
+
+const handleLeadClick = (leadId) => {
+    navigateTo(`/agent/leads/${leadId}`)
 }
 </script>
 
@@ -62,8 +69,13 @@ const handleSeeAll = () => {
             </button>
         </div>
 
+        <!-- Loading State -->
+        <div v-if="loading" class="py-8 text-center">
+            <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+        </div>
+
         <!-- Table -->
-        <div class="overflow-x-auto">
+        <div v-else-if="appointments.length > 0" class="overflow-x-auto">
             <table class="w-full">
                 <thead class="bg-gray-50">
                     <tr>
@@ -77,49 +89,53 @@ const handleSeeAll = () => {
                 </thead>
                 <tbody>
                     <tr v-for="appointment in appointments" :key="appointment.id"
-                        class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                        @click="handleLeadClick(appointment.id)"
+                        class="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
                         <!-- Status -->
                         <td class="py-4 px-4">
                             <span class="px-3 py-1 text-xs font-medium rounded-md"
-                                :class="getStatusColor(getStatusInfo(appointment.appointment_status).color)">
-                                {{ getStatusInfo(appointment.appointment_status).text }}
+                                :class="getStatusColor(getStatusInfo(appointment.lead_status).color)">
+                                {{ getStatusInfo(appointment.lead_status).text }}
                             </span>
                         </td>
 
                         <!-- Date & Time -->
                         <td class="py-4 px-4">
                             <div class="text-sm text-gray-900">
-                                {{ formatAppointmentDate(appointment.scheduled_at) }}
-                                {{ formatAppointmentTime(appointment.scheduled_at, appointment.scheduled_end_at) }}
+                                {{ formatAppointmentDate(appointment.date, appointment.time) }}
                             </div>
                         </td>
 
                         <!-- Name with Avatar -->
                         <td class="py-4 px-4">
                             <div class="flex items-center space-x-3">
-                                <img :src="appointment.client_avatar" :alt="appointment.client_name"
-                                    class="w-8 h-8 rounded-full object-cover" />
-                                <span class="text-sm text-gray-900">{{ appointment.client_name }}</span>
+                                <img :src="appointment.customer?.photo || '/images/dashboard/1.png'"
+                                    :alt="appointment.name" class="w-8 h-8 rounded-full object-cover"
+                                    @error="$event.target.src = '/images/dashboard/1.png'" />
+                                <span class="text-sm text-gray-900">{{ appointment.name }}</span>
                             </div>
                         </td>
 
                         <!-- Property -->
                         <td class="py-4 px-4">
-                            <span class="text-sm text-gray-600">{{ appointment.property_address }}</span>
+                            <div class="max-w-xs">
+                                <div class="text-sm font-medium text-gray-900 truncate">{{ appointment.property?.name || 'N/A' }}</div>
+                                <div class="text-xs text-gray-500 truncate">{{ appointment.property?.address || '' }}</div>
+                            </div>
                         </td>
 
                         <!-- Contact Info -->
                         <td class="py-4 px-4">
                             <div class="flex items-center space-x-2">
-                                <Icon :name="appointment.contact_type === 'phone' ? 'lucide:phone' : 'lucide:mail'"
+                                <Icon :name="appointment.phone ? 'lucide:phone' : 'lucide:mail'"
                                     class="w-4 h-4 text-gray-400" />
-                                <span class="text-sm text-gray-600">{{ appointment.contact_info }}</span>
+                                <span class="text-sm text-gray-600">{{ appointment.phone || appointment.email }}</span>
                             </div>
                         </td>
 
                         <!-- Action -->
                         <td class="py-4 px-4">
-                            <button @click="handleActionMenu(appointment)"
+                            <button @click.stop="handleActionMenu(appointment)"
                                 class="text-gray-400 hover:text-gray-600 transition-colors">
                                 <Icon name="lucide:more-vertical" class="w-5 h-5" />
                             </button>
@@ -127,6 +143,11 @@ const handleSeeAll = () => {
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else class="py-8 text-center text-gray-500 text-sm">
+            No upcoming appointments
         </div>
     </div>
 </template>
