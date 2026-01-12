@@ -558,7 +558,7 @@
                 <div class="h-5 sm:h-6 w-48 bg-gray-200 rounded"></div>
                 <div class="h-4 w-14 bg-gray-200 rounded"></div>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div
                     v-for="n in 3"
                     :key="n"

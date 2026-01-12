@@ -1,11 +1,10 @@
 <script setup>
-import { useVideoPlayer } from "~/composables/useVideoPlayer"
 
-useHead({ title: "Videos - Military Panel" })
+useHead({ title: "Videos - Investor Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "citizen" })
 
-const { openVideo } = useVideoPlayer()
 const route = useRoute()
+const router = useRouter()
 const toast = useToast()
 const videos = ref([])
 const pending = ref(false)
@@ -28,10 +27,6 @@ const categories = ref([
 const clearSearch = () => {
     searchQuery.value = ""
 }
-
-// Ad configuration - uses dynamic URLs based on current host
-const { getDefaultAdConfig } = useAdConfig()
-const adConfig = computed(() => getDefaultAdConfig())
 
 const currentPage = ref(1)
 const totalPages = ref(1)
@@ -91,7 +86,8 @@ const playVideo = (videoId) => {
     if (!video) {
         return
     }
-    openVideo(video, videos.value)
+
+    router.push(`/military/watch/${videoId}`)
 }
 
 onMounted(() => {
@@ -107,9 +103,9 @@ watch(
 </script>
 
 <template>
-    <div class="space-y-4 md:space-y-6 p-4 md:p-6 lg:p-8">
+    <div class="space-y-4 lg:space-y-6 w-full max-w-[1316px] mx-auto">
         <!-- Top Banner Ad -->
-        <AdvertisementDisplay placement-slug="military-videos-top-banner" />
+        <AdvertisementDisplay placement-slug="investor-videos-top-banner" />
 
         <div class="flex items-center justify-between">
             <div>
@@ -167,7 +163,7 @@ watch(
         <div v-else-if="error" class="text-center py-12">
             <Icon name="lucide:alert-circle" class="w-12 h-12 text-red-500 mx-auto mb-4" />
             <p class="text-gray-600 mb-4">Failed to load videos</p>
-            <button @click="loadVideos" class="px-4 py-2 bg-[#6E9EF3] text-white rounded-lg hover:bg-[#5E8EE3]">Retry</button>
+            <button @click="loadVideos" class="px-4 py-2 bg-[#333365] text-white rounded-lg hover:bg-[#232355]">Retry</button>
         </div>
 
         <div v-else-if="videos.length === 0" class="text-center py-12">
@@ -250,9 +246,6 @@ watch(
 
     <Toast position="top-right" />
     
-    <ClientOnly>
-        <VideoPlayerModal :adConfig="adConfig" />
-    </ClientOnly>
 </template>
 
 <style scoped>
