@@ -199,7 +199,7 @@ watch(
 </script>
 
 <template>
-    <div class="space-y-4 md:space-y-6 py-4 md:py-6 lg:py-1">
+    <div class="space-y-4 lg:space-y-6 w-full max-w-[1316px] mx-auto">
         <!-- Top Banner Ad -->
         <AdvertisementDisplay placement-slug="kamaina-favorites-top-banner" />
 
@@ -250,7 +250,7 @@ watch(
         <!-- Properties Tab Content -->
         <div v-if="activeTab === 'property'">
             <!-- Loading State -->
-            <div v-if="pending" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div v-if="pending" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <CommonCitizenPropertyCardSkeleton v-for="n in 8" :key="n" />
             </div>
 
@@ -284,7 +284,7 @@ watch(
 
             <!-- Properties Grid -->
             <div v-else>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <CommonCitizenPropertyCard
                         v-for="property in properties"
                         :key="property.id"
@@ -309,7 +309,7 @@ watch(
         <!-- Videos Tab Content -->
         <div v-else-if="activeTab === 'video'">
             <!-- Loading State -->
-            <div v-if="pendingVideos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div v-if="pendingVideos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div v-for="n in 8" :key="n" class="animate-pulse">
                     <div class="bg-gray-200 rounded-lg h-48"></div>
                 </div>
@@ -344,7 +344,7 @@ watch(
             </div>
 
             <!-- Videos Grid -->
-            <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <!-- Video cards will be rendered here -->
                 <div 
                     v-for="video in videos"

@@ -349,19 +349,20 @@
                     "Special Loan Eligibility",
             }
 
-            const {left, right} = chart.chartArea
+            const {left, right, top: chartTop, bottom: chartBottom} = chart.chartArea
             const halfWidth = tooltipSize.width / 2
             const clampedX = Math.min(
                 Math.max(element.element.x, left + halfWidth),
                 right - halfWidth
             )
-            const top = Math.max(
-                8,
+            const desiredTop =
                 element.element.y - tooltipSize.height - tooltipSize.gap
-            )
+            const minTop = chartTop + tooltipSize.gap
+            const maxTop = chartBottom - tooltipSize.height - tooltipSize.gap
+            const clampedTop = Math.max(minTop, Math.min(desiredTop, maxTop))
 
             tooltipStyle.value.left = `${clampedX}px`
-            tooltipStyle.value.top = `${top}px`
+            tooltipStyle.value.top = `${clampedTop}px`
             tooltipStyle.value.transform = "translateX(-50%)"
             showTooltip.value = true
         },
