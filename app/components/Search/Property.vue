@@ -417,6 +417,31 @@ watch(viewMode, async (newMode) => {
         detachMapWheelListener()
     }
 })
+ 
+watch(pending, async (newState) => {
+    if (viewMode.value !== "Map View") return
+    if (newState) {
+        detachMapWheelListener()
+        if (map.value) {
+            map.value.remove()
+            map.value = null
+        }
+    } else {
+        await nextTick()
+        setTimeout(() => initializeMap(), 100)
+    }
+})
+
+watch(
+    () => route.query.page,
+    async () => {
+        if (viewMode.value === "Map View" && map.value) {
+            await nextTick()
+            map.value?.invalidateSize()
+            setTimeout(() => fitBoundsToMarkers(), 100)
+        }
+    }
+)
 
 watch(properties, async () => {
     if (viewMode.value === "Map View" && map.value) {
