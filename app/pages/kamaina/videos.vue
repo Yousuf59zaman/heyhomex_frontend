@@ -103,7 +103,7 @@ watch(
 </script>
 
 <template>
-    <div class="space-y-4 md:space-y-6 p-4 md:p-6 lg:p-8">
+    <div class="space-y-4 lg:space-y-6 w-full max-w-[1316px] mx-auto">
         <!-- Top Banner Ad -->
         <AdvertisementDisplay placement-slug="investor-videos-top-banner" />
 
