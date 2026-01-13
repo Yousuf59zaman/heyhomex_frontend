@@ -12,7 +12,6 @@ const showScheduleModal = ref(false)
 const showAddNoteModal = ref(false)
 const showMessageModal = ref(false)
 
-
 const fetchLeadDetails = async () => {
     loading.value = true
     try {
@@ -27,7 +26,6 @@ const fetchLeadDetails = async () => {
         loading.value = false
     }
 }
-
 
 const updateLeadStatus = async (status, addToCalendar = null) => {
     updating.value = true
@@ -55,7 +53,6 @@ const updateLeadStatus = async (status, addToCalendar = null) => {
         updating.value = false
     }
 }
-
 
 const showToast = (message, type = 'info') => {
     console.log(`[${type.toUpperCase()}]: ${message}`)
@@ -94,7 +91,6 @@ onMounted(() => {
         <div v-if="loading" class="flex items-center justify-center py-12">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
         </div>
-
         <!-- Content -->
         <div v-else-if="leadInfo">
             <div class="flex items-center justify-between">
