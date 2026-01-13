@@ -39,8 +39,6 @@ const fetchMonthAppointments = async () => {
     try {
         const year = currentDate.value.getFullYear()
         const month = currentDate.value.getMonth()
-
-
         const startDate = year + '-' + String(month + 1).padStart(2, '0') + '-01'
         const lastDay = new Date(year, month + 1, 0).getDate()
         const endDate = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(lastDay).padStart(2, '0')
@@ -53,7 +51,6 @@ const fetchMonthAppointments = async () => {
                 end_date: endDate
             }
         })
-
         allAppointments.value = response.data.data || []
     } catch (error) {
         console.error('Error fetching appointments:', error)
@@ -163,7 +160,7 @@ const calendarDays = computed(() => {
         const isToday = date.getTime() === today.getTime()
 
 
-        const dateStr = date.toISOString().split('T')[0]
+        const dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(i).padStart(2, '0')
         const appointmentCount = getAppointmentCount(dateStr)
         const pendingCount = getPendingAppointmentCount(dateStr)
         const closedCount = getClosedAppointmentCount(dateStr)
@@ -241,23 +238,23 @@ const showRescheduleModal = ref(false)
 const selectedAppointmentForReschedule = ref(null)
 const rescheduleDateTime = ref(null)
 
-const handleAcceptAppointment = (appointment) => {
-    const index = allAppointments.value.findIndex(apt => apt.id === appointment.id)
-    if (index !== -1) {
-        allAppointments.value[index].appointment_status = 'accepted'
-        allAppointments.value[index].is_request = false
-    }
-}
+// const handleAcceptAppointment = (appointment) => {
+//     const index = allAppointments.value.findIndex(apt => apt.id === appointment.id)
+//     if (index !== -1) {
+//         allAppointments.value[index].appointment_status = 'accepted'
+//         allAppointments.value[index].is_request = false
+//     }
+// }
 
-const handleDeclineAppointment = (appointment) => {
-    const index = allAppointments.value.findIndex(apt => apt.id === appointment.id)
-    if (index !== -1) {
-        allAppointments.value[index].appointment_status = 'cancelled'
-        setTimeout(() => {
-            allAppointments.value.splice(index, 1)
-        }, 500)
-    }
-}
+// const handleDeclineAppointment = (appointment) => {
+//     const index = allAppointments.value.findIndex(apt => apt.id === appointment.id)
+//     if (index !== -1) {
+//         allAppointments.value[index].appointment_status = 'cancelled'
+//         setTimeout(() => {
+//             allAppointments.value.splice(index, 1)
+//         }, 500)
+//     }
+// }
 
 // const updateAppointmentStatus = async (appointment, newStatusId) => {
 //     try {
@@ -289,9 +286,23 @@ const handleDeclineAppointment = (appointment) => {
 
 const handleAddToCalendar = async (appointment) => {
     try {
+        const isAdding = !appointment.add_to_calendar
         const formData = new FormData()
         formData.append('_method', 'PATCH')
-        formData.append('add_to_calendar', appointment.add_to_calendar ? '0' : '1')
+        formData.append('add_to_calendar', isAdding ? '1' : '0')
+
+
+        if (isAdding) {
+            const scheduledStatus = leadStatuses.value.find(s => s.name.toLowerCase() === 'scheduled')
+            if (scheduledStatus) {
+                formData.append('status', scheduledStatus.id)
+            }
+        } else {
+            const activeStatus = leadStatuses.value.find(s => s.name.toLowerCase() === 'active')
+            if (activeStatus) {
+                formData.append('status', activeStatus.id)
+            }
+        }
 
         await $fetchCitizen(`agent/v1/leads/${appointment.id}/update`, {
             method: 'POST',
@@ -371,8 +382,6 @@ const showToast = (message, type = 'success') => {
 
 const handleRescheduleAppointment = (appointment) => {
     selectedAppointmentForReschedule.value = appointment
-
-
     if (appointment.date && appointment.time) {
         const dateTimeStr = `${appointment.date}T${appointment.time}`
         rescheduleDateTime.value = new Date(dateTimeStr)
@@ -385,15 +394,11 @@ const handleRescheduleAppointment = (appointment) => {
 
 const confirmReschedule = async () => {
     if (!rescheduleDateTime.value || !selectedAppointmentForReschedule.value) return
-
     try {
         const newDateTime = new Date(rescheduleDateTime.value)
-
-
         const newDate = newDateTime.getFullYear() + '-' +
             String(newDateTime.getMonth() + 1).padStart(2, '0') + '-' +
             String(newDateTime.getDate()).padStart(2, '0')
-
 
         const newTime = String(newDateTime.getHours()).padStart(2, '0') + ':' +
             String(newDateTime.getMinutes()).padStart(2, '0') + ':00'
@@ -407,13 +412,8 @@ const confirmReschedule = async () => {
             method: 'POST',
             body: formData
         })
-
-
         selectedDate.value = newDateTime
-
-
         await fetchMonthAppointments()
-
         showToast('Appointment rescheduled successfully', 'success')
     } catch (error) {
         console.error('Error rescheduling appointment:', error)
@@ -766,7 +766,7 @@ watch(currentDate, () => {
             </div>
         </div>
 
-      
+
         <ResponseModal :response_modal="responseModal" />
     </div>
 </template>
