@@ -5,6 +5,7 @@ definePageMeta({ middleware: ["auth-citizen"], layout: "agent" })
 const searchQuery = ref('')
 const statusFilter = ref('All')
 const sortBy = ref('All')
+const typeFilter = ref('')
 
 const leads = ref([])
 const loading = ref(false)
@@ -13,21 +14,28 @@ const totalItems = ref(0)
 const perPage = ref(10)
 const totalPages = ref(0)
 
-// Fetch leads from API
+
 const fetchLeads = async () => {
     loading.value = true
     try {
-        const response = await $fetchCitizen('v1/leads/list', {
+        const params = {
+            page: currentPage.value,
+        }
+
+
+        if (typeFilter.value) {
+            params.type = typeFilter.value
+        }
+
+        const response = await $fetchCitizen('agent/v1/leads/list', {
             method: 'GET',
-            // params: {
-            //     page: currentPage.value,
-            //     per_page: perPage.value
-            // }
+            params
         })
 
         leads.value = response.data.data
         totalItems.value = response.data.meta.total
         totalPages.value = response.data.meta.last_page
+        currentPage.value = response.data.meta.current_page
     } catch (error) {
         console.error('Error fetching leads:', error)
     } finally {
@@ -39,7 +47,7 @@ onMounted(() => {
     fetchLeads()
 })
 
-watch(currentPage, () => {
+watch([currentPage, typeFilter], () => {
     fetchLeads()
 })
 
@@ -53,6 +61,7 @@ const getLeadStatusInfo = (leadStatus) => {
         'new': { text: 'New', color: 'green' },
         'claimed': { text: 'Claimed', color: 'blue' },
         'contacted': { text: 'Contacted', color: 'yellow' },
+        'schedule': { text: 'Schedule', color: 'purple' },
         'converted': { text: 'Converted', color: 'green' },
         'lost': { text: 'Lost', color: 'red' }
     }
@@ -64,6 +73,7 @@ const getStatusColor = (color) => {
         green: 'bg-green-100 text-green-700 border border-green-200',
         blue: 'bg-blue-100 text-blue-700 border border-blue-200',
         yellow: 'bg-yellow-100 text-yellow-700 border border-yellow-200',
+        purple: 'bg-purple-100 text-purple-700 border border-purple-200',
         red: 'bg-red-100 text-red-700 border border-red-200',
         gray: 'bg-gray-100 text-gray-700 border border-gray-200'
     }
@@ -85,6 +95,27 @@ const handleLeadClick = (leadId) => {
 const handleActionMenu = (lead) => {
     console.log('Action for lead:', lead.id)
 }
+
+const paginationConfig = computed(() => {
+    return {
+        data: {
+            total: totalItems.value,
+            per_page: perPage.value,
+            current_page: currentPage.value,
+            last_page: totalPages.value,
+            from: (currentPage.value - 1) * perPage.value + 1,
+            to: Math.min(currentPage.value * perPage.value, totalItems.value)
+        },
+        align: 'center',
+        action: 'query',
+        lang: 'en'
+    }
+})
+
+const loadData = (page) => {
+    currentPage.value = page
+    fetchLeads()
+}
 </script>
 
 <template>
@@ -103,16 +134,27 @@ const handleActionMenu = (lead) => {
             </div>
         </div>
 
-        <!-- Search and Filters -->
+
         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <!-- Search -->
+
             <div class="relative flex-1 max-w-md">
                 <Icon name="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input v-model="searchQuery" type="text" placeholder="Search Here..."
                     class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
             </div>
 
-            <!-- Status Filter -->
+
+            <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-600">Type:</span>
+                <select v-model="typeFilter"
+                    class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 cursor-pointer">
+                    <option value="">All</option>
+                    <option value="1">Messages</option>
+                    <option value="2">Appointments</option>
+                </select>
+            </div>
+
+
             <div class="flex items-center gap-2">
                 <span class="text-sm text-gray-600">Status:</span>
                 <select v-model="statusFilter"
@@ -121,30 +163,19 @@ const handleActionMenu = (lead) => {
                     <option value="New">New</option>
                     <option value="Claimed">Claimed</option>
                     <option value="Contacted">Contacted</option>
-                </select>
-            </div>
-
-            <!-- Sort By -->
-            <div class="flex items-center gap-2">
-                <span class="text-sm text-gray-600">Sort by:</span>
-                <select v-model="sortBy"
-                    class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 cursor-pointer">
-                    <option value="All">All</option>
-                    <option value="Date">Date</option>
-                    <option value="Name">Name</option>
-                    <option value="Status">Status</option>
+                    <option value="Schedule">Schedule</option>
                 </select>
             </div>
         </div>
 
-        <!-- Leads Table -->
+
         <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-            <!-- Table Header -->
+
             <div class="px-6 py-4 border-b border-gray-100">
                 <h3 class="text-base font-semibold text-gray-900">All Leads</h3>
             </div>
 
-            <!-- Table -->
+
             <div class="overflow-x-auto">
                 <table class="w-full">
                     <thead class="bg-gray-50">
@@ -159,6 +190,9 @@ const handleActionMenu = (lead) => {
                                 Property
                             </th>
                             <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">
+                                Type
+                            </th>
+                            <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">
                                 Date
                             </th>
                             <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">
@@ -171,12 +205,12 @@ const handleActionMenu = (lead) => {
                     </thead>
                     <tbody>
                         <tr v-if="loading">
-                            <td colspan="6" class="py-8 text-center text-gray-500">
+                            <td colspan="7" class="py-8 text-center text-gray-500">
                                 Loading leads...
                             </td>
                         </tr>
                         <tr v-else-if="leads.length === 0">
-                            <td colspan="6" class="py-8 text-center text-gray-500">
+                            <td colspan="7" class="py-8 text-center text-gray-500">
                                 No leads found
                             </td>
                         </tr>
@@ -197,17 +231,29 @@ const handleActionMenu = (lead) => {
                                 </div>
                             </td>
 
-                            <!-- Property -->
+
                             <td class="py-4 px-6">
-                                <span class="text-sm text-gray-600">{{ lead.property?.address || 'N/A' }}</span>
+                                <div class="max-w-xs">
+                                    <div class="text-sm font-medium text-gray-900">{{ lead.property?.name || 'N/A' }}
+                                    </div>
+                                    <div class="text-xs text-gray-500 truncate">{{ lead.property?.address || '' }}</div>
+                                </div>
                             </td>
 
-                            <!-- Date -->
+
                             <td class="py-4 px-6">
-                                <span class="text-sm text-gray-600">{{ $formatDate(lead.created_at) }}</span>
+                                <span class="text-sm text-gray-600">{{ lead.type_label }}</span>
                             </td>
 
-                            <!-- Contact Info -->
+
+                            <td class="py-4 px-6">
+                                <div class="text-sm text-gray-900">{{ $formatDate(lead.created_at) }}</div>
+                                <div v-if="lead.date && lead.time" class="text-xs text-gray-500">
+                                    Scheduled: {{ lead.date }} {{ lead.time }}
+                                </div>
+                            </td>
+
+
                             <td class="py-4 px-6">
                                 <div class="flex items-center space-x-2">
                                     <Icon :name="lead.phone ? 'lucide:phone' : 'lucide:mail'"
@@ -216,7 +262,7 @@ const handleActionMenu = (lead) => {
                                 </div>
                             </td>
 
-                            <!-- Action -->
+
                             <td class="py-4 px-6">
                                 <button @click.stop="handleActionMenu(lead)"
                                     class="text-gray-400 hover:text-gray-600 transition-colors">
@@ -228,24 +274,9 @@ const handleActionMenu = (lead) => {
                 </table>
             </div>
 
-            <!-- Pagination -->
-            <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
-                <div class="text-sm text-gray-600">
-                    Showing {{ leads.length }} of {{ totalItems }}
-                </div>
-                <div class="flex items-center gap-2">
-                    <button @click="currentPage--" :disabled="currentPage === 1"
-                        class="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">
-                        Previous
-                    </button>
-                    <button class="px-3 py-1 text-sm bg-gray-900 text-white rounded">
-                        {{ currentPage }}
-                    </button>
-                    <button @click="currentPage++" :disabled="currentPage >= totalPages"
-                        class="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">
-                        Next
-                    </button>
-                </div>
+
+            <div v-if="totalPages > 1" class="px-6 py-4 border-t border-gray-100">
+                <Pagination :config="paginationConfig" @loadData="loadData" />
             </div>
         </div>
     </div>
