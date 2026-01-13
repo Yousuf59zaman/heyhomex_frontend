@@ -22,7 +22,6 @@ const fetchLeads = async () => {
             page: currentPage.value,
         }
 
-
         if (typeFilter.value) {
             params.type = typeFilter.value
         }
@@ -275,7 +274,7 @@ const loadData = (page) => {
             </div>
 
 
-            <div v-if="totalPages > 1" class="px-6 py-4 border-t border-gray-100">
+            <div class="px-6 py-4 border-t border-gray-100">
                 <Pagination :config="paginationConfig" @loadData="loadData" />
             </div>
         </div>
