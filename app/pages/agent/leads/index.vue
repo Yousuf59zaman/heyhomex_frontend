@@ -21,16 +21,16 @@ const fetchLeads = async () => {
         const params = {
             page: currentPage.value,
         }
-
         if (typeFilter.value) {
             params.type = typeFilter.value
         }
-
+        if (statusFilter.value) {
+            params.status = statusFilter.value
+        }
         const response = await $fetchCitizen('agent/v1/leads/list', {
             method: 'GET',
             params
         })
-
         leads.value = response.data.data
         totalItems.value = response.data.meta.total
         totalPages.value = response.data.meta.last_page
