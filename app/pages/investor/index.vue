@@ -215,38 +215,45 @@
     }
 
     const handleRemoveItem = ({itemId, type}) => {
-        if (type === "home") {
-            itemToRemove.value = { itemId, type }
-            showConfirmModal.value = true
-        } else {
-            const index = savedVideoItems.value.findIndex(
-                (item) => item.id === itemId
-            )
-            if (index !== -1) {
-                savedVideoItems.value.splice(index, 1)
-            }
-        }
+        itemToRemove.value = { itemId, type }
+        showConfirmModal.value = true
     }
 
     const confirmRemoveFavorite = async () => {
         if (!itemToRemove.value) return
         
         const itemId = itemToRemove.value.itemId
+        const type = itemToRemove.value.type
         itemToRemove.value = null
         
         try {
-            await $fetchCitizen(`/v1/favorite-properties/${itemId}/toggle`, {
-                method: "POST",
-            })
-            
-            toast.add({
-                severity: 'info',
-                summary: 'Removed from Favorites',
-                detail: 'Property has been removed from your saved list',
-                life: 3000
-            })
-            
-            await loadFavoriteProperties()
+            if (type === "home") {
+                await $fetchCitizen(`/v1/favorite-properties/${itemId}/toggle`, {
+                    method: "POST",
+                })
+                
+                toast.add({
+                    severity: 'info',
+                    summary: 'Removed from Favorites',
+                    detail: 'Property has been removed from your saved list',
+                    life: 3000
+                })
+                
+                await loadFavoriteProperties()
+            } else {
+                await $fetchCitizen(`/v1/favorite-videos/${itemId}/toggle`, {
+                    method: "POST",
+                })
+                
+                toast.add({
+                    severity: 'info',
+                    summary: 'Removed from Favorites',
+                    detail: 'Video has been removed from your saved list',
+                    life: 3000
+                })
+                
+                await loadFavoriteVideos()
+            }
         } catch (e) {
             console.error("Error removing favorite:", e.message)
             toast.add({
@@ -262,7 +269,7 @@
         if (type === "home") {
             navigateTo(`/investor/property/${item.id}`)
         } else {
-            console.log("Video clicked:", item)
+            navigateTo(`/investor/watch/${item.id}`)
         }
     }
 
@@ -339,14 +346,70 @@
         }
     }
 
-    const handleVideoClick = (video) => {
-        console.log("Video clicked:", video)
+    const loadFavoriteVideos = async () => {
+        try {
+            const response = await $fetchCitizen("/v1/favorite-videos/list", {
+                method: "GET",
+                params: {
+                    page: 1,
+                    per_page: 3,
+                },
+            })
+
+            // Only keep the first 3 videos
+            savedVideoItems.value = response.data.data
+                .slice(0, 3)
+                .map((video) => ({
+                    id: video.id,
+                    title: video.title,
+                    description: video.description || '',
+                    thumbnail: video.video_image || '/images/dashboard/video/1.png',
+                }))
+        } catch (e) {
+            console.error("Error loading favorite videos:", e.message)
+            savedVideoItems.value = []
+        }
     }
 
-    const toggleVideoFavorite = (video) => {
+    const handleVideoClick = (video) => {
+        navigateTo(`/investor/watch/${video.id}`)
+    }
+
+    const toggleVideoFavorite = async (video) => {
         const targetVideo = videos.value.find((v) => v.id === video.id)
-        if (targetVideo) {
-            targetVideo.isFavorite = !targetVideo.isFavorite
+        if (!targetVideo) return
+
+        const previousState = targetVideo.isFavorite
+        targetVideo.isFavorite = !targetVideo.isFavorite
+
+        try {
+            const response = await $fetchCitizen(`/v1/favorite-videos/${video.id}/toggle`, {
+                method: "POST",
+            })
+
+            if (response.status === "success") {
+                targetVideo.isFavorite = response.data.is_favorite
+                
+                toast.add({
+                    severity: response.data.is_favorite ? 'success' : 'info',
+                    summary: response.data.is_favorite ? 'Added to Favorites' : 'Removed from Favorites',
+                    detail: response.data.is_favorite 
+                        ? 'Video has been added to your favorite list'
+                        : 'Video has been removed from your favorite list',
+                    life: 3000
+                })
+            } else {
+                targetVideo.isFavorite = previousState
+            }
+        } catch (e) {
+            console.error("Error toggling favorite:", e.message)
+            targetVideo.isFavorite = previousState
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to update favorite status',
+                life: 3000
+            })
         }
     }
 
@@ -364,6 +427,7 @@
         loadData()
         loadVideos()
         loadFavoriteProperties()
+        loadFavoriteVideos()
     })
 
    

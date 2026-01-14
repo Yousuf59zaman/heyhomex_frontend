@@ -16,7 +16,7 @@ const showConfirmModal = ref(false)
 const propertyToRemove = ref(null)
 const videoToRemove = ref(null)
 
-// Pagination
+
 const currentPage = ref(1)
 const totalPages = ref(1)
 const totalResults = ref(0)
@@ -53,7 +53,7 @@ const loadFavoriteProperties = async () => {
                 : null,
         }))
 
-        // Update pagination
+        
         currentPage.value = response.data.meta.current_page
         totalPages.value = response.data.meta.last_page
         totalResults.value = response.data.meta.total
@@ -75,7 +75,18 @@ const loadFavoriteVideos = async () => {
             method: "GET",
         })
         
-        videos.value = response.data.data || []
+        videos.value = response.data.data.map((video) => ({
+            id: video.id,
+            title: video.title,
+            description: video.description || '',
+            channel: video.channel?.name || 'Unknown Channel',
+            duration: video.duration || '0:00',
+            views: '0 views',
+            uploadTime: new Date(video.created_at).toLocaleDateString(),
+            thumbnail: video.video_image || '/images/dashboard/1.png',
+            isFavorite: true,
+            videoUrl: video.video_url,
+        })) || []
     } catch (e) {
         console.error("Error loading favorite videos:", e.message)
         errorVideos.value = e
@@ -180,7 +191,7 @@ const handlePropertyClick = (property) => {
 }
 
 const handleVideoClick = (video) => {
-    navigateTo(`/investor/video/${video.id}`)
+    navigateTo(`/investor/watch/${video.id}`)
 }
 
 onMounted(() => {
@@ -325,20 +336,69 @@ watch(
                 </NuxtLink>
             </div>
 
-            <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div v-for="video in videos" :key="video.id" @click="handleVideoClick(video)" class="cursor-pointer group">
-                    <div class="relative bg-gray-100 rounded-lg overflow-hidden">
-                        <img 
-                            :src="video.thumbnail || '/images/placeholder-video.jpg'" 
+            <!-- Videos Grid -->
+            <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div
+                    v-for="video in videos"
+                    :key="video.id"
+                    class="video-card flex flex-col">
+                    <!-- Thumbnail -->
+                    <div class="relative h-[200px] rounded-[10px] overflow-hidden cursor-pointer group" @click="handleVideoClick(video)">
+                        <img
+                            :src="video.thumbnail"
                             :alt="video.title"
-                            class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-200" />
-                        <button @click.stop="toggleVideoFavorite(video)" class="absolute top-2 right-2 p-2 bg-white/90 rounded-full hover:bg-white transition-colors">
-                            <Icon name="lucide:heart" class="w-5 h-5 text-red-500 fill-red-500" />
+                            class="w-full h-full object-cover" />
+
+                        <div
+                            class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
+                            <div
+                                class="bg-red-600 group-hover:bg-red-700 flex items-center justify-center rounded-full w-10 h-10 transition-colors">
+                                <Icon
+                                    name="lucide:play"
+                                    class="w-5 h-5 text-white" />
+                            </div>
+                        </div>
+
+                        <div
+                            class="absolute bottom-2 right-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
+                            {{ video.duration }}
+                        </div>
+                        <button
+                            @click.stop="toggleVideoFavorite(video)"
+                            class="absolute top-2 right-2 flex items-center justify-center p-2 rounded-[8px] bg-white/90 backdrop-blur-[2px] shadow-sm transition-colors">
+                            <Icon
+                                :name="video.isFavorite ? 'mdi:heart' : 'mdi:heart-outline'"
+                                class="w-5 h-5 text-[#283849]" />
                         </button>
                     </div>
-                    <div class="mt-2">
-                        <h3 class="font-semibold text-gray-900 group-hover:text-[#333365] transition-colors">{{ video.title }}</h3>
-                        <p class="text-sm text-gray-600 mt-1">{{ video.description }}</p>
+
+                    <!-- Video Details -->
+                    <div class="flex gap-1 items-start mt-4">
+                        <div class="flex-1 flex gap-4 items-start">
+                            <!-- Channel Avatar -->
+                            <div class="bg-[#283849] rounded-[10px] w-12 h-12 flex-shrink-0 flex items-center justify-center">
+                                <p class="text-white text-sm font-semibold text-center leading-[16px]">
+                                    Hello
+                                </p>
+                            </div>
+                            
+                            <!-- Title and Metadata -->
+                            <div class="flex-1 flex flex-col gap-1">
+                                <h3
+                                    class="text-[#283849] text-base font-semibold leading-[1.5] line-clamp-2 cursor-pointer hover:text-[#121a22]"
+                                    @click="handleVideoClick(video)">
+                                    {{ video.title }}
+                                </h3>
+                                <div
+                                    class="flex items-center text-xs text-[#283849] gap-1.5">
+                                    <span>{{ video.channel }}</span>
+                                    <div class="bg-[#d4d4d4] h-3 w-px"></div>
+                                    <span>{{ video.views }}</span>
+                                    <div class="bg-[#d4d4d4] h-3 w-px"></div>
+                                    <span>{{ video.uploadTime }}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -355,3 +415,17 @@ watch(
         :message="propertyToRemove ? 'This property will be removed from your saved list.' : 'This video will be removed from your saved list.'"
         @confirm="confirmRemoveFavorite" />
 </template>
+
+<style scoped>
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.video-card {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+</style>
