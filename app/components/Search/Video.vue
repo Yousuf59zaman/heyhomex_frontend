@@ -439,7 +439,7 @@
                 </div>
             </div>
 
-            <!-- Map View: Full-width map on top + cards below -->
+            <!-- Map View: Full-width map on top + cards below  -->
             <div v-if="viewMode === 'Map View'" class="flex flex-col gap-4">
                 <div class="w-full">
                     <div class="relative z-0 bg-white rounded-xl overflow-hidden h-[400px] sm:h-[500px] lg:h-[600px]">
