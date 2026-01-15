@@ -7,6 +7,7 @@ definePageMeta({
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
+const { citizen_user } = citizenAuth()
 
 const agentId = route.params.id
 const agentData = ref(null)
@@ -66,7 +67,7 @@ const togglePropertyFavorite = (property) => {
     })
 }
 
-const submitContactForm = () => {
+const submitContactForm = async () => {
     if (!contactForm.value.fullName || !contactForm.value.message) {
         toast.add({
             severity: 'warn',
@@ -78,19 +79,45 @@ const submitContactForm = () => {
     }
 
     contactLoading.value = true
-    
-    // Simulate API call
-    setTimeout(() => {
+    try {
+        const now = new Date()
+
+        await $fetchCitizen('/v1/leads/store', {
+            method: 'POST',
+            body: {
+                user_id: citizen_user.value?.data?.id,
+                property_id: null,
+                agent_id: agentId,
+                name: contactForm.value.fullName,
+                email: citizen_user.value?.data?.email,
+                phone: citizen_user.value?.data?.user_info?.mobile || '',
+                message: contactForm.value.message,
+                date: now.toISOString().split('T')[0],
+                time: now.toTimeString().split(' ')[0],
+                type: 1,
+            },
+        })
+
         toast.add({
             severity: 'success',
             summary: 'Message Sent',
-            detail: 'Your message has been sent to the agent (Demo)',
+            detail: 'Your message has been sent to the agent',
             life: 3000,
         })
+
         contactForm.value.fullName = ''
         contactForm.value.message = ''
+    } catch (error) {
+        console.error('Error sending message:', error)
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.message || 'Failed to send message',
+            life: 3000,
+        })
+    } finally {
         contactLoading.value = false
-    }, 1000)
+    }
 }
 
 const formatPriceRange = (minPrice, maxPrice) => {
