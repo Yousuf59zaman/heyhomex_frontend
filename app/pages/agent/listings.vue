@@ -210,7 +210,7 @@ const handleActionMenu = (listing) => {
                             <td class="py-4 px-6">
                                 <img :src="listing.property_image" :alt="listing.property_title"
                                     class="w-20 h-14 object-cover rounded-lg"
-                                    @error="$event.target.src = '/images/dashboard/property1.jpg'" />
+                                    @error="$event.target.src = '/svg/not-found-img.svg'" />
                             </td>
 
 
