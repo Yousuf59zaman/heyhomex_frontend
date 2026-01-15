@@ -9,7 +9,13 @@ const router = useRouter()
 const toast = useToast()
 
 const agentId = route.params.id
-const pending = ref(false)
+const agentData = ref(null)
+const apiResponse = ref(null)
+const propertiesResponse = ref(null)
+const properties = ref([])
+const pending = ref(true)
+const propertiesLoading = ref(false)
+const error = ref(null)
 
 const contactForm = ref({
     fullName: '',
@@ -17,67 +23,22 @@ const contactForm = ref({
 })
 const contactLoading = ref(false)
 
-// Mock data - API not implemented yet
-const agentData = ref({
-    id: 1,
-    name: 'John Watters',
-    photo: '/images/agents/1.png',
-    agent_type: 'Top Agents',
-    min_price: 500000,
-    max_price: 3800000,
-    sales_count: 283,
-    rating: 5.0,
-    reviews_count: 48,
-    bio: `Aloha! I'm John Watters, a dedicated real estate professional with Top Agents, specializing in Hawaii's unique and dynamic property market. Whether you're searching for your dream home with ocean views, looking to invest in island paradise, or ready to sell your property, I'm here to guide you through every step of the journey.\n\nWhat sets Hawaii real estate apart is the incredible blend of natural beauty, diverse communities, and lifestyle opportunities—from beachfront condos to mountain retreats. I bring local market expertise, a commitment to personalized service, and a genuine passion for helping clients find not just a house, but a home that fits their vision of island living.`,
-    isFavorited: false,
-})
-
-const properties = ref([
-    {
-        id: 1,
-        title: 'Island Bank Hawaii',
-        address: '456 Ocean View Dr, Maui, HI 96753',
-        price: 431000,
-        beds: 3,
-        baths: 3,
-        sqft: '1733/5000',
-        image: '/images/agents/1.png',
-        isFavorited: false,
-    },
-    {
-        id: 2,
-        title: 'Hawaii Home Movers',
-        address: '123 Aloha Lane, Honolulu, HI 96818',
-        price: 475000,
-        beds: 5,
-        baths: 3,
-        sqft: '1733/5000',
-        image: '/images/agents/1.png',
-        isFavorited: false,
-    },
-    {
-        id: 3,
-        title: 'Seabreeze Living Co.',
-        address: '201 Sea Shore Rd, Kahului, HI 96732',
-        price: 429000,
-        beds: 3,
-        baths: 2,
-        sqft: '1733/5000',
-        image: '/images/agents/1.png',
-        isFavorited: false,
-    },
-    {
-        id: 4,
-        title: 'Volcano View Cabin',
-        address: '12 Lava Ridge, Volcano, HI 96785',
-        price: 289000,
-        beds: 5,
-        baths: 3,
-        sqft: '1733/5000',
-        image: '/images/agents/1.png',
-        isFavorited: false,
-    },
-])
+const loadAgentDetail = async () => {
+    pending.value = true
+    error.value = null
+    try {
+        const response = await $fetchCitizen(`/v1/user/${agentId}`, {
+            method: 'GET',
+        })
+        apiResponse.value = response
+        agentData.value = response?.data || null
+    } catch (e) {
+        console.error('Error loading agent:', e)
+        error.value = e
+    } finally {
+        pending.value = false
+    }
+}
 
 const toggleFavorite = () => {
     if (!agentData.value) return
@@ -153,13 +114,81 @@ const formatPriceRange = (minPrice, maxPrice) => {
     }
 }
 
+const loadAgentProperties = async () => {
+    propertiesLoading.value = true
+    try {
+        const response = await $fetchCitizen(`/v1/agent/${agentId}/properties`, {
+            method: 'GET',
+        })
+        propertiesResponse.value = response
+        properties.value = (response?.data || []).map((property) => ({
+            id: property.id,
+            title: property.name,
+            address: property.address,
+            price: parseFloat(property.price) || 0,
+            beds: property.beds,
+            baths: property.baths,
+            sqft: property.square_feet,
+            image: property.image_url,
+            isFavorited: property.is_favorite || false,
+        }))
+    } catch (e) {
+        console.error('Error loading properties:', e)
+    } finally {
+        propertiesLoading.value = false
+    }
+}
+
+const agentName = computed(() => agentData.value?.name || 'Agent')
+const agentFirstName = computed(() => agentName.value.split(' ')[0] || 'Agent')
+const agentPhoto = computed(
+    () => agentData.value?.photo || agentData.value?.profile_pic || '/images/agents/1.png'
+)
+const agentType = computed(
+    () => agentData.value?.agent_type || agentData.value?.user_type?.[0]?.name || 'Agent'
+)
+const agentRating = computed(() => {
+    const rating = Number(agentData.value?.rating)
+    return Number.isFinite(rating) ? rating : 5.0
+})
+const agentReviewCount = computed(() => {
+    const count = Number(agentData.value?.reviews_count)
+    return Number.isFinite(count) ? count : 0
+})
+const agentSalesCount = computed(() => {
+    const count = Number(agentData.value?.sales_count)
+    return Number.isFinite(count) ? count : 0
+})
+const agentMinPrice = computed(() => {
+    const minPrice = parseFloat(
+        agentData.value?.user_preference?.range_minimum_price ??
+            agentData.value?.min_price
+    )
+    return Number.isFinite(minPrice) ? minPrice : 0
+})
+const agentMaxPrice = computed(() => {
+    const maxPrice = parseFloat(
+        agentData.value?.user_preference?.range_maximum_price ??
+            agentData.value?.max_price
+    )
+    return Number.isFinite(maxPrice) ? maxPrice : 0
+})
+const agentBio = computed(
+    () => agentData.value?.bio || agentData.value?.user_info?.bio || 'Bio coming soon.'
+)
+
 const showFullBio = ref(false)
 const bioPreview = computed(() => {
-    if (!agentData.value?.bio) return ''
-    if (showFullBio.value) return agentData.value.bio
-    const words = agentData.value.bio.split(' ')
-    if (words.length <= 100) return agentData.value.bio
+    if (!agentBio.value) return ''
+    if (showFullBio.value) return agentBio.value
+    const words = agentBio.value.split(' ')
+    if (words.length <= 100) return agentBio.value
     return words.slice(0, 100).join(' ') + '...'
+})
+
+onMounted(async () => {
+    await loadAgentDetail()
+    await loadAgentProperties()
 })
 </script>
 
@@ -193,7 +222,7 @@ const bioPreview = computed(() => {
                 <div class="flex flex-col gap-4">
                     <!-- Agent Image -->
                     <div class="relative w-full h-[324px] rounded-[10px] overflow-hidden">
-                        <img :src="agentData.photo || '/images/agents/1.png'" :alt="agentData.name"
+                        <img :src="agentPhoto" :alt="agentName"
                             class="w-full h-full object-cover"
                             @error="$event.target.src = '/images/agents/1.png'" />
                     </div>
@@ -202,10 +231,10 @@ const bioPreview = computed(() => {
                     <div class="flex items-start justify-between gap-4">
                         <div class="flex-1">
                             <h2 class="text-[24px] font-semibold text-[#121A22] leading-[32px] mb-1">
-                                {{ agentData.name }}
+                                {{ agentName }}
                             </h2>
                             <p class="text-[16px] text-[#121A22] leading-[20px] capitalize">
-                                {{ agentData.agent_type }}
+                                {{ agentType }}
                             </p>
                         </div>
 
@@ -213,11 +242,11 @@ const bioPreview = computed(() => {
                             <!-- Rating -->
                             <div class="flex items-center gap-1">
                                 <span class="text-[20px] font-bold text-[#283849] leading-[1.5]">
-                                    {{ agentData.rating.toFixed(1) }}
+                                    {{ agentRating.toFixed(1) }}
                                 </span>
                                 <Icon name="fa6-solid:star" class="w-4 h-4 text-[#FFB013]" />
                                 <span class="text-[14px] text-[#121A22] leading-[20px]">
-                                    ({{ agentData.reviews_count }})
+                                    ({{ agentReviewCount }})
                                 </span>
                             </div>
 
@@ -237,7 +266,7 @@ const bioPreview = computed(() => {
                     <div class="grid grid-cols-2 gap-3">
                         <div class="bg-[#FAF9F8] rounded-[12px] px-8 py-4 lg:py-4 text-center">
                             <p class="text-[20px] font-bold text-[#121A22] leading-[28px] capitalize mb-4">
-                                {{ formatPriceRange(agentData.min_price, agentData.max_price) }}
+                                {{ formatPriceRange(agentMinPrice, agentMaxPrice) }}
                             </p>
                             <p class="text-[20px] font-medium text-[#121A22] leading-[28px] capitalize">
                                 Price Range
@@ -245,7 +274,7 @@ const bioPreview = computed(() => {
                         </div>
                         <div class="bg-[#FAF9F8] rounded-[12px] px-8 py-4 lg:py-4 text-center">
                             <p class="text-[20px] font-bold text-[#121A22] leading-[28px] capitalize mb-4">
-                                {{ agentData.sales_count }} sold
+                                {{ agentSalesCount }} sold
                             </p>
                             <p class="text-[20px] font-medium text-[#121A22] leading-[28px] capitalize">
                                 Last 12 months
@@ -256,12 +285,12 @@ const bioPreview = computed(() => {
                     <!-- About Section -->
                     <div class="flex flex-col gap-3">
                         <h3 class="text-[24px] font-semibold text-[#121A22] leading-[32px]">
-                            About {{ agentData.name.split(' ')[0] }}
+                            About {{ agentFirstName }}
                         </h3>
                         <div class="text-[16px] text-[#283849] leading-[24px] whitespace-pre-line">
                             {{ bioPreview }}
                         </div>
-                        <button v-if="agentData.bio && agentData.bio.split(' ').length > 100"
+                        <button v-if="agentBio && agentBio.split(' ').length > 100"
                             @click="showFullBio = !showFullBio"
                             class="text-[16px] font-bold text-[#2C3E50] leading-[24px] text-left hover:underline">
                             {{ showFullBio ? 'See Less...' : 'See More...' }}
@@ -276,7 +305,11 @@ const bioPreview = computed(() => {
                     </h3>
 
                     <!-- Properties Grid -->
-                    <div v-if="properties.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div v-if="propertiesLoading" class="text-center py-12 bg-white rounded-[12px]">
+                        <p class="text-gray-500">Loading properties...</p>
+                    </div>
+
+                    <div v-else-if="properties.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div v-for="property in properties" :key="property.id"
                             class="bg-white border border-[#D9D9D9] rounded-[8px] p-3 cursor-pointer hover:shadow-lg transition-shadow"
                             @click="navigateTo(`/kamaina/property/${property.id}`)">
@@ -350,7 +383,7 @@ const bioPreview = computed(() => {
                         <div class="bg-white rounded-[8px] p-4 flex flex-col gap-5 lg:bg-transparent lg:rounded-none">
                             <h3
                                 class="text-[20px] leading-7 font-semibold text-[#121a22] md:text-[22px] md:leading-8 lg:text-2xl lg:leading-8">
-                                Contact {{ agentData.name.split(' ')[0] }}
+                                Contact {{ agentFirstName }}
                             </h3>
 
                             <!-- Divider -->
