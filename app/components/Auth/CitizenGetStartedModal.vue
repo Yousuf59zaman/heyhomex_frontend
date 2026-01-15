@@ -270,7 +270,7 @@
                     <button
                         @click="handleContinueWithApple"
                         type="button"
-                        :disabled="isAppleLoadingSSO"
+                        :disabled="true"
                         class="flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-[12px] border border-[#CFDBE8] bg-white px-5 text-base font-bold leading-6 text-[#18222c] transition-colors duration-200 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
                         <svg
                             v-if="!isAppleLoadingSSO"
@@ -289,7 +289,7 @@
                     <button
                         @click="handleContinueWithFacebook"
                         type="button"
-                        :disabled="isFacebookLoadingSSO"
+                        :disabled="true"
                         class="flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-[12px] border border-[#CFDBE8] bg-white px-5 text-base font-bold leading-6 text-[#18222c] transition-colors duration-200 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
                         <svg
                             v-if="!isFacebookLoadingSSO"
