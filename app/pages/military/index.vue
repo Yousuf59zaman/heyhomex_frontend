@@ -440,7 +440,7 @@
         <!-- Advertisement Placement (Top Banner) -->
         <AdvertisementDisplay 
             v-if="hydrated"
-            placement-slug="kamaina-dashboard-row1-col-4-8" 
+            placement-slug="military-dashboard-banner" 
             
         />    
 

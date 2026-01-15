@@ -458,7 +458,8 @@
                 Your local community insights are just a click away.
             </p>
         </div>
-
+        <AdvertisementDisplay v-if="hydrated" placement-slug="investor-search-top-banner"
+            class="investor-ad-banner" />
         <!-- Search Filter Section Skeleton BEFORE hydration -->
         <div v-if="!hydrated" class="animate-pulse">
             <div class="lg:hidden flex flex-col gap-4">
@@ -490,12 +491,8 @@
             @map-search="handleMapSearch"
             @toggle-filters="handleToggleFilters" />
 
-        <!-- Advertisement Placement (Top Banner) -->
-        <AdvertisementDisplay 
-            v-if="hydrated"
-            placement-slug="kamaina-dashboard-row1-col-4-8"
-            class="investor-ad-banner" 
-        />      
+         <AdvertisementDisplay v-if="hydrated" placement-slug="investor-dashboard-banner" />
+        
 
         <!-- Chart and Saved List Section -->
         <div
