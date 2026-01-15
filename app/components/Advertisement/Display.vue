@@ -51,10 +51,10 @@ const loadAdvertisements = async () => {
                 method: 'GET'
             }
         );
-
+            console.log("ciming aDS",adsResponse.data.data);
         if (adsResponse.data?.data) {
-            advertisements.value = adsResponse.data.data.filter(ad => ad.is_active);
-
+            advertisements.value = adsResponse.data.data.filter(ad => ad.status);
+            
 
             if (advertisements.value.length > 1) {
                 startRotation();

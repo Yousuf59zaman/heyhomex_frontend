@@ -74,10 +74,41 @@ const loadVideos = async () => {
     }
 }
 
-const toggleFavorite = (videoId) => {
+const toggleFavorite = async (videoId) => {
     const video = videos.value.find((v) => v.id === videoId)
-    if (video) {
-        video.isFavorite = !video.isFavorite
+    if (!video) return
+
+    const previousState = video.isFavorite
+    video.isFavorite = !video.isFavorite
+
+    try {
+        const response = await $fetchCitizen(`/v1/favorite-videos/${videoId}/toggle`, {
+            method: "POST",
+        })
+
+        if (response.status === "success") {
+            video.isFavorite = response.data.is_favorite
+            
+            toast.add({
+                severity: response.data.is_favorite ? 'success' : 'info',
+                summary: response.data.is_favorite ? 'Added to Favorites' : 'Removed from Favorites',
+                detail: response.data.is_favorite 
+                    ? 'Video has been added to your favorite list'
+                    : 'Video has been removed from your favorite list',
+                life: 3000
+            })
+        } else {
+            video.isFavorite = previousState
+        }
+    } catch (e) {
+        console.error("Error toggling favorite:", e.message)
+        video.isFavorite = previousState
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update favorite status',
+            life: 3000
+        })
     }
 }
 
@@ -201,13 +232,10 @@ watch(
                         </div>
                         <button
                             @click.stop="toggleFavorite(video.id)"
-                            class="absolute top-2 left-2 flex items-center justify-center p-2 rounded-[8px] bg-white/90 backdrop-blur-[2px] shadow-sm transition-colors">
+                            class="absolute top-2 right-2 flex items-center justify-center p-2 rounded-[8px] bg-white/90 backdrop-blur-[2px] shadow-sm transition-colors">
                             <Icon
-                                name="lucide:heart"
-                                :class="[
-                                    'w-5 h-5',
-                                    video.isFavorite ? 'text-[#2C3E50] fill-current' : 'text-[#2C3E50] fill-none',
-                                ]" />
+                                :name="video.isFavorite ? 'mdi:heart' : 'mdi:heart-outline'"
+                                class="w-5 h-5 text-[#283849]" />
                         </button>
                     </div>
 
