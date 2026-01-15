@@ -146,7 +146,21 @@
         <div
             class="relative hidden md:flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12 py-1">
             <!-- Left Spacer-->
-            <div class="w-[200px]"></div>
+            <div
+                v-if="!admin_user && !hasCitizenDashboardAccess"
+                class="hidden lg:flex items-center gap-3 xl:gap-4">
+                <button
+                    @click="handleAdvertiserPanel"
+                    class="py-2 px-3 lg:px-4 text-white text-xs lg:text-sm font-semibold leading-5 border border-white rounded-lg hover:bg-white/10 transition-colors duration-200 whitespace-nowrap">
+                    Advertiser's Panel
+                </button>
+                <button
+                    @click="handleAgentPanel"
+                    class="py-2 px-3 lg:px-4 text-white text-xs lg:text-sm font-semibold leading-5 border border-white rounded-lg hover:bg-white/10 transition-colors duration-200 whitespace-nowrap">
+                    Agent Panel
+                </button>
+            </div>
+            <div v-else class="w-[200px]"></div>
 
             <!-- Logo Section-->
             <div
@@ -189,16 +203,6 @@
                 <div
                     v-else
                     class="hidden lg:flex items-center gap-3 xl:gap-4">
-                    <button
-                        @click="handleAdvertiserPanel"
-                        class="py-2 px-3 lg:px-4 text-white text-xs lg:text-sm font-semibold leading-5 border border-white rounded-lg hover:bg-white/10 transition-colors duration-200 whitespace-nowrap">
-                        Advertiser's Panel
-                    </button>
-                    <button
-                        @click="handleAgentPanel"
-                        class="py-2 px-3 lg:px-4 text-white text-xs lg:text-sm font-semibold leading-5 border border-white rounded-lg hover:bg-white/10 transition-colors duration-200 whitespace-nowrap">
-                        Agent Panel
-                    </button>
                     <button
                         @click="handleSignIn"
                         class="text-white text-xs lg:text-sm font-semibold leading-5 hover:text-gray-300 transition-colors no-underline whitespace-nowrap">

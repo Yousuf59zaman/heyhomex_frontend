@@ -10,82 +10,38 @@ const toast = useToast()
 
 const searchQuery = ref(route.query.q || '')
 const searchType = ref(route.query.type || 'location')
+const agents = ref([])
+const apiResponse = ref(null)
 const pending = ref(false)
+const error = ref(null)
 
-const agents = ref([
-    {
-        id: 1,
-        name: 'John Watters',
-        photo: '/images/dashboard/1.png',
-        agent_type: 'Top Agents',
-        min_price: 500000,
-        max_price: 3800000,
-        sales_count: 283,
-        rating: 5.0,
-        reviews_count: 48,
-        isFavorited: false,
-    },
-    {
-        id: 2,
-        name: 'Melinda Cook',
-        photo: '/images/dashboard/1.png',
-        agent_type: 'Top Agents',
-        min_price: 500000,
-        max_price: 3800000,
-        sales_count: 283,
-        rating: 5.0,
-        reviews_count: 48,
-        isFavorited: false,
-    },
-    {
-        id: 3,
-        name: 'Draymond John',
-        photo: '/images/dashboard/1.png',
-        agent_type: 'Top Agents',
-        min_price: 500000,
-        max_price: 3800000,
-        sales_count: 283,
-        rating: 5.0,
-        reviews_count: 48,
-        isFavorited: false,
-    },
-    {
-        id: 4,
-        name: 'Elyssa May',
-        photo: '/images/dashboard/1.png',
-        agent_type: 'Top Agents',
-        min_price: 500000,
-        max_price: 3800000,
-        sales_count: 283,
-        rating: 5.0,
-        reviews_count: 48,
-        isFavorited: false,
-    },
-    {
-        id: 5,
-        name: 'Rachel Xander',
-        photo: '/images/dashboard/1.png',
-        agent_type: 'Top Agents',
-        min_price: 500000,
-        max_price: 3800000,
-        sales_count: 283,
-        rating: 5.0,
-        reviews_count: 48,
-        isFavorited: false,
-    },
-    {
-        id: 6,
-        name: 'Bonnie Michaels',
-        photo: '/images/dashboard/1.png',
-        agent_type: 'Top Agents',
-        min_price: 500000,
-        max_price: 3800000,
-        sales_count: 283,
-        rating: 5.0,
-        reviews_count: 48,
-        isFavorited: false,
-    },
-])
+const loadAgents = async () => {
+    pending.value = true
+    error.value = null
+    try {
+        const response = await $fetchCitizen('/v1/user-types/5/users', {
+            method: 'GET',
+        })
+        apiResponse.value = response
+        agents.value = (response?.data?.data || []).map((agent) => ({
+            id: agent.id,
+            name: agent.name,
+            photo: agent.profile_pic || '/images/agents/1.png',
+            agent_type: agent.user_type?.[0]?.name || 'Agent',
+            min_price: parseFloat(agent.user_preference?.range_minimum_price) || 0,
+            max_price: parseFloat(agent.user_preference?.range_maximum_price) || 0,
+            sales_count: 0,
+            rating: 5.0,
+            reviews_count: 0,
+            isFavorited: false,
+        }))
+    } catch (e) {
+        console.error('Error loading agents:', e)
+        error.value = e
+    } finally {
+        pending.value = false
+    }
+}
 
 const handleSearch = () => {
     // API not implemented - just update UI
@@ -109,6 +65,10 @@ const toggleFavorite = (agent) => {
 
 const resultsFound = computed(() => agents.value.length)
 const displayQuery = computed(() => searchQuery.value || 'Honolulu')
+
+onMounted(() => {
+    loadAgents()
+})
 </script>
 
 <template>
