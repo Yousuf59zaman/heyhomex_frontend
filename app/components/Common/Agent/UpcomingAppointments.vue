@@ -84,7 +84,7 @@ const handleLeadClick = (leadId) => {
                         <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">Name</th>
                         <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">Property</th>
                         <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">Contact Info</th>
-                        <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">Action</th>
+                        <!-- <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">Action</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -134,12 +134,12 @@ const handleLeadClick = (leadId) => {
                         </td>
 
                         <!-- Action -->
-                        <td class="py-4 px-4">
+                        <!-- <td class="py-4 px-4">
                             <button @click.stop="handleActionMenu(appointment)"
                                 class="text-gray-400 hover:text-gray-600 transition-colors">
                                 <Icon name="lucide:more-vertical" class="w-5 h-5" />
                             </button>
-                        </td>
+                        </td> -->
                     </tr>
                 </tbody>
             </table>
