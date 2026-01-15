@@ -409,6 +409,11 @@
 
 <template>
     <div class="flex flex-col gap-6 w-full max-w-[1316px] mx-auto">
+        <AdvertisementDisplay 
+            v-if="hydrated"
+            placement-slug="kamaina-search-top-banner" 
+            
+        />
         <!-- Search Filter Section Skeleton BEFORE hydration -->
         <div v-if="!hydrated" class="animate-pulse">
             <div class="lg:hidden flex flex-col gap-4">
@@ -441,7 +446,6 @@
             @map-search="handleMapSearch"
             @toggle-filters="handleToggleFilters" />
 
-        <!-- Advertisement Placement (Top Banner) -->
         <AdvertisementDisplay 
             v-if="hydrated"
             placement-slug="kamaina-dashboard-row1-col-4-8" 

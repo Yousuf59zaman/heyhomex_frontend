@@ -3,9 +3,10 @@ useHead({ title: "Leads - Agent Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "agent" })
 
 const searchQuery = ref('')
-const statusFilter = ref('All')
-const sortBy = ref('All')
+const statusFilter = ref(null)
 const typeFilter = ref('')
+
+const route = useRoute()
 
 const leads = ref([])
 const loading = ref(false)
@@ -15,7 +16,7 @@ const perPage = ref(10)
 const totalPages = ref(0)
 
 
-const fetchLeads = async () => {
+const fetchLeads = async (sf) => {
     loading.value = true
     try {
         const params = {
@@ -24,8 +25,9 @@ const fetchLeads = async () => {
         if (typeFilter.value) {
             params.type = typeFilter.value
         }
-        if (statusFilter.value) {
-            params.status = statusFilter.value
+        const statusValue = sf ?? statusFilter.value
+        if (statusValue) {
+            params.status = statusValue
         }
         const response = await $fetchCitizen('agent/v1/leads/list', {
             method: 'GET',
@@ -42,12 +44,43 @@ const fetchLeads = async () => {
     }
 }
 
+const isLoadingStatus = ref(false)
+const statusOptions = ref([])
+const fetchLeadStatus = async () => {
+    isLoadingStatus.value = true
+    try {
+        const response = await $fetchCitizen('admin/lead-statuses/list', {
+            method: 'GET',
+        })
+        statusOptions.value = response.data.data
+    } catch (error) {
+        console.error('Error fetching leads:', error)
+    } finally {
+        isLoadingStatus.value = false
+    }
+}
+
 onMounted(() => {
+    fetchLeadStatus()
     fetchLeads()
 })
 
-watch([currentPage, typeFilter], () => {
+watch(
+    () => route.query.page,
+    (page) => {
+        const parsed = Number(page)
+        currentPage.value = Number.isFinite(parsed) && parsed > 0 ? parsed : 1
+    },
+    { immediate: true }
+)
+
+watch(currentPage, () => {
     fetchLeads()
+})
+
+watch([typeFilter, statusFilter], () => {
+    currentPage.value = 1
+    fetchLeads(statusFilter.value)
 })
 
 const getLeadStatusInfo = (leadStatus) => {
@@ -113,7 +146,6 @@ const paginationConfig = computed(() => {
 
 const loadData = (page) => {
     currentPage.value = page
-    fetchLeads()
 }
 </script>
 
@@ -153,16 +185,14 @@ const loadData = (page) => {
                 </select>
             </div>
 
-
             <div class="flex items-center gap-2">
                 <span class="text-sm text-gray-600">Status:</span>
-                <select v-model="statusFilter"
+                <select v-model="statusFilter" 
                     class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 cursor-pointer">
-                    <option value="All">All</option>
-                    <option value="New">New</option>
-                    <option value="Claimed">Claimed</option>
-                    <option value="Contacted">Contacted</option>
-                    <option value="Schedule">Schedule</option>
+                    <option :value="null">All</option>
+                    <option v-for="status in statusOptions" :key="status.id" :value="status.id">
+                        {{ status.name }}
+                    </option>
                 </select>
             </div>
         </div>
