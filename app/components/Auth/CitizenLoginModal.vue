@@ -320,7 +320,7 @@
                         placeholder="Enter your email address"
                         required
                         autocomplete="off"
-                        class="w-full px-4 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 font-normal text-[#566573] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                        class="w-full px-4 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 font-normal text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                 </div>
 
                 <div class="flex flex-col gap-2">
@@ -337,7 +337,7 @@
                             placeholder="Enter your password"
                             required
                             autocomplete="current-password"
-                            class="w-full px-4 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 font-normal text-[#566573] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                            class="w-full px-4 h-14 border border-[#CFDBE8] rounded-lg text-base leading-6 font-normal text-[#121A22] font-['sf-pro-Regular'] [font-feature-settings:'dlig'_on] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
                         <button
                             type="button"
                             @click="password_view_status(!password_open)"

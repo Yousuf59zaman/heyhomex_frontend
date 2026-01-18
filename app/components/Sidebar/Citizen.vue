@@ -54,6 +54,16 @@
         return "Citizen"
     })
 
+    const isKamainaUser = computed(() => {
+        const userType = citizen_user.value?.data?.user_type?.[0]
+        const slug = userType?.slug ? userType.slug.toLowerCase() : ""
+        const name = userType?.name ? userType.name.toLowerCase() : ""
+
+        return (
+            slug === "kamaaina" 
+        )
+    })
+
     const sidebarColor = computed(() => {
         const currentPath = route.path
         if (currentPath.includes("kamaina")) {
@@ -74,43 +84,50 @@
     })
 
     // Main navigation items (above separator line) - order matches Figma design
-    const mainNavigationItems = computed(() => [
-        {
-            id: "dashboard",
-            label: "Dashboard",
-            icon: "/svg/menubar/dashboard.svg",
-            iconType: "svg",
-            path: getBasePath.value,
-        },
-        {
-            id: "favourites",
-            label: "Favourites",
-            icon: "/svg/menubar/favourite.svg",
-            iconType: "svg",
-            path: `${getBasePath.value}/favorites`,
-        },
-        {
-            id: "Search",
-            label: "Search",
-            icon: "/svg/menubar/search.svg",
-            iconType: "svg",
-            path: `${getBasePath.value}/search`,
-        },
-        {
-            id: "videos",
-            label: "Videos",
-            icon: "/svg/menubar/video.svg",
-            iconType: "svg",
-            path: `${getBasePath.value}/videos`,
-        },
-        {
-            id: "agents",
-            label: "Agents",
-            icon: "/svg/menubar/agents.svg",
-            iconType: "svg",
-            path: `${getBasePath.value}/agents`,
-        },
-    ])
+    const mainNavigationItems = computed(() => {
+        const items = [
+            {
+                id: "dashboard",
+                label: "Dashboard",
+                icon: "/svg/menubar/dashboard.svg",
+                iconType: "svg",
+                path: getBasePath.value,
+            },
+            {
+                id: "favourites",
+                label: "Favourites",
+                icon: "/svg/menubar/favourite.svg",
+                iconType: "svg",
+                path: `${getBasePath.value}/favorites`,
+            },
+            {
+                id: "Search",
+                label: "Search",
+                icon: "/svg/menubar/search.svg",
+                iconType: "svg",
+                path: `${getBasePath.value}/search`,
+            },
+            {
+                id: "videos",
+                label: "Videos",
+                icon: "/svg/menubar/video.svg",
+                iconType: "svg",
+                path: `${getBasePath.value}/videos`,
+            },
+        ]
+
+        if (isKamainaUser.value) {
+            items.push({
+                id: "agents",
+                label: "Agents",
+                icon: "/svg/menubar/agents.svg",
+                iconType: "svg",
+                path: `${getBasePath.value}/agents`,
+            })
+        }
+
+        return items
+    })
 
     // Settings item (below separator line)
     const settingsItem = computed(() => ({

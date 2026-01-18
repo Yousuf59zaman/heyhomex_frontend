@@ -155,12 +155,6 @@
 
     const handleTourBooked = (data) => {
         console.log('Tour booked:', data)
-        toast.add({
-            severity: 'success',
-            summary: 'Tour Requested',
-            detail: 'Your tour request has been submitted successfully',
-            life: 3000
-        })
     }
 
     const propertyImage = computed(
