@@ -6,6 +6,7 @@
 
     const isScroll = ref(false)
     const menu = ref()
+    const unreadCount = ref(0)
     const profileMenuItems = ref([
         {
             label: "Logout",
@@ -22,6 +23,21 @@
             default: false,
         },
     })
+
+    // Fetch unread notification count (Advertiser doesn't have notifications API yet, using agent API as placeholder)
+    const fetchUnreadCount = async () => {
+        try {
+            const response = await $fetchCitizen('agent/v1/leads/notifications', {
+                method: 'GET',
+                params: { read_status: 'unread', page: 1 }
+            })
+            if (response.status === 'success') {
+                unreadCount.value = response.data.total || 0
+            }
+        } catch (e) {
+            console.error('Failed to fetch unread notifications:', e)
+        }
+    }
 
     const handleScroll = () => {
         isScroll.value = window.scrollY > 0
@@ -66,6 +82,9 @@
 
     onMounted(() => {
         window.addEventListener("scroll", handleScroll)
+        fetchUnreadCount()
+        // Refresh count every 30 seconds
+        setInterval(fetchUnreadCount, 30000)
     })
 
     onUnmounted(() => {
@@ -98,11 +117,12 @@
             <!-- Right Side - Notification and Profile -->
             <div class="flex items-center space-x-2">
                 <button
-                    class="text-gray-400 hover:text-gray-600 transition-colors p-2 flex items-center">
+                    class="text-gray-400 hover:text-gray-600 transition-colors p-2 flex items-center flex-shrink-0 relative">
                     <img
                         src="/svg/dashboard/bell-icon.svg"
                         alt="Notifications"
-                        class="w-6 h-6" />
+                        class="w-6 h-6 flex-shrink-0" />
+                    <span v-if="unreadCount > 0" class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                 </button>
 
                 <Button
