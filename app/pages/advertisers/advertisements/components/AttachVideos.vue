@@ -289,11 +289,11 @@ const closeModal = () => {
                             </div>
 
                             <!-- Video Settings (shown when selected) -->
-                            <div v-if="isVideoSelected(video.id)" class="mt-4 p-3 bg-white rounded-lg border border-gray-200">
+                            <div v-if="isVideoSelected(video.id)" class="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
                                 <p class="text-xs font-medium text-gray-700 mb-3">Display Settings</p>
-                                <div class="flex flex-col gap-3">
-                                    <div class="flex flex-col">
-                                        <label class="text-xs text-gray-600 mb-1.5 block">Display Time (seconds)</label>
+                                <div class="display-settings-grid grid grid-cols-3 gap-4 items-end">
+                                    <div>
+                                        <label class="text-xs text-gray-600 mb-1 block">Display Time (seconds)</label>
                                         <InputNumber
                                             :modelValue="getVideoSettings(video.id)?.display_time"
                                             @update:modelValue="updateVideoSettings(video.id, 'display_time', $event)"
@@ -301,7 +301,7 @@ const closeModal = () => {
                                             :max="60"
                                             showButtons
                                             class="w-full"
-                                            inputClass="text-sm" />
+                                            inputClass="text-sm h-[42px]" />
                                     </div>
                                     <div class="flex flex-col">
                                         <label class="text-xs text-gray-600 mb-1.5 block">Display Order</label>
@@ -311,16 +311,16 @@ const closeModal = () => {
                                             :min="1"
                                             showButtons
                                             class="w-full"
-                                            inputClass="text-sm" />
+                                            inputClass="text-sm h-[42px]" />
                                     </div>
-                                    <div class="flex flex-col">
-                                        <label class="text-xs text-gray-600 mb-1.5 block">Status</label>
+                                    <div>
+                                        <label class="text-xs text-gray-600 mb-1 block">Status</label>
                                         <ToggleButton
                                             :modelValue="getVideoSettings(video.id)?.is_active === 1"
                                             @update:modelValue="updateVideoSettings(video.id, 'is_active', $event ? 1 : 0)"
                                             onLabel="Active"
                                             offLabel="Inactive"
-                                            class="text-xs w-full" />
+                                            class="w-full h-[42px] text-xs font-medium" />
                                     </div>
                                 </div>
                             </div>
@@ -360,5 +360,15 @@ const closeModal = () => {
 <style scoped>
 :deep(.p-dialog-content) {
     max-height: calc(90vh - 180px);
+}
+
+:deep(.display-settings-grid .p-inputnumber-input),
+:deep(.display-settings-grid .p-inputnumber-button-group),
+:deep(.display-settings-grid .p-togglebutton) {
+    height: 42px;
+}
+
+:deep(.display-settings-grid .p-togglebutton) {
+    border-radius: 0.5rem;
 }
 </style>

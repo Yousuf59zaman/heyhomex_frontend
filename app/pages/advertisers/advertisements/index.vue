@@ -95,7 +95,10 @@ const deleteHandler = async () => {
             }
         });
         if (getData.status == true || getData.status == 'success') {
-            response_modal.value = getData;
+            response_modal.value = {
+                status: true,
+                message: 'Advertisement deleted successfully.'
+            };
             data.value = data.value.filter(item => item.id !== deleteId.value);
         }
     } catch (e) {
