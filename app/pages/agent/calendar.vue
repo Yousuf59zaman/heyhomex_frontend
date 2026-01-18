@@ -1,4 +1,6 @@
 <script setup>
+import { format } from 'date-fns'
+
 useHead({ title: "Calendar - Agent Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "agent" })
 
@@ -428,16 +430,33 @@ const confirmReschedule = async () => {
 const formatAppointmentTime = (date, time) => {
     if (!date || !time) return 'N/A'
 
+    const dateTime = new Date(`${date}T${time}`)
+    if (!Number.isNaN(dateTime.getTime())) {
+        return format(dateTime, 'MMM d, yyyy h:mma')
+    }
+
+    const dateOnly = new Date(date)
+    if (!Number.isNaN(dateOnly.getTime())) {
+        return `${format(dateOnly, 'MMM d, yyyy')} ${time}`
+    }
+
+    return 'N/A'
+}
+
+const formatTimeOnly = (time) => {
+    if (!time) return 'N/A'
 
     const timeParts = time.split(':')
     if (timeParts.length < 2) return time
 
-    const hours = parseInt(timeParts[0])
+    const hours = parseInt(timeParts[0], 10)
+    if (Number.isNaN(hours)) return 'N/A'
+
     const minutes = timeParts[1]
     const ampm = hours >= 12 ? 'PM' : 'AM'
     const displayHours = hours % 12 || 12
 
-    return `${displayHours}:${minutes} ${ampm}`
+    return `${displayHours}:${minutes}${ampm}`
 }
 
 const cancelReschedule = () => {
@@ -544,7 +563,7 @@ watch(currentDate, () => {
                             </td>
                             <td class="py-4 px-6">
                                 <div class="text-sm text-gray-900">
-                                    {{ formatAppointmentTime(appointment.date, appointment.time) }}
+                                   {{ formatAppointmentTime(appointment.date, appointment.time) }}
                                 </div>
                             </td>
                             <td class="py-4 px-6">
@@ -668,7 +687,7 @@ watch(currentDate, () => {
                         <div class="mb-3">
                             <div class="flex items-center justify-between mb-2">
                                 <div class="text-sm font-semibold text-gray-900">
-                                    {{ formatAppointmentTime(appointment.date, appointment.time) }}
+                                    {{ formatTimeOnly(appointment.time) }}
                                 </div>
                                 <span class="px-2 py-1 text-xs font-medium rounded-md"
                                     :class="getStatusColor(getStatusInfo(appointment.lead_status).color)">
