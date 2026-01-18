@@ -10,7 +10,7 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'success']);
 
 const visible = computed({
     get: () => props.isOpenModal,
@@ -23,6 +23,7 @@ const availablePlaces = ref([]);
 const attachedPlaces = ref([]);
 const isLoading = ref(false);
 const errors = ref({});
+const response_modal = ref({});
 
 const newPlace = ref({
     ads_place_id: '',
@@ -51,7 +52,7 @@ const loadAttachedPlaces = async () => {
         const response = await $fetchCitizen(`advertiser/advertisements/${props.advertisement.id}/show`, {
             method: 'GET'
         });
-        // Get ads_places from API response
+      
         attachedPlaces.value = response.data?.ads_places || [];
     } catch (e) {
         console.error('Error loading attached places:', e.message);
@@ -83,7 +84,7 @@ const attachPlace = async () => {
     errors.value = {};
 
     try {
-        // Build array of all places to attach (existing + new)
+      
         const placesToAttach = [
             ...attachedPlaces.value.map(p => ({
                 ads_place_id: p.id,
@@ -97,7 +98,7 @@ const attachPlace = async () => {
             }
         ];
 
-        // Create FormData to properly send nested array structure
+      
         const formData = new FormData();
         placesToAttach.forEach((place, index) => {
             formData.append(`ads_places[${index}][ads_place_id]`, place.ads_place_id);
@@ -114,15 +115,17 @@ const attachPlace = async () => {
         );
 
         if (response.status === 'success') {
-            // Reload attached places to get updated data
+         
             await loadAttachedPlaces();
 
-            // Reset form
+        
             newPlace.value = {
                 ads_place_id: '',
                 display_order: 1,
                 is_active: true
             };
+
+            emit('success', response.data);
         }
     } catch (e) {
         if (e.response?.status === 422) {
@@ -155,14 +158,14 @@ const updatePlace = async (place) => {
     errors.value = {};
 
     try {
-        // Build array with all placements including the updated one
+    
         const placesToUpdate = attachedPlaces.value.map(p => ({
             ads_place_id: p.id,
             display_order: p.id === place.id ? editingPlace.value.display_order : p.display_order,
             is_active: p.id === place.id ? (editingPlace.value.is_active ? 1 : 0) : (p.is_active ? 1 : 0)
         }));
 
-        // Create FormData to properly send nested array structure
+      
         const formData = new FormData();
         placesToUpdate.forEach((place, index) => {
             formData.append(`ads_places[${index}][ads_place_id]`, place.ads_place_id);
@@ -181,6 +184,7 @@ const updatePlace = async (place) => {
         if (response.status === 'success') {
             await loadAttachedPlaces();
             editingPlace.value = null;
+            emit('success', response.data);
         }
     } catch (e) {
         if (e.response?.status === 422) {
@@ -208,6 +212,7 @@ const detachPlace = async (placeId) => {
 
         if (response.status === 'success') {
             await loadAttachedPlaces();
+            emit('success', response.data);
         }
     } catch (e) {
         console.error('Error:', e.message);
@@ -279,7 +284,23 @@ const getAvailablePlacesForSelection = computed(() => {
         <div>
             <h4 class="font-semibold mb-3">Attached Placements</h4>
 
-            <LoaderDataFetch v-if="isLoading && attachedPlaces.length === 0" />
+            <div v-if="isLoading && attachedPlaces.length === 0" class="space-y-2">
+                <div v-for="i in 3" :key="i" class="p-3 border border-gray-200 dark:border-gray-600 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1 space-y-2">
+                            <div class="flex items-center gap-2">
+                                <Skeleton width="200px" height="1.25rem" />
+                                <Skeleton width="60px" height="1.25rem" borderRadius="0.25rem" />
+                            </div>
+                            <Skeleton width="300px" height="1rem" />
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <Skeleton shape="circle" size="2.5rem" />
+                            <Skeleton shape="circle" size="2.5rem" />
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div v-else-if="attachedPlaces.length === 0"
                 class="text-center py-8 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-lg">
@@ -361,13 +382,21 @@ const getAvailablePlacesForSelection = computed(() => {
 
         <template #footer class="flex justify-end gap-2 border-gray-200">
             <div class="flex justify-end items-center gap-3 border-gray-200">
-                <Button type="button" label="Done" severity="success" raised
+                <!-- <Button type="button" label="Done" severity="success" raised
                     class="transition-all duration-300 hover:scale-105 hover:shadow-lg" @click="close">
                     <template #icon>
                         <i class="pi pi-check-circle mr-2"></i>
                     </template>
-                </Button>
+                </Button> -->
+                <Button type="button" label="Cancel" severity="danger" outlined
+                        class="transition-all duration-300 hover:scale-105"  @click="close">
+                        <template #icon="{ class: iconClass }">
+                            <i class="pi pi-times-circle mr-2" :class="iconClass"></i>
+                        </template>
+                    </Button>
             </div>
         </template>
     </Dialog>
+
+    <LazyResponseModal :response_modal="response_modal" />
 </template>

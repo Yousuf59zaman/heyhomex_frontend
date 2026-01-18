@@ -14,7 +14,7 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['close', 'add_emit']);
+const emit = defineEmits(['close', 'success']);
 
 const visible = computed({
     get: () => props.isOpenModal,
@@ -34,18 +34,37 @@ const form = ref({
     charge_for_click: props.item?.charge_for_click ?? true,
     status: props.item?.status ?? 0,
     starts_at: props.item?.starts_at?.split(' ')[0] || '',
-    ends_at: props.item?.ends_at?.split(' ')[0] || ''
+    ends_at: props.item?.ends_at?.split(' ')[0] || '',
+    placement: props.item?.placement || 'dashboard',
+    height: props.item?.height || 200,
+    width: props.item?.width || 1200
 });
 
 const errors = ref({});
 const isLoading = ref(false);
+const response_modal = ref({});
 const mediaPreview = ref(props.item?.media_url || null);
-const uploadMethod = ref('file'); // 'file' or 'url'
+const uploadMethod = ref('file'); 
 
 const typeOptions = [
     { value: 1, label: 'Image' },
     { value: 2, label: 'Video' }
 ];
+
+const placementOptions = [
+    { value: 'dashboard', label: 'Dashboard', height: 200, width: 1200 },
+    { value: 'search_top', label: 'Search Page Top Bar', height: 150, width: 1000 },
+    { value: 'videos_top', label: 'Videos Page Topbar', height: 150, width: 1000 },
+    { value: 'videos_first', label: 'Videos Page 1st Video', height: 300, width: 400 }
+];
+
+const updateDimensions = () => {
+    const selected = placementOptions.find(p => p.value === form.value.placement);
+    if (selected) {
+        form.value.height = selected.height;
+        form.value.width = selected.width;
+    }
+};
 
 const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -55,7 +74,7 @@ const handleFileChange = (event) => {
     }
 };
 
-// Watch for item changes and update form
+
 watch(() => props.item, (newItem) => {
     if (newItem && Object.keys(newItem).length > 0) {
         form.value = {
@@ -69,13 +88,14 @@ watch(() => props.item, (newItem) => {
             charge_for_click: newItem.charge_for_click ?? true,
             status: newItem.status ?? 0,
             starts_at: newItem.starts_at?.split(' ')[0] || '',
-            ends_at: newItem.ends_at?.split(' ')[0] || ''
+            ends_at: newItem.ends_at?.split(' ')[0] || '',
+            placement: newItem.placement || 'dashboard',
+            height: newItem.height || 200,
+            width: newItem.width || 1200
         };
         mediaPreview.value = newItem.media_url || null;
-        // Set upload method based on existing data
         uploadMethod.value = newItem.media_url ? 'url' : 'file';
     } else {
-        // Reset form for create mode
         form.value = {
             title: '',
             description: '',
@@ -87,7 +107,10 @@ watch(() => props.item, (newItem) => {
             charge_for_click: true,
             status: 0,
             starts_at: '',
-            ends_at: ''
+            ends_at: '',
+            placement: 'dashboard',
+            height: 200,
+            width: 1200
         };
         mediaPreview.value = null;
         uploadMethod.value = 'file';
@@ -98,38 +121,41 @@ watch(() => props.item, (newItem) => {
 const submitHandler = async () => {
     isLoading.value = true;
     errors.value = {};
-    
+    response_modal.value = {};
+
     try {
-        const url = props.modalTitle === 'Create' 
+        const url = props.modalTitle === 'Create'
             ? 'advertiser/advertisements/store'
             : `advertiser/advertisements/${props.item.id}/update`;
-        
+
         const formData = new FormData();
         formData.append('title', form.value.title);
         formData.append('description', form.value.description);
         formData.append('type', form.value.type);
-        
-        // Handle media based on type and upload method
+
+
         if (form.value.type === 1) {
-            // Image type: only file upload with ad_image parameter
+
             if (form.value.media_path) {
                 formData.append('ad_image', form.value.media_path);
             }
         } else if (form.value.type === 2) {
-            // Video type: file or URL upload with media_path parameter
+
             if (uploadMethod.value === 'file' && form.value.media_path) {
                 formData.append('media_path', form.value.media_path);
             } else if (uploadMethod.value === 'url' && form.value.media_url) {
                 formData.append('media_path', form.value.media_url);
             }
         }
-        
+
         formData.append('redirect_url', form.value.redirect_url);
         formData.append('charge_for_impression', form.value.charge_for_impression ? 1 : 0);
         formData.append('charge_for_click', form.value.charge_for_click ? 1 : 0);
         formData.append('total_impressions', 0);
         formData.append('total_clicks', 0);
-        formData.append('status', form.value.status ? 1 : 0);
+        formData.append('height', form.value.height);
+        formData.append('width', form.value.width);
+        formData.append('status', '1');
         formData.append('starts_at', form.value.starts_at);
         formData.append('ends_at', form.value.ends_at);
 
@@ -143,12 +169,23 @@ const submitHandler = async () => {
         });
 
         if (response.status === 'success') {
-            emit('add_emit', response.data);
-            emit('close');
+            response_modal.value = {
+                status: true,
+                message: props.modalTitle === 'Create' ? 'Advertisement created successfully!' : 'Advertisement updated successfully!'
+            };
+            emit('success', response.data);
+            setTimeout(() => {
+                emit('close');
+            }, 1500);
         }
     } catch (e) {
         if (e.response?.status === 422) {
             errors.value = e.response._data.errors || {};
+        } else {
+            response_modal.value = {
+                status: 'error',
+                message: e.response?._data?.message || 'Failed to save advertisement. Please try again.'
+            };
         }
         console.error('Error:', e.message);
     } finally {
@@ -208,18 +245,14 @@ const cancel = () => {
                 <div v-if="form.type === 2" class="flex items-center gap-4">
                     <label class="font-semibold">Media Source</label>
                     <div class="flex gap-2">
-                        <Button 
-                            type="button"
-                            :severity="uploadMethod === 'file' ? 'primary' : 'secondary'" 
+                        <Button type="button" :severity="uploadMethod === 'file' ? 'primary' : 'secondary'"
                             :outlined="uploadMethod !== 'file'"
                             @click="uploadMethod = 'file'; form.media_url = ''; errors.media_url = ''; errors.media_path = ''"
                             size="small">
                             <i class="pi pi-upload mr-2"></i>
                             Upload File
                         </Button>
-                        <Button 
-                            type="button"
-                            :severity="uploadMethod === 'url' ? 'primary' : 'secondary'" 
+                        <Button type="button" :severity="uploadMethod === 'url' ? 'primary' : 'secondary'"
                             :outlined="uploadMethod !== 'url'"
                             @click="uploadMethod = 'url'; form.media_path = null; mediaPreview = null; errors.media_url = ''; errors.media_path = ''"
                             size="small">
@@ -230,7 +263,8 @@ const cancel = () => {
                 </div>
 
                 <!-- File Upload Option -->
-                <div v-if="form.type === 1 || (form.type === 2 && uploadMethod === 'file')" class="flex items-center gap-4">
+                <div v-if="form.type === 1 || (form.type === 2 && uploadMethod === 'file')"
+                    class="flex items-center gap-4">
                     <div class="flex-auto">
                         <label class="font-semibold">{{ form.type === 1 ? 'Image' : 'Video' }} File</label>
                         <input type="file" id="media_path" @change="handleFileChange"
@@ -240,7 +274,8 @@ const cancel = () => {
                             <img v-if="form.type === 1" :src="mediaPreview" alt="Preview" class="h-32 w-auto rounded" />
                             <video v-else :src="mediaPreview" class="h-32 w-auto rounded" controls></video>
                         </div>
-                        <InputError class="text-sm mt-1" v-if="errors.media_path || errors.ad_image" :message="errors.media_path?.[0] || errors.ad_image?.[0]" />
+                        <InputError class="text-sm mt-1" v-if="errors.media_path || errors.ad_image"
+                            :message="errors.media_path?.[0] || errors.ad_image?.[0]" />
                     </div>
                 </div>
 
@@ -248,21 +283,18 @@ const cancel = () => {
                 <div v-if="form.type === 2 && uploadMethod === 'url'" class="flex items-center gap-4">
                     <div class="flex-auto">
                         <label class="font-semibold">Video URL</label>
-                        <InputText 
-                            v-model="form.media_url" 
-                            class="w-full" 
-                            type="url"
+                        <InputText v-model="form.media_url" class="w-full" type="url"
                             placeholder="https://example.com/video.mp4"
-                            :class="errors.media_url ? 'border-[#f44336!important]' : ''" 
-                            autocomplete="off"
-                            @focus="errors.media_url = ''"
-                            @input="mediaPreview = form.media_url" />
+                            :class="errors.media_url ? 'border-[#f44336!important]' : ''" autocomplete="off"
+                            @focus="errors.media_url = ''" @input="mediaPreview = form.media_url" />
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                             Enter the full URL of the {{ form.type === 1 ? 'image' : 'video' }}
                         </p>
                         <div v-if="form.media_url && mediaPreview" class="mt-2">
-                            <img v-if="form.type === 1" :src="mediaPreview" alt="Preview" class="h-32 w-auto rounded" @error="mediaPreview = null" />
-                            <video v-else :src="mediaPreview" class="h-32 w-auto rounded" controls @error="mediaPreview = null"></video>
+                            <img v-if="form.type === 1" :src="mediaPreview" alt="Preview" class="h-32 w-auto rounded"
+                                @error="mediaPreview = null" />
+                            <video v-else :src="mediaPreview" class="h-32 w-auto rounded" controls
+                                @error="mediaPreview = null"></video>
                         </div>
                         <InputError class="text-sm mt-1" v-if="errors.media_url" :message="errors.media_url[0]" />
                     </div>
@@ -273,11 +305,47 @@ const cancel = () => {
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Redirect URL</label>
-                    <InputText v-model="form.redirect_url" class="w-full" type="url"
-                        placeholder="https://example.com"
+                    <InputText v-model="form.redirect_url" class="w-full" type="url" placeholder="https://example.com"
                         :class="errors.redirect_url ? 'border-[#f44336!important]' : ''" autocomplete="off"
                         @focus="errors.redirect_url = ''" />
                     <InputError class="text-sm mt-1" v-if="errors.redirect_url" :message="errors.redirect_url[0]" />
+                </div>
+            </div>
+
+            <!-- Ad Placement & Dimensions -->
+            <div class="flex flex-col gap-4">
+                <div class="flex-auto">
+                    <label class="font-semibold">Ad Placement</label>
+                    <div class="flex flex-col gap-3 mt-2">
+                        <div v-for="option in placementOptions" :key="option.value" class="flex items-center">
+                            <RadioButton 
+                                v-model="form.placement" 
+                                :inputId="option.value" 
+                                :value="option.value" 
+                                @change="updateDimensions" 
+                            />
+                            <label :for="option.value" class="ml-2 cursor-pointer">
+                                {{ option.label }} ({{ option.height }}px × {{ option.width }}px)
+                            </label>
+                        </div>
+                    </div>
+                    <InputError class="text-sm mt-1" v-if="errors.placement" :message="errors.placement[0]" />
+                </div>
+                
+                <!-- Display current dimensions -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex-auto">
+                        <label class="font-semibold">Height (pixels)</label>
+                        <InputNumber v-model="form.height" class="w-full" :min="1" :disabled="true"
+                            :class="errors.height ? 'border-[#f44336!important]' : ''" />
+                        <InputError class="text-sm mt-1" v-if="errors.height" :message="errors.height[0]" />
+                    </div>
+                    <div class="flex-auto">
+                        <label class="font-semibold">Width (pixels)</label>
+                        <InputNumber v-model="form.width" class="w-full" :min="1" :disabled="true"
+                            :class="errors.width ? 'border-[#f44336!important]' : ''" />
+                        <InputError class="text-sm mt-1" v-if="errors.width" :message="errors.width[0]" />
+                    </div>
                 </div>
             </div>
 
@@ -318,12 +386,12 @@ const cancel = () => {
             </div>
 
             <!-- Status -->
-            <div class="flex items-center gap-4">
+            <!-- <div class="flex items-center gap-4">
                 <label class="font-semibold">Status</label>
                 <div class="flex-auto">
                     <ToggleSwitch v-model="form.status" :binary="true" />
                 </div>
-            </div>
+            </div> -->
         </form>
 
         <template #footer class="flex justify-end gap-2 border-gray-200">
@@ -349,4 +417,6 @@ const cancel = () => {
             </div>
         </template>
     </Dialog>
+
+    <LazyResponseModal :response_modal="response_modal" />
 </template>

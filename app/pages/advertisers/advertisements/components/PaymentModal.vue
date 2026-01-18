@@ -12,7 +12,7 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'success']);
 
 const config = useRuntimeConfig();
 
@@ -114,6 +114,7 @@ const submitHandler = async () => {
 
         if (response.status === 'success') {
             response_modal.value = response;
+            emit('success', response.data);
             setTimeout(() => {
                 emit('close');
             }, 2000);
@@ -187,9 +188,16 @@ watch(() => props.isOpenModal, (newVal) => {
                     <div class="relative">
                         <span
                             class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">$</span>
-                        <InputText v-model="form.amount" type="number" step="0.01" min="1" class="w-full pl-7"
-                            placeholder="0.00" :class="errors.amount ? 'border-[#f44336!important]' : ''"
-                            @focus="errors.amount = ''" />
+                        <input 
+                            v-model="form.amount" 
+                            type="number" 
+                            step="0.01" 
+                            min="1" 
+                            class="w-full pl-7 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                            :class="errors.amount ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'"
+                            placeholder="0.00"
+                            @focus="errors.amount = ''" 
+                        />
                     </div>
                     <InputError class="text-sm mt-1" v-if="errors.amount" :message="errors.amount[0]" />
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Minimum amount: $1.00</p>

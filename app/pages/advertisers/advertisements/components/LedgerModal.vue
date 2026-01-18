@@ -248,12 +248,18 @@ const getActionClass = (action) => {
         <!-- Buttons -->
         <template #footer class="flex justify-end gap-2 border-gray-200">
             <div class="flex justify-end items-center gap-3 border-gray-200">
-                <Button type="button" label="Close" severity="success" raised
+                <!-- <Button type="button" label="Close" severity="success" raised
                     class="transition-all duration-300 hover:scale-105 hover:shadow-lg" @click="close">
                     <template #icon>
                         <i class="pi pi-check-circle mr-2"></i>
                     </template>
-                </Button>
+                </Button> -->
+                <Button type="button" label="Cancel" severity="danger" outlined
+                        class="transition-all duration-300 hover:scale-105"  @click="close">
+                        <template #icon="{ class: iconClass }">
+                            <i class="pi pi-times-circle mr-2" :class="iconClass"></i>
+                        </template>
+                    </Button>
             </div>
         </template>
     </Dialog>
