@@ -10,12 +10,13 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'success']);
 
 const isLoading = ref(false);
 const videos = ref([]);
 const attachedVideoIds = ref([]);
 const selectedVideos = ref([]);
+const response_modal = ref({});
 
 const visible = computed({
     get: () => props.isOpenModal,
@@ -40,9 +41,9 @@ const loadVideos = async () => {
                 attachedVideoIds.value = props.advertisement.videos.map(v => v.id);
                 selectedVideos.value = props.advertisement.videos.map(v => ({
                     video_id: v.id,
-                    display_time: v.pivot?.display_time || 0,
-                    display_order: v.pivot?.display_order || 1,
-                    is_active: v.pivot?.is_active !== undefined ? v.pivot.is_active : 1
+                    display_time: v.display_time || 10,
+                    display_order: v.display_order || 1,
+                    is_active: v.is_active !== undefined ? (v.is_active ? 1 : 0) : 1
                 }));
             }
         }
@@ -89,66 +90,77 @@ const updateVideoSettings = (videoId, field, value) => {
 };
 
 const saveAttachments = async () => {
-    if (selectedVideos.value.length === 0) {
-        alert('Please select at least one video');
-        return;
-    }
-
+    console.log('Saving attachments:', selectedVideos.value);
     isLoading.value = true;
+    response_modal.value = {};
+    
     try {
-        // Create FormData for proper form submission
-        const formData = new FormData();
+        const selectedVideoIds = selectedVideos.value.map(v => v.video_id);
         
-        selectedVideos.value.forEach((video, index) => {
-            formData.append(`videos[${index}][video_id]`, video.video_id);
-            formData.append(`videos[${index}][display_time]`, video.display_time);
-            formData.append(`videos[${index}][display_order]`, video.display_order);
-            formData.append(`videos[${index}][is_active]`, video.is_active);
-        });
-
-        const response = await $fetchCitizen(
-            `advertiser/advertisements/${props.advertisement.id}/attach-video`,
-            {
-                method: 'POST',
-                body: formData
+        // Find videos to detach (were attached but now not selected)
+        const videosToDetach = attachedVideoIds.value.filter(id => !selectedVideoIds.includes(id));
+        
+        // Detach videos that were removed
+        if (videosToDetach.length > 0) {
+            for (const videoId of videosToDetach) {
+                await $fetchCitizen(
+                    `advertiser/advertisements/${props.advertisement.id}/detach-video/${videoId}`,
+                    {
+                        method: 'POST',
+                        body: {
+                            _method: 'DELETE'
+                        }
+                    }
+                );
             }
-        );
-
-        if (response.status === 'success') {
-            emit('close');
         }
-    } catch (error) {
-        console.error('Error attaching videos:', error);
-        alert('Error attaching videos. Please try again.');
-    } finally {
-        isLoading.value = false;
-    }
-};
+        
+        // Attach/Update selected videos
+        if (selectedVideos.value.length > 0) {
+            const formData = new FormData();
+            
+            selectedVideos.value.forEach((video, index) => {
+                formData.append(`videos[${index}][video_id]`, video.video_id);
+                formData.append(`videos[${index}][display_time]`, video.display_time);
+                formData.append(`videos[${index}][display_order]`, video.display_order);
+                formData.append(`videos[${index}][is_active]`, video.is_active);
+            });
 
-const detachVideo = async (videoId) => {
-    if (!confirm('Are you sure you want to detach this video?')) {
-        return;
-    }
-
-    isLoading.value = true;
-    try {
-        const response = await $fetchCitizen(
-            `advertiser/advertisements/${props.advertisement.id}/detach-video/${videoId}`,
-            {
-                method: 'POST',
-                body: {
-                    _method: 'DELETE'
+            await $fetchCitizen(
+                `advertiser/advertisements/${props.advertisement.id}/attach-video`,
+                {
+                    method: 'POST',
+                    body: formData
                 }
-            }
-        );
-
-        if (response.status === 'success') {
-            // Remove from selected videos
-            selectedVideos.value = selectedVideos.value.filter(v => v.video_id !== videoId);
-            attachedVideoIds.value = attachedVideoIds.value.filter(id => id !== videoId);
+            );
         }
+        console.log('Attachments saved successfully.');
+        
+        // Success message
+        let message = 'Videos updated successfully!';
+        if (videosToDetach.length > 0 && selectedVideos.value.length === 0) {
+            message = 'All videos detached successfully!';
+        } else if (videosToDetach.length > 0 && selectedVideos.value.length > 0) {
+            message = 'Videos attached and detached successfully!';
+        } else if (selectedVideos.value.length > 0) {
+            message = 'Videos attached successfully!';
+        }
+        
+        response_modal.value = {
+            status: true,
+            message: message
+        };
+        
+        emit('success');
+        setTimeout(() => {
+            emit('close');
+        }, 1500);
     } catch (error) {
-        console.error('Error detaching video:', error);
+        console.error('Error updating videos:', error);
+        response_modal.value = {
+            status: 'error',
+            message: error.response?._data?.message || 'Error updating videos. Please try again.'
+        };
     } finally {
         isLoading.value = false;
     }
@@ -185,10 +197,20 @@ const closeModal = () => {
             </div>
         </template>
 
-        <div v-if="isLoading" class="flex items-center justify-center py-12">
-            <div class="text-center">
-                <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" />
-                <p class="text-sm text-gray-500 mt-4">Loading videos...</p>
+        <div v-if="isLoading" class="space-y-4">
+            <div v-for="n in 3" :key="n" class="flex items-center justify-between p-4 border rounded-lg">
+                <div class="flex items-center gap-4 flex-1">
+                    <Skeleton shape="circle" size="3rem" />
+                    <div class="flex-1 space-y-2">
+                        <Skeleton width="70%" height="1.5rem" />
+                        <Skeleton width="40%" height="1rem" />
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <Skeleton width="150px" height="2.5rem" />
+                    <Skeleton width="150px" height="2.5rem" />
+                    <Skeleton width="150px" height="2.5rem" />
+                </div>
             </div>
         </div>
 
@@ -259,13 +281,6 @@ const closeModal = () => {
 
                                 <!-- Select Checkbox -->
                                 <div class="flex items-center gap-2">
-                                    <button
-                                        v-if="attachedVideoIds.includes(video.id)"
-                                        @click="detachVideo(video.id)"
-                                        class="text-xs px-3 py-1.5 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors font-medium">
-                                        <Icon name="lucide:unlink" class="w-3 h-3 inline mr-1" />
-                                        Detach
-                                    </button>
                                     <Checkbox
                                         :modelValue="isVideoSelected(video.id)"
                                         @update:modelValue="toggleVideo(video)"
@@ -288,8 +303,8 @@ const closeModal = () => {
                                             class="w-full"
                                             inputClass="text-sm h-[42px]" />
                                     </div>
-                                    <div>
-                                        <label class="text-xs text-gray-600 mb-1 block">Display Order</label>
+                                    <div class="flex flex-col">
+                                        <label class="text-xs text-gray-600 mb-1.5 block">Display Order</label>
                                         <InputNumber
                                             :modelValue="getVideoSettings(video.id)?.display_order"
                                             @update:modelValue="updateVideoSettings(video.id, 'display_order', $event)"
@@ -316,14 +331,20 @@ const closeModal = () => {
 
             <!-- Action Buttons -->
             <div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
-                <button
+                <!-- <button
                     @click="closeModal"
                     class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors">
                     Cancel
-                </button>
+                </button> -->
+                 <Button type="button" label="Cancel" severity="danger" outlined
+                        class="transition-all duration-300 hover:scale-105"   @click="closeModal">
+                        <template #icon="{ class: iconClass }">
+                            <i class="pi pi-times-circle mr-2" :class="iconClass"></i>
+                        </template>
+                    </Button>
                 <button
                     @click="saveAttachments"
-                    :disabled="isLoading || selectedVideos.length === 0"
+                    :disabled="isLoading"
                     class="px-4 py-2 bg-[#18222C] hover:bg-[#0F172A] text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
                     <Icon v-if="isLoading" name="lucide:loader-2" class="w-4 h-4 animate-spin" />
                     <Icon v-else name="lucide:save" class="w-4 h-4" />
@@ -331,6 +352,8 @@ const closeModal = () => {
                 </button>
             </div>
         </div>
+
+        <LazyResponseModal :response_modal="response_modal" />
     </Dialog>
 </template>
 
