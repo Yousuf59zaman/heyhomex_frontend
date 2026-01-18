@@ -56,6 +56,12 @@ const loadingBilling = ref(false)
 const subscriptionHistory = ref(null)
 const loadingHistory = ref(false)
 
+// Billing pagination and sorting
+const billingCurrentPage = ref(1)
+const billingItemsPerPage = 10
+const billingSortField = ref('created_at')
+const billingSortOrder = ref('desc')
+
 
 const showCancelModal = ref(false)
 
@@ -149,6 +155,99 @@ const fetchSubscriptionHistory = async () => {
         console.error('Error fetching subscription history:', error)
     } finally {
         loadingHistory.value = false
+    }
+}
+
+const formatBillingDate = (dateString) => {
+    if (!dateString) return 'N/A'
+    const date = new Date(dateString)
+    if (Number.isNaN(date.getTime())) return 'N/A'
+    return date.toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+    })
+}
+
+const sortedBillingHistory = computed(() => {
+    if (!billingHistory.value || billingHistory.value.length === 0) return []
+
+    return [...billingHistory.value].sort((a, b) => {
+        let aVal
+        let bVal
+
+        switch (billingSortField.value) {
+            case 'status':
+                aVal = a.status || ''
+                bVal = b.status || ''
+                break
+            case 'created_at':
+                aVal = new Date(a.created_at).getTime()
+                bVal = new Date(b.created_at).getTime()
+                break
+            case 'invoice_number':
+                aVal = a.stripe_invoice_details?.invoice_number || ''
+                bVal = b.stripe_invoice_details?.invoice_number || ''
+                break
+            case 'amount':
+                aVal = parseFloat(a.amount) || 0
+                bVal = parseFloat(b.amount) || 0
+                break
+            default:
+                aVal = a[billingSortField.value] || ''
+                bVal = b[billingSortField.value] || ''
+        }
+
+        if (billingSortOrder.value === 'asc') {
+            return aVal > bVal ? 1 : aVal < bVal ? -1 : 0
+        }
+
+        return aVal < bVal ? 1 : aVal > bVal ? -1 : 0
+    })
+})
+
+const paginatedBillingHistory = computed(() => {
+    const start = (billingCurrentPage.value - 1) * billingItemsPerPage
+    const end = start + billingItemsPerPage
+    return sortedBillingHistory.value.slice(start, end)
+})
+
+const billingTotalPages = computed(() => {
+    if (!billingHistory.value) return 0
+    return Math.ceil(billingHistory.value.length / billingItemsPerPage)
+})
+
+const billingPageNumbers = computed(() => {
+    const total = billingTotalPages.value
+    if (total <= 1) return total === 1 ? [1] : []
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+
+    const current = billingCurrentPage.value
+
+    if (current <= 3) {
+        return [1, 2, 3, '...', total - 1, total]
+    }
+
+    if (current >= total - 2) {
+        return [1, 2, '...', total - 2, total - 1, total]
+    }
+
+    return [1, '...', current - 1, current, current + 1, '...', total]
+})
+
+const toggleBillingSort = (field) => {
+    if (billingSortField.value === field) {
+        billingSortOrder.value = billingSortOrder.value === 'asc' ? 'desc' : 'asc'
+    } else {
+        billingSortField.value = field
+        billingSortOrder.value = 'asc'
+    }
+    billingCurrentPage.value = 1
+}
+
+const goToBillingPage = (page) => {
+    if (page >= 1 && page <= billingTotalPages.value) {
+        billingCurrentPage.value = page
     }
 }
 
@@ -482,7 +581,7 @@ onMounted(async () => {
         <div v-show="activeTab === 'billing'" class="space-y-4">
             <h2 class="text-lg md:text-xl font-semibold text-gray-900">Billing History</h2>
 
-            <div v-if="loadingBilling" class="bg-white border border-gray-200 rounded-lg p-8">
+            <div v-if="loadingBilling" class="bg-white rounded-lg p-8">
                 <div class="text-center">
                     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
                     <p class="text-sm text-gray-600">Loading billing history...</p>
@@ -494,62 +593,124 @@ onMounted(async () => {
                 <p class="text-sm text-gray-600">No billing history found.</p>
             </div>
 
-            <div v-else class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div v-else class="bg-white rounded-lg overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Invoice</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Amount</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Status</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Date</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Actions</th>
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th @click="toggleBillingSort('status')"
+                                    class="px-6 py-4 text-left text-sm font-medium text-gray-900 cursor-pointer hover:bg-gray-50">
+                                    <div class="flex items-center gap-1">
+                                        Status
+                                        <Icon name="lucide:arrow-up-down" class="w-4 h-4 text-gray-400" />
+                                    </div>
+                                </th>
+                                <th @click="toggleBillingSort('created_at')"
+                                    class="px-6 py-4 text-left text-sm font-medium text-gray-900 cursor-pointer hover:bg-gray-50">
+                                    <div class="flex items-center gap-1">
+                                        Due Date
+                                        <Icon name="lucide:arrow-up-down" class="w-4 h-4 text-gray-400" />
+                                    </div>
+                                </th>
+                                <th @click="toggleBillingSort('invoice_number')"
+                                    class="px-6 py-4 text-left text-sm font-medium text-gray-900 cursor-pointer hover:bg-gray-50">
+                                    <div class="flex items-center gap-1">
+                                        Invoice ID
+                                        <Icon name="lucide:arrow-up-down" class="w-4 h-4 text-gray-400" />
+                                    </div>
+                                </th>
+                                <th @click="toggleBillingSort('amount')"
+                                    class="px-6 py-4 text-left text-sm font-medium text-gray-900 cursor-pointer hover:bg-gray-50">
+                                    <div class="flex items-center gap-1">
+                                        Amount
+                                        <Icon name="lucide:arrow-up-down" class="w-4 h-4 text-gray-400" />
+                                    </div>
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-medium text-gray-900">
+                                    Download or View Invoice
+                                </th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <tr v-for="payment in billingHistory" :key="payment.id">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        <tbody>
+                            <tr v-for="payment in paginatedBillingHistory" :key="payment.id"
+                                class="border-b border-gray-200 hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span :class="[
+                                        'px-3 py-1.5 text-sm font-medium rounded-full',
+                                        payment.status === 'succeeded'
+                                            ? 'bg-gray-900 text-white'
+                                            : 'border border-gray-300 text-gray-700 bg-white'
+                                    ]">
+                                        {{ payment.status === 'succeeded' ? 'Paid' : 'Pending' }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ formatBillingDate(payment.created_at) }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     {{ payment.stripe_invoice_details?.invoice_number || 'N/A' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    ${{ payment.amount }} {{ payment.currency.toUpperCase() }}
+                                    ${{ payment.amount }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span :class="[
-                                        'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
-                                        payment.status === 'succeeded' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                    ]">
-                                        {{ payment.status }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ new Date(payment.created_at).toLocaleDateString() }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    <a v-if="payment.stripe_invoice_details?.invoice_pdf"
-                                        :href="payment.stripe_invoice_details.invoice_pdf" target="_blank"
-                                        class="text-blue-600 hover:text-blue-900 mr-3">
-                                        Download PDF
-                                    </a>
-                                    <a v-if="payment.stripe_invoice_details?.hosted_invoice_url"
-                                        :href="payment.stripe_invoice_details.hosted_invoice_url" target="_blank"
-                                        class="text-blue-600 hover:text-blue-900">
-                                        View Invoice
-                                    </a>
+                                    <div class="flex items-center gap-4">
+                                        <a v-if="payment.stripe_invoice_details?.invoice_pdf"
+                                            :href="payment.stripe_invoice_details.invoice_pdf"
+                                            target="_blank"
+                                            class="text-gray-500 hover:text-gray-700 transition-colors">
+                                            <Icon name="lucide:download" class="w-5 h-5" />
+                                        </a>
+                                        <a v-if="payment.stripe_invoice_details?.hosted_invoice_url"
+                                            :href="payment.stripe_invoice_details.hosted_invoice_url"
+                                            target="_blank"
+                                            class="text-gray-500 hover:text-gray-700 transition-colors">
+                                            <Icon name="lucide:external-link" class="w-5 h-5" />
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <div v-if="billingTotalPages > 1"
+                    class="flex items-center justify-between px-6 py-4 border-t border-gray-200">
+                    <button
+                        @click="goToBillingPage(billingCurrentPage - 1)"
+                        :disabled="billingCurrentPage === 1"
+                        class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                        <Icon name="lucide:arrow-left" class="w-4 h-4" />
+                        Previous
+                    </button>
+
+                    <div class="flex items-center gap-1">
+                        <template v-for="(page, index) in billingPageNumbers" :key="index">
+                            <span v-if="page === '...'" class="px-3 py-2 text-gray-500">...</span>
+                            <button v-else
+                                @click="goToBillingPage(page)"
+                                :class="[
+                                    'w-10 h-10 text-sm font-medium rounded-lg transition-colors',
+                                    billingCurrentPage === page
+                                        ? 'bg-gray-900 text-white'
+                                        : 'text-gray-700 hover:bg-gray-100'
+                                ]">
+                                {{ page }}
+                            </button>
+                        </template>
+                    </div>
+
+                    <button
+                        @click="goToBillingPage(billingCurrentPage + 1)"
+                        :disabled="billingCurrentPage === billingTotalPages"
+                        class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                        Next
+                        <Icon name="lucide:arrow-right" class="w-4 h-4" />
+                    </button>
+                </div>
+
+                <div class="px-6 py-3 text-sm text-gray-500">
+                    Showing {{ paginatedBillingHistory.length }} from {{ billingHistory.length }} results
                 </div>
             </div>
         </div>
