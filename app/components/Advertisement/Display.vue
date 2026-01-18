@@ -53,7 +53,7 @@ const loadAdvertisements = async () => {
         );
             console.log("ciming aDS",adsResponse.data.data);
         if (adsResponse.data?.data) {
-            advertisements.value = adsResponse.data.data.filter(ad => ad.status);
+            advertisements.value = adsResponse.data.data.filter(ad => ad.is_active);
             
 
             if (advertisements.value.length > 1) {
@@ -183,11 +183,11 @@ watch(currentAd, async (newAd, oldAd) => {
         <div class="advertisement-content cursor-pointer hover:opacity-90 transition-opacity relative overflow-hidden rounded-lg shadow-sm"
             @click="handleAdClick">
 
-            <img v-if="currentAd.type === 1" :src="currentAd.media_url" :alt="currentAd.title"
+            <img v-if="currentAd.type === 1" :src="currentAd.media_path" :alt="currentAd.title"
                 class="w-full h-full object-cover" />
 
 
-            <video v-else-if="currentAd.type === 2" :src="currentAd.media_url" class="w-full h-full object-cover"
+            <video v-else-if="currentAd.type === 2" :src="currentAd.media_path" class="w-full h-full object-cover"
                 autoplay loop muted />
 
 

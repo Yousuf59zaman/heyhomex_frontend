@@ -123,6 +123,11 @@ const toggleStatus = async (id) => {
             }
         }
     } catch (e) {
+        //if error show message in modal that has been used in whole system for error handling
+        response_modal.value = {
+                status: false,
+                message: 'Insufficient Balance'
+            };
         console.error('Error toggling status:', e.message);
     }
 };
@@ -139,6 +144,9 @@ const openAttachPlaces = (ad) => {
 const closeAttachModal = () => {
     attachItem.value = {};
     isOpenAttachModal.value = false;
+};
+
+const onAttachPlacesSuccess = (data) => {
     loadData();
 };
 
@@ -154,6 +162,9 @@ const openAttachVideos = (ad) => {
 const closeAttachVideosModal = () => {
     attachVideosItem.value = {};
     isOpenAttachVideosModal.value = false;
+};
+
+const onAttachVideosSuccess = (data) => {
     loadData();
 };
 
@@ -183,6 +194,9 @@ const openPayment = (ad) => {
 const closePaymentModal = () => {
     paymentItem.value = {};
     isOpenPaymentModal.value = false;
+};
+
+const onPaymentSuccess = (data) => {
     loadData();
 };
 
@@ -438,17 +452,19 @@ const getStatusLabel = (status) => {
             :item="item" 
             :modalTitle="modalTitle"
             @close="cancelModal" 
-            @add_emit="receivedData" />
+            @success="receivedData" />
         
         <AttachPlaces 
             :isOpenModal="isOpenAttachModal" 
             :advertisement="attachItem" 
-            @close="closeAttachModal" />
+            @close="closeAttachModal"
+            @success="onAttachPlacesSuccess" />
         
         <AttachVideos 
             :isOpenModal="isOpenAttachVideosModal" 
             :advertisement="attachVideosItem" 
-            @close="closeAttachVideosModal" />
+            @close="closeAttachVideosModal"
+            @success="onAttachVideosSuccess" />
         
         <LedgerModal 
             :isOpenModal="isOpenLedgerModal" 
@@ -458,7 +474,8 @@ const getStatusLabel = (status) => {
         <PaymentModal 
             :isOpenModal="isOpenPaymentModal" 
             :advertisement="paymentItem" 
-            @close="closePaymentModal" />
+            @close="closePaymentModal"
+            @success="onPaymentSuccess" />
         
         <LazyConfirmModal 
             :isOpenConModal="isOpenConModal" 
