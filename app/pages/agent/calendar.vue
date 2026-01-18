@@ -239,6 +239,7 @@ const getStatusColor = (color) => {
 const showRescheduleModal = ref(false)
 const selectedAppointmentForReschedule = ref(null)
 const rescheduleDateTime = ref(null)
+const isRescheduleCalendarOpen = ref(false)
 
 // const handleAcceptAppointment = (appointment) => {
 //     const index = allAppointments.value.findIndex(apt => apt.id === appointment.id)
@@ -384,6 +385,7 @@ const showToast = (message, type = 'success') => {
 
 const handleRescheduleAppointment = (appointment) => {
     selectedAppointmentForReschedule.value = appointment
+    isRescheduleCalendarOpen.value = false
     if (appointment.date && appointment.time) {
         const dateTimeStr = `${appointment.date}T${appointment.time}`
         rescheduleDateTime.value = new Date(dateTimeStr)
@@ -424,6 +426,7 @@ const confirmReschedule = async () => {
         showRescheduleModal.value = false
         selectedAppointmentForReschedule.value = null
         rescheduleDateTime.value = null
+        isRescheduleCalendarOpen.value = false
     }
 }
 
@@ -463,6 +466,7 @@ const cancelReschedule = () => {
     showRescheduleModal.value = false
     selectedAppointmentForReschedule.value = null
     rescheduleDateTime.value = null
+    isRescheduleCalendarOpen.value = false
 }
 
 
@@ -745,7 +749,9 @@ watch(currentDate, () => {
         <div v-if="showRescheduleModal"
             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
             @click.self="cancelReschedule">
-            <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl">
+            <div
+                class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl max-h-[90vh]"
+                :class="isRescheduleCalendarOpen && 'transform -translate-y-10'">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900">Reschedule Appointment</h3>
                     <button @click="cancelReschedule" class="text-gray-400 hover:text-gray-600 transition-colors">
@@ -768,8 +774,13 @@ watch(currentDate, () => {
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Select New Date & Time
                     </label>
-                    <Calendar v-model="rescheduleDateTime" showTime hourFormat="12" :showIcon="true"
-                        :minDate="new Date()" dateFormat="M dd, yy" class="w-full" />
+                    <div class="reschedule-calendar">
+                        <Calendar v-model="rescheduleDateTime" showTime hourFormat="12" :showIcon="true"
+                            :minDate="new Date()" dateFormat="M dd, yy" class="w-full"
+                            appendTo="self"
+                            @show="isRescheduleCalendarOpen = true"
+                            @hide="isRescheduleCalendarOpen = false" />
+                    </div>
                 </div>
 
                 <div class="flex gap-3">
@@ -789,3 +800,15 @@ watch(currentDate, () => {
         <ResponseModal :response_modal="responseModal" />
     </div>
 </template>
+
+<style scoped>
+    .reschedule-calendar :deep(.p-datepicker-panel) {
+        top: calc(100% + 0.25rem) !important;
+        left: 0 !important;
+        z-index: 50;
+        max-height: 50vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: contain;
+    }
+</style>
