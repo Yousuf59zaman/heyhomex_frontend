@@ -709,10 +709,10 @@
 
                 <div class="pt-4 flex flex-col gap-6">
                     <div
-                        class="flex items-center gap-3 rounded-lg bg-white p-1.5 overflow-hidden">
+                        class="tabs-scroll flex items-center gap-3 rounded-lg bg-white p-1.5 overflow-x-auto">
                         <button
                             :class="[
-                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-1 lg:flex-none px-5 lg:px-4 py-3 text-center',
+                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-5 lg:px-4 py-3 text-center',
                                 activeTab === 'Insights'
                                     ? 'bg-[#18222c] text-white hover:bg-[#111922] lg:px-5'
                                     : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
@@ -722,7 +722,7 @@
                         </button>
                         <button
                             :class="[
-                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-1 lg:flex-none px-5 lg:px-4 py-3 text-center',
+                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-5 lg:px-4 py-3 text-center',
                                 activeTab === 'Loan'
                                     ? 'bg-[#18222c] text-white hover:bg-[#111922] lg:px-5'
                                     : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
@@ -732,7 +732,7 @@
                         </button>
                         <button
                             :class="[
-                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-1 lg:flex-none px-5 lg:px-4 py-3 text-center',
+                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-5 lg:px-4 py-3 text-center',
                                 activeTab === 'Features'
                                     ? 'bg-[#18222c] text-white hover:bg-[#111922] lg:px-5'
                                     : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
@@ -742,7 +742,7 @@
                         </button>
                         <button
                             :class="[
-                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-1 lg:flex-none px-5 lg:px-4 py-3 text-center',
+                                'whitespace-nowrap rounded-xl font-bold text-sm leading-[1.46] transition-colors flex-shrink-0 px-5 lg:px-4 py-3 text-center',
                                 activeTab === 'Maps'
                                     ? 'bg-[#18222c] text-white hover:bg-[#111922] lg:px-5'
                                     : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
@@ -776,7 +776,7 @@
                                         {{ item.label }}
                                     </p>
                                     <p
-                                        class="text-[#283849] text-[20px] leading-[24px] font-bold italic font-['sf-pro-Bold'] w-full lg:w-[340px] lg:text-right">
+                                        class="text-[#283849] text-[20px] leading-[24px]">
                                         {{ item.value }}
                                     </p>
                                 </div>
@@ -1101,19 +1101,31 @@
             height: 6rem;
         }
 
-        .overflow-x-auto::-webkit-scrollbar {
-            display: none;
-        }
-        .overflow-x-auto {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
     }
 
     @media (min-width: 769px) {
         .h-32 {
             height: 8rem;
         }
+    }
+
+    .tabs-scroll {
+        scrollbar-color: #cbd5e1 #f0f1f3;
+        scrollbar-width: thin;
+    }
+
+    .tabs-scroll::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .tabs-scroll::-webkit-scrollbar-track {
+        background: #f0f1f3;
+        border-radius: 999px;
+    }
+
+    .tabs-scroll::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 999px;
     }
 
     :deep(.contact-agent-btn),
