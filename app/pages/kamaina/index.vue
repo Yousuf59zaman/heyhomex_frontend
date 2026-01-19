@@ -340,10 +340,6 @@ const handleFavoriteToggle = async (property) => {
     }
 }
 
-const handleVideoClick = (video) => {
-    navigateTo(`/kamaina/watch/${video.id}`)
-}
-
 const toggleVideoFavorite = async (video) => {
     const targetVideo = videos.value.find((v) => v.id === video.id)
     if (!targetVideo) return
@@ -558,7 +554,7 @@ watch(
 
         <!-- Real Video Grid AFTER hydration -->
         <CommonCitizenVideoGrid v-else :videos="videos" show-info :ad-config="adConfig" @see-all="handleSeeAllVideos"
-            @video-click="handleVideoClick" @favorite="toggleVideoFavorite" />
+            @favorite="toggleVideoFavorite" />
     </div>
 
     <!-- Toast Notifications -->

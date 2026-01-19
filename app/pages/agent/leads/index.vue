@@ -161,7 +161,7 @@ const loadData = (page) => {
     <div class="space-y-6">
         <div class="flex items-center justify-between">
             <h1 class="text-2xl font-semibold text-gray-900">Leads</h1>
-            <div class="flex items-center gap-2">
+            <!-- <div class="flex items-center gap-2">
                 <button @click="handleExportCSV"
                     class="px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
                     Export Leads As CSV
@@ -170,7 +170,7 @@ const loadData = (page) => {
                     class="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">
                     Add New Lead
                 </button>
-            </div>
+            </div> -->
         </div>
 
 
