@@ -14,7 +14,7 @@ const props = defineProps({
     },
 })
 
-const emit = defineEmits(['favoriteToggle'])
+const emit = defineEmits(['favoriteToggle', 'search'])
 
 
 const currentSection = computed(() => {
@@ -97,16 +97,14 @@ const playVideo = (videoId) => {
     router.push(`/${currentSection.value}/watch/${videoId}`)
 }
 const handleSearch = () => {
-    console.log("Searching for:", searchQuery.value)
+    // Emit search event with the current search query
+    emit('search', searchQuery.value)
 }
 
 const clearSearch = () => {
     if (!searchQuery.value) return
     searchQuery.value = ""
-}
-
-const saveSearch = () => {
-    console.log("Saving search...")
+    handleSearch()
 }
 
 const handleFilterChange = (filters) => {
@@ -409,9 +407,9 @@ onUnmounted(() => {
                         <Icon name="lucide:sliders-horizontal" class="w-4 h-4" />
                     </button>
                 </div>
-                <button @click="saveSearch"
+                <button @click="handleSearch"
                     class="w-full sm:w-auto h-[44px] px-4 bg-[#18222C] text-white rounded-[8px] text-[14px] leading-[20px] font-semibold hover:bg-[#1f2b36] transition-colors whitespace-nowrap">
-                    Save Search
+                    Search
                 </button>
             </div>
         </div>

@@ -19,8 +19,14 @@ const loadAgents = async () => {
     pending.value = true
     error.value = null
     try {
+        const params = {}
+        if (searchQuery.value) {
+            params.search = searchQuery.value
+        }
+        
         const response = await $fetchCitizen('/v1/user-types/5/users', {
             method: 'GET',
+            params: params
         })
         apiResponse.value = response
         agents.value = (response?.data?.data || []).map((agent) => ({
@@ -44,8 +50,7 @@ const loadAgents = async () => {
 }
 
 const handleSearch = () => {
-    // API not implemented - just update UI
-    console.log('Searching for:', searchQuery.value, 'Type:', searchType.value)
+    loadAgents()
 }
 
 const toggleFavorite = (agent) => {
@@ -82,34 +87,12 @@ onMounted(() => {
 
         <!-- Search Section -->
         <div class="flex flex-col gap-3">
-            <!-- Search Type Tabs -->
-            <div class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px]">
-                <div class="flex items-center gap-3">
-                    <button @click="searchType = 'location'" :class="[
-                        'flex-1 px-5 py-2 rounded-[8px] text-[14px] font-bold leading-[1.46] transition-colors',
-                        searchType === 'location'
-                            ? 'bg-[#18222C] text-white'
-                            : 'bg-[#F0F1F3] text-[#121A22]'
-                    ]">
-                        Location
-                    </button>
-                    <button @click="searchType = 'name'" :class="[
-                        'flex-1 px-4 py-2 rounded-[8px] text-[14px] font-bold leading-[1.46] transition-colors',
-                        searchType === 'name'
-                            ? 'bg-[#18222C] text-white'
-                            : 'bg-[#F0F1F3] text-[#121A22]'
-                    ]">
-                        Name
-                    </button>
-                </div>
-            </div>
-
             <!-- Search Input -->
             <div class="flex items-center gap-6">
                 <div
                     class="bg-white border border-[#D9D9D9] rounded-[8px] px-4 py-3 flex items-center gap-2.5 w-full max-w-[440px]">
                     <Icon name="lucide:search" class="w-5 h-5 text-[#121A22]" />
-                    <input v-model="searchQuery" type="text" :placeholder="searchType === 'location' ? 'Honolulu' : 'Enter agent name'"
+                    <input v-model="searchQuery" type="text" placeholder="Search agents"
                         class="flex-1 text-[14px] font-semibold text-[#121A22] leading-[20px] outline-none bg-transparent"
                         @keyup.enter="handleSearch" />
                     <button v-if="searchQuery" @click="searchQuery = ''; handleSearch()"

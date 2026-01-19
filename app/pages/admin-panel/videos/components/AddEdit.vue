@@ -23,14 +23,17 @@
         video_url: "",
         description: "",
         video_image: null,
+        tag_ids: [],
     })
 
     const thumbnailFile = ref(null)
     const thumbnailPreview = ref("")
     const thumbnailInput = ref(null)
+    const tags = ref([])
+    const tagsLoading = ref(false)
 
     const validations_errors = ref({})
-    const skip_validations = ref(["id", "video_image"])
+    const skip_validations = ref(["id", "video_image", "tag_ids"])
 
     watch(
         () => props.item,
@@ -45,6 +48,7 @@
                     video_url: value.video_url,
                     description: value.description,
                     video_image: null,
+                    tag_ids: value.tags ? value.tags.map(tag => tag.id) : [],
                 }
                 thumbnailPreview.value = value.video_image || ""
                 thumbnailFile.value = null
@@ -57,6 +61,7 @@
                     video_url: "",
                     description: "",
                     video_image: null,
+                    tag_ids: [],
                 }
                 thumbnailPreview.value = ""
                 thumbnailFile.value = null
@@ -64,6 +69,29 @@
         },
         {immediate: true}
     )
+
+    // Load tags from API
+    const loadTags = async () => {
+        tagsLoading.value = true
+        try {
+            const response = await $fetchAdmin('/admin/tags/all', {
+                method: 'POST'
+            })
+            
+            if (response.status) {
+                tags.value = response.data.data || []
+            }
+        } catch (e) {
+            console.error('Error loading tags:', e.message)
+            tags.value = []
+        } finally {
+            tagsLoading.value = false
+        }
+    }
+
+    onMounted(() => {
+        loadTags()
+    })
 
     const isLoading = ref(false)
     const response_modal = ref({})
@@ -144,6 +172,13 @@
             formDataToSend.append("video_url", formData.value.video_url)
             formDataToSend.append("description", formData.value.description)
 
+            // Add tags
+            if (formData.value.tag_ids && formData.value.tag_ids.length > 0) {
+                formData.value.tag_ids.forEach(tagId => {
+                    formDataToSend.append("tag_ids[]", tagId)
+                })
+            }
+
             if (thumbnailFile.value) {
                 formDataToSend.append("image", thumbnailFile.value)
             }
@@ -221,6 +256,13 @@
             formDataToSend.append("duration", String(formData.value.duration))
             formDataToSend.append("video_url", formData.value.video_url)
             formDataToSend.append("description", formData.value.description)
+
+            // Add tags
+            if (formData.value.tag_ids && formData.value.tag_ids.length > 0) {
+                formData.value.tag_ids.forEach(tagId => {
+                    formDataToSend.append("tag_ids[]", tagId)
+                })
+            }
 
             if (thumbnailFile.value) {
                 formDataToSend.append("image", thumbnailFile.value)
@@ -394,6 +436,24 @@
                     <InputError
                         class="text-sm mt-1"
                         :message="validations_errors.description" />
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 md:col-span-2">
+                <div class="flex-auto">
+                    <label class="font-semibold">Tags</label>
+                    <MultiSelect
+                        v-model="formData.tag_ids"
+                        :options="tags"
+                        optionLabel="tag_title"
+                        optionValue="id"
+                        placeholder="Select tags"
+                        :loading="tagsLoading"
+                        :maxSelectedLabels="3"
+                        class="w-full" />
+                    <InputError
+                        class="text-sm mt-1"
+                        :message="validations_errors.tag_ids" />
                 </div>
             </div>
 

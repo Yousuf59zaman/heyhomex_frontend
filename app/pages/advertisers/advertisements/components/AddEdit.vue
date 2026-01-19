@@ -77,6 +77,17 @@ const handleFileChange = (event) => {
 
 watch(() => props.item, (newItem) => {
     if (newItem && Object.keys(newItem).length > 0) {
+        // Auto-select placement radio button based on width/height when type === 1
+        let selectedPlacement = null;
+        if (newItem.type === 1 && newItem.width && newItem.height) {
+            const matchingPlacement = placementOptions.find(
+                p => p.width === newItem.width && p.height === newItem.height
+            );
+            if (matchingPlacement) {
+                selectedPlacement = matchingPlacement.value;
+            }
+        }
+        
         form.value = {
             title: newItem.title || '',
             description: newItem.description || '',
@@ -89,10 +100,11 @@ watch(() => props.item, (newItem) => {
             status: newItem.status ?? 0,
             starts_at: newItem.starts_at?.split(' ')[0] || '',
             ends_at: newItem.ends_at?.split(' ')[0] || '',
-            placement: newItem.placement || 'dashboard',
-            height: newItem.height || 200,
-            width: newItem.width || 1200
+            placement: selectedPlacement || '',
+            height: newItem.height || null,
+            width: newItem.width || null
         };
+        
         mediaPreview.value = newItem.media_url || null;
         uploadMethod.value = newItem.media_url ? 'url' : 'file';
     } else {
@@ -312,8 +324,8 @@ const cancel = () => {
                 </div>
             </div>
 
-            <!-- Ad Placement & Dimensions -->
-            <div class="flex flex-col gap-4">
+            <!-- Ad Placement & Dimensions (Only for Image type) -->
+            <div v-if="form.type === 1" class="flex flex-col gap-4">
                 <div class="flex-auto">
                     <label class="font-semibold">Ad Placement</label>
                     <div class="flex flex-col gap-3 mt-2">

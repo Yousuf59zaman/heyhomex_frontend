@@ -17,6 +17,7 @@ const videosPaginationConfig = ref({
     align: "center",
     action: "",
 });
+const videoSearchQuery = ref('');
 
 // Ad configuration - uses dynamic URLs based on current host
 const { getDefaultAdConfig } = useAdConfig();
@@ -29,11 +30,17 @@ const loadVideos = async () => {
     videosLoading.value = true;
     videosError.value = null;
     try {
+        const params = {
+            page: route.query.videoPage ? route.query.videoPage : 1,
+        };
+        
+        if (videoSearchQuery.value) {
+            params.search = videoSearchQuery.value;
+        }
+        
         const response = await $fetchCitizen("/videos/list", {
             method: "GET",
-            params: {
-                page: route.query.videoPage ? route.query.videoPage : 1,
-            }
+            params: params
         });
 
         videos.value = response.data.data.map((video) => ({
@@ -41,9 +48,9 @@ const loadVideos = async () => {
             title: video.title,
             channel: video.channel?.name || 'Unknown Channel',
             duration: video.duration || '0:00',
-            views: '0 views', 
+            views: '0 views',
             uploadTime: new Date(video.created_at).toLocaleDateString(),
-            thumbnail: video.video_image || '/images/dashboard/1.png', 
+            thumbnail: video.video_image || '/images/dashboard/1.png',
             isFavorite: false,
             category: 'Real Estate',
             location: video.latitude && video.longitude ? 'Custom Location' : 'Unknown',
@@ -61,9 +68,10 @@ const loadVideos = async () => {
     }
 };
 
-onMounted(() => {
-    hydrated.value = true;
-});
+const handleVideoSearch = (query) => {
+    videoSearchQuery.value = query;
+    loadVideos();
+};
 
 const handleTabClick = (tab) => {
     const router = useRouter();
@@ -261,7 +269,7 @@ const handleTabClick = (tab) => {
 
                 <!-- Videos Content -->
                 <div v-else>
-                    <SearchVideo :videos="videos" filters-variant="figma">
+                    <SearchVideo :videos="videos" filters-variant="figma" @search="handleVideoSearch">
                         <template #tabs>
                             <div class="bg-white rounded-[8px] p-[6px] sm:w-full md:w-[340px] sm:max-w-[640px] md:max-w-[340px]">
                                 <div class="flex items-center gap-3">
