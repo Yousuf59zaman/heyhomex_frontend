@@ -12,20 +12,43 @@ const error = ref(null)
 
 // Filter state
 const searchQuery = ref("")
-const selectedCategory = ref("All")
-
-const categories = ref([
-    "All",
-    "Neighborhood Tours",
-    "Military Relocation",
-    "Investment Insights",
-    "Local Living",
-    "School Reviews",
-    "Commuting & Transit",
-])
+const selectedTag = ref(null)
+const tags = ref([])
+const tagsLoading = ref(false)
 
 const clearSearch = () => {
     searchQuery.value = ""
+    selectedTag.value = null
+    loadVideos()
+}
+
+const handleSearch = () => {
+    loadVideos()
+}
+
+const handleTagClick = (tagId) => {
+    selectedTag.value = tagId
+    searchQuery.value = ""
+    loadVideos()
+}
+
+// Load tags from API
+const loadTags = async () => {
+    tagsLoading.value = true
+    try {
+        const response = await $fetchCitizen('/get/all/tag', {
+            method: 'GET'
+        })
+        
+        if (response.status === 'success') {
+            tags.value = response.data || []
+        }
+    } catch (e) {
+        console.error('Error loading tags:', e.message)
+        tags.value = []
+    } finally {
+        tagsLoading.value = false
+    }
 }
 
 const currentPage = ref(1)
@@ -39,6 +62,16 @@ const loadVideos = async () => {
     try {
         const params = {
             page: route.query.page ? route.query.page : 1,
+        }
+
+        // Add search param if there's a search query
+        if (searchQuery.value) {
+            params.search = searchQuery.value
+        }
+
+        // Add tag filter if a tag is selected
+        if (selectedTag.value) {
+            params.search = selectedTag.value
         }
 
         const response = await $fetchCitizen("/videos/list", {
@@ -123,6 +156,7 @@ const playVideo = (videoId) => {
 
 onMounted(() => {
     loadVideos()
+    loadTags()
 })
 
 watch(
@@ -159,29 +193,43 @@ watch(
                     v-model="searchQuery"
                     type="text"
                     placeholder="Search Here..."
-                    class="flex-1 bg-transparent border-none outline-none text-sm text-[#121a22] placeholder:text-[#6c6c6c]" />
+                    class="flex-1 bg-transparent border-none outline-none text-sm text-[#121a22] placeholder:text-[#6c6c6c]"
+                    @keyup.enter="handleSearch" />
             </div>
-            <button class="bg-[#f7f7f8] flex items-center gap-2 px-4 py-3 rounded-lg text-[#121a22] text-base font-medium hover:bg-[#eeeff0] transition-colors whitespace-nowrap">
-                <span>Filter</span>
-                <Icon name="lucide:sliders-horizontal" class="w-[18px] h-[18px]" />
+            <button 
+                @click="handleSearch"
+                class="bg-[#18222C] text-white flex items-center gap-2 px-4 py-3 rounded-lg text-base font-medium hover:bg-[#2C3E50] transition-colors whitespace-nowrap">
+                <span>Search</span>
+                <Icon name="lucide:search" class="w-[18px] h-[18px]" />
             </button>
         </div>
         
-        <!-- Horizontal Category Pills -->
+        <!-- Horizontal Tag Pills -->
         <div class="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
-                    <button
-                        v-for="category in categories"
-                        :key="category"
-                        :class="[
-                            'px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-colors flex-shrink-0',
-                            selectedCategory === category
-                                ? 'bg-[#18222c] text-white'
-                                : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
-                        ]"
-                        @click="selectedCategory = category">
-                        {{ category }}
-                    </button>
-                </div>
+            <button
+                v-if="!tagsLoading"
+                :class="[
+                    'px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-colors flex-shrink-0',
+                    !selectedTag
+                        ? 'bg-[#18222c] text-white'
+                        : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
+                ]"
+                @click="selectedTag = null; loadVideos()">
+                All
+            </button>
+            <button
+                v-for="tag in tags"
+                :key="tag.id"
+                :class="[
+                    'px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-colors flex-shrink-0',
+                    selectedTag === tag.tag_title
+                        ? 'bg-[#18222c] text-white'
+                        : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
+                ]"
+                @click="handleTagClick(tag.tag_title)">
+                {{ tag.tag_title }}
+            </button>
+        </div>
 
         <div v-if="pending" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <div v-for="n in 8" :key="n" class="animate-pulse">
