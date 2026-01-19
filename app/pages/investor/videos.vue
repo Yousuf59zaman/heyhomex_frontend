@@ -222,7 +222,7 @@ watch(
                 :key="tag.id"
                 :class="[
                     'px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-colors flex-shrink-0',
-                    selectedTag === tag.id
+                    selectedTag === tag.tag_title
                         ? 'bg-[#18222c] text-white'
                         : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
                 ]"

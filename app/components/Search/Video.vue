@@ -14,7 +14,7 @@ const props = defineProps({
     },
 })
 
-const emit = defineEmits(['favoriteToggle'])
+const emit = defineEmits(['favoriteToggle', 'search'])
 
 
 const currentSection = computed(() => {
@@ -97,11 +97,8 @@ const playVideo = (videoId) => {
     router.push(`/${currentSection.value}/watch/${videoId}`)
 }
 const handleSearch = () => {
-    // Trigger search with the current search query
-    if (searchQuery.value) {
-        // You can emit an event or call parent method here
-        console.log("Searching for:", searchQuery.value)
-    }
+    // Emit search event with the current search query
+    emit('search', searchQuery.value)
 }
 
 const clearSearch = () => {

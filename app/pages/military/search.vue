@@ -17,6 +17,7 @@ const videosPaginationConfig = ref({
     align: "center",
     action: "",
 });
+const videoSearchQuery = ref('');
 
 // Ad configuration - uses dynamic URLs based on current host
 const { getDefaultAdConfig } = useAdConfig();
@@ -261,7 +262,7 @@ const handleTabClick = (tab) => {
 
                 <!-- Videos Content -->
                 <div v-else>
-                    <SearchVideo :videos="videos" filters-variant="figma">
+                    <SearchVideo :videos="videos" filters-variant="figma" @search="handleVideoSearch">
                         <template #tabs>
                             <div class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px] lg:w-[340px]">
                                 <div class="flex items-center gap-3">

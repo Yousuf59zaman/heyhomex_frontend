@@ -17,6 +17,7 @@ const videosPaginationConfig = ref({
     align: "center",
     action: "",
 });
+const videoSearchQuery = ref('');
 
 // Ad configuration - uses dynamic URLs based on current host
 const { getDefaultAdConfig } = useAdConfig();
@@ -29,11 +30,17 @@ const loadVideos = async () => {
     videosLoading.value = true;
     videosError.value = null;
     try {
+        const params = {
+            page: route.query.videoPage ? route.query.videoPage : 1,
+        };
+        
+        if (videoSearchQuery.value) {
+            params.search = videoSearchQuery.value;
+        }
+        
         const response = await $fetchCitizen("/videos/list", {
             method: "GET",
-            params: {
-                page: route.query.videoPage ? route.query.videoPage : 1,
-            }
+            params: params
         });
 
         videos.value = response.data.data.map((video) => ({
@@ -59,6 +66,11 @@ const loadVideos = async () => {
     } finally {
         videosLoading.value = false;
     }
+};
+
+const handleVideoSearch = (query) => {
+    videoSearchQuery.value = query;
+    loadVideos();
 };
 
 onMounted(() => {
@@ -270,7 +282,7 @@ const handleTabClick = (tab) => {
 
                 <!-- Videos Content -->
                 <div v-else class="flex flex-col gap-4">
-                    <SearchVideo :videos="videos" filters-variant="figma">
+                    <SearchVideo :videos="videos" filters-variant="figma" @search="handleVideoSearch">
                         <template #tabs>
                             <div class="bg-white rounded-[8px] p-[6px] w-full max-w-[340px] lg:w-[340px]">
                                 <div class="flex items-center gap-3">

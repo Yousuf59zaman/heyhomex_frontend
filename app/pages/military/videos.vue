@@ -226,7 +226,7 @@ watch(
                         ? 'bg-[#18222c] text-white'
                         : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
                 ]"
-                @click="handleTagClick(tag.tag_title)">
+                @click="handleTagClick(tag.id)">
                 {{ tag.tag_title }}
             </button>
         </div>

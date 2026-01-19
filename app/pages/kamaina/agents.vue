@@ -19,8 +19,14 @@ const loadAgents = async () => {
     pending.value = true
     error.value = null
     try {
+        const params = {}
+        if (searchQuery.value) {
+            params.search = searchQuery.value
+        }
+        
         const response = await $fetchCitizen('/v1/user-types/5/users', {
             method: 'GET',
+            params: params
         })
         apiResponse.value = response
         agents.value = (response?.data?.data || []).map((agent) => ({
@@ -44,8 +50,7 @@ const loadAgents = async () => {
 }
 
 const handleSearch = () => {
-    // API not implemented - just update UI
-    console.log('Searching for:', searchQuery.value, 'Type:', searchType.value)
+    loadAgents()
 }
 
 const toggleFavorite = (agent) => {
