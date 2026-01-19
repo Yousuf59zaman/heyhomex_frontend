@@ -115,15 +115,23 @@ const generateDateTimeFilename = (adId: number | string): string => {
 };
 
 /**
- * Generate VAST XML string with media_url in ClickThrough
+ * Generate VAST XML string with optional ClickThrough
  */
 const createVastXml = (
     adId: string | number,
     mediaUrl: string,
     adTitle: string,
     duration: string,
-    mediaType: string
+    mediaType: string,
+    clickThroughUrl?: string
 ): string => {
+    const normalizedClickThrough = clickThroughUrl?.trim();
+    const videoClicksSection = normalizedClickThrough
+        ? `<VideoClicks>
+                            <ClickThrough><![CDATA[${normalizedClickThrough}]]></ClickThrough>
+                        </VideoClicks>`
+        : '';
+
     return `<?xml version="1.0" encoding="UTF-8"?>
 <VAST version="3.0">
     <Ad id="${adId}">
@@ -140,9 +148,7 @@ const createVastXml = (
                                 <![CDATA[${mediaUrl}]]>
                             </MediaFile>
                         </MediaFiles>
-                        <VideoClicks>
-                            <ClickThrough><![CDATA[${mediaUrl}]]></ClickThrough>
-                        </VideoClicks>
+                        ${videoClicksSection}
                     </Linear>
                 </Creative>
             </Creatives>
@@ -175,18 +181,27 @@ export default defineNuxtPlugin(() => {
                     adTitle?: string;
                     duration?: string;
                     mediaType?: string;
+                    clickThroughUrl?: string;
                 }
             ): { tag: string; tagFilename: string } => {
                 const adId = options?.adId || Date.now();
                 const adTitle = options?.adTitle || 'Advertisement';
                 const duration = options?.duration || '00:00:30';
                 const mediaType = options?.mediaType || 'video/mp4';
+                const clickThroughUrl = options?.clickThroughUrl;
 
                 // Generate clean filename: 2025-12-30_13-45-00_3.xml
                 const tagFilename = generateDateTimeFilename(adId);
 
-                // Create VAST XML with media_url in ClickThrough
-                const vastXml = createVastXml(adId, mediaUrl, adTitle, duration, mediaType);
+                // Create VAST XML with optional ClickThrough
+                const vastXml = createVastXml(
+                    adId,
+                    mediaUrl,
+                    adTitle,
+                    duration,
+                    mediaType,
+                    clickThroughUrl
+                );
 
                 // Convert to data URI for VAST client to fetch
                 const tag = xmlToDataUri(vastXml);
@@ -235,6 +250,7 @@ export default defineNuxtPlugin(() => {
                         adTitle: ad.title,
                         duration: '00:00:30',
                         mediaType: mediaType,
+                        clickThroughUrl: ad.redirect_url,
                     });
 
                     schedule.push({
@@ -301,6 +317,7 @@ export default defineNuxtPlugin(() => {
                         adTitle: ad.title,
                         duration: '00:00:30',
                         mediaType: mediaType,
+                        clickThroughUrl: ad.redirect_url,
                     });
 
                     schedule.push({
