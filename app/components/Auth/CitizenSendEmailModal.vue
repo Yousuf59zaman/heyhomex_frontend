@@ -197,7 +197,7 @@
                         placeholder="Enter your email address"
                         @keyup.enter="handleSubmit"
                         :pt="{
-                            root: 'w-full h-14 px-4 border border-[#cfdbe8] rounded-lg text-sm md:text-base text-[#566573] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
+                            root: 'w-full h-14 px-4 border border-[#121A22] rounded-lg text-sm md:text-base text-[#566573] placeholder:text-[#566573] focus:ring-2 focus:ring-[#18222c]/20 focus:border-[#18222c] transition-colors',
                         }" />
                     <div
                         v-if="validations_errors.email"

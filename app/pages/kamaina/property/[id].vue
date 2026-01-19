@@ -565,10 +565,10 @@ onMounted(() => {
                             {{ propertyData.title || propertyData.name }}
                         </h1>
                         <div class="flex items-center gap-3 shrink-0">
-                            <button
+                            <!-- <button
                                 class="bg-[#18222c] text-white h-[44px] px-5 rounded-xl text-sm font-bold leading-[1.46] hover:bg-[#111922] transition-colors">
                                 Claim This Home
-                            </button>
+                            </button> -->
                             <button
                                 class="h-[44px] w-[44px] flex-shrink-0 bg-white border border-[#e5e7eb] rounded-xl flex items-center justify-center hover:bg-[#f9fafb] transition-colors">
                                 <Icon
