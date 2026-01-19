@@ -29,11 +29,13 @@
         modal
         :draggable="false"
         :closable="false"
-        class="auth-modal"
-        :style="{width: '45rem', maxWidth: '720px'}"
+        :resizable="false"
+        class="citizen-success-modal"
+        :style="{width: 'min(45rem, 95vw)', maxWidth: '95vw'}"
         :pt="{
+            root: 'border-0 rounded-xl shadow-2xl m-4',
             header: 'border-0 p-[0px!important]',
-            content: 'border-0 px-[24px!important]',
+            content: 'border-0 p-[0px!important]',
         }">
         <template #header>
             <div class="absolute right-0 top-0 z-50">
@@ -54,23 +56,39 @@
             </div>
         </template>
 
-        <div class="text-center space-y-6 pb-4 pt-4 flex flex-col items-center">
-            <!-- Success Message -->
-            <div class="space-y-2 w-[408px] max-w-full pb-2">
-                <p class="text-[32px] leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Medium']">
-                    You have successfully created your account!
-                </p>
-            </div>
+        <div class="px-4 sm:px-6 pb-8 pt-6">
+            <div class="text-center space-y-6 flex flex-col items-center">
+                <!-- Success Message -->
+                <div class="space-y-2 w-[408px] max-w-full pb-2">
+                    <p class="text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[40px] font-[510] text-[#121A22] text-center font-['sf-pro-Medium']">
+                        You have successfully created your account!
+                    </p>
+                </div>
 
-            <!-- Continue Button -->
-            <button
-                @click="handleNext"
-                class="w-full px-6 py-3 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white lg:text-base font-bold rounded-lg transition-colors duration-200 flex items-center justify-center"
-                size="large">
-                Continue to login
-            </button>
+                <!-- Continue Button -->
+                <button
+                    @click="handleNext"
+                    class="w-full px-6 py-3 bg-[#1E293B] hover:bg-[#0F172A] disabled:bg-gray-400 text-white lg:text-base font-bold rounded-lg transition-colors duration-200 flex items-center justify-center"
+                    size="large">
+                    Continue to login
+                </button>
+            </div>
         </div>
     </Dialog>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+    .citizen-success-modal .p-dialog {
+        border-radius: 0.625rem;
+    }
+
+    .citizen-success-modal .p-dialog-header {
+        border: none;
+        padding: 0;
+    }
+
+    .citizen-success-modal .p-dialog-content {
+        border: none;
+        padding: 0;
+    }
+</style>
