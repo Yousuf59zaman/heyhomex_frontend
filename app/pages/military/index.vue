@@ -336,10 +336,6 @@
         }
     }
 
-    const handleVideoClick = (video) => {
-        navigateTo(`/military/watch/${video.id}`)
-    }
-
     const toggleVideoFavorite = async (video) => {
         const targetVideo = videos.value.find((v) => v.id === video.id)
         if (!targetVideo) return
@@ -590,7 +586,6 @@
             show-info
             :ad-config="adConfig"
             @see-all="handleSeeAllVideos"
-            @video-click="handleVideoClick"
             @favorite="toggleVideoFavorite" />
     </div>
 
