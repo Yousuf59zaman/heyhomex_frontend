@@ -37,8 +37,8 @@ const loadAgents = async () => {
             min_price: parseFloat(agent.user_preference?.range_minimum_price) || 0,
             max_price: parseFloat(agent.user_preference?.range_maximum_price) || 0,
             sales_count: 0,
-            rating: 5.0,
-            reviews_count: 0,
+            rating: agent.rating || 0,
+            reviews_count: agent.review || 0,
             isFavorited: false,
         }))
     } catch (e) {

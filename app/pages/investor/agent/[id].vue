@@ -179,7 +179,7 @@ const agentRating = computed(() => {
     return Number.isFinite(rating) ? rating : 5.0
 })
 const agentReviewCount = computed(() => {
-    const count = Number(agentData.value?.reviews_count)
+    const count = Number(agentData.value?.review)
     return Number.isFinite(count) ? count : 0
 })
 const agentSalesCount = computed(() => {
@@ -278,11 +278,11 @@ onMounted(async () => {
                             </div>
 
                             <!-- Favorite Button -->
-                            <button @click="toggleFavorite"
+                            <!-- <button @click="toggleFavorite"
                                 class="bg-[#F0F1F3] p-3 rounded-[12px] hover:bg-[#E0E1E3] transition-colors">
                                 <Icon :name="agentData.isFavorited ? 'ph:heart-fill' : 'ph:heart'" class="w-6 h-6"
                                     :class="agentData.isFavorited ? 'text-red-500' : 'text-gray-600'" />
-                            </button>
+                            </button> -->
                         </div>
                     </div>
                 </div>
