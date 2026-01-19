@@ -25,6 +25,9 @@ const fetchLeads = async (sf) => {
         if (typeFilter.value) {
             params.type = typeFilter.value
         }
+        if(searchQuery.value){
+            params.search = searchQuery.value
+        }
         const statusValue = sf ?? statusFilter.value
         if (statusValue) {
             params.status = statusValue
@@ -82,6 +85,11 @@ watch([typeFilter, statusFilter], () => {
     currentPage.value = 1
     fetchLeads(statusFilter.value)
 })
+
+watch([searchQuery] , ()=>{
+    fetchLeads();
+})
+
 
 const getLeadStatusInfo = (leadStatus) => {
     if (!leadStatus) {

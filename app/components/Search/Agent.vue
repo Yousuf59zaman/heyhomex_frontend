@@ -69,12 +69,12 @@ const reviewCount = computed(() => {
                 class="w-full h-full object-cover" @error="$event.target.src = '/images/dashboard/1.png'" />
 
             <!-- Favorite Button -->
-            <button
+            <!-- <button
                 class="absolute top-2 right-2 bg-white/90 backdrop-blur-[2px] p-2 rounded-lg hover:bg-white transition-colors"
                 @click="handleFavoriteClick">
                 <Icon :name="agent.isFavorited ? 'ph:heart-fill' : 'ph:heart'" class="w-5 h-5"
                     :class="agent.isFavorited ? 'text-red-500' : 'text-gray-600'" />
-            </button>
+            </button> -->
         </div>
 
         <!-- Agent Info -->
