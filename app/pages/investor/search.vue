@@ -5,6 +5,9 @@ definePageMeta({
 
 const route = useRoute();
 const hydrated = ref(false);
+onMounted(() => {
+    hydrated.value = true;
+});
 const activeTab = ref('home');
 
 // Videos state
