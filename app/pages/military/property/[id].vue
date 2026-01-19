@@ -813,7 +813,7 @@
                                         {{ item.label }}
                                     </p>
                                     <p
-                                        class="font-bold w-full lg:w-[340px] lg:text-right">
+                                                                                class="text-[#283849] text-[20px] leading-[24px] font-bold italic font-['sf-pro-Bold'] w-full lg:w-[340px] lg:text-right">
                                         {{ item.value }}
                                     </p>
                                 </div>
