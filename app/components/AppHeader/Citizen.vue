@@ -7,6 +7,7 @@
 
     const isScroll = ref(false)
     const menu = ref()
+    const unreadCount = ref(0)
     const profileMenuItems = ref([
         {
             label: "Logout",
@@ -23,6 +24,21 @@
             default: false,
         },
     })
+
+    // Fetch unread notification count
+    const fetchUnreadCount = async () => {
+        try {
+            const response = await $fetchCitizen('v1/leads/notifications', {
+                method: 'GET',
+                params: { read_status: 'unread', page: 1 }
+            })
+            if (response.status === 'success') {
+                unreadCount.value = response.data.total || 0
+            }
+        } catch (e) {
+            console.error('Failed to fetch unread notifications:', e)
+        }
+    }
 
     const handleScroll = () => {
         isScroll.value = window.screenY > 0
@@ -86,6 +102,9 @@
 
     onMounted(() => {
         window.addEventListener("scroll", handleScroll)
+        fetchUnreadCount()
+        // Refresh count every 30 seconds
+        setInterval(fetchUnreadCount, 30000)
     })
 
     onUnmounted(() => {
@@ -137,17 +156,19 @@
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <button
+                    <NuxtLink
+                        :to="`${propertyBasePath}/notifications`"
                         type="button"
                         aria-label="Notifications"
-                        class="relative text-gray-400 hover:text-gray-600 transition-colors">
+                        class="relative text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
                         <img
                             src="/svg/dashboard/bell-icon.svg"
                             alt=""
-                            class="w-6 h-6" />
+                            class="w-6 h-6 flex-shrink-0" />
                         <span
+                            v-if="unreadCount > 0"
                             class="absolute -top-0.5 right-0 w-2 h-2 bg-[#FF4D4F] rounded-full"></span>
-                    </button>
+                    </NuxtLink>
 
                     <div class="w-px h-6 bg-[#D1D1D5]"></div>
 
@@ -194,17 +215,10 @@
                             alt="HeyHome Logo" />
                     </NuxtLink>
                     <div class="flex items-center gap-6">
-                        <button
-                            type="button"
-                            aria-label="Notifications"
-                            class="relative">
-                            <img
-                                src="/svg/dashboard/bell-icon.svg"
-                                alt=""
-                                class="w-6 h-6" />
-                            <span
-                                class="absolute -top-0.5 right-0 w-2 h-2 bg-[#FF4D4F] rounded-full"></span>
-                        </button>
+                        <NuxtLink :to="`/agent/notifications`" class="text-gray-400 hover:text-gray-600 transition-colors relative">
+                            <img src="/svg/dashboard/bell-icon.svg" alt="Notifications" />
+                            <span v-if="unreadCount > 0" class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </NuxtLink>
                         <button
                             type="button"
                             aria-label="Open menu"
@@ -239,19 +253,21 @@
                 </div>
 
                 <div class="flex items-center gap-5">
-                    <button
+                    <NuxtLink
+                        :to="`${propertyBasePath}/notifications`"
                         type="button"
                         aria-label="Notifications"
-                        class="relative bg-white w-12 h-12 rounded-[30px] flex items-center justify-center">
-                        <span class="relative w-6 h-6">
+                        class="relative bg-white w-12 h-12 rounded-[30px] flex items-center justify-center flex-shrink-0">
+                        <span class="relative w-6 h-6 flex-shrink-0">
                             <img
                                 src="/svg/dashboard/bell-icon.svg"
                                 alt=""
-                                class="w-6 h-6" />
+                                class="w-6 h-6 flex-shrink-0" />
                             <span
+                                v-if="unreadCount > 0"
                                 class="absolute top-0 left-[14px] w-2 h-2 bg-[#FF4D4F] rounded-full"></span>
                         </span>
-                    </button>
+                    </NuxtLink>
 
                     <div class="w-px h-6 bg-[#D4D4D4]"></div>
 
