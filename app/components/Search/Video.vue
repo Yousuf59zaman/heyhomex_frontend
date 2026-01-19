@@ -97,16 +97,17 @@ const playVideo = (videoId) => {
     router.push(`/${currentSection.value}/watch/${videoId}`)
 }
 const handleSearch = () => {
-    console.log("Searching for:", searchQuery.value)
+    // Trigger search with the current search query
+    if (searchQuery.value) {
+        // You can emit an event or call parent method here
+        console.log("Searching for:", searchQuery.value)
+    }
 }
 
 const clearSearch = () => {
     if (!searchQuery.value) return
     searchQuery.value = ""
-}
-
-const saveSearch = () => {
-    console.log("Saving search...")
+    handleSearch()
 }
 
 const handleFilterChange = (filters) => {
@@ -409,9 +410,9 @@ onUnmounted(() => {
                         <Icon name="lucide:sliders-horizontal" class="w-4 h-4" />
                     </button>
                 </div>
-                <button @click="saveSearch"
+                <button @click="handleSearch"
                     class="w-full sm:w-auto h-[44px] px-4 bg-[#18222C] text-white rounded-[8px] text-[14px] leading-[20px] font-semibold hover:bg-[#1f2b36] transition-colors whitespace-nowrap">
-                    Save Search
+                    Search
                 </button>
             </div>
         </div>
