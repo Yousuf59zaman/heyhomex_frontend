@@ -398,7 +398,7 @@
                     <button
                         @click="handleAppleLogin"
                         type="button"
-                        :disabled="isAppleLoadingSSO"
+                        :disabled="true"
                         class="px-2 py-3 bg-white hover:bg-gray-50 text-gray-900 font-medium border border-gray-300 rounded-lg transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
                         <svg
                             v-if="!isAppleLoadingSSO"
@@ -417,7 +417,7 @@
                     <button
                         @click="handleFacebookLogin"
                         type="button"
-                        :disabled="isFacebookLoadingSSO"
+                        :disabled="true"
                         class="px-4 py-3 bg-white hover:bg-gray-50 text-gray-900 font-medium border border-gray-300 rounded-lg transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
                         <svg
                             v-if="!isFacebookLoadingSSO"
