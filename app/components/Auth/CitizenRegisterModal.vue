@@ -117,12 +117,12 @@
         occupation: "",
     })
 
-    // Check if this is agent or advertiser registration
+   
     const isAgentOrAdvertiser = computed(() => {
         return props.accountType === 1 || props.accountType === 2
     })
 
-    // Load professions from API
+  
     const loadProfessions = async () => {
         if (!isAgentOrAdvertiser.value) return
         

@@ -87,6 +87,7 @@ const validations_errors = ref({});
 const skip_validations = ref([
     'id',
     'status',
+    'price'
 ]);
 
 const isLoading = ref(false);
@@ -129,7 +130,7 @@ const updateHandler = async () => {
         formDataToSend.append('stripe_product_type', formData.value.stripe_product_type);
         formDataToSend.append('duration_in_days', formData.value.duration_in_days);
         formDataToSend.append('price', formData.value.price);
-        formDataToSend.append('status', formData.value.status);
+        formDataToSend.append('status', formData.value.status ? 1 : 0);
         
         // Add details to formData
         formData.value.details.forEach((detail, index) => {
@@ -146,8 +147,9 @@ const updateHandler = async () => {
             method: 'POST',
             body: formDataToSend,
         });
-        response_modal.value = getData;
-        if (getData.status == 'success') {
+        console.log('coming get data' , getData);
+        response_modal.value = getData.data;
+        if (getData) {
             emit('add_emit', getData.data);
         }
     } catch (e) {
