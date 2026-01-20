@@ -518,13 +518,13 @@
                     leave-to-class="opacity-0 scale-95 -translate-y-1">
                     <div
                         v-if="isOthersOpen"
-                        class="absolute left-0 md:left-auto md:right-0 top-[calc(100%+4px)] z-50 w-full overflow-hidden rounded-[8px] bg-white py-1 shadow-lg ring-1 ring-black/5">
+                        class="absolute left-0 md:left-auto md:right-0 top-[calc(100%+4px)] z-50 min-w-[160px] overflow-hidden rounded-[8px] bg-white py-1 shadow-lg ring-1 ring-black/5">
                         <button
                             v-for="option in othersOptions"
                             :key="option"
                             type="button"
                             @click="selectOthers(option)"
-                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[16px] leading-[22px] transition-colors"
+                            class="flex w-full items-center justify-center md:justify-start px-4 py-2 text-[16px] leading-[22px] transition-colors whitespace-nowrap"
                             :class="
                                 selectedOthers === option
                                     ? 'bg-[#2C3E50] text-white font-medium'

@@ -235,13 +235,13 @@ const loadData = (page) => {
                             <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">
                                 Contact Info
                             </th>
-                            <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">
+                            <!-- <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">
                                 Action
-                            </th>
+                            </th> -->
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-if="loading">
+                        <tr v-if="loading" >
                             <td colspan="7" class="py-8 text-center text-gray-500">
                                 Loading leads...
                             </td>
@@ -300,12 +300,12 @@ const loadData = (page) => {
                             </td>
 
 
-                            <td class="py-4 px-6">
+                            <!-- <td class="py-4 px-6">
                                 <button @click.stop="handleActionMenu(lead)"
                                     class="text-gray-400 hover:text-gray-600 transition-colors">
                                     <Icon name="lucide:more-vertical" class="w-5 h-5" />
                                 </button>
-                            </td>
+                            </td> -->
                         </tr>
                     </tbody>
                 </table>
