@@ -24,11 +24,7 @@
 
     const formData = reactive({
         professionalType: "",
-        licenseNumber: "",
-        brokerId: "",
-        zipCode: "",
         mobilePhone: "",
-        extension: "",
     })
 
     const errorMessage = ref("")
@@ -97,16 +93,6 @@
             return
         }
 
-        if (!formData.licenseNumber) {
-            errorMessage.value = "Please enter your license number"
-            return
-        }
-
-        if (!formData.zipCode) {
-            errorMessage.value = "Please enter your zip code"
-            return
-        }
-
         if (!formData.mobilePhone) {
             errorMessage.value = "Please enter your mobile/phone number"
             return
@@ -119,11 +105,11 @@
                 method: "POST",
                 body: {
                     profession_id: formData.professionalType,
-                    license_number: formData.licenseNumber,
-                    broker_id: formData.brokerId,
-                    zip_code: formData.zipCode,
+                    license_number: '123',
+                    broker_id: '123',
+                    zip_code: '',
                     mobile: formData.mobilePhone,
-                    extension: formData.extension,
+                    extension: '',
                 }
             })
 
@@ -241,97 +227,21 @@
                     </div>
                 </div>
 
-                <div class="flex gap-5">
-                    <div class="flex-1 flex flex-col gap-5">
-                        <div class="flex flex-col w-full">
-                            <div class="pb-2">
-                                <label
-                                    for="licenseNumber"
-                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
-                                    License number
-                                </label>
-                            </div>
-                            <InputText
-                                id="licenseNumber"
-                                v-model="formData.licenseNumber"
-                                type="text"
-                                placeholder="Enter your license number"
-                                class="w-full h-14 px-4 py-4 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex flex-col gap-5">
-                        <div class="flex flex-col w-full">
-                            <div class="pb-2">
-                                <label
-                                    for="brokerId"
-                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
-                                    Broker ID
-                                </label>
-                            </div>
-                            <InputText
-                                id="brokerId"
-                                v-model="formData.brokerId"
-                                type="text"
-                                placeholder="Enter your broker ID"
-                                class="w-full h-14 px-4 py-4 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
-                        </div>
-                    </div>
-                </div>
-
                 <div class="flex flex-col gap-5">
                     <div class="flex flex-col w-full">
                         <div class="pb-2">
-                                <label
-                                    for="zipCode"
-                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
-                                Zip code
-                                </label>
-                            </div>
+                            <label
+                                for="mobilePhone"
+                                class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
+                                Mobile/Phone number
+                            </label>
+                        </div>
                         <InputText
-                            id="zipCode"
-                            v-model="formData.zipCode"
-                            type="text"
-                            placeholder="Enter your zip code"
+                            id="mobilePhone"
+                            v-model="formData.mobilePhone"
+                            type="tel"
+                            placeholder="Enter your mobile/phone number"
                             class="w-full h-14 px-4 py-4 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
-                    </div>
-                </div>
-
-                <div class="flex gap-5">
-                    <div class="flex-1 flex flex-col gap-5">
-                        <div class="flex flex-col w-full">
-                            <div class="pb-2">
-                                <label
-                                    for="mobilePhone"
-                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
-                                    Mobile/Phone number
-                                </label>
-                            </div>
-                            <InputText
-                                id="mobilePhone"
-                                v-model="formData.mobilePhone"
-                                type="tel"
-                                placeholder="Enter your mobile/phone number"
-                                class="w-full h-14 px-4 py-4 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex flex-col gap-5">
-                        <div class="flex flex-col w-full">
-                            <div class="pb-2">
-                                <label
-                                    for="extension"
-                                    class="text-base leading-6 font-[510] text-[#121A22] font-['sf-pro-Medium'] [font-feature-settings:'dlig'_on]">
-                                    Extension
-                                </label>
-                            </div>
-                            <InputText
-                                id="extension"
-                                v-model="formData.extension"
-                                type="text"
-                                placeholder="Enter extension"
-                                class="w-full h-14 px-4 py-4 border border-[#CFDBE8] rounded-lg text-base leading-6 text-[#121A22] placeholder:text-[#566573] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
-                        </div>
                     </div>
                 </div>
 
