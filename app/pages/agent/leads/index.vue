@@ -241,7 +241,7 @@ const loadData = (page) => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-if="loading">
+                        <tr v-if="loading" >
                             <td colspan="7" class="py-8 text-center text-gray-500">
                                 Loading leads...
                             </td>
