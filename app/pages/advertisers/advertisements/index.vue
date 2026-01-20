@@ -23,11 +23,13 @@ const permissions = ref({});
 const loadData = async () => {
     isLoading.value = true;
     permissions.value = {};
+    
     try {
         const getData = await $fetchCitizen(`advertiser/advertisements/list`, {
             method: 'GET',
             params: {
                 page: route.query.page ? route.query.page : 1,
+                title : search.value ? search.value : ''
             },
         });
         data.value = getData.data.data;
@@ -48,6 +50,10 @@ onMounted(() => {
 watch(() => route.query, (to) => {
     loadData();
 });
+
+watch([search] , ()=> {
+    loadData();
+})
 
 const isOpenModal = ref(false);
 const item = ref({});
@@ -253,8 +259,6 @@ const getStatusLabel = (status) => {
                     <InputText 
                         type="text" 
                         v-model="search" 
-                        @input="loadData" 
-                        @keyup.enter="loadData"
                         placeholder="Search campaigns..."
                         class="text-sm" />
                 </div>

@@ -2,80 +2,58 @@
 useHead({ title: "Listings - Agent Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "agent" })
 
+const citizen_user = citizenUser()
 
-const searchQuery = ref('')
-const statusFilter = ref('All')
-const sortBy = ref('All')
+// const searchQuery = ref('')
+// const statusFilter = ref('All')
+// const sortBy = ref('All')
 
-// const isLoading = ref(false)
+const isLoading = ref(false)
+const listings = ref([])
+const error = ref(null)
 
-
-const listings = ref([
-    {
-        id: 1,
-        property_status: 'active',
-        property_image: '/images/dashboard/property1.jpg',
-        property_title: 'Modern City Apartment',
-        property_location: 'Hawaii',
-        property_price: 120000,
-        created_at: '2026-01-01T10:00:00Z',
-        updated_at: '2026-01-05T15:30:00Z'
-    },
-    {
-        id: 2,
-        property_status: 'active',
-        property_image: '/images/dashboard/property1.jpg',
-        property_title: 'Beachfront Villa',
-        property_location: 'Hawaii',
-        property_price: 250000,
-        created_at: '2026-01-02T10:00:00Z',
-        updated_at: '2026-01-05T15:30:00Z'
-    },
-    {
-        id: 3,
-        property_status: 'active',
-        property_image: '/images/dashboard/property1.jpg',
-        property_title: 'Downtown Condo',
-        property_location: 'Hawaii',
-        property_price: 180000,
-        created_at: '2026-01-03T10:00:00Z',
-        updated_at: '2026-01-05T15:30:00Z'
-    },
-    {
-        id: 4,
-        property_status: 'pending',
-        property_image: '/images/dashboard/property1.jpg',
-        property_title: 'Luxury Penthouse',
-        property_location: 'Hawaii',
-        property_price: 350000,
-        created_at: '2026-01-04T10:00:00Z',
-        updated_at: '2026-01-05T15:30:00Z'
-    },
-    {
-        id: 5,
-        property_status: 'active',
-        property_image: '/images/dashboard/property1.jpg',
-        property_title: 'Suburban House',
-        property_location: 'Hawaii',
-        property_price: 145000,
-        created_at: '2026-01-05T10:00:00Z',
-        updated_at: '2026-01-05T15:30:00Z'
-    },
-    {
-        id: 6,
-        property_status: 'sold',
-        property_image: '/images/dashboard/property1.jpg',
-        property_title: 'Ocean View Apartment',
-        property_location: 'Hawaii',
-        property_price: 195000,
-        created_at: '2025-12-28T10:00:00Z',
-        updated_at: '2026-01-03T15:30:00Z'
+const loadListings = async () => {
+    isLoading.value = true
+    error.value = null
+    try {
+        const agentId = citizen_user.value?.data?.id
+        if (!agentId) {
+            throw new Error('Agent ID not found')
+        }
+        
+        const response = await $fetchCitizen(`/v1/agent/${agentId}/properties`, {
+            method: 'GET'
+        })
+        
+        if (response.status === 'success') {
+            listings.value = response.data.map(property => ({
+                id: property.id,
+                property_status: property.category || 'active',
+                property_image: property.image_url,
+                property_title: property.name,
+                property_location: property.address,
+                property_price: parseFloat(property.price),
+                beds: property.beds,
+                baths: property.baths,
+                square_feet: property.square_feet,
+                created_at: property.created_at,
+                updated_at: property.updated_at
+            }))
+        }
+    } catch (e) {
+        console.error('Error loading listings:', e.message)
+        error.value = e
+        listings.value = []
+    } finally {
+        isLoading.value = false
     }
-])
+}
 
+onMounted(() => {
+    loadListings()
+})
 
 const currentPage = ref(1)
-// const itemsPerPage = ref(10)
 const totalItems = computed(() => listings.value.length)
 
 
@@ -86,8 +64,11 @@ const formatPrice = (price) => {
         minimumFractionDigits: 0
     }).format(price)
 }
+
 const getStatusInfo = (status) => {
     const statusMap = {
+        'for_sale': { text: 'For Sale', color: 'green' },
+        'for_rent': { text: 'For Rent', color: 'blue' },
         'active': { text: 'Active', color: 'green' },
         'pending': { text: 'Pending', color: 'yellow' },
         'sold': { text: 'Sold', color: 'blue' },
@@ -107,19 +88,18 @@ const getStatusColor = (color) => {
     return colors[color] || 'bg-gray-100 text-gray-700 border border-gray-200'
 }
 
-const handleAddListing = () => {
-    console.log('Add new listing')
-}
+// const handleAddListing = () => {
+//     console.log('Add new listing')
+// }
 
-const handleActionMenu = (listing) => {
-    console.log('Action for listing:', listing.id)
-}
+// const handleActionMenu = (listing) => {
+//     console.log('Action for listing:', listing.id)
+// }
 </script>
 
 <template>
     <div class="space-y-6">
-
-        <div class="flex items-center justify-between">
+        <!-- <div class="flex items-center justify-between">
             <h1 class="text-2xl font-semibold text-gray-900">Listings</h1>
             <div class="flex items-center gap-2">
                 <button @click="handleAddListing"
@@ -127,10 +107,10 @@ const handleActionMenu = (listing) => {
                     Add New Listing
                 </button>
             </div>
-        </div>
+        </div> -->
 
 
-        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <!-- <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
 
             <div class="relative flex-1 max-w-md">
                 <Icon name="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -144,9 +124,8 @@ const handleActionMenu = (listing) => {
                 <select v-model="statusFilter"
                     class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 cursor-pointer">
                     <option value="All">All</option>
-                    <option value="Active">Active</option>
-                    <option value="Sold">Sold</option>
-                    <option value="Pending">Pending</option>
+                    <option value="for_sale">For Sale</option>
+                    <option value="for_rent">For Rent</option>
                 </select>
             </div>
 
@@ -161,7 +140,7 @@ const handleActionMenu = (listing) => {
                     <option value="Location">Location</option>
                 </select>
             </div>
-        </div>
+        </div> -->
 
 
         <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
@@ -171,7 +150,65 @@ const handleActionMenu = (listing) => {
             </div>
 
 
-            <div class="overflow-x-auto">
+            <div v-if="isLoading" class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">
+                                Status
+                            </th>
+                            <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">
+                                Property Image
+                            </th>
+                            <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">
+                                Property Title
+                            </th>
+                            <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">
+                                Location
+                            </th>
+                            <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">
+                                Price
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="n in 5" :key="n" class="border-b border-gray-100 animate-pulse">
+                            <td class="py-4 px-6">
+                                <div class="h-6 w-20 bg-gray-200 rounded"></div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="w-20 h-14 bg-gray-200 rounded-lg"></div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="h-4 w-32 bg-gray-200 rounded"></div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="h-4 w-24 bg-gray-200 rounded"></div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="h-4 w-20 bg-gray-200 rounded"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div v-else-if="error" class="px-6 py-12 text-center">
+                <Icon name="lucide:alert-circle" class="w-12 h-12 text-red-500 mx-auto mb-4" />
+                <p class="text-gray-600 mb-4">Failed to load listings</p>
+                <button @click="loadListings" 
+                    class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
+                    Retry
+                </button>
+            </div>
+
+            <div v-else-if="listings.length === 0" class="px-6 py-12 text-center">
+                <Icon name="lucide:home" class="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <p class="text-gray-600 mb-2">No listings found</p>
+                <p class="text-sm text-gray-500">Add your first listing to get started</p>
+            </div>
+
+            <div v-else class="overflow-x-auto">
                 <table class="w-full">
                     <thead class="bg-gray-50">
                         <tr>
