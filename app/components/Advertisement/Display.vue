@@ -196,12 +196,12 @@ watch(currentAd, async (newAd, oldAd) => {
             </div>
 
 
-            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
+            <!-- <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
                 <h4 class="text-white text-sm font-semibold">{{ currentAd.title }}</h4>
                 <p v-if="currentAd.description" class="text-white text-xs opacity-90 mt-1">
                     {{ currentAd.description.substring(0, 50) }}{{ currentAd.description.length > 50 ? '...' : '' }}
                 </p>
-            </div>
+            </div> -->
         </div>
 
 
