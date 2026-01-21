@@ -84,11 +84,11 @@ const reviewCount = computed(() => {
                 <h3 class="text-[16px] font-bold text-[#283849] leading-[28px] truncate">
                     {{ agent.name }}
                 </h3>
-                <div class="flex items-center gap-1 flex-shrink-0">
+                <!-- <div class="flex items-center gap-1 flex-shrink-0">
                     <span class="text-[20px] font-bold text-[#283849] leading-[1.5]">{{ rating.toFixed(1) }}</span>
                     <Icon name="fa6-solid:star" class="w-4 h-4 text-[#FFB013]" />
                     <span class="text-[14px] text-[#121A22] leading-[20px]">({{ reviewCount }})</span>
-                </div>
+                </div> -->
             </div>
 
             <!-- Agent Type/Category -->
@@ -97,10 +97,10 @@ const reviewCount = computed(() => {
             </p>
 
             <!-- Divider -->
-            <div class="border-t border-[#D9D9D9]"></div>
+            <!-- <div class="border-t border-[#D9D9D9]"></div> -->
 
             <!-- Stats -->
-            <div class="flex items-center gap-3">
+            <!-- <div class="flex items-center gap-3">
                 <div class="flex-1 bg-[#FAF9F8] rounded-[4px] px-3 py-2.5">
                     <p class="text-[12px] font-semibold text-[#121A22] leading-[16px] capitalize text-center truncate">
                         {{ priceRange }} price Range
@@ -111,7 +111,7 @@ const reviewCount = computed(() => {
                         {{ soldCount }} sold last 12 mos
                     </p>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>

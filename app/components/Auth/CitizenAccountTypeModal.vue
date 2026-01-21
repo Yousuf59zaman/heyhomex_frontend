@@ -199,7 +199,7 @@
                                 ? 'bg-[#18222c] text-white'
                                 : 'bg-white text-[#18222c] border border-[#cfdbe8] hover:bg-gray-50',
                         ]">
-                        I am a Buyer
+                        I am a Guest
                     </button>
 
                     <button
