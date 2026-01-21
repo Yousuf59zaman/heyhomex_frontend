@@ -392,9 +392,24 @@
 
 <template>
     <div class="flex flex-col gap-6">
+        <!-- Video Section -->
+        <div class="bg-white rounded-[10px] p-5 overflow-hidden">
+            <h2 class="text-[20px] leading-[24px] tracking-[0.4px] font-semibold text-[#121A22] mb-4">
+                Welcome Video
+            </h2>
+            <div class="relative w-full" style="padding-bottom: 56.25%;">
+                <video 
+                    class="absolute inset-0 w-full h-full object-cover rounded-lg" 
+                    src="/video/HomePageVideo.mp4" 
+                    controls 
+                    playsinline>
+                </video>
+            </div>
+        </div>
+        
         <!-- Card container - fits viewport width -->
-        <div class="bg-white rounded-[10px] p-5 flex flex-col gap-5">
-            <!-- Header: Title + Dropdown - always visible, no scroll -->
+        <!-- <div class="bg-white rounded-[10px] p-5 flex flex-col gap-5">
+           
             <div
                 class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <h2
@@ -449,12 +464,12 @@
                 </div>
             </div>
 
-            <!-- Chart area - scrolls horizontally on mobile only -->
+          
             <div
                 ref="scrollContainerRef"
                 class="overflow-x-auto scrollbar-hide sm:overflow-visible"
                 @scroll="handleScroll">
-                <!-- Wide chart wrapper for mobile scroll -->
+              
                 <div class="min-w-[550px] sm:min-w-0 sm:w-full">
                     <div class="h-[320px] sm:h-64 md:h-80 relative">
                         <Chart
@@ -494,21 +509,21 @@
             </div>
         </div>
 
-        <!-- Mobile scroll indicator - INTERACTIVE: click track or drag thumb to scroll -->
+      
         <div
             v-if="isMobile"
             ref="scrollTrackRef"
             class="w-full h-[8px] px-1 py-[1px] bg-[#E6E6EA] rounded-[99px] sm:hidden cursor-pointer relative"
             @click="handleScrollTrackClick"
             @touchstart="handleScrollTrackClick">
-            <!-- Draggable thumb -->
+            
             <div
                 class="h-[6px] w-[80px] bg-[#B0B1BF] rounded-[99px] cursor-grab active:cursor-grabbing select-none"
                 :class="{'cursor-grabbing': isDragging}"
                 :style="scrollThumbStyle"
                 @mousedown="handleThumbDragStart"
                 @touchstart.stop="handleThumbDragStart"></div>
-        </div>
+        </div> -->
     </div>
 </template>
 

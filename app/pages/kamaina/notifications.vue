@@ -262,7 +262,7 @@ onMounted(() => {
                     'bg-white rounded-lg border transition-all duration-200 hover:shadow-md cursor-pointer',
                     notification.read_at ? 'border-gray-200' : 'border-blue-200 bg-blue-50/30'
                 ]"
-                @click="navigateTo(`/kamaina/notifications/${notification.id}`)">
+                @click="() => navigateTo(`/kamaina/notifications/${notification.id}`)">
                 <div class="p-4">
                     <div class="flex items-start gap-4">
                         <!-- Icon -->
