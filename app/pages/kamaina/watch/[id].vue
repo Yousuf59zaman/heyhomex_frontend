@@ -279,7 +279,7 @@ watch(
                 <!-- Right side: Related Videos -->
                 <div class="w-full lg:w-[400px] xl:w-[420px] flex-shrink-0">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Related Videos</h3>
-                    <AdvertisementDisplay placement-slug="kamaina-videos-sidebar" class="my-3"/>
+                    <FeatureDisplay placement-slug="kamaina-videos-sidebar" class="my-3"/>
                     <div class="space-y-3">
                         <div
                             v-for="relatedVideo in relatedVideos"

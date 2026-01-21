@@ -90,7 +90,7 @@ const handleTabClick = (tab) => {
 </script>
 
 <template>
-    <AdvertisementDisplay v-if="hydrated" placement-slug="investor-search-top-banner"
+    <FeatureDisplay v-if="hydrated" placement-slug="investor-search-top-banner"
             class="investor-ad-banner" />
     <div class="space-y-4 lg:space-y-6 w-full max-w-[1316px] mx-auto">
         <!-- Skeleton BEFORE hydration -->
