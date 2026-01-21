@@ -83,7 +83,6 @@
     onMounted(() => {
         window.addEventListener("scroll", handleScroll)
         fetchUnreadCount()
-        // Refresh count every 30 seconds
         setInterval(fetchUnreadCount, 30000)
     })
 

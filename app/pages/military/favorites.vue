@@ -216,7 +216,7 @@
 <template>
     <div class="space-y-4 lg:space-y-6 w-full max-w-[1316px] mx-auto">
         <!-- Top Banner Ad -->
-        <AdvertisementDisplay placement-slug="military-favorites-top-banner" />
+        <FeatureDisplay placement-slug="military-favorites-top-banner" />
 
         <!-- Header -->
         <div class="flex items-center justify-between">

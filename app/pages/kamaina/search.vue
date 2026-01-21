@@ -91,7 +91,7 @@ const handleTabClick = (tab) => {
 </script>
 
 <template>
-    <AdvertisementDisplay class="mb-4" v-if="hydrated" placement-slug="kamaina-search-top-banner" />
+    <FeatureDisplay class="mb-4" v-if="hydrated" placement-slug="kamaina-search-top-banner" />
     <div class="flex flex-col gap-4 lg:gap-6 w-full max-w-[1316px] mx-auto">
         <template v-if="!hydrated">
             <div class="flex flex-col gap-4 animate-pulse">

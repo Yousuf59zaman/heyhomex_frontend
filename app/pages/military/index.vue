@@ -434,7 +434,7 @@
             @toggle-filters="handleToggleFilters" />
 
         <!-- Advertisement Placement (Top Banner) -->
-        <AdvertisementDisplay 
+        <FeatureDisplay 
             v-if="hydrated"
             placement-slug="military-dashboard-banner" 
             

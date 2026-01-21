@@ -18,16 +18,16 @@ const props = defineProps({
     }
 });
 
-const advertisements = ref([]);
+const features = ref([]);
 const currentAdIndex = ref(0);
 const isLoading = ref(false);
 const hasTrackedImpression = ref(false);
 
 const currentAd = computed(() => {
-    return advertisements.value[currentAdIndex.value] || null;
+    return features.value[currentAdIndex.value] || null;
 });
 
-const loadAdvertisements = async () => {
+const loadFeatures = async () => {
     isLoading.value = true;
     try {
 
@@ -53,15 +53,15 @@ const loadAdvertisements = async () => {
         );
             console.log("ciming aDS",adsResponse.data.data);
         if (adsResponse.data?.data) {
-            advertisements.value = adsResponse.data.data.filter(ad => ad.is_active);
+            features.value = adsResponse.data.data.filter(ad => ad.is_active);
             
 
-            if (advertisements.value.length > 1) {
+            if (features.value.length > 1) {
                 startRotation();
             }
         }
     } catch (e) {
-        console.error('Error loading advertisements:', e.message);
+        console.error('Error loading features:', e.message);
     } finally {
         isLoading.value = false;
     }
@@ -101,7 +101,7 @@ const handleAdClick = async () => {
 
 const startRotation = () => {
     setInterval(() => {
-        currentAdIndex.value = (currentAdIndex.value + 1) % advertisements.value.length;
+        currentAdIndex.value = (currentAdIndex.value + 1) % features.value.length;
         hasTrackedImpression.value = false;
     }, 10000);
 };
@@ -140,7 +140,7 @@ const setupIntersectionObserver = () => {
 };
 
 onMounted(async () => {
-    await loadAdvertisements();
+    await loadFeatures();
 
 
     setupIntersectionObserver();
@@ -179,8 +179,8 @@ watch(currentAd, async (newAd, oldAd) => {
 </script>
 
 <template>
-    <div v-if="currentAd" ref="adElement" :class="className" :style="{ width, height }" class="advertisement-container">
-        <div class="advertisement-content cursor-pointer hover:opacity-90 transition-opacity relative overflow-hidden rounded-lg shadow-sm"
+    <div v-if="currentAd" ref="adElement" :class="className" :style="{ width, height }" class="feature-container">
+        <div class="feature-content cursor-pointer hover:opacity-90 transition-opacity relative overflow-hidden rounded-lg shadow-sm"
             @click="handleAdClick">
 
             <img v-if="currentAd.type === 1" :src="currentAd.media_path" :alt="currentAd.title"
@@ -191,9 +191,9 @@ watch(currentAd, async (newAd, oldAd) => {
                 autoplay loop muted />
 
 
-            <div class="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                Ad
-            </div>
+            <!-- <div v-if="currentAd.type == 1" class="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                Ads
+            </div> -->
 
 
             <!-- <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
@@ -205,8 +205,8 @@ watch(currentAd, async (newAd, oldAd) => {
         </div>
 
 
-        <div v-if="advertisements.length > 1" class="flex justify-center gap-1 mt-2">
-            <div v-for="(ad, index) in advertisements" :key="ad.id"
+        <div v-if="features.length > 1" class="flex justify-center gap-1 mt-2">
+            <div v-for="(ad, index) in features" :key="ad.id"
                 :class="index === currentAdIndex ? 'bg-indigo-600' : 'bg-gray-300 dark:bg-gray-600'"
                 class="w-2 h-2 rounded-full transition-colors" />
         </div>
@@ -214,16 +214,16 @@ watch(currentAd, async (newAd, oldAd) => {
 </template>
 
 <style scoped>
-.advertisement-container {
+.feature-container {
     position: relative;
     display: block;
 }
 
-.advertisement-content {
+.feature-content {
     background-color: #e5e7eb;
 }
 
-.dark .advertisement-content {
+.dark .feature-content {
     background-color: #374151;
 }
 </style>
