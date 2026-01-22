@@ -7,7 +7,12 @@
     const isOpenStartModal = ref(false)
     const initialStep = ref(0)
     const preselectedAccountType = ref(null)
-
+  
+    const accountType = {
+        advertiser : 1 , 
+        agent      : 2 ,
+        citizen    : 3
+    }
     const citizenProfile = computed(() => {
         const rawCitizen =
             citizen_user && citizen_user.value !== undefined
@@ -38,28 +43,28 @@
 
     const handleGetStarted = () => {
         initialStep.value = 0
-        preselectedAccountType.value = null
+        preselectedAccountType.value = accountType.citizen 
         isOpenStartModal.value = true
         isMobileMenuOpen.value = false
     }
 
     const handleSignIn = () => {
         initialStep.value = 6
-        preselectedAccountType.value = null
+        preselectedAccountType.value = accountType.citizen 
         isOpenStartModal.value = true
         isMobileMenuOpen.value = false
     }
 
     const handleAdvertiserPanel = () => {
-        initialStep.value = 6
-        preselectedAccountType.value = 1 // Advertiser
+        initialStep.value = 6 
+        preselectedAccountType.value = accountType.advertiser 
         isOpenStartModal.value = true
         isMobileMenuOpen.value = false
     }
 
     const handleAgentPanel = () => {
-        initialStep.value = 6
-        preselectedAccountType.value = 2 // Agent
+        initialStep.value = 6 
+        preselectedAccountType.value = accountType.agent 
         isOpenStartModal.value = true
         isMobileMenuOpen.value = false
     }
