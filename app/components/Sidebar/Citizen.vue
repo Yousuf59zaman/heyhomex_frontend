@@ -114,17 +114,24 @@
                 iconType: "svg",
                 path: `${getBasePath.value}/videos`,
             },
-        ]
-
-        if (isKamainaUser.value) {
-            items.push({
+            {
                 id: "agents",
                 label: "Agents",
                 icon: "/svg/menubar/agents.svg",
                 iconType: "svg",
                 path: `${getBasePath.value}/agents`,
-            })
-        }
+            }
+        ]
+
+        // if (isKamainaUser.value) {
+        //     items.push({
+        //         id: "agents",
+        //         label: "Agents",
+        //         icon: "/svg/menubar/agents.svg",
+        //         iconType: "svg",
+        //         path: `${getBasePath.value}/agents`,
+        //     })
+        // }
 
         return items
     })
