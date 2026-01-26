@@ -131,7 +131,7 @@ onMounted(() => {
 
             <!-- Agents Grid -->
             <div v-else-if="agents.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <SearchAgent v-for="agent in agents" :key="agent.id" :agent="agent" segment="kamaina"
+                <SearchAgent v-for="agent in agents" :key="agent.id" :agent="agent" segment="military"
                     @toggle-favorite="toggleFavorite" />
             </div>
 
