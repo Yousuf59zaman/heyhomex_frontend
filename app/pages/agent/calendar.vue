@@ -1,19 +1,80 @@
 <script setup>
-import { format } from 'date-fns'
+import { format, startOfWeek, endOfWeek, addDays, isSameDay, startOfDay, endOfDay } from 'date-fns'
 
+/**
+ * ==============================
+ * Page Meta & Head
+ * ==============================
+ */
 useHead({ title: "Calendar - Agent Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "agent" })
 
+/**
+ * ==============================
+ * Reactive States
+ * ==============================
+ */
 const currentDate = ref(new Date())
 const selectedDate = ref(new Date())
 const viewMode = ref('Month')
+
 const loading = ref(false)
 const loadingUpcoming = ref(false)
+
 const allAppointments = ref([])
 const upcomingAppointmentsData = ref([])
 const leadStatuses = ref([])
+
 const responseModal = ref({})
 
+/**
+ * Reschedule Modal States
+ */
+const showRescheduleModal = ref(false)
+const selectedAppointmentForReschedule = ref(null)
+const rescheduleDateTime = ref(null)
+const isRescheduleCalendarOpen = ref(false)
+
+/**
+ * ==============================
+ * Helper Functions
+ * ==============================
+ */
+
+// Format JS Date to YYYY-MM-DD
+const formatDateYMD = (dateObj) => {
+    return dateObj.getFullYear() + '-' +
+        String(dateObj.getMonth() + 1).padStart(2, '0') + '-' +
+        String(dateObj.getDate()).padStart(2, '0')
+}
+
+// Format current datetime for API
+const getCurrentDateTimeString = () => {
+    const now = new Date()
+    return now.getFullYear() + '-' +
+        String(now.getMonth() + 1).padStart(2, '0') + '-' +
+        String(now.getDate()).padStart(2, '0') + ' ' +
+        String(now.getHours()).padStart(2, '0') + ':' +
+        String(now.getMinutes()).padStart(2, '0') + ':' +
+        String(now.getSeconds()).padStart(2, '0')
+}
+
+// Common toast handler
+const showToast = (message, type = 'success') => {
+    responseModal.value = {
+        status: type === 'success',
+        message,
+        error: type === 'error' ? { message: [message] } : null
+    }
+}
+
+/**
+ * ==============================
+ * Computed Properties
+ * ==============================
+ */
+
+// Selected date full formatted label
 const selectedDateFormatted = computed(() => {
     return selectedDate.value.toLocaleDateString('en-US', {
         month: 'long',
@@ -23,7 +84,52 @@ const selectedDateFormatted = computed(() => {
     })
 })
 
+// Month title (January 2026 etc.)
+const monthName = computed(() => {
+    return currentDate.value.toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric'
+    })
+})
 
+// Week title for week view
+const weekTitle = computed(() => {
+    const weekStart = startOfWeek(currentDate.value, { weekStartsOn: 1 })
+    const weekEnd = endOfWeek(currentDate.value, { weekStartsOn: 1 })
+    return `${format(weekStart, 'MMM d')} - ${format(weekEnd, 'MMM d, yyyy')}`
+})
+
+// Day title for day view
+const dayTitle = computed(() => {
+    return format(currentDate.value, 'MMMM d, yyyy')
+})
+
+// Today's appointment list for selected date
+const todayAppointments = computed(() => {
+    const selectedDateStr = formatDateYMD(selectedDate.value)
+
+    return allAppointments.value
+        .filter(appointment => {
+            if (!appointment.date) return false
+
+            // Exclude closed leads
+            if (appointment.lead_status?.name.toLowerCase() === 'closed') return false
+
+            return appointment.date === selectedDateStr
+        })
+        .sort((a, b) => {
+            if (!a.time || !b.time) return 0
+            return a.time.localeCompare(b.time)
+        })
+})
+
+/**
+ * ==============================
+ * API Calls
+ * ==============================
+ */
+
+// Fetch all active lead statuses
 const fetchLeadStatuses = async () => {
     try {
         const response = await $fetchCMS('admin/lead-statuses/all/active', {
@@ -35,15 +141,17 @@ const fetchLeadStatuses = async () => {
     }
 }
 
-
+// Fetch all appointments of current month
 const fetchMonthAppointments = async () => {
     loading.value = true
+
     try {
         const year = currentDate.value.getFullYear()
         const month = currentDate.value.getMonth()
-        const startDate = year + '-' + String(month + 1).padStart(2, '0') + '-01'
+
+        const startDate = `${year}-${String(month + 1).padStart(2, '0')}-01`
         const lastDay = new Date(year, month + 1, 0).getDate()
-        const endDate = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(lastDay).padStart(2, '0')
+        const endDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
 
         const response = await $fetchCitizen('agent/v1/leads/list', {
             method: 'GET',
@@ -53,6 +161,7 @@ const fetchMonthAppointments = async () => {
                 end_date: endDate
             }
         })
+
         allAppointments.value = response.data.data || []
     } catch (error) {
         console.error('Error fetching appointments:', error)
@@ -61,17 +170,12 @@ const fetchMonthAppointments = async () => {
     }
 }
 
-
+// Fetch upcoming appointments (future datetime)
 const fetchUpcomingAppointments = async () => {
     loadingUpcoming.value = true
+
     try {
-        const now = new Date()
-        const currentDateTime = now.getFullYear() + '-' +
-            String(now.getMonth() + 1).padStart(2, '0') + '-' +
-            String(now.getDate()).padStart(2, '0') + ' ' +
-            String(now.getHours()).padStart(2, '0') + ':' +
-            String(now.getMinutes()).padStart(2, '0') + ':' +
-            String(now.getSeconds()).padStart(2, '0')
+        const currentDateTime = getCurrentDateTimeString()
 
         const response = await $fetchCitizen('agent/v1/leads/list', {
             method: 'GET',
@@ -88,52 +192,49 @@ const fetchUpcomingAppointments = async () => {
     }
 }
 
+/**
+ * ==============================
+ * Calendar Helpers
+ * ==============================
+ */
 
-const todayAppointments = computed(() => {
-    const filtered = allAppointments.value.filter(appointment => {
-        if (!appointment.date) return false
-        const appointmentDate = appointment.date
-
-        const selectedDateStr = selectedDate.value.getFullYear() + '-' +
-            String(selectedDate.value.getMonth() + 1).padStart(2, '0') + '-' +
-            String(selectedDate.value.getDate()).padStart(2, '0')
-        return appointmentDate === selectedDateStr
-    }).sort((a, b) => {
-        if (!a.time || !b.time) return 0
-        return a.time.localeCompare(b.time)
-    })
-
-    return filtered
-})
-
-
+// Count scheduled (added to calendar) appointments
 const getAppointmentCount = (dateStr) => {
-    return allAppointments.value.filter(apt =>
-        apt.date === dateStr && apt.add_to_calendar
-    ).length
+    return allAppointments.value.filter(apt => {
+        if (apt.lead_status?.name.toLowerCase() === 'closed') return false
+        return apt.date === dateStr && apt.add_to_calendar
+    }).length
 }
 
-
+// Count pending (not added to calendar) appointments
 const getPendingAppointmentCount = (dateStr) => {
-    return allAppointments.value.filter(apt =>
-        apt.date === dateStr && !apt.add_to_calendar
-    ).length
+    return allAppointments.value.filter(apt => {
+        if (apt.lead_status?.name.toLowerCase() === 'closed') return false
+        return apt.date === dateStr && !apt.add_to_calendar
+    }).length
 }
 
-
-const getClosedAppointmentCount = (dateStr) => {
-    return allAppointments.value.filter(apt =>
-        apt.date === dateStr && apt.lead_status?.name.toLowerCase() === 'closed'
-    ).length
+// Get appointments for a specific date
+const getAppointmentsForDate = (dateStr) => {
+    return allAppointments.value
+        .filter(apt => {
+            if (apt.lead_status?.name.toLowerCase() === 'closed') return false
+            return apt.date === dateStr
+        })
+        .sort((a, b) => {
+            if (!a.time || !b.time) return 0
+            return a.time.localeCompare(b.time)
+        })
 }
 
+// Build full 6-week calendar grid
 const calendarDays = computed(() => {
     const year = currentDate.value.getFullYear()
     const month = currentDate.value.getMonth()
+
     const firstDay = new Date(year, month, 1)
     const lastDay = new Date(year, month + 1, 0)
     const daysInMonth = lastDay.getDate()
-
 
     let startingDayOfWeek = firstDay.getDay()
     startingDayOfWeek = startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1
@@ -142,7 +243,7 @@ const calendarDays = computed(() => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
-
+    // Previous month filler days
     const prevMonthLastDay = new Date(year, month, 0).getDate()
     for (let i = startingDayOfWeek - 1; i >= 0; i--) {
         days.push({
@@ -155,18 +256,18 @@ const calendarDays = computed(() => {
         })
     }
 
-
+    // Current month days
     for (let i = 1; i <= daysInMonth; i++) {
-        const date = new Date(year, month, i)
-        date.setHours(0, 0, 0, 0)
-        const isToday = date.getTime() === today.getTime()
+        const dateObj = new Date(year, month, i)
+        dateObj.setHours(0, 0, 0, 0)
 
+        const isToday = dateObj.getTime() === today.getTime()
+        const dateStr = formatDateYMD(dateObj)
 
-        const dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(i).padStart(2, '0')
         const appointmentCount = getAppointmentCount(dateStr)
         const pendingCount = getPendingAppointmentCount(dateStr)
-        const closedCount = getClosedAppointmentCount(dateStr)
-        const hasEvent = appointmentCount > 0 || pendingCount > 0 || closedCount > 0
+
+        const hasEvent = appointmentCount > 0 || pendingCount > 0
 
         days.push({
             date: i,
@@ -175,12 +276,11 @@ const calendarDays = computed(() => {
             hasEvent,
             appointmentCount,
             pendingCount,
-            closedCount,
             fullDate: dateStr
         })
     }
 
-
+    // Next month filler days to complete 42 cells
     const remainingDays = 42 - days.length
     for (let i = 1; i <= remainingDays; i++) {
         days.push({
@@ -193,9 +293,60 @@ const calendarDays = computed(() => {
     return days
 })
 
-const monthName = computed(() => {
-    return currentDate.value.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+// Week view days (7 days starting from Monday)
+const weekDays = computed(() => {
+    const weekStart = startOfWeek(currentDate.value, { weekStartsOn: 1 })
+    const days = []
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    for (let i = 0; i < 7; i++) {
+        const dateObj = addDays(weekStart, i)
+        const dateStr = formatDateYMD(dateObj)
+        const isToday = dateObj.getTime() === today.getTime()
+
+        days.push({
+            date: dateObj.getDate(),
+            fullDate: dateStr,
+            dateObj,
+            isToday,
+            appointments: getAppointmentsForDate(dateStr),
+            appointmentCount: getAppointmentCount(dateStr),
+            pendingCount: getPendingAppointmentCount(dateStr)
+        })
+    }
+
+    return days
 })
+
+// Day view hours (24 hours)
+const dayHours = computed(() => {
+    const hours = []
+    const dateStr = formatDateYMD(currentDate.value)
+    const appointments = getAppointmentsForDate(dateStr)
+
+    for (let i = 0; i < 24; i++) {
+        const hourAppointments = appointments.filter(apt => {
+            if (!apt.time) return false
+            const hour = parseInt(apt.time.split(':')[0], 10)
+            return hour === i
+        })
+
+        hours.push({
+            hour: i,
+            label: format(new Date(2000, 0, 1, i), 'ha'),
+            appointments: hourAppointments
+        })
+    }
+
+    return hours
+})
+
+/**
+ * ==============================
+ * Status Helpers
+ * ==============================
+ */
 
 const getStatusInfo = (leadStatus) => {
     if (!leadStatus) return { text: 'Unknown', color: 'gray' }
@@ -204,13 +355,14 @@ const getStatusInfo = (leadStatus) => {
     const lowerStatus = statusName.toLowerCase()
 
     const statusMap = {
-        'new': { text: 'New', color: 'orange' },
-        'contacted': { text: 'Contacted', color: 'blue' },
-        'scheduled': { text: 'Scheduled', color: 'green' },
-        'closed': { text: 'Closed', color: 'red' },
-        'active': { text: 'Active', color: 'blue' },
-        'pending': { text: 'Pending', color: 'orange' }
+        new: { text: 'New', color: 'orange' },
+        contacted: { text: 'Contacted', color: 'blue' },
+        scheduled: { text: 'Appointment', color: 'blue' },
+        closed: { text: 'Closed', color: 'red' },
+        active: { text: 'Accepted', color: 'green' },
+        pending: { text: 'Pending', color: 'orange' }
     }
+
     return statusMap[lowerStatus] || { text: statusName, color: 'gray' }
 }
 
@@ -222,89 +374,31 @@ const getStatusColor = (color) => {
         red: 'bg-red-100 text-red-700',
         gray: 'bg-gray-100 text-gray-700'
     }
+
     return colors[color] || 'bg-gray-100 text-gray-700'
 }
 
-// const getAppointmentActions = (appointment) => {
-//     if (appointment.appointment_status === 'requested') {
-//         return ['Accept', 'Decline']
-//     }
-//     if (appointment.is_added_to_calendar) {
-//         return ['Reschedule']
-//     }
-//     return ['Reschedule', 'Add To Calendar']
-// }
+/**
+ * ==============================
+ * Business Actions
+ * ==============================
+ */
 
-
-const showRescheduleModal = ref(false)
-const selectedAppointmentForReschedule = ref(null)
-const rescheduleDateTime = ref(null)
-const isRescheduleCalendarOpen = ref(false)
-
-// const handleAcceptAppointment = (appointment) => {
-//     const index = allAppointments.value.findIndex(apt => apt.id === appointment.id)
-//     if (index !== -1) {
-//         allAppointments.value[index].appointment_status = 'accepted'
-//         allAppointments.value[index].is_request = false
-//     }
-// }
-
-// const handleDeclineAppointment = (appointment) => {
-//     const index = allAppointments.value.findIndex(apt => apt.id === appointment.id)
-//     if (index !== -1) {
-//         allAppointments.value[index].appointment_status = 'cancelled'
-//         setTimeout(() => {
-//             allAppointments.value.splice(index, 1)
-//         }, 500)
-//     }
-// }
-
-// const updateAppointmentStatus = async (appointment, newStatusId) => {
-//     try {
-//         const formData = new FormData()
-//         formData.append('_method', 'PATCH')
-//         formData.append('status', newStatusId)
-
-
-//         const scheduledStatus = leadStatuses.value.find(s => s.name.toLowerCase() === 'scheduled')
-//         const scheduledStatusId = scheduledStatus ? scheduledStatus.id : 3
-
-//         if (newStatusId === scheduledStatusId) {
-//             formData.append('add_to_calendar', '1')
-//         } else {
-//             formData.append('add_to_calendar', '0')
-//         }
-
-//         await $fetchCitizen(`agent/v1/leads/${appointment.id}/update`, {
-//             method: 'POST',
-//             body: formData
-//         })
-
-//        
-//         await fetchMonthAppointments()
-//     } catch (error) {
-//         console.error('Error updating appointment status:', error)
-//     }
-// }
-
+// Toggle Add / Remove from calendar
 const handleAddToCalendar = async (appointment) => {
     try {
         const isAdding = !appointment.add_to_calendar
         const formData = new FormData()
+
         formData.append('_method', 'PATCH')
         formData.append('add_to_calendar', isAdding ? '1' : '0')
 
-
         if (isAdding) {
             const scheduledStatus = leadStatuses.value.find(s => s.name.toLowerCase() === 'scheduled')
-            if (scheduledStatus) {
-                formData.append('status', scheduledStatus.id)
-            }
+            if (scheduledStatus) formData.append('status', scheduledStatus.id)
         } else {
             const activeStatus = leadStatuses.value.find(s => s.name.toLowerCase() === 'active')
-            if (activeStatus) {
-                formData.append('status', activeStatus.id)
-            }
+            if (activeStatus) formData.append('status', activeStatus.id)
         }
 
         await $fetchCitizen(`agent/v1/leads/${appointment.id}/update`, {
@@ -312,10 +406,7 @@ const handleAddToCalendar = async (appointment) => {
             body: formData
         })
 
-
         await fetchMonthAppointments()
-
-
         showToast('Calendar updated successfully', 'success')
     } catch (error) {
         console.error('Error toggling calendar:', error)
@@ -323,6 +414,7 @@ const handleAddToCalendar = async (appointment) => {
     }
 }
 
+// Mark lead as Active
 const updateLeadStatusToActive = async (appointment) => {
     try {
         const activeStatus = leadStatuses.value.find(s => s.name.toLowerCase() === 'active')
@@ -338,10 +430,7 @@ const updateLeadStatusToActive = async (appointment) => {
             body: formData
         })
 
-
         await fetchMonthAppointments()
-
-
         showToast('Lead marked as Active', 'success')
     } catch (error) {
         console.error('Error updating lead status:', error)
@@ -349,6 +438,7 @@ const updateLeadStatusToActive = async (appointment) => {
     }
 }
 
+// Decline lead (mark Closed)
 const declineLead = async (appointment) => {
     try {
         const closedStatus = leadStatuses.value.find(s => s.name.toLowerCase() === 'closed')
@@ -364,10 +454,7 @@ const declineLead = async (appointment) => {
             body: formData
         })
 
-
         await fetchMonthAppointments()
-
-
         showToast('Lead declined', 'success')
     } catch (error) {
         console.error('Error declining lead:', error)
@@ -375,61 +462,21 @@ const declineLead = async (appointment) => {
     }
 }
 
-const showToast = (message, type = 'success') => {
-    responseModal.value = {
-        status: type === 'success',
-        message: message,
-        error: type === 'error' ? { message: [message] } : null
-    }
+/**
+ * ==============================
+ * Time & Date Utilities
+ * ==============================
+ */
+
+// Check if appointment time already passed
+const hasAppointmentTimePassed = (appointment) => {
+    if (!appointment.date || !appointment.time) return false
+
+    const appointmentDateTime = new Date(`${appointment.date}T${appointment.time}`)
+    return appointmentDateTime < new Date()
 }
 
-const handleRescheduleAppointment = (appointment) => {
-    selectedAppointmentForReschedule.value = appointment
-    isRescheduleCalendarOpen.value = false
-    if (appointment.date && appointment.time) {
-        const dateTimeStr = `${appointment.date}T${appointment.time}`
-        rescheduleDateTime.value = new Date(dateTimeStr)
-    } else {
-        rescheduleDateTime.value = new Date()
-    }
-
-    showRescheduleModal.value = true
-}
-
-const confirmReschedule = async () => {
-    if (!rescheduleDateTime.value || !selectedAppointmentForReschedule.value) return
-    try {
-        const newDateTime = new Date(rescheduleDateTime.value)
-        const newDate = newDateTime.getFullYear() + '-' +
-            String(newDateTime.getMonth() + 1).padStart(2, '0') + '-' +
-            String(newDateTime.getDate()).padStart(2, '0')
-
-        const newTime = String(newDateTime.getHours()).padStart(2, '0') + ':' +
-            String(newDateTime.getMinutes()).padStart(2, '0') + ':00'
-
-        const formData = new FormData()
-        formData.append('_method', 'PATCH')
-        formData.append('date', newDate)
-        formData.append('time', newTime)
-
-        await $fetchCitizen(`agent/v1/leads/${selectedAppointmentForReschedule.value.id}/update`, {
-            method: 'POST',
-            body: formData
-        })
-        selectedDate.value = newDateTime
-        await fetchMonthAppointments()
-        showToast('Appointment rescheduled successfully', 'success')
-    } catch (error) {
-        console.error('Error rescheduling appointment:', error)
-        showToast('Failed to reschedule appointment', 'error')
-    } finally {
-        showRescheduleModal.value = false
-        selectedAppointmentForReschedule.value = null
-        rescheduleDateTime.value = null
-        isRescheduleCalendarOpen.value = false
-    }
-}
-
+// Full datetime formatter
 const formatAppointmentTime = (date, time) => {
     if (!date || !time) return 'N/A'
 
@@ -446,20 +493,69 @@ const formatAppointmentTime = (date, time) => {
     return 'N/A'
 }
 
+// Only time formatter (12h)
 const formatTimeOnly = (time) => {
     if (!time) return 'N/A'
 
-    const timeParts = time.split(':')
-    if (timeParts.length < 2) return time
-
-    const hours = parseInt(timeParts[0], 10)
+    const [hourStr, minute] = time.split(':')
+    const hours = parseInt(hourStr, 10)
     if (Number.isNaN(hours)) return 'N/A'
 
-    const minutes = timeParts[1]
     const ampm = hours >= 12 ? 'PM' : 'AM'
     const displayHours = hours % 12 || 12
 
-    return `${displayHours}:${minutes}${ampm}`
+    return `${displayHours}:${minute}${ampm}`
+}
+
+/**
+ * ==============================
+ * Reschedule Flow
+ * ==============================
+ */
+
+const handleRescheduleAppointment = (appointment) => {
+    selectedAppointmentForReschedule.value = appointment
+    isRescheduleCalendarOpen.value = false
+
+    if (appointment.date && appointment.time) {
+        rescheduleDateTime.value = new Date(`${appointment.date}T${appointment.time}`)
+    } else {
+        rescheduleDateTime.value = new Date()
+    }
+
+    showRescheduleModal.value = true
+}
+
+const confirmReschedule = async () => {
+    if (!rescheduleDateTime.value || !selectedAppointmentForReschedule.value) return
+
+    try {
+        const newDateTime = new Date(rescheduleDateTime.value)
+
+        const newDate = formatDateYMD(newDateTime)
+        const newTime = String(newDateTime.getHours()).padStart(2, '0') + ':' +
+            String(newDateTime.getMinutes()).padStart(2, '0') + ':00'
+
+        const formData = new FormData()
+        formData.append('_method', 'PATCH')
+        formData.append('date', newDate)
+        formData.append('time', newTime)
+
+        await $fetchCitizen(
+            `agent/v1/leads/${selectedAppointmentForReschedule.value.id}/update`,
+            { method: 'POST', body: formData }
+        )
+
+        selectedDate.value = newDateTime
+        await fetchMonthAppointments()
+
+        showToast('Appointment rescheduled successfully', 'success')
+    } catch (error) {
+        console.error('Error rescheduling appointment:', error)
+        showToast('Failed to reschedule appointment', 'error')
+    } finally {
+        cancelReschedule()
+    }
 }
 
 const cancelReschedule = () => {
@@ -469,43 +565,70 @@ const cancelReschedule = () => {
     isRescheduleCalendarOpen.value = false
 }
 
+/**
+ * ==============================
+ * Calendar Navigation
+ * ==============================
+ */
 
-// const handleAppointmentAction = (appointment, action) => {
-//     switch (action) {
-//         case 'Accept':
-//             handleAcceptAppointment(appointment)
-//             break
-//         case 'Decline':
-//             handleDeclineAppointment(appointment)
-//             break
-//         case 'Reschedule':
-//             handleRescheduleAppointment(appointment)
-//             break
-//         case 'Add To Calendar':
-//             handleAddToCalendar(appointment)
-//             break
-//     }
-// }
-
-const previousMonth = () => {
-    currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() - 1, 1)
+const previousPeriod = () => {
+    if (viewMode.value === 'Month') {
+        currentDate.value = new Date(
+            currentDate.value.getFullYear(),
+            currentDate.value.getMonth() - 1,
+            1
+        )
+    } else if (viewMode.value === 'Week') {
+        currentDate.value = addDays(currentDate.value, -7)
+    } else if (viewMode.value === 'Day') {
+        currentDate.value = addDays(currentDate.value, -1)
+    }
 }
 
-const nextMonth = () => {
-    currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() + 1, 1)
-}
-
-const handleActionMenu = (appointment) => {
-    console.log('Action for appointment:', appointment.id)
+const nextPeriod = () => {
+    if (viewMode.value === 'Month') {
+        currentDate.value = new Date(
+            currentDate.value.getFullYear(),
+            currentDate.value.getMonth() + 1,
+            1
+        )
+    } else if (viewMode.value === 'Week') {
+        currentDate.value = addDays(currentDate.value, 7)
+    } else if (viewMode.value === 'Day') {
+        currentDate.value = addDays(currentDate.value, 1)
+    }
 }
 
 const handleDateClick = (day) => {
-    if (day.isCurrentMonth) {
-        const year = currentDate.value.getFullYear()
-        const month = currentDate.value.getMonth()
-        selectedDate.value = new Date(year, month, day.date)
-    }
+    if (!day.isCurrentMonth && viewMode.value === 'Month') return
+
+    const year = currentDate.value.getFullYear()
+    const month = currentDate.value.getMonth()
+    selectedDate.value = new Date(year, month, day.date)
 }
+
+const handleWeekDayClick = (day) => {
+    selectedDate.value = day.dateObj
+    currentDate.value = day.dateObj
+}
+
+const handleDayHourClick = (hour) => {
+    // Optional: could open a create appointment modal at this time
+    console.log('Clicked hour:', hour)
+}
+
+// Get current view title
+const currentViewTitle = computed(() => {
+    if (viewMode.value === 'Month') return monthName.value
+    if (viewMode.value === 'Week') return weekTitle.value
+    return dayTitle.value
+})
+
+/**
+ * ==============================
+ * Lifecycle & Watchers
+ * ==============================
+ */
 
 onMounted(() => {
     fetchLeadStatuses()
@@ -513,12 +636,11 @@ onMounted(() => {
     fetchUpcomingAppointments()
 })
 
-
 watch(currentDate, () => {
     fetchMonthAppointments()
 })
-
 </script>
+
 
 <template>
     <div class="space-y-6">
@@ -542,7 +664,6 @@ watch(currentDate, () => {
                             <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">Name</th>
                             <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">Property</th>
                             <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">Contact Info</th>
-                            <!-- <th class="text-left py-3 px-6 text-sm font-medium text-gray-600">Action</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -593,12 +714,6 @@ watch(currentDate, () => {
                                         }}</span>
                                 </div>
                             </td>
-                            <!-- <td class="py-4 px-6">
-                                <button @click.stop="handleActionMenu(appointment)"
-                                    class="text-gray-400 hover:text-gray-600 transition-colors">
-                                    <Icon name="lucide:more-vertical" class="w-5 h-5" />
-                                </button>
-                            </td> -->
                         </tr>
                     </tbody>
                 </table>
@@ -626,17 +741,17 @@ watch(currentDate, () => {
 
 
                 <div class="flex items-center justify-between mb-6">
-                    <button @click="previousMonth" class="p-2 hover:bg-gray-100 rounded transition-colors">
+                    <button @click="previousPeriod" class="p-2 hover:bg-gray-100 rounded transition-colors">
                         <Icon name="lucide:chevron-left" class="w-5 h-5" />
                     </button>
-                    <h3 class="text-lg font-semibold text-gray-900">{{ monthName }}</h3>
-                    <button @click="nextMonth" class="p-2 hover:bg-gray-100 rounded transition-colors">
+                    <h3 class="text-lg font-semibold text-gray-900">{{ currentViewTitle }}</h3>
+                    <button @click="nextPeriod" class="p-2 hover:bg-gray-100 rounded transition-colors">
                         <Icon name="lucide:chevron-right" class="w-5 h-5" />
                     </button>
                 </div>
 
-
-                <div class="grid grid-cols-7 gap-px bg-gray-200">
+                <!-- Month View -->
+                <div v-if="viewMode === 'Month'" class="grid grid-cols-7 gap-px bg-gray-200">
 
                     <div v-for="day in ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']" :key="day"
                         class="bg-gray-50 p-3 text-center">
@@ -662,12 +777,105 @@ watch(currentDate, () => {
                                 {{ day.appointmentCount }} appointment{{ day.appointmentCount > 1 ? 's' : '' }}
                             </div>
                             <div v-if="day.pendingCount > 0"
-                                class="text-[10px] bg-orange-500 text-white px-1.5 py-0.5 rounded text-center">
-                                {{ day.pendingCount }} pending
+                                class="text-[10px] bg-green-500 text-white px-1.5 py-0.5 rounded text-center">
+                                {{ day.pendingCount }} Accepted
                             </div>
-                            <div v-if="day.closedCount > 0"
-                                class="text-[10px] bg-gray-500 text-white px-1.5 py-0.5 rounded text-center">
-                                {{ day.closedCount }} closed
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Week View -->
+                <div v-else-if="viewMode === 'Week'" class="space-y-2">
+                    <div class="grid grid-cols-8 gap-px bg-gray-200">
+                        <!-- Time column header -->
+                        <div class="bg-gray-50 p-2"></div>
+                        <!-- Day headers -->
+                        <div v-for="day in weekDays" :key="day.fullDate"
+                            class="bg-gray-50 p-2 text-center">
+                            <div class="text-xs font-medium text-gray-600">
+                                {{ format(day.dateObj, 'EEE') }}
+                            </div>
+                            <div :class="[
+                                'text-lg font-semibold mt-1',
+                                day.isToday ? 'w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center mx-auto' : 'text-gray-900'
+                            ]">
+                                {{ day.date }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Time slots -->
+                    <div class="grid grid-cols-8 gap-px bg-gray-200 max-h-[500px] overflow-y-auto">
+                        <template v-for="hour in 24" :key="hour">
+                            <!-- Time label -->
+                            <div class="bg-white p-2 text-xs text-gray-500 text-right">
+                                {{ format(new Date(2000, 0, 1, hour - 1), 'ha') }}
+                            </div>
+                            <!-- Day columns -->
+                            <div v-for="day in weekDays" :key="`${day.fullDate}-${hour}`"
+                                @click="handleWeekDayClick(day)"
+                                class="bg-white p-2 min-h-[60px] cursor-pointer hover:bg-gray-50 transition-colors relative">
+                                <template v-for="apt in day.appointments" :key="apt.id">
+                                    <div v-if="apt.time && parseInt(apt.time.split(':')[0]) === hour - 1"
+                                        class="text-xs p-1 mb-1 rounded cursor-pointer"
+                                        :class="apt.add_to_calendar ? 'bg-blue-100 border-l-2 border-blue-500' : 'bg-green-100 border-l-2 border-green-500'"
+                                        @click.stop="navigateTo(`/agent/leads/${apt.id}`)">
+                                        <div class="font-medium truncate">{{ formatTimeOnly(apt.time) }}</div>
+                                        <div class="truncate">{{ apt.name }}</div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Day View -->
+                <div v-else-if="viewMode === 'Day'" class="space-y-2">
+                    <div class="border border-gray-200 rounded-lg max-h-[600px] overflow-y-auto">
+                        <div v-for="hourSlot in dayHours" :key="hourSlot.hour"
+                            @click="handleDayHourClick(hourSlot)"
+                            class="grid grid-cols-12 gap-4 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <!-- Time column -->
+                            <div class="col-span-2 p-4 text-sm text-gray-500 text-right border-r border-gray-100">
+                                {{ hourSlot.label }}
+                            </div>
+                            <!-- Appointments column -->
+                            <div class="col-span-10 p-4 min-h-[80px]">
+                                <div v-if="hourSlot.appointments.length === 0" class="text-xs text-gray-400">
+                                    <!-- Empty slot -->
+                                </div>
+                                <div v-else class="space-y-2">
+                                    <div v-for="apt in hourSlot.appointments" :key="apt.id"
+                                        @click.stop="navigateTo(`/agent/leads/${apt.id}`)"
+                                        class="p-3 rounded-lg border-l-4 cursor-pointer"
+                                        :class="apt.add_to_calendar 
+                                            ? 'bg-blue-50 border-blue-500 hover:bg-blue-100' 
+                                            : 'bg-green-50 border-green-500 hover:bg-green-100'">
+                                        <div class="flex items-start justify-between mb-2">
+                                            <div class="flex-1">
+                                                <div class="font-medium text-gray-900">{{ apt.name }}</div>
+                                                <div class="text-sm text-gray-600 mt-1">
+                                                    {{ formatTimeOnly(apt.time) }}
+                                                </div>
+                                            </div>
+                                            <span class="px-2 py-1 text-xs font-medium rounded-md ml-2"
+                                                :class="getStatusColor(getStatusInfo(apt.lead_status).color)">
+                                                {{ getStatusInfo(apt.lead_status).text }}
+                                            </span>
+                                        </div>
+                                        <div class="text-sm text-gray-700 mb-1">
+                                            {{ apt.property?.name || 'N/A' }}
+                                        </div>
+                                        <div class="text-xs text-gray-600">
+                                            {{ apt.property?.address || '' }}
+                                        </div>
+                                        <div class="flex items-center space-x-2 mt-2">
+                                            <Icon :name="apt.phone ? 'lucide:phone' : 'lucide:mail'"
+                                                class="w-3 h-3 text-gray-400" />
+                                            <span class="text-xs text-gray-600">{{ apt.phone || apt.email }}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -708,11 +916,11 @@ watch(currentDate, () => {
                         <div v-if="appointment.lead_status?.name.toLowerCase() === 'new' && !appointment.add_to_calendar"
                             class="flex gap-2">
                             <button @click="updateLeadStatusToActive(appointment)"
-                                class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors bg-green-600 text-white hover:bg-green-700">
+                                class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors bg-gray-900 text-white hover:bg-gray-800">
                                 Active
                             </button>
                             <button @click="declineLead(appointment)"
-                                class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors bg-red-600 text-white hover:bg-red-700">
+                                class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
                                 Decline
                             </button>
                         </div>
@@ -721,9 +929,15 @@ watch(currentDate, () => {
                                 class="flex-1 px-3 py-2 text-xs font-medium rounded-lg bg-gray-300 text-gray-600 cursor-not-allowed">
                                 Closed
                             </button>
-                            <button @click="updateLeadStatusToActive(appointment)"
-                                class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors bg-green-600 text-white hover:bg-green-700">
-                                Active
+                        </div>
+                        <div v-else-if="hasAppointmentTimePassed(appointment)" class="flex gap-2">
+                            <button @click="handleRescheduleAppointment(appointment)"
+                                class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors bg-gray-900 text-white hover:bg-gray-800">
+                                Reschedule
+                            </button>
+                            <button @click="declineLead(appointment)"
+                                class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                                Close
                             </button>
                         </div>
                         <div v-else class="flex gap-2">
@@ -734,7 +948,7 @@ watch(currentDate, () => {
                             <button @click="handleAddToCalendar(appointment)" :class="[
                                 'flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors',
                                 appointment.add_to_calendar
-                                    ? 'bg-white border border-red-200 text-red-600 hover:bg-red-50'
+                                    ? 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
                                     : 'bg-blue-600 text-white hover:bg-blue-700'
                             ]">
                                 {{ appointment.add_to_calendar ? 'Remove from Calendar' : 'Add to Calendar' }}

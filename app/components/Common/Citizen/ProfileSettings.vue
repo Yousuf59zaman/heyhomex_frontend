@@ -25,6 +25,9 @@ const showProfessionDropdown = ref(false)
 const filteredProfessions = ref([])
 const professionSearchTerm = ref('')
 const isProfessionFromAPI = ref(false)
+const showCropModal = ref(false)
+const imageToCrop = ref(null)
+const cropper = ref(null)
 
 
 const isAgentOrAdvertiser = computed(() => {
@@ -79,13 +82,11 @@ const handleFileUpload = async (event) => {
 
     errors.value.photo = null
 
-
-    profileForm.value.photoFile = file
-
-
+    // Show crop modal
     const reader = new FileReader()
     reader.onload = (e) => {
-        profileForm.value.photo = e.target.result
+        imageToCrop.value = e.target.result
+        showCropModal.value = true
     }
     reader.readAsDataURL(file)
 }
@@ -97,6 +98,70 @@ const removeImage = () => {
         fileInput.value.value = ''
     }
 }
+
+const initCropper = () => {
+    if (import.meta.client && imageToCrop.value) {
+        nextTick(() => {
+            const imageElement = document.getElementById('crop-image')
+            if (imageElement && window.Cropper) {
+                if (cropper.value) {
+                    cropper.value.destroy()
+                }
+                cropper.value = new window.Cropper(imageElement, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    dragMode: 'move',
+                    autoCropArea: 1,
+                    restore: false,
+                    guides: true,
+                    center: true,
+                    highlight: false,
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    toggleDragModeOnDblclick: false,
+                })
+            }
+        })
+    }
+}
+
+const cancelCrop = () => {
+    if (cropper.value) {
+        cropper.value.destroy()
+        cropper.value = null
+    }
+    imageToCrop.value = null
+    showCropModal.value = false
+    if (fileInput.value) {
+        fileInput.value.value = ''
+    }
+}
+
+const applyCrop = () => {
+    if (cropper.value) {
+        const canvas = cropper.value.getCroppedCanvas({
+            width: 800,
+            height: 800,
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: 'high',
+        })
+        
+        canvas.toBlob((blob) => {
+            if (blob) {
+                const file = new File([blob], 'profile-pic.jpg', { type: 'image/jpeg' })
+                profileForm.value.photoFile = file
+                profileForm.value.photo = canvas.toDataURL('image/jpeg')
+                cancelCrop()
+            }
+        }, 'image/jpeg', 0.9)
+    }
+}
+
+watch(showCropModal, (newVal) => {
+    if (newVal) {
+        initCropper()
+    }
+})
 
 const validateForm = () => {
     errors.value = {}
@@ -350,12 +415,27 @@ onMounted(async () => {
     await loadProfileData()
     if (import.meta.client) {
         document.addEventListener('click', handleClickOutside)
+        
+        // Load Cropper.js
+        if (!window.Cropper) {
+            const link = document.createElement('link')
+            link.rel = 'stylesheet'
+            link.href = 'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css'
+            document.head.appendChild(link)
+            
+            const script = document.createElement('script')
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js'
+            document.head.appendChild(script)
+        }
     }
 })
 
 onUnmounted(() => {
     if (import.meta.client) {
         document.removeEventListener('click', handleClickOutside)
+    }
+    if (cropper.value) {
+        cropper.value.destroy()
     }
 })
 </script>
@@ -393,13 +473,15 @@ onUnmounted(() => {
 
                 <!-- Upload Controls -->
                 <div class="flex flex-col gap-2 justify-center">
-                    <div class="flex flex-col h-[52px] items-center pb-2">
+                    <div class="flex flex-col items-center pb-2">
                         <p class="text-[#121a22] text-base font-bold leading-6 text-center w-full">
                             Upload your photo
                         </p>
-                        <p class="text-[#121a22] text-xs font-normal leading-normal text-center w-full">
-                            Your photo should be in PNG or JPG format (up to 5mb)
-                        </p>
+                        <div class="text-[#121a22] text-xs font-normal leading-normal text-center w-full space-y-1">
+                            <p>Your photo should be in PNG or JPG format (up to 5MB)</p>
+                            <p class="text-[#666]">Recommended size: 800x800 pixels (1:1 ratio)</p>
+                            <p class="text-[#666]">Your image will be cropped to fit the profile view</p>
+                        </div>
                     </div>
 
                     <input ref="fileInput" type="file" accept="image/png, image/jpeg, image/jpg"
@@ -583,6 +665,40 @@ onUnmounted(() => {
                 class="bg-gray-100 text-gray-900 text-sm font-semibold leading-5 px-5 py-3 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                 Cancel
             </button>
+        </div>
+
+        <!-- Image Crop Modal -->
+        <div v-if="showCropModal" 
+            class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+            @click.self="cancelCrop">
+            <div class="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 shadow-2xl">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Crop Profile Photo</h3>
+                    <button @click="cancelCrop" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fa-solid fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm text-gray-600 mb-3">
+                        Adjust the crop area to select the part of your image that will be used as your profile photo.
+                    </p>
+                    <div class="max-h-[500px] overflow-hidden">
+                        <img id="crop-image" :src="imageToCrop" class="max-w-full" />
+                    </div>
+                </div>
+                
+                <div class="flex gap-3 justify-end">
+                    <button @click="cancelCrop" type="button"
+                        class="px-5 py-2.5 bg-gray-100 text-gray-900 text-sm font-semibold rounded-lg hover:bg-gray-200 transition-colors">
+                        Cancel
+                    </button>
+                    <button @click="applyCrop" type="button"
+                        class="px-5 py-2.5 bg-[#121a22] text-white text-sm font-semibold rounded-lg hover:bg-[#2a3440] transition-colors">
+                        Apply Crop
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
