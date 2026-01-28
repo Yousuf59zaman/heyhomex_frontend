@@ -96,13 +96,10 @@ const deleteHandler = async () => {
         const getData = await $fetchAdmin(`admin/professions/${deleteId.value}/delete`, {
             method: 'DELETE',
         });
-        if (getData.status == true) {
-            response_modal.value = {
-                status: true,
-                message: 'Data deleted Successfully.',
-            }
+       
+            response_modal.value = getData;
             data.value = data.value.filter(item => item.id !== deleteId.value);
-        }
+       
     } catch (e) {
         // console.log('here 1',e.response);
         if (e.response?.status === 404 || e.response?.status === 409) {
@@ -120,10 +117,10 @@ const restoreHandler = async (id) => {
         const getData = await $fetchAdmin(`admin/professions/restore/${id}`, {
             method: 'POST',
         });
-        if (getData.status == true) {
+       
             response_modal.value = getData;
             data.value = data.value.filter(item => item.id !== id);
-        }
+      
     } catch (e) {
         // console.log('here 1',e.response);
         if (e.response?.status === 404 || e.response?.status === 409) {
