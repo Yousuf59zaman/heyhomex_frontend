@@ -10,7 +10,7 @@ const notification = ref(null)
 const pending = ref(false)
 const error = ref(null)
 
-// Load single notification
+
 const loadNotification = async () => {
     pending.value = true
     error.value = null
@@ -22,7 +22,7 @@ const loadNotification = async () => {
         if (response.status === 'success') {
             notification.value = response.data
             
-            // Mark as read if not already read
+          
             if (!notification.value.read_at) {
                 await markAsRead()
             }
@@ -40,7 +40,7 @@ const loadNotification = async () => {
     }
 }
 
-// Mark notification as read
+
 const markAsRead = async () => {
     try {
         const formData = new FormData()
@@ -51,7 +51,7 @@ const markAsRead = async () => {
             body: formData
         })
 
-        // Refresh notification to get updated read_at timestamp
+        
         if (notification.value) {
             notification.value.read_at = new Date().toISOString()
         }
@@ -60,12 +60,12 @@ const markAsRead = async () => {
     }
 }
 
-// Go back to notifications list
+
 const goBack = () => {
     router.push('/kamaina/notifications')
 }
 
-// Format date
+
 const formatDate = (date) => {
     if (!date) return ''
     return new Date(date).toLocaleString('en-US', {
@@ -77,7 +77,7 @@ const formatDate = (date) => {
     })
 }
 
-// Get notification icon based on type
+
 const getNotificationIcon = (type) => {
     switch (type) {
         case 'new_lead':
@@ -96,7 +96,7 @@ onMounted(() => {
 
 <template>
     <div class="w-full max-w-[1316px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <!-- Header with Back Button -->
+       
         <div class="flex items-center gap-4 mb-6">
             <button
                 type="button"
@@ -112,7 +112,7 @@ onMounted(() => {
             </h1>
         </div>
 
-        <!-- Loading State -->
+      
         <div v-if="pending" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <Skeleton height="2rem" class="mb-4"></Skeleton>
             <Skeleton height="1rem" class="mb-2"></Skeleton>
@@ -120,7 +120,7 @@ onMounted(() => {
             <Skeleton height="1rem" width="70%"></Skeleton>
         </div>
 
-        <!-- Error State -->
+       
         <div v-else-if="error" class="bg-white rounded-lg shadow-sm border border-red-200 p-6">
             <div class="flex items-center gap-3 text-red-600">
                 <Icon name="lucide:alert-circle" class="w-6 h-6" />
@@ -131,9 +131,9 @@ onMounted(() => {
             </div>
         </div>
 
-        <!-- Notification Content -->
+      
         <div v-else-if="notification" class="bg-white rounded-lg shadow-sm border border-gray-200">
-            <!-- Notification Header -->
+            
             <div class="p-6 border-b border-gray-200">
                 <div class="flex items-start gap-4">
                     <div
@@ -146,7 +146,7 @@ onMounted(() => {
                     </div>
                     <div class="flex-1">
                         <h2 class="text-xl font-semibold text-[#2C3E50] mb-2">
-                            {{ notification.title }}
+                            {{ notification.data?.title || 'Notification' }}
                         </h2>
                         <div class="flex items-center gap-4 text-sm text-gray-500">
                             <span>{{ formatDate(notification.created_at) }}</span>
@@ -165,20 +165,22 @@ onMounted(() => {
                 </div>
             </div>
 
-            <!-- Notification Body -->
+          
             <div class="p-6">
                 <div class="prose max-w-none">
-                    <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ notification.message }}</p>
+                    <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ notification.data?.message || 'No message available' }}</p>
                 </div>
 
-                <!-- Additional Data (if any) -->
-                <div v-if="notification.data" class="mt-6 p-4 bg-gray-50 rounded-lg">
-                    <h3 class="text-sm font-semibold text-gray-700 mb-2">Additional Information</h3>
-                    <pre class="text-sm text-gray-600 whitespace-pre-wrap">{{ JSON.stringify(notification.data, null, 2) }}</pre>
+              
+                <div v-if="notification.data?.agent_name" class="mt-6 space-y-2">
+                    <div class="flex items-center gap-2 text-sm">
+                        <span class="text-gray-500">From:</span>
+                        <span class="text-gray-700 font-medium">{{ notification.data.agent_name }}</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Footer -->
+          
             <div v-if="notification.read_at" class="p-6 border-t border-gray-200 bg-gray-50">
                 <p class="text-sm text-gray-500">
                     Read on {{ formatDate(notification.read_at) }}

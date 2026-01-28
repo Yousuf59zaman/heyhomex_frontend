@@ -121,6 +121,7 @@ export default defineNuxtPlugin(() => {
                 const date = new Date(isoDate)
                 return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
             },
+            
 
             formatPriceRange : (minPrice:any, maxPrice:any) => {
                 if (!minPrice && !maxPrice) return 'N/A'
