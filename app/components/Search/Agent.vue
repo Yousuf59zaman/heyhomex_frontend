@@ -14,6 +14,7 @@ const props = defineProps({
 const emit = defineEmits(['toggle-favorite'])
 
 const navigateToAgent = () => {
+    console.log('coming props' , props.segment)
     navigateTo(`/${props.segment}/agent/${props.agent.id}`)
 }
 
@@ -89,12 +90,15 @@ const reviewCount = computed(() => {
                     <Icon name="fa6-solid:star" class="w-4 h-4 text-[#FFB013]" />
                     <span class="text-[14px] text-[#121A22] leading-[20px]">({{ reviewCount }})</span>
                 </div> -->
+                <p class="text-[14px] text-[#121A22] leading-[20px] capitalize">
+                    {{ agent.agent_type || 'Top Agents' }}
+                </p>
             </div>
 
             <!-- Agent Type/Category -->
-            <p class="text-[14px] text-[#121A22] leading-[20px] capitalize">
+            <!-- <p class="text-[14px] text-[#121A22] leading-[20px] capitalize">
                 {{ agent.agent_type || 'Top Agents' }}
-            </p>
+            </p> -->
 
             <!-- Divider -->
             <!-- <div class="border-t border-[#D9D9D9]"></div> -->
