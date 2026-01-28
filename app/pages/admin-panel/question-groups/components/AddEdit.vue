@@ -69,11 +69,7 @@ const updateHandler = async () => {
             method: 'PATCH',
             body: formData.value,
         });
-        response_modal.value = {
-            status : true,
-            message : getData.message
-        };
-        console.log(response_modal.value)
+        response_modal.value = getData;
         if (getData.data.is_active == true) {
             emit('add_emit', getData.data);
         }
@@ -121,10 +117,7 @@ const createHandler = async () => {
             method: 'POST',
             body: formData.value,
         });
-        response_modal.value = {
-            status : true,
-            message : getData.message
-        };
+        response_modal.value = getData;
         if (getData.data.name) {
             console.log('adada',getData.data )
             emit('add_emit', getData.data);

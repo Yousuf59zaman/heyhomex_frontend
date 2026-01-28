@@ -78,10 +78,7 @@ const updateHandler = async () => {
             body: submitData
         });
         
-        response_modal.value = {
-                status: true,
-                message: 'Ad place updated successfully.'
-            };
+        response_modal.value = getData;
         if (getData.status == true || getData.status == 'success') {
             emit('add_emit', getData.data);
         }
@@ -133,10 +130,7 @@ const createHandler = async () => {
             body: submitData,
         });
         
-        response_modal.value = {
-                status: true,
-                message: 'Ad place created successfully.'
-            };
+        response_modal.value = getData;
         if (getData.status == true || getData.status == 'success') {
             emit('add_emit', getData.data);
         }

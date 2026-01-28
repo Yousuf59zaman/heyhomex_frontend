@@ -193,10 +193,7 @@
                 }
             )
 
-            response_modal.value = {
-                status: true,
-                message: "Updated Successfully.",
-            }
+            response_modal.value = getData
 
             if (getData.status === "success") {
                 emit("add_emit", getData.data)
@@ -273,10 +270,7 @@
                 body: formDataToSend,
             })
 
-            response_modal.value = {
-                status: true,
-                message: "Created Successfully.",
-            }
+            response_modal.value = getData
 
             if (getData.status === "success") {
                 emit("add_emit", getData.data)

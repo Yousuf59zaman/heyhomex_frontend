@@ -96,10 +96,7 @@ const deleteHandler = async () => {
             }
         });
         if (getData.status == true || getData.status == 'success') {
-            response_modal.value = {
-                status: true,
-                message: 'Lead status deleted successfully.',
-            }
+            response_modal.value = getData;
             data.value = data.value.filter(item => item.id !== deleteId.value);
         }
     } catch (e) {

@@ -304,10 +304,7 @@
                 }
             )
 
-            response_modal.value = {
-                status: true,
-                message: getData.message,
-            }
+            response_modal.value = getData;
             if (getData) {
                 emit('add_emit', getData.data)
             }
@@ -408,10 +405,7 @@
                 }
             )
 
-            response_modal.value = {
-                status: true,
-                message: getData.message,
-            }
+            response_modal.value = getData;
             if (getData) {
                 emit('add_emit', getData.data)
             }

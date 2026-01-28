@@ -111,11 +111,7 @@
                 }
             );
             if (getData) {
-                response_modal.value = {
-                    status : true,
-                    message : getData.message
-                };
-                console.log('deleting' ,data)
+                response_modal.value = getData;
                 data.value = data.value.filter(
                     (item) => item.id !== deleteId.value
                 );
@@ -138,10 +134,10 @@
                     method: 'POST',
                 }
             );
-            if (getData.status == true) {
+           
                 response_modal.value = getData;
                 data.value = data.value.filter((item) => item.id !== id);
-            }
+          
         } catch (e) {
             if (e.response?.status === 404 || e.response?.status === 409) {
                 response_modal.value = e.response._data;

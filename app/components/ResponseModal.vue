@@ -7,7 +7,7 @@ const props = defineProps({
 
 const visible = ref(false);
 watch(() => props.response_modal, (newVal, oldVal) => {
-    if (newVal.status == true) {
+    if (newVal.status == true || newVal.status == 'success') {
         visible.value = true;
         setTimeout(() => {
             closeModal();
@@ -46,7 +46,7 @@ const messageLogs = computed(() => {
                     <div v-else class="text-left font-medium text-gray-900 whitespace-nowrap dark:text-white w-full">
                         <div class="success-icon flex justify-center items-center">
                             <div class="demo1">
-                                <div v-if="response_modal.status == true"
+                                <div v-if="response_modal.status == true || response_modal.status == 'success'"
                                     class="flex flex-col items-center justify-center">
                                     <div class="ui-success">
                                         <svg viewBox="0 0 87 87" version="1.1" xmlns="http://www.w3.org/2000/svg"

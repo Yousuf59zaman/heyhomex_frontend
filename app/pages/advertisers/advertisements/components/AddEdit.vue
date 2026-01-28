@@ -181,10 +181,7 @@ const submitHandler = async () => {
         });
 
         if (response.status === 'success') {
-            response_modal.value = {
-                status: true,
-                message: props.modalTitle === 'Create' ? 'Advertisement created successfully!' : 'Advertisement updated successfully!'
-            };
+            response_modal.value = getDatasetAtEvent;
             emit('success', response.data);
             setTimeout(() => {
                 emit('close');

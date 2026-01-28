@@ -146,10 +146,7 @@ const saveAttachments = async () => {
             message = 'Videos attached successfully!';
         }
         
-        response_modal.value = {
-            status: true,
-            message: message
-        };
+        response_modal.value = getDatasetAtEvent;
         
         emit('success');
         setTimeout(() => {
