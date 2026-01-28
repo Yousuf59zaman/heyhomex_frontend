@@ -18,9 +18,14 @@ onMounted(() => {
 
 <template>
     <div class="relative min-h-screen overflow-hidden">
-        <video class="absolute inset-0 w-full h-full object-cover" src="/video/HomePageVideo.mp4" autoplay muted loop
-            playsinline></video>
-
+        <!-- YouTube Video Background -->
+        <iframe 
+            class="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            src="https://www.youtube.com/embed/xXvd5PRnjrA?autoplay=1&mute=1&loop=1&playlist=xXvd5PRnjrA&controls=0&showinfo=0&rel=0&playsinline=1&cc_load_policy=0&enablejsapi=1&modestbranding=1&iv_load_policy=3"
+            frameborder="0"
+            allow="autoplay; encrypted-media"
+            style="position: absolute; top: 50%; left: 50%; width: 100vw; height: 100vh; transform: translate(-50%, -50%) scale(1.5); object-fit: cover;"
+        ></iframe>
         <!-- <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div> -->
 
         <!-- Skeleton BEFORE hydration -->
