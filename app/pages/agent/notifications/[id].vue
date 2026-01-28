@@ -123,7 +123,7 @@ onMounted(() => {
       
         <div v-else-if="error" class="bg-white rounded-lg shadow-sm border border-red-200 p-6">
             <div class="flex items-center gap-3 text-red-600">
-                <Icon name="lucide:alert-circle" class="w-6 h-6" />
+                <Icon name="lucide:alert-circle" class="w-12 h-12 text-red-500 mx-auto mb-2" />
                 <div>
                     <p class="font-semibold">Failed to load notification</p>
                     <p class="text-sm">{{ error }}</p>
