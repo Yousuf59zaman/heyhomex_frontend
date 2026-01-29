@@ -171,7 +171,7 @@ const loadAgentProperties = async () => {
 const agentName = computed(() => agentData.value?.name || 'Agent')
 const agentFirstName = computed(() => agentName.value.split(' ')[0] || 'Agent')
 const agentPhoto = computed(
-    () => agentData.value?.photo || agentData.value?.profile_pic || '/images/agents/1.png'
+    () => agentData.value?.photo || agentData.value?.profile_pic || '/svg/not-found-img.svg'
 )
 const agentType = computed(
     () => agentData.value?.agent_type || agentData.value?.user_type?.[0]?.name || 'Agent'

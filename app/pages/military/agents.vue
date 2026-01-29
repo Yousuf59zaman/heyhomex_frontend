@@ -32,7 +32,7 @@ const loadAgents = async () => {
         agents.value = (response?.data?.data || []).map((agent) => ({
             id: agent.id,
             name: agent.name,
-            photo: agent.profile_pic || '/images/agents/1.png',
+            photo: agent.profile_pic || '/svg/not-found-img.svg',
             agent_type: agent.user_type?.[0]?.name || 'Agent',
             min_price: parseFloat(agent.user_preference?.range_minimum_price) || 0,
             max_price: parseFloat(agent.user_preference?.range_maximum_price) || 0,

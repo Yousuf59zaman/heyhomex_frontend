@@ -213,7 +213,7 @@
 
             <div class="flex items-center gap-3">
                 <!-- Property Type Dropdown -->
-                <div ref="propertyTypeRef" class="relative">
+                <!-- <div ref="propertyTypeRef" class="relative">
                     <button
                         type="button"
                         @click="togglePropertyType"
@@ -259,10 +259,10 @@
                             </button>
                         </div>
                     </Transition>
-                </div>
+                </div> -->
 
                 <!-- Price Range Dropdown -->
-                <div ref="priceRangeRef" class="relative">
+                <!-- <div ref="priceRangeRef" class="relative">
                     <button
                         type="button"
                         @click="togglePriceRange"
@@ -308,7 +308,7 @@
                             </button>
                         </div>
                     </Transition>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
