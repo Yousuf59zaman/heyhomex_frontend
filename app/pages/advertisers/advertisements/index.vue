@@ -101,10 +101,7 @@ const deleteHandler = async () => {
             }
         });
         if (getData.status == true || getData.status == 'success') {
-            response_modal.value = {
-                status: true,
-                message: 'Advertisement deleted successfully.'
-            };
+            response_modal.value = getData
             data.value = data.value.filter(item => item.id !== deleteId.value);
         }
     } catch (e) {
@@ -132,11 +129,10 @@ const toggleStatus = async (id) => {
             }
         }
     } catch (e) {
-        //if error show message in modal that has been used in whole system for error handling
-        response_modal.value = {
-                status: false,
-                message: 'Insufficient Balance'
-            };
+       
+        if (e.response?.status === 404 || e.response?.status === 409) {
+            response_modal.value = e.response._data;
+        }
         console.error('Error toggling status:', e.message);
     }
 };

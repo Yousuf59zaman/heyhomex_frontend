@@ -69,10 +69,7 @@ const updateHandler = async () => {
                 _method: 'PATCH'
             },
         });
-        response_modal.value = {
-                status: true,
-                message: 'Data Updated',
-            }
+           response_modal.value = updateDate;
        
             emit('add_emit', updateData.data);
        
@@ -124,10 +121,7 @@ const createHandler = async () => {
             method: 'POST',
             body: formData.value,
         });
-        response_modal.value = {
-                status: true,
-                message: 'Data Added Successfully.',
-            }
+            response_modal.value = getData;
             emit('add_emit', getData.data);
     } catch (e) {
         console.log('Get Message', e.message);

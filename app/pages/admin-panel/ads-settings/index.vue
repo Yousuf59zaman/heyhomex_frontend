@@ -49,10 +49,7 @@ const submitHandler = async () => {
         });
 
         if (response.status === 'success') {
-            response_modal.value = {
-                status: true,
-                message: 'Ad settings updated successfully.'
-            };
+            response_modal.value = getData;
             form.value.cpc_value = response.data.cpc_value;
             form.value.cpm_value = response.data.cpm_value;
         }
