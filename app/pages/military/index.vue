@@ -9,6 +9,7 @@
     const pending = ref(false)
     const error = ref(null)
     const route = useRoute()
+    const router = useRouter();
     const paginationConfig = ref({
         data: {},
         lang: "en",
@@ -374,12 +375,16 @@
         }
     }
 
+    const currentPage = route.path
     const handleSeeAllProperties = () => {
-        console.log("See all properties")
+        console.log("See all properties" , currentPage)
+        
+        router.push(`${currentPage}/search`)
     }
 
     const handleSeeAllVideos = () => {
         console.log("See all videos")
+        router.push(`${currentPage}/videos`)
     }
 
     onMounted(() => {

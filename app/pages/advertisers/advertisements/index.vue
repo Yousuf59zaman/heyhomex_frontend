@@ -1,4 +1,6 @@
 <script setup>
+import Hls from 'hls.js'
+
 const AddEdit = defineAsyncComponent(() => import('./components/AddEdit.vue'));
 const AttachPlaces = defineAsyncComponent(() => import('./components/AttachPlaces.vue'));
 const AttachVideos = defineAsyncComponent(() => import('./components/AttachVideos.vue'));
@@ -225,6 +227,29 @@ const getStatusLabel = (status) => {
     if (status === 0) return "Inactive"
     return status
 }
+
+
+
+const videoRefs = new Map()
+
+const initHls = (el, src) => {
+    if (!el || !src) return
+
+    if (Hls.isSupported()) {
+        const hls = new Hls()
+        hls.loadSource(src)
+        hls.attachMedia(el)
+        videoRefs.set(el, hls)
+    } else if (el.canPlayType('application/vnd.apple.mpegurl')) {
+        // Safari
+        el.src = src
+    }
+}
+
+onBeforeUnmount(() => {
+    videoRefs.forEach(hls => hls.destroy())
+    videoRefs.clear()
+})
 </script>
 
 <template>
@@ -341,14 +366,36 @@ const getStatusLabel = (status) => {
                             <td class="py-4 px-2">
                                 <div class="flex items-center gap-3">
                                     <div class="flex-shrink-0">
-                                        <img 
-                                            v-if="campaign.media_url" 
-                                            :src="campaign.media_url" 
+                                        <!-- <img 
+                                            v-if="campaign.media_path" 
+                                            :src="campaign.media_path" 
                                             :alt="campaign.title" 
                                             class="w-10 h-10 object-cover rounded-md" 
                                         />
                                         <div 
                                             v-else 
+                                            class="w-10 h-10 rounded-md bg-gray-200 flex items-center justify-center">
+                                            <Icon name="lucide:image" class="w-5 h-5 text-gray-400" />
+                                        </div> -->
+                                        <video
+                                            v-if="campaign.media_path && campaign.media_path.endsWith('.m3u8')"
+                                            :ref="el => initHls(el, campaign.media_path)"
+                                            muted
+                                            playsinline
+                                            class="w-10 h-10 object-cover rounded-md bg-black"
+                                        />
+
+                                        <!-- IMAGE PREVIEW -->
+                                        <img 
+                                            v-else-if="campaign.media_path"
+                                            :src="campaign.media_path"
+                                            :alt="campaign.title"
+                                            class="w-10 h-10 object-cover rounded-md"
+                                        />
+
+                                        <!-- FALLBACK -->
+                                        <div 
+                                            v-else
                                             class="w-10 h-10 rounded-md bg-gray-200 flex items-center justify-center">
                                             <Icon name="lucide:image" class="w-5 h-5 text-gray-400" />
                                         </div>

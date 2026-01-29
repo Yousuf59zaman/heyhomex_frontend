@@ -46,11 +46,13 @@
     }
 
     const handleRemoveItem = (itemId) => {
-        emit("remove-item", {itemId, type: activeTab.value.toLowerCase()})
+        const type = activeTab.value === 'Home' ? 'home' : 'video'
+        emit("remove-item", {itemId, type})
     }
 
     const handleItemClick = (item) => {
-        emit("item-click", {item, type: activeTab.value.toLowerCase()})
+        const type = activeTab.value === 'Home' ? 'home' : 'video'
+        emit("item-click", {item, type})
     }
 
     watch(

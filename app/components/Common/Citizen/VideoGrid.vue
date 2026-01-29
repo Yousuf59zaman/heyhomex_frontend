@@ -49,11 +49,11 @@
             <h2 class="text-base sm:text-lg font-semibold text-gray-900">
                 {{ title }}
             </h2>
-            <button
+            <div
                 @click="$emit('see-all')"
                 class="text-sm text-blue-600 hover:text-blue-700 font-medium">
                 See all
-            </button>
+            </div>
         </div>
 
         <div
