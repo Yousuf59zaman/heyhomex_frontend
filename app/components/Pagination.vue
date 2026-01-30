@@ -32,17 +32,28 @@ const align = computed(() => {
 const action = computed(() => {
     return props.config.action
 })
-const current_pg = ref(route.query.page ? Number(route.query.page) : 1);
+const pageQueryKey = computed(() => {
+    const key = props.config?.pageQueryKey || props.config?.pageKey || props.config?.queryKey
+    return key ? String(key) : 'page'
+})
+const current_pg = ref(1)
 
-watch(() => route.query.page, (currentPg) => {
+const normalizePageValue = (value) => {
+    if (value === undefined || value === null || value === '') return 1
+    const parsed = Number(value)
+    return Number.isNaN(parsed) ? 1 : parsed
+}
+
+watch(() => route.query[pageQueryKey.value], (currentPg) => {
     // alert(currentPg)
     // console.log('currentPg', currentPg);
-    current_pg.value = parseInt(currentPg ? currentPg : 1)
+    current_pg.value = normalizePageValue(currentPg)
     pg_list.value = {}
     init_pg_data()
 })
 
 onMounted(() => {
+    current_pg.value = normalizePageValue(route.query[pageQueryKey.value])
     init_pg_data()
 })
 
@@ -72,8 +83,14 @@ const init_pg_data = () => {
         sel_lang.value = lang.value
     }
 
-    if (route.query.page == 1) navigateTo({ query: {} })
-    else if (route.query.page > data.value.last_page) load_content(data.value.last_page)
+    const currentQueryPage = normalizePageValue(route.query[pageQueryKey.value])
+    if (currentQueryPage === 1 && route.query[pageQueryKey.value]) {
+        const query = Object.assign({}, route.query)
+        delete query[pageQueryKey.value]
+        navigateTo({ query })
+    } else if (currentQueryPage > data.value.last_page) {
+        load_content(data.value.last_page)
+    }
 }
 const go_previous = () => {
     if (current_pg.value > 1) load_content(current_pg.value - 1)
@@ -91,10 +108,10 @@ const load_content = async (pg) => {
         if (action.value == 'ajax') emit('loadData', pg, true)
         else if (pg == 1) {
             let query = Object.assign({}, route.query);
-            delete query['page'];
+            delete query[pageQueryKey.value];
             await navigateTo({ query });
         } else {
-            let obj = {}; obj['page'] = pg;
+            let obj = {}; obj[pageQueryKey.value] = pg;
             await navigateTo({ query: Object.assign({}, route.query, obj) });
         }
     }
