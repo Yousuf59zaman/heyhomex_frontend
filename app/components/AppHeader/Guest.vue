@@ -112,7 +112,7 @@
                     v-if="!admin_user && !hasCitizenDashboardAccess"
                     @click="handleGetStarted"
                     class="py-[6px] px-[12px] text-[#121A22] text-[14px] font-semibold leading-[20px] bg-white rounded-[8px] hover:bg-gray-50 transition-colors duration-200">
-                    Register
+                    
                 </button>
 
                 <!-- Mobile Hamburger Button -->
@@ -218,7 +218,7 @@
                     <button
                         @click="handleGetStarted"
                         class="py-2 px-4 lg:px-5 text-[#121A22] text-xs lg:text-sm font-semibold leading-5 bg-white rounded-lg hover:bg-gray-50 transition-colors duration-200 border border-white whitespace-nowrap">
-                        Register
+                        Sign Up
                     </button>
                 </div>
             </div>
@@ -255,7 +255,7 @@
                     <button
                         @click="handleGetStarted"
                         class="block w-full text-center py-[0.625rem] px-[1.5rem] text-base text-black bg-white border rounded-lg hover:bg-gray-100 transition-colors">
-                        Register
+                        Sign Up
                     </button>
                 </div>
             </div>
