@@ -16,6 +16,7 @@ const videosPaginationConfig = ref({
     lang: "en",
     align: "center",
     action: "",
+    queryKey: "videoPage",
 });
 const videoSearchQuery = ref('');
 
@@ -77,9 +78,9 @@ onMounted(() => {
     hydrated.value = true;
 });
 
-const handleTabClick = (tab) => {
+const handleTabClick = async (tab) => {
     const router = useRouter();
-    router.replace({ query: {} });
+    await router.replace({ query: {} });
 
     if (tab === 'home') {
         activeTab.value = 'home';
@@ -88,6 +89,14 @@ const handleTabClick = (tab) => {
         loadVideos();
     }
 };
+
+watch(
+    () => route.query.videoPage,
+    () => {
+        if (activeTab.value !== 'videos') return;
+        loadVideos();
+    }
+);
 </script>
 
 <template>

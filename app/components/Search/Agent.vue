@@ -101,7 +101,7 @@ const reviewCount = computed(() => {
             </p> -->
 
             <!-- Divider -->
-            <div class="border-t border-[#D9D9D9]"></div>
+            <!-- <div class="border-t border-[#D9D9D9]"></div> -->
 
             <!-- Stats -->
             <!-- <div class="flex items-center gap-3">
