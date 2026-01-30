@@ -181,7 +181,7 @@ const submitHandler = async () => {
         });
 
         if (response.status === 'success') {
-            response_modal.value = getDatasetAtEvent;
+            response_modal.value = response;
             emit('success', response.data);
             setTimeout(() => {
                 emit('close');
