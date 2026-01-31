@@ -6,6 +6,7 @@
 
     const route = useRoute()
     const toast = useToast()
+    const { $formatdate } = useNuxtApp()
     const properties = ref([])
     const videos = ref([])
     const pending = ref(false)
@@ -83,7 +84,7 @@
                 channel: video.channel?.name || 'Unknown Channel',
                 duration: video.duration || '0:00',
                 views: '0 views',
-                uploadTime: new Date(video.created_at).toLocaleDateString(),
+                uploadTime: $formatdate(video.created_at),
                 thumbnail: video.video_image || '/images/dashboard/1.png',
                 isFavorite: true,
                 videoUrl: video.video_url,
@@ -417,8 +418,8 @@
                                 <div
                                     class="flex items-center text-xs text-[#283849] gap-1.5">
                                     <span>{{ video.channel }}</span>
-                                    <div class="bg-[#d4d4d4] h-3 w-px"></div>
-                                    <span>{{ video.views }}</span>
+                                    <!-- <div class="bg-[#d4d4d4] h-3 w-px"></div> -->
+                                    <!-- <span>{{ video.views }}</span> -->
                                     <div class="bg-[#d4d4d4] h-3 w-px"></div>
                                     <span>{{ video.uploadTime }}</span>
                                 </div>

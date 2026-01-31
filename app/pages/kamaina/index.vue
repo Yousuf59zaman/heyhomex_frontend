@@ -5,6 +5,7 @@ definePageMeta({ middleware: ["auth-citizen"], layout: "citizen" })
 
 const hydrated = ref(false)
 const toast = useToast()
+const { $formatdate } = useNuxtApp()
 
 
 const properties = ref([])
@@ -106,7 +107,7 @@ const videos = ref([
         duration: "3:45",
         channelName: "AIRLINES",
         views: "0 Views",
-        timeAgo: new Date().toLocaleDateString(),
+        timeAgo: $formatdate(new Date()),
         videoUrl: demoVideoUrl,
         isFavorite: false,
     },
@@ -118,7 +119,7 @@ const videos = ref([
         duration: "5:12",
         channelName: "HOUSE",
         views: "0 Views",
-        timeAgo: new Date().toLocaleDateString(),
+        timeAgo: $formatdate(new Date()),
         videoUrl: demoVideoUrl,
         isFavorite: false,
     },
@@ -130,7 +131,7 @@ const videos = ref([
         duration: "2:58",
         channelName: "ONE ARE YOU?",
         views: "0 Views",
-        timeAgo: new Date().toLocaleDateString(),
+        timeAgo: $formatdate(new Date()),
         videoUrl: demoVideoUrl,
         isFavorite: false,
     },
