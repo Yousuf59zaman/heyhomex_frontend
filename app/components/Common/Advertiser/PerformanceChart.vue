@@ -91,7 +91,15 @@
         let impressionsData = []
 
         // Handle different view types
-        if (props.lineGraphData.view_type === 'weekly') {
+        if (props.lineGraphData.view_type === 'hourly') {
+            labels = props.lineGraphData.data.map(item => item.hour_label || `${item.hour}:00`)
+            clicksData = props.lineGraphData.data.map(item => item.clicks)
+            impressionsData = props.lineGraphData.data.map(item => item.impressions)
+        } else if (props.lineGraphData.view_type === 'daily') {
+            labels = props.lineGraphData.data.map(item => item.day_label || item.day_short)
+            clicksData = props.lineGraphData.data.map(item => item.clicks)
+            impressionsData = props.lineGraphData.data.map(item => item.impressions)
+        } else if (props.lineGraphData.view_type === 'weekly') {
             labels = props.lineGraphData.data.map(item => item.day_short)
             clicksData = props.lineGraphData.data.map(item => item.clicks)
             impressionsData = props.lineGraphData.data.map(item => item.impressions)
@@ -210,6 +218,8 @@
                     :value="period"
                     @change="emit('period-change', $event.target.value)"
                     class="appearance-none bg-white px-4 py-2 pr-8 text-sm text-gray-700 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 cursor-pointer">
+                    <option value="hourly">Hourly</option>
+                    <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
                     <option value="monthly">Monthly</option>
                     <option value="yearly">Yearly</option>
