@@ -1,5 +1,5 @@
 <script setup>
-import { config } from 'process'
+// import { config } from 'process'
 
 definePageMeta({ middleware: ["auth-citizen"], layout: "agent" })
 useHead({ title: "Calendar Sync - Agent Panel" })
