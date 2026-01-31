@@ -773,14 +773,10 @@ export const useHlsPlayerCore = (
                 emit('ready');
 
                 const levels = hls.levels || [];
-                const qualityOptions = levels.map((level, index) => {
+                hlsFallbackState.availableQualities = levels.map((level, index) => {
                     let label = '';
                     if (level.height) {
-                        if (level.height >= 2160 && level.height < 3000) {
-                            label = '4K';
-                        } else {
-                            label = `${level.height}p`;
-                        }
+                        label = `${level.height}p`;
                     } else if (level.bitrate) {
                         const bitrateKbps = level.bitrate / 1000;
                         let estimatedHeight = '';
@@ -805,22 +801,9 @@ export const useHlsPlayerCore = (
                     } else {
                         label = `Level ${index + 1}`;
                     }
-                    const bitrate = level.maxBitrate ?? level.bitrate ?? 0;
-                    return { label, index, bitrate };
+                    return { label, index };
                 });
-                const allowedLabels = new Set(['720p', '1080p', '4K']);
-                const orderedLabels = ['720p', '1080p', '4K'];
-                const filteredQualities = qualityOptions
-                    .filter((quality) => allowedLabels.has(quality.label))
-                    .sort((a, b) => orderedLabels.indexOf(a.label) - orderedLabels.indexOf(b.label));
-
-                hlsFallbackState.availableQualities = filteredQualities.map(({ label, index }) => ({ label, index }));
                 hlsFallbackState.currentQuality = -1;
-
-                const minAuto = filteredQualities[0];
-                if (minAuto && Number.isFinite(minAuto.bitrate) && minAuto.bitrate > 0) {
-                    hls.config.minAutoBitrate = minAuto.bitrate;
-                }
             });
             hls.on(Events.LEVEL_SWITCHING, () => {
                 state.isBuffering = true;

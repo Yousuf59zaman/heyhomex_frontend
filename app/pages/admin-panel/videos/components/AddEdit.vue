@@ -24,6 +24,9 @@
         description: "",
         video_image: null,
         tag_ids: [],
+        location: "",
+        address: "",
+        category_ids: "",
         latitude: null,
         longitude: null,
     })
@@ -51,6 +54,13 @@
                     description: value.description,
                     video_image: null,
                     tag_ids: value.tags ? value.tags.map(tag => tag.id) : [],
+                    location: value.location || "",
+                    address: value.address || "",
+                    category_ids: value.category_ids
+                        ? value.category_ids.join(", ")
+                        : value.categories
+                            ? value.categories.map(category => category.id).join(", ")
+                            : "",
                     latitude: value.latitude || null,
                     longitude: value.longitude || null,
                 }
@@ -66,6 +76,9 @@
                     description: "",
                     video_image: null,
                     tag_ids: [],
+                    location: "",
+                    address: "",
+                    category_ids: "",
                     latitude: null,
                     longitude: null,
                 }
@@ -165,6 +178,15 @@
         return true
     }
 
+    const parseCategoryIds = (value) => {
+        if (!value) return []
+        if (Array.isArray(value)) return value
+        return String(value)
+            .split(",")
+            .map((item) => item.trim())
+            .filter((item) => item.length > 0)
+    }
+
     const updateHandler = async () => {
         if (!validateForm()) return
 
@@ -177,11 +199,20 @@
             formDataToSend.append("duration", String(formData.value.duration))
             formDataToSend.append("video_url", formData.value.video_url)
             formDataToSend.append("description", formData.value.description)
+            formDataToSend.append("location", formData.value.location)
+            formDataToSend.append("address", formData.value.address)
 
             // Add tags
             if (formData.value.tag_ids && formData.value.tag_ids.length > 0) {
                 formData.value.tag_ids.forEach(tagId => {
                     formDataToSend.append("tag_ids[]", tagId)
+                })
+            }
+
+            const categoryIds = parseCategoryIds(formData.value.category_ids)
+            if (categoryIds.length > 0) {
+                categoryIds.forEach((categoryId) => {
+                    formDataToSend.append("category_ids[]", categoryId)
                 })
             }
 
@@ -259,6 +290,8 @@
             formDataToSend.append("duration", String(formData.value.duration))
             formDataToSend.append("video_url", formData.value.video_url)
             formDataToSend.append("description", formData.value.description)
+            formDataToSend.append("location", formData.value.location)
+            formDataToSend.append("address", formData.value.address)
 
             // Add latitude and longitude if provided
             if (formData.value.latitude !== null && formData.value.latitude !== '') {
@@ -272,6 +305,13 @@
             if (formData.value.tag_ids && formData.value.tag_ids.length > 0) {
                 formData.value.tag_ids.forEach(tagId => {
                     formDataToSend.append("tag_ids[]", tagId)
+                })
+            }
+
+            const categoryIds = parseCategoryIds(formData.value.category_ids)
+            if (categoryIds.length > 0) {
+                categoryIds.forEach((categoryId) => {
+                    formDataToSend.append("category_ids[]", categoryId)
                 })
             }
 
@@ -465,53 +505,63 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 md:col-span-2">
                 <div class="flex-auto">
-                    <label class="font-semibold">Latitude (Optional)</label>
-                    <InputNumber
-                        v-model="formData.latitude"
-                        mode="decimal"
-                        :minFractionDigits="0"
-                        :maxFractionDigits="8"
-                        :useGrouping="false"
+                    <label class="font-semibold">Category IDs</label>
+                    <InputText
+                        v-model="formData.category_ids"
                         class="w-full"
-                        placeholder="e.g., 21.4225"
+                        placeholder="e.g., 1, 2, 3"
                         :class="
-                            validations_errors.latitude
+                            validations_errors.category_ids
                                 ? 'border-[#f44336!important]'
                                 : ''
                         "
                         autocomplete="off"
-                        @focus="validations_errors.latitude = ''" />
+                        @focus="validations_errors.category_ids = ''" />
                     <InputError
                         class="text-sm mt-1"
-                        :message="validations_errors.latitude" />
-                    <small class="text-gray-500">Enter the latitude coordinate for map display</small>
+                        :message="validations_errors.category_ids" />
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
-                    <label class="font-semibold">Longitude (Optional)</label>
-                    <InputNumber
-                        v-model="formData.longitude"
-                        mode="decimal"
-                        :minFractionDigits="0"
-                        :maxFractionDigits="8"
-                        :useGrouping="false"
+                    <label class="font-semibold">Location</label>
+                    <InputText
+                        v-model="formData.location"
                         class="w-full"
-                        placeholder="e.g., -157.8584"
+                        placeholder="e.g., Makakilo"
                         :class="
-                            validations_errors.longitude
+                            validations_errors.location
                                 ? 'border-[#f44336!important]'
                                 : ''
                         "
                         autocomplete="off"
-                        @focus="validations_errors.longitude = ''" />
+                        @focus="validations_errors.location = ''" />
                     <InputError
                         class="text-sm mt-1"
-                        :message="validations_errors.longitude" />
-                    <small class="text-gray-500">Enter the longitude coordinate for map display</small>
+                        :message="validations_errors.location" />
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex-auto">
+                    <label class="font-semibold">Address</label>
+                    <InputText
+                        v-model="formData.address"
+                        class="w-full"
+                        placeholder="e.g., 92-1291 Palahia St, Kapolei, HI 96707, USA"
+                        :class="
+                            validations_errors.address
+                                ? 'border-[#f44336!important]'
+                                : ''
+                        "
+                        autocomplete="off"
+                        @focus="validations_errors.address = ''" />
+                    <InputError
+                        class="text-sm mt-1"
+                        :message="validations_errors.address" />
                 </div>
             </div>
 
