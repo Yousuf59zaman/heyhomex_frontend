@@ -1,6 +1,6 @@
 <script setup>
 import { format, startOfWeek, endOfWeek, addDays, isSameDay, startOfDay, endOfDay } from 'date-fns'
-
+const config = useRuntimeConfig();
 
 useHead({ title: "Calendar - Agent Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "agent" })
