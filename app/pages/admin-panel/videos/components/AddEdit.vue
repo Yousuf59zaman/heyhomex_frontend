@@ -26,7 +26,7 @@
         tag_ids: [],
         location: "",
         address: "",
-        category_ids: "",
+        category_id: null,
         latitude: null,
         longitude: null,
     })
@@ -56,11 +56,7 @@
                     tag_ids: value.tags ? value.tags.map(tag => tag.id) : [],
                     location: value.location || "",
                     address: value.address || "",
-                    category_ids: value.category_ids
-                        ? value.category_ids.join(", ")
-                        : value.categories
-                            ? value.categories.map(category => category.id).join(", ")
-                            : "",
+                    category_id: value.category_id || (value.category && value.category.id) || null,
                     latitude: value.latitude || null,
                     longitude: value.longitude || null,
                 }
@@ -78,7 +74,7 @@
                     tag_ids: [],
                     location: "",
                     address: "",
-                    category_ids: "",
+                    category_id: null,
                     latitude: null,
                     longitude: null,
                 }
@@ -88,6 +84,26 @@
         },
         {immediate: true}
     )
+    // Load categories for dropdown
+    const categories = ref([])
+    const categoriesLoading = ref(false)
+    const loadCategories = async () => {
+        categoriesLoading.value = true
+        try {
+            const response = await $fetchAdmin('/categories/drop-down', { method: 'GET' })
+            if (response.status === 'success') {
+                categories.value = response.data || []
+            }
+        } catch (e) {
+            categories.value = []
+        } finally {
+            categoriesLoading.value = false
+        }
+    }
+    onMounted(() => {
+        loadTags()
+        loadCategories()
+    })
 
     // Load tags from API
     const loadTags = async () => {
@@ -209,11 +225,8 @@
                 })
             }
 
-            const categoryIds = parseCategoryIds(formData.value.category_ids)
-            if (categoryIds.length > 0) {
-                categoryIds.forEach((categoryId) => {
-                    formDataToSend.append("category_ids[]", categoryId)
-                })
+            if (formData.value.category_id) {
+                formDataToSend.append("category_id", formData.value.category_id)
             }
 
             if (thumbnailFile.value) {
@@ -308,11 +321,8 @@
                 })
             }
 
-            const categoryIds = parseCategoryIds(formData.value.category_ids)
-            if (categoryIds.length > 0) {
-                categoryIds.forEach((categoryId) => {
-                    formDataToSend.append("category_ids[]", categoryId)
-                })
+            if (formData.value.category_id) {
+                formDataToSend.append("category_id", formData.value.category_id)
             }
 
             if (thumbnailFile.value) {
@@ -507,21 +517,19 @@
 
             <div class="flex items-center gap-4 md:col-span-2">
                 <div class="flex-auto">
-                    <label class="font-semibold">Category IDs</label>
-                    <InputText
-                        v-model="formData.category_ids"
+                    <label class="font-semibold">Category</label>
+                    <Dropdown
+                        v-model="formData.category_id"
+                        :options="categories"
+                        optionLabel="name"
+                        optionValue="id"
+                        placeholder="Select category"
+                        :loading="categoriesLoading"
                         class="w-full"
-                        placeholder="e.g., 1, 2, 3"
-                        :class="
-                            validations_errors.category_ids
-                                ? 'border-[#f44336!important]'
-                                : ''
-                        "
-                        autocomplete="off"
-                        @focus="validations_errors.category_ids = ''" />
+                    />
                     <InputError
                         class="text-sm mt-1"
-                        :message="validations_errors.category_ids" />
+                        :message="validations_errors.category_id" />
                 </div>
             </div>
 
