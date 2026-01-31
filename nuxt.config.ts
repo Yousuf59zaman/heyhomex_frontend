@@ -45,7 +45,13 @@ export default defineNuxtConfig({
 
             // Stripe Configuration
             STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
-            NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL: process.env.NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL
+            NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL: process.env.NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL,
+            
+            //Calendar Configuration :
+            GOOGLE_REDIRECT_URI:process.env.GOOGLE_REDIRECT_URI,
+            GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+            GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+
         }
     },
     compatibilityDate: "2025-07-15",

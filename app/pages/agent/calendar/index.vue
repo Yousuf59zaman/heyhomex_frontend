@@ -1,19 +1,11 @@
 <script setup>
 import { format, startOfWeek, endOfWeek, addDays, isSameDay, startOfDay, endOfDay } from 'date-fns'
 
-/**
- * ==============================
- * Page Meta & Head
- * ==============================
- */
+
 useHead({ title: "Calendar - Agent Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "agent" })
 
-/**
- * ==============================
- * Reactive States
- * ==============================
- */
+
 const currentDate = ref(new Date())
 const selectedDate = ref(new Date())
 const viewMode = ref('Month')
@@ -27,28 +19,29 @@ const leadStatuses = ref([])
 
 const responseModal = ref({})
 
-/**
- * Reschedule Modal States
- */
+
+const showGoogleSyncDropdown = ref({})
+const isGoogleSynced = ref(false)
+const showGoogleEventModal = ref(false)
+const selectedAppointmentForGoogle = ref(null)
+const googleEventStart = ref(null)
+const googleEventEnd = ref(null)
+const checkingGoogleSync = ref(false)
+
+
 const showRescheduleModal = ref(false)
 const selectedAppointmentForReschedule = ref(null)
 const rescheduleDateTime = ref(null)
 const isRescheduleCalendarOpen = ref(false)
 
-/**
- * ==============================
- * Helper Functions
- * ==============================
- */
 
-// Format JS Date to YYYY-MM-DD
 const formatDateYMD = (dateObj) => {
     return dateObj.getFullYear() + '-' +
         String(dateObj.getMonth() + 1).padStart(2, '0') + '-' +
         String(dateObj.getDate()).padStart(2, '0')
 }
 
-// Format current datetime for API
+
 const getCurrentDateTimeString = () => {
     const now = new Date()
     return now.getFullYear() + '-' +
@@ -59,7 +52,7 @@ const getCurrentDateTimeString = () => {
         String(now.getSeconds()).padStart(2, '0')
 }
 
-// Common toast handler
+
 const showToast = (message, type = 'success') => {
     responseModal.value = {
         status: type === 'success',
@@ -68,13 +61,7 @@ const showToast = (message, type = 'success') => {
     }
 }
 
-/**
- * ==============================
- * Computed Properties
- * ==============================
- */
 
-// Selected date full formatted label
 const selectedDateFormatted = computed(() => {
     return selectedDate.value.toLocaleDateString('en-US', {
         month: 'long',
@@ -84,7 +71,7 @@ const selectedDateFormatted = computed(() => {
     })
 })
 
-// Month title (January 2026 etc.)
+
 const monthName = computed(() => {
     return currentDate.value.toLocaleDateString('en-US', {
         month: 'long',
@@ -92,19 +79,19 @@ const monthName = computed(() => {
     })
 })
 
-// Week title for week view
+
 const weekTitle = computed(() => {
     const weekStart = startOfWeek(currentDate.value, { weekStartsOn: 1 })
     const weekEnd = endOfWeek(currentDate.value, { weekStartsOn: 1 })
     return `${format(weekStart, 'MMM d')} - ${format(weekEnd, 'MMM d, yyyy')}`
 })
 
-// Day title for day view
+
 const dayTitle = computed(() => {
     return format(currentDate.value, 'MMMM d, yyyy')
 })
 
-// Today's appointment list for selected date
+
 const todayAppointments = computed(() => {
     const selectedDateStr = formatDateYMD(selectedDate.value)
 
@@ -112,7 +99,7 @@ const todayAppointments = computed(() => {
         .filter(appointment => {
             if (!appointment.date) return false
 
-            // Exclude closed leads
+           
             if (appointment.lead_status?.name.toLowerCase() === 'closed') return false
 
             return appointment.date === selectedDateStr
@@ -123,13 +110,7 @@ const todayAppointments = computed(() => {
         })
 })
 
-/**
- * ==============================
- * API Calls
- * ==============================
- */
 
-// Fetch all active lead statuses
 const fetchLeadStatuses = async () => {
     try {
         const response = await $fetchCMS('admin/lead-statuses/all/active', {
@@ -141,7 +122,7 @@ const fetchLeadStatuses = async () => {
     }
 }
 
-// Fetch all appointments of current month
+
 const fetchMonthAppointments = async () => {
     loading.value = true
 
@@ -170,7 +151,7 @@ const fetchMonthAppointments = async () => {
     }
 }
 
-// Fetch upcoming appointments (future datetime)
+
 const fetchUpcomingAppointments = async () => {
     loadingUpcoming.value = true
 
@@ -192,13 +173,7 @@ const fetchUpcomingAppointments = async () => {
     }
 }
 
-/**
- * ==============================
- * Calendar Helpers
- * ==============================
- */
 
-// Count scheduled (added to calendar) appointments
 const getAppointmentCount = (dateStr) => {
     return allAppointments.value.filter(apt => {
         if (apt.lead_status?.name.toLowerCase() === 'closed') return false
@@ -206,7 +181,7 @@ const getAppointmentCount = (dateStr) => {
     }).length
 }
 
-// Count pending (not added to calendar) appointments
+
 const getPendingAppointmentCount = (dateStr) => {
     return allAppointments.value.filter(apt => {
         if (apt.lead_status?.name.toLowerCase() === 'closed') return false
@@ -214,7 +189,7 @@ const getPendingAppointmentCount = (dateStr) => {
     }).length
 }
 
-// Get appointments for a specific date
+
 const getAppointmentsForDate = (dateStr) => {
     return allAppointments.value
         .filter(apt => {
@@ -227,7 +202,7 @@ const getAppointmentsForDate = (dateStr) => {
         })
 }
 
-// Build full 6-week calendar grid
+
 const calendarDays = computed(() => {
     const year = currentDate.value.getFullYear()
     const month = currentDate.value.getMonth()
@@ -243,7 +218,7 @@ const calendarDays = computed(() => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
-    // Previous month filler days
+  
     const prevMonthLastDay = new Date(year, month, 0).getDate()
     for (let i = startingDayOfWeek - 1; i >= 0; i--) {
         days.push({
@@ -256,7 +231,7 @@ const calendarDays = computed(() => {
         })
     }
 
-    // Current month days
+    
     for (let i = 1; i <= daysInMonth; i++) {
         const dateObj = new Date(year, month, i)
         dateObj.setHours(0, 0, 0, 0)
@@ -280,7 +255,7 @@ const calendarDays = computed(() => {
         })
     }
 
-    // Next month filler days to complete 42 cells
+   
     const remainingDays = 42 - days.length
     for (let i = 1; i <= remainingDays; i++) {
         days.push({
@@ -293,7 +268,7 @@ const calendarDays = computed(() => {
     return days
 })
 
-// Week view days (7 days starting from Monday)
+
 const weekDays = computed(() => {
     const weekStart = startOfWeek(currentDate.value, { weekStartsOn: 1 })
     const days = []
@@ -319,7 +294,7 @@ const weekDays = computed(() => {
     return days
 })
 
-// Day view hours (24 hours)
+
 const dayHours = computed(() => {
     const hours = []
     const dateStr = formatDateYMD(currentDate.value)
@@ -342,11 +317,7 @@ const dayHours = computed(() => {
     return hours
 })
 
-/**
- * ==============================
- * Status Helpers
- * ==============================
- */
+
 
 const getStatusInfo = (leadStatus) => {
     if (!leadStatus) return { text: 'Unknown', color: 'gray' }
@@ -378,11 +349,170 @@ const getStatusColor = (color) => {
     return colors[color] || 'bg-gray-100 text-gray-700'
 }
 
-/**
- * ==============================
- * Business Actions
- * ==============================
- */
+
+const checkGoogleSync = () => {
+    try {
+        const synced = localStorage.getItem('google_calendar_synced')
+        isGoogleSynced.value = synced === 'true'
+    } catch (error) {
+        console.error('Error checking Google sync status:', error)
+        isGoogleSynced.value = false
+    }
+}
+
+
+const syncWithGoogle = async () => {
+    try {
+        // const redirectUri = `${window.location.origin}/agent/calendar/callback`
+        // const redirectUri = `http://localhost:3000/calendar/callback`
+        const redirectUri = config.public.GOOGLE_REDIRECT_URI
+        
+        const response = await $fetchCitizen('v1/google/auth', {
+            method: 'GET',
+            params: {
+                redirect_uri: redirectUri
+            }
+        })
+        
+        if (response.auth_url) {
+            window.location.href = response.auth_url
+        } else {
+            showToast('Failed to get authorization URL', 'error')
+        }
+    } catch (error) {
+        console.error('Error initiating Google sync:', error)
+        showToast('Failed to initiate Google sync', 'error')
+    }
+}
+
+// Open modal to add event to Google Calendar
+const addToGoogleCalendar = (appointment) => {
+    selectedAppointmentForGoogle.value = appointment
+    
+    // Set default start time from appointment
+    const startDate = new Date(`${appointment.date} ${appointment.time}`)
+    googleEventStart.value = startDate
+    
+    // Set default end time (1 hour later)
+    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000)
+    googleEventEnd.value = endDate
+    
+    showGoogleEventModal.value = true
+    closeGoogleSyncDropdown(appointment.id)
+}
+
+// Confirm and submit Google Calendar event
+const confirmAddToGoogleCalendar = async () => {
+    if (!selectedAppointmentForGoogle.value || !googleEventStart.value || !googleEventEnd.value) {
+        showToast('Please select both start and end times', 'error')
+        return
+    }
+    
+    try {
+        const appointment = selectedAppointmentForGoogle.value
+        
+        // Format datetime as 'YYYY-MM-DD HH:mm:ss'
+        const formatDateTime = (date) => {
+            const year = date.getFullYear()
+            const month = String(date.getMonth() + 1).padStart(2, '0')
+            const day = String(date.getDate()).padStart(2, '0')
+            const hours = String(date.getHours()).padStart(2, '0')
+            const minutes = String(date.getMinutes()).padStart(2, '0')
+            const seconds = String(date.getSeconds()).padStart(2, '0')
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+        }
+        
+        const startDateTime = formatDateTime(googleEventStart.value)
+        const endDateTime = formatDateTime(googleEventEnd.value)
+
+        const formData = new FormData()
+        formData.append('title', appointment.property?.name || 'Appointment')
+        formData.append('description', appointment.notes || `Appointment with ${appointment.name}`)
+        formData.append('start', startDateTime)
+        formData.append('end', endDateTime)
+        formData.append('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone)
+        formData.append('lead_id', appointment.id)
+
+        const response = await $fetchCitizen('agent/v1/calendar/add/event', {
+            method: 'POST',
+            body: formData
+        })
+
+        if (response) {
+            appointment.google_event_id = response.id
+            
+            // Update lead to mark as scheduled and add to calendar
+            const scheduledStatus = leadStatuses.value.find(s => s.name.toLowerCase() === 'scheduled')
+            const updateFormData = new FormData()
+            updateFormData.append('_method', 'PATCH')
+            updateFormData.append('add_to_calendar', '1')
+            if (scheduledStatus) {
+                updateFormData.append('status', scheduledStatus.id)
+            }
+
+            await $fetchCitizen(`agent/v1/leads/${appointment.id}/update`, {
+                method: 'POST',
+                body: updateFormData
+            })
+            
+            showToast('Event added to Google Calendar and marked as scheduled', 'success')
+            showGoogleEventModal.value = false
+            selectedAppointmentForGoogle.value = null
+            fetchMonthAppointments() // Refresh to get updated data
+        }
+    } catch (error) {
+        console.error('Error adding to Google Calendar:', error)
+        showToast(error.response?.data?.message || 'Failed to add event to Google Calendar', 'error')
+    }
+}
+
+// Delete event from Google Calendar
+const deleteFromGoogleCalendar = async (appointment) => {
+    if (!appointment.google_event_id) return
+    
+    try {
+        await $fetchCitizen(`agent/v1/calendar/delete/event/${appointment.google_event_id}`, {
+            method: 'DELETE'
+        })
+
+        appointment.google_event_id = null
+
+        // Update lead to mark as active and remove from calendar
+        const activeStatus = leadStatuses.value.find(s => s.name.toLowerCase() === 'active')
+        const updateFormData = new FormData()
+        updateFormData.append('_method', 'PATCH')
+        updateFormData.append('add_to_calendar', '0')
+        if (activeStatus) {
+            updateFormData.append('status', activeStatus.id)
+        }
+
+        await $fetchCitizen(`agent/v1/leads/${appointment.id}/update`, {
+            method: 'POST',
+            body: updateFormData
+        })
+
+        showToast('Event removed from Google Calendar and marked as accepted', 'success')
+        closeGoogleSyncDropdown(appointment.id)
+        fetchMonthAppointments() // Refresh to get updated data
+    } catch (error) {
+        console.error('Error deleting from Google Calendar:', error)
+        showToast(error.response?.data?.message || 'Failed to remove event from Google Calendar', 'error')
+    }
+}
+
+// Toggle Google sync dropdown
+const toggleGoogleSyncDropdown = (appointmentId) => {
+    Object.keys(showGoogleSyncDropdown.value).forEach(key => {
+        if (key !== appointmentId.toString()) {
+            showGoogleSyncDropdown.value[key] = false
+        }
+    })
+    showGoogleSyncDropdown.value[appointmentId] = !showGoogleSyncDropdown.value[appointmentId]
+}
+
+const closeGoogleSyncDropdown = (appointmentId) => {
+    showGoogleSyncDropdown.value[appointmentId] = false
+}
 
 // Toggle Add / Remove from calendar
 const handleAddToCalendar = async (appointment) => {
@@ -634,6 +764,7 @@ onMounted(() => {
     fetchLeadStatuses()
     fetchMonthAppointments()
     fetchUpcomingAppointments()
+    checkGoogleSync()
 })
 
 watch(currentDate, () => {
@@ -647,6 +778,20 @@ watch(currentDate, () => {
 
         <div class="flex items-center justify-between">
             <h1 class="text-2xl font-semibold text-gray-900">Calendar</h1>
+            
+            <!-- Google Calendar Sync Button -->
+            <button 
+                v-if="!isGoogleSynced"
+                @click="syncWithGoogle"
+                :disabled="checkingGoogleSync"
+                class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50">
+                <Icon name="logos:google-icon" class="w-5 h-5" />
+                {{ checkingGoogleSync ? 'Checking...' : 'Connect Google Calendar' }}
+            </button>
+            <div v-else class="flex items-center gap-2 text-sm text-green-600">
+                <Icon name="lucide:check-circle" class="w-5 h-5" />
+                <span>Google Calendar Connected</span>
+            </div>
         </div>
 
 
@@ -945,16 +1090,128 @@ watch(currentDate, () => {
                                 class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors bg-gray-900 text-white hover:bg-gray-800">
                                 Reschedule
                             </button>
-                            <button @click="handleAddToCalendar(appointment)" :class="[
-                                'flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors',
-                                appointment.add_to_calendar
-                                    ? 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                                    : 'bg-blue-600 text-white hover:bg-blue-700'
-                            ]">
-                                {{ appointment.add_to_calendar ? 'Remove from Calendar' : 'Add to Calendar' }}
-                            </button>
+                            <div class="relative flex-1">
+                                <button @click="toggleGoogleSyncDropdown(appointment.id)" :class="[
+                                    'w-full px-3 py-2 text-xs font-medium rounded-lg transition-colors flex items-center justify-center gap-1',
+                                    appointment.add_to_calendar
+                                        ? 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                                ]">
+                                    {{ appointment.add_to_calendar ? 'Remove from Calendar' : 'Add to Calendar' }}
+                                    <Icon name="lucide:chevron-down" class="w-3 h-3" />
+                                </button>
+                                
+                                <!-- Dropdown Menu -->
+                                <div v-if="showGoogleSyncDropdown[appointment.id]" 
+                                    class="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                                    <div class="py-1">
+                                        <!-- <button 
+                                            @click="handleAddToCalendar(appointment)"
+                                            class="w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                            <Icon name="lucide:calendar" class="w-4 h-4" />
+                                            {{ appointment.add_to_calendar ? 'Remove from Local' : 'Add to Local' }}
+                                        </button> -->
+                                        
+                                        <!-- Google Calendar Options (only if synced) -->
+                                        <template v-if="isGoogleSynced">
+                                            <button 
+                                                v-if="!appointment.google_event_id"
+                                                @click="addToGoogleCalendar(appointment)"
+                                                class="w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                                <Icon name="logos:google-icon" class="w-4 h-4" />
+                                                Add to Google Calendar
+                                            </button>
+                                            <button 
+                                                v-else
+                                                @click="deleteFromGoogleCalendar(appointment)"
+                                                class="w-full px-4 py-2 text-xs text-left text-red-600 hover:bg-red-50 flex items-center gap-2">
+                                                <Icon name="lucide:trash-2" class="w-4 h-4" />
+                                                Remove from Google
+                                            </button>
+                                        </template>
+                                        
+                                        <!-- Connect Google Calendar prompt (if not synced) -->
+                                        <button 
+                                            v-else
+                                            @click="syncWithGoogle"
+                                            class="w-full px-4 py-2 text-xs text-left text-blue-600 hover:bg-blue-50 flex items-center gap-2">
+                                            <Icon name="logos:google-icon" class="w-4 h-4" />
+                                            Connect Google Calendar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Google Calendar Event Modal -->
+        <div v-if="showGoogleEventModal"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            @click.self="showGoogleEventModal = false">
+            <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Add to Google Calendar</h3>
+                    <button @click="showGoogleEventModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <Icon name="lucide:x" class="w-5 h-5" />
+                    </button>
+                </div>
+
+                <div v-if="selectedAppointmentForGoogle" class="mb-4">
+                    <p class="text-sm text-gray-600 mb-2">
+                        Adding appointment: <span class="font-medium text-gray-900">{{
+                            selectedAppointmentForGoogle.property?.name || 'Appointment' }}</span>
+                    </p>
+                    <p class="text-xs text-gray-500">
+                        With: {{ selectedAppointmentForGoogle.name }}
+                    </p>
+                </div>
+
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Start Date & Time <span class="text-red-500">*</span>
+                        </label>
+                        <Calendar 
+                            v-model="googleEventStart" 
+                            showTime 
+                            hourFormat="12" 
+                            :showIcon="true"
+                            dateFormat="M dd, yy" 
+                            class="w-full"
+                        />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            End Date & Time <span class="text-red-500">*</span>
+                        </label>
+                        <Calendar 
+                            v-model="googleEventEnd" 
+                            showTime 
+                            hourFormat="12" 
+                            :showIcon="true"
+                            dateFormat="M dd, yy" 
+                            class="w-full"
+                            :minDate="googleEventStart"
+                        />
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button @click="showGoogleEventModal = false"
+                        class="flex-1 px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button 
+                        @click="confirmAddToGoogleCalendar" 
+                        :disabled="!googleEventStart || !googleEventEnd"
+                        class="flex-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Add to Google Calendar
+                    </button>
                 </div>
             </div>
         </div>
