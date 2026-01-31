@@ -31,18 +31,10 @@ const uploadUrl = 'https://dev-video.heyhomex.orangebd.com/';
                     class="pointer-events-none absolute -left-16 -bottom-16 h-40 w-40 rounded-full bg-indigo-200/60 blur-3xl dark:bg-indigo-500/20"></div>
             </section>
 
-            <section class="mt-6">
+            <section>
                 <div
                     class="flex h-screen min-h-[50vh] flex-col overflow-hidden rounded-2xl border border-gray-200/70 bg-white shadow-xl dark:border-gray-700/70 dark:bg-gray-900">
-                    <div
-                        class="flex items-center justify-between border-b border-gray-200/70 bg-gray-50/80 px-4 py-3 text-xs text-gray-500 dark:border-gray-700/70 dark:bg-gray-800/60 dark:text-gray-300 sm:px-6">
-                        <div class="flex items-center gap-2">
-                            <span class="h-2.5 w-2.5 rounded-full bg-red-400"></span>
-                            <span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span>
-                            <span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
-                        </div>
-                        <span class="font-medium">dev-video.heyhomex.orangebd.com</span>
-                    </div>
+                   
                     <iframe
                         :src="uploadUrl"
                         title="HeyHomex Video Upload"
