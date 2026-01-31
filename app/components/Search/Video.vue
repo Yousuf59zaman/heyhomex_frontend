@@ -516,8 +516,8 @@ onUnmounted(() => {
                                     <div
                                         class="flex items-center gap-1.5 font-['sf-pro-Medium'] text-[12px] leading-[18px] font-normal text-[#283849]">
                                         <span>{{ video.channel }}</span>
-                                        <div class="bg-[#d4d4d4] h-3 w-px"></div>
-                                        <span>{{ video.views }}</span>
+                                        <!-- <div class="bg-[#d4d4d4] h-3 w-px"></div> -->
+                                        <!-- <span>{{ video.views }}</span> -->
                                         <div class="bg-[#d4d4d4] h-3 w-px"></div>
                                         <span>{{ video.uploadTime }}</span>
                                     </div>
@@ -578,8 +578,8 @@ onUnmounted(() => {
                                     <div
                                         class="flex items-center gap-1.5 font-['sf-pro-Medium'] text-[12px] leading-[18px] font-normal text-[#283849]">
                                         <span>{{ video.channel }}</span>
-                                        <div class="bg-[#d4d4d4] h-3 w-px"></div>
-                                        <span>{{ video.views }}</span>
+                                        <!-- <div class="bg-[#d4d4d4] h-3 w-px"></div> -->
+                                        <!-- <span>{{ video.views }}</span> -->
                                         <div class="bg-[#d4d4d4] h-3 w-px"></div>
                                         <span>{{ video.uploadTime }}</span>
                                     </div>

@@ -21,6 +21,7 @@
     const toast = useToast()
     // Hydration state for SSR/CSR skeleton loading
     const hydrated = ref(false)
+    const { $formatdate } = useNuxtApp()
 
     
 
@@ -95,7 +96,7 @@
                 duration: video.duration || '0:00',
                 channelName: video.channel?.name || "Unknown Channel",
                 views: "0 Views",
-                timeAgo: new Date(video.created_at).toLocaleDateString(),
+                timeAgo: $formatdate(video.created_at),
                 videoUrl: video.video_url || demoVideoUrl,
                 isFavorite: video.is_favorite || false,
             }))
