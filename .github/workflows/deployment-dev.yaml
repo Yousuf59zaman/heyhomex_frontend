@@ -29,6 +29,8 @@ jobs:
                 echo NUXT_PUBLIC_JWPLAYER_LIBRARY_UR="${{ secrets.DEV_NUXT_PUBLIC_JWPLAYER_LIBRARY_UR }}" >> .env
                 echo NUXT_PUBLIC_JWPLAYER_DEVMODE="${{ vars.DEV_NUXT_PUBLIC_JWPLAYER_DEVMODE }}" >> .env
                 echo NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL="${{ secrets.DEV_NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_UR }}" >> .env
+                echo GOOGLE_CLIENT_ID="${{ secrets.DEV_GOOGLE_CLIENT_ID }}" >> .env
+                echo GOOGLE_CLIENT_SECRET="${{ secrets.DEV_GOOGLE_CLIENT_SECRET }}" >> .env
                 touch .env
                 pnpm install
                 pnpm run build
