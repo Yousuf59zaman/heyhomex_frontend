@@ -1,90 +1,35 @@
 <script setup>
-
-
 const hydrated = ref(false)
-const videoPlaying = ref(false)
-const videoError = ref(false)
+const videoLoaded = ref(false)
+const showAuthModal = ref(false)
 
-let player = null
-
-const backgroundStyle = {
-    backgroundImage: 'url(/images/home/background.png)',
+const handleLetsBegin = () => {
+    showAuthModal.value = true
 }
 
-const loadYouTubeAPI = () => {
-    return new Promise((resolve) => {
-        if (window.YT && window.YT.Player) {
-            resolve()
-            return
-        }
-        const tag = document.createElement('script')
-        tag.src = 'https://www.youtube.com/iframe_api'
-        document.body.appendChild(tag)
-
-        window.onYouTubeIframeAPIReady = () => {
-            resolve()
-        }
-    })
+const handleVideoLoaded = () => {
+    videoLoaded.value = true
 }
 
-onMounted(async () => {
+onMounted(() => {
     hydrated.value = true
-    await loadYouTubeAPI()
-    player = new YT.Player('yt-bg', {
-        videoId: 'xXvd5PRnjrA',
-        playerVars: {
-            autoplay: 1,
-            mute: 1,
-            loop: 1,
-            playlist: 'xXvd5PRnjrA',
-            controls: 0,
-            rel: 0,
-            modestbranding: 1,
-            playsinline: 1,
-        },
-        events: {
-            onReady: () => {
-                console.log('YouTube Player Ready')
-                player.mute()
-                player.playVideo()
-                // player.setPlaybackQuality('hd1080')
-            },
-            onStateChange: (event) => {
-                if (event.data === YT.PlayerState.PLAYING) {
-                    videoPlaying.value = true
-                    console.log('Video Playing')
-                }
-            },
-            onError: () => {
-                videoError.value = true
-                console.log('Video Error')
-            },
-        },
-    })
-})
-
-onBeforeUnmount(() => {
-    if (player) {
-        player.destroy()
-    }
 })
 </script>
 
-
-
-
-
 <template>
-    <div class="relative min-h-screen overflow-hidden bg-cover bg-center bg-no-repeat" :style="backgroundStyle">
+    <div class="relative min-h-screen overflow-hidden">
 
-        <div v-show="hydrated && !videoError"  class="absolute inset-0 w-full h-full object-cover pointer-events-none">
-            <div id="yt-bg"
-            style="position: absolute; top: 50%; left: 50%; width: 100vw; height: 100vh; transform: translate(-50%, -50%) scale(1.5); object-fit: cover;"
-                ></div>
+        <div v-show="!videoLoaded" class="absolute inset-0 w-full h-full bg-cover bg-center"
+            style="background-image: url(/images/home/background.png)">
         </div>
 
 
-        <div v-if="!videoPlaying" class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div>
+        <ClientOnly>
+            <video class="absolute inset-0 w-full h-full object-cover" src="/video/HomeVideo.mp4" autoplay muted loop
+                playsinline @loadeddata="handleVideoLoaded">
+            </video>
+        </ClientOnly>
+
 
         <div v-if="!hydrated"
             class="relative z-10 flex flex-col justify-center lg:justify-end min-h-screen px-4 sm:px-6 lg:px-8 lg:pb-28 animate-pulse">
@@ -103,40 +48,54 @@ onBeforeUnmount(() => {
                     <div class="h-12 bg-gray-800 rounded-xl"></div>
                 </div>
             </div>
-        </div> <!-- Real content AFTER hydration -->
+        </div>
+
+        <!-- Real content AFTER hydration -->
         <div v-else
             class="relative z-10 flex flex-col justify-center lg:justify-end min-h-screen px-4 sm:px-6 lg:px-8 lg:pb-28 transition-opacity duration-500">
             <div class="max-w-2xl mx-auto text-center sm:text-left lg:mx-0 lg:max-w-4xl">
-                <h1 class="text-4xl font-bold tracking-wider text-white mb-4 sm:text-5xl lg:text-[2.5rem]"> Home Starts
-                    Here </h1>
+                <h1 class="text-4xl font-bold tracking-wider text-white mb-4 sm:text-5xl lg:text-[2.5rem]">
+                    Home Starts Here
+                </h1>
                 <div class="max-w-2xl sm:max-w-xl h-[1px] mb-4 bg-gray-600"></div>
-                <p class="text-[14px] leading-[20px] text-white mb-8 sm:text-[16px] sm:leading-[24px] max-w-md"> Where
-                    your next chapter begins — Kama‘aina, Military, or Investor, your path starts with purpose </p>
+                <p class="text-[14px] leading-[20px] text-white mb-8 sm:text-[16px] sm:leading-[24px] max-w-md">
+                    Where your next chapter begins — Kama'aina, Military, or Investor, your path starts with purpose
+                </p>
                 <div
                     class="hidden sm:flex items-center gap-6 sm:max-w-xl bg-white rounded-xl shadow-lg overflow-hidden pl-[15px] pr-[10px] py-[10px]">
-                    <div class="flex items-center gap-3 flex-1 min-w-0"> <svg class="w-6 h-6 text-[#566573] shrink-0"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                        <svg class="w-6 h-6 text-[#566573] shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg> <input type="text" placeholder="Enter an address,neighborhood,city or zip code"
+                        </svg>
+                        <input type="text" placeholder="Enter an address,neighborhood,city or zip code"
                             aria-label="Search location"
                             class="flex-1 min-w-0 bg-transparent focus:outline-none text-sm leading-6 text-[#121a22] placeholder:text-[#566573]" />
                     </div>
-                    <div class="w-px h-6 bg-[#CFDBE8]"></div> <button @click="handleLetsBegin"
+                    <div class="w-px h-6 bg-[#CFDBE8]"></div>
+                    <button @click="handleLetsBegin"
                         class="px-6 py-3 bg-[#18222c] hover:bg-[#121a22] text-white text-sm font-semibold rounded-lg transition-colors duration-200 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#18222c]/30 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
-                        aria-label="Begin search"> Let’s Begin </button>
+                        aria-label="Begin search">
+                        Let's Begin
+                    </button>
                 </div>
                 <div class="flex sm:hidden flex-col gap-3 w-full">
-                    <div class="relative"> <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-[#566573]"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <div class="relative">
+                        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-[#566573]" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg> <input type="text" placeholder="Enter an address, neighborhood , City..."
+                        </svg>
+                        <input type="text" placeholder="Enter an address, neighborhood , City..."
                             aria-label="Search location"
                             class="w-full pl-12 pr-4 py-4 bg-white rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-[#18222c]/20 text-[#121a22] placeholder:text-[#566573] text-sm" />
-                    </div> <button @click="handleLetsBegin"
+                    </div>
+                    <button @click="handleLetsBegin"
                         class="w-full py-4 bg-[#18222c] hover:bg-[#121a22] text-white font-semibold rounded-xl shadow-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#18222c]/30 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
-                        aria-label="Begin search"> Let’s Begin </button>
+                        aria-label="Begin search">
+                        Let's Begin
+                    </button>
                 </div>
             </div>
         </div>
