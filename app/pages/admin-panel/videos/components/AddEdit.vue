@@ -24,6 +24,8 @@
         description: "",
         video_image: null,
         tag_ids: [],
+        latitude: null,
+        longitude: null,
     })
 
     const thumbnailFile = ref(null)
@@ -33,7 +35,7 @@
     const tagsLoading = ref(false)
 
     const validations_errors = ref({})
-    const skip_validations = ref(["id", "video_image", "tag_ids"])
+    const skip_validations = ref(["id", "video_image", "tag_ids", "latitude", "longitude"])
 
     watch(
         () => props.item,
@@ -49,6 +51,8 @@
                     description: value.description,
                     video_image: null,
                     tag_ids: value.tags ? value.tags.map(tag => tag.id) : [],
+                    latitude: value.latitude || null,
+                    longitude: value.longitude || null,
                 }
                 thumbnailPreview.value = value.video_image || ""
                 thumbnailFile.value = null
@@ -62,6 +66,8 @@
                     description: "",
                     video_image: null,
                     tag_ids: [],
+                    latitude: null,
+                    longitude: null,
                 }
                 thumbnailPreview.value = ""
                 thumbnailFile.value = null
@@ -253,6 +259,14 @@
             formDataToSend.append("duration", String(formData.value.duration))
             formDataToSend.append("video_url", formData.value.video_url)
             formDataToSend.append("description", formData.value.description)
+
+            // Add latitude and longitude if provided
+            if (formData.value.latitude !== null && formData.value.latitude !== '') {
+                formDataToSend.append("latitude", String(formData.value.latitude))
+            }
+            if (formData.value.longitude !== null && formData.value.longitude !== '') {
+                formDataToSend.append("longitude", String(formData.value.longitude))
+            }
 
             // Add tags
             if (formData.value.tag_ids && formData.value.tag_ids.length > 0) {
@@ -448,6 +462,56 @@
                     <InputError
                         class="text-sm mt-1"
                         :message="validations_errors.tag_ids" />
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex-auto">
+                    <label class="font-semibold">Latitude (Optional)</label>
+                    <InputNumber
+                        v-model="formData.latitude"
+                        mode="decimal"
+                        :minFractionDigits="0"
+                        :maxFractionDigits="8"
+                        :useGrouping="false"
+                        class="w-full"
+                        placeholder="e.g., 21.4225"
+                        :class="
+                            validations_errors.latitude
+                                ? 'border-[#f44336!important]'
+                                : ''
+                        "
+                        autocomplete="off"
+                        @focus="validations_errors.latitude = ''" />
+                    <InputError
+                        class="text-sm mt-1"
+                        :message="validations_errors.latitude" />
+                    <small class="text-gray-500">Enter the latitude coordinate for map display</small>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex-auto">
+                    <label class="font-semibold">Longitude (Optional)</label>
+                    <InputNumber
+                        v-model="formData.longitude"
+                        mode="decimal"
+                        :minFractionDigits="0"
+                        :maxFractionDigits="8"
+                        :useGrouping="false"
+                        class="w-full"
+                        placeholder="e.g., -157.8584"
+                        :class="
+                            validations_errors.longitude
+                                ? 'border-[#f44336!important]'
+                                : ''
+                        "
+                        autocomplete="off"
+                        @focus="validations_errors.longitude = ''" />
+                    <InputError
+                        class="text-sm mt-1"
+                        :message="validations_errors.longitude" />
+                    <small class="text-gray-500">Enter the longitude coordinate for map display</small>
                 </div>
             </div>
 
