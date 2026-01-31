@@ -364,7 +364,8 @@ const checkGoogleSync = () => {
 const syncWithGoogle = async () => {
     try {
         // const redirectUri = `${window.location.origin}/agent/calendar/callback`
-        const redirectUri = `http://localhost:3000/calendar/callback`
+        // const redirectUri = `http://localhost:3000/calendar/callback`
+        const redirectUri = config.public.GOOGLE_REDIRECT_URI
         
         const response = await $fetchCitizen('v1/google/auth', {
             method: 'GET',
