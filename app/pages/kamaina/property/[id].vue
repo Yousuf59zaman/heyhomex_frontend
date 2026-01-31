@@ -9,6 +9,7 @@ const hydrated = ref(false)
 const route = useRoute()
 const router = useRouter()
 const propertyId = route.params.id
+const { $formatdate } = useNuxtApp()
 
 const activeTab = ref("Insights")
 
@@ -205,7 +206,7 @@ const loadVideos = async () => {
             channelName: video.channel?.name || "Unknown Channel",
             channelInitial: video.channel?.name?.charAt(0) || "H",
             views: "0 Views",
-            timeAgo: new Date(video.created_at).toLocaleDateString(),
+            timeAgo: $formatdate(video.created_at),
             videoUrl: video.video_url,
         }))
     } catch (e) {
@@ -775,8 +776,8 @@ onMounted(() => {
                                         </p>
                                         <div class="flex items-center gap-1.5 text-xs text-[#283849]">
                                             <span>{{ video.channelName }}</span>
-                                            <div class="w-px h-3 bg-[#d4d4d4]"></div>
-                                            <span>{{ video.views }}</span>
+                                            <!-- <div class="w-px h-3 bg-[#d4d4d4]"></div> -->
+                                            <!-- <span>{{ video.views }}</span> -->
                                             <div class="w-px h-3 bg-[#d4d4d4]"></div>
                                             <span>{{ video.timeAgo }}</span>
                                         </div>

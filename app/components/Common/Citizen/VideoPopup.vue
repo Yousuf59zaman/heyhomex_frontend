@@ -41,7 +41,7 @@
                     {{ video.channel }}
                 </p>
                 <div class="flex items-center text-xs text-gray-500 gap-1 mb-2">
-                    <span>{{ video.views }}</span>
+                    <!-- <span>{{ video.views }}</span> -->
                     <span>•</span>
                     <span>{{ video.uploadTime }}</span>
                 </div>

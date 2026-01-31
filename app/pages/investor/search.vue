@@ -9,6 +9,7 @@ onMounted(() => {
     hydrated.value = true;
 });
 const activeTab = ref('home');
+const { $formatdate } = useNuxtApp();
 
 // Videos state
 const videos = ref([]);
@@ -53,7 +54,7 @@ const loadVideos = async () => {
             channel: video.channel?.name || 'Unknown Channel',
             duration: video.duration || '0:00',
             views: '0 views',
-            uploadTime: new Date(video.created_at).toLocaleDateString(),
+            uploadTime: $formatdate(video.created_at),
             thumbnail: video.video_image || '/images/dashboard/1.png',
             isFavorite: false,
             category: 'Real Estate',

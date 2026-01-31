@@ -87,8 +87,8 @@
                         </p>
                         <div class="flex items-center gap-1.5 text-xs text-[#283849]">
                             <span>{{ video.channelName || video.subtitle || "Unknown Channel" }}</span>
-                            <div class="w-px h-3 bg-[#d4d4d4]"></div>
-                            <span>{{ video.views || "0 Views" }}</span>
+                            <!-- <div class="w-px h-3 bg-[#d4d4d4]"></div> -->
+                            <!-- <span>{{ video.views || "0 Views" }}</span> -->
                             <div class="w-px h-3 bg-[#d4d4d4]"></div>
                             <span>{{ video.timeAgo || "" }}</span>
                         </div>

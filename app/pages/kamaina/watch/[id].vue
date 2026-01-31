@@ -6,6 +6,7 @@ definePageMeta({
 const route = useRoute();
 const router = useRouter();
 const videoId = route.params.id;
+const { $formatdate } = useNuxtApp();
 
 const hydrated = ref(false);
 const video = ref(null);
@@ -39,7 +40,7 @@ const loadVideoDetails = async () => {
             channel: data.channel?.name || 'Unknown Channel',
             channelId: data.channel?.id,
             views: '0 views',
-            uploadTime: formatTimeAgo(data.created_at),
+            uploadTime: $formatdate(data.created_at),
             createdAt: data.created_at,
             createdBy: data.created_by,
         };
@@ -71,28 +72,12 @@ const loadRelatedVideos = async () => {
                 duration: v.duration || '0:00',
                 channel: v.channel?.name || 'Unknown Channel',
                 views: '0 views',
-                uploadTime: formatTimeAgo(v.created_at),
+                uploadTime: $formatdate(v.created_at),
                 videoUrl: v.video_url,
             }));
     } catch (e) {
         console.error('Error loading related videos:', e.message);
     }
-};
-
-// Format time ago
-const formatTimeAgo = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now - date) / 1000);
-
-    if (diffInSeconds < 60) return 'Just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`;
-    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 604800)} weeks ago`;
-    if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)} months ago`;
-    return `${Math.floor(diffInSeconds / 31536000)} years ago`;
 };
 
 // Navigate to another video

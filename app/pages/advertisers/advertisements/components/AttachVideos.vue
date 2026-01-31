@@ -270,7 +270,7 @@ const closeModal = () => {
                                     <div class="flex items-center gap-4 mt-2 text-xs text-gray-500">
                                         <span>
                                             <Icon name="lucide:calendar" class="w-3 h-3 inline mr-1" />
-                                            {{ new Date(video.created_at).toLocaleDateString() }}
+                                            {{ $formatdate(video.created_at) }}
                                         </span>
                                         <span v-if="video.channel">
                                             <Icon name="lucide:tv" class="w-3 h-3 inline mr-1" />
