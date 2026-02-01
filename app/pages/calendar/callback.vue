@@ -18,7 +18,7 @@ const errorMessage = ref('')
 
 const GOOGLE_CLIENT_ID = config.public.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = config.public.GOOGLE_CLIENT_SECRET
-const REDIRECT_URI = config.public.GOOGLE_REDIRECT_URI
+const REDIRECT_URI = config.public.GOOGLE_REDIRECT_URI || 'https://dev.heyhomex.orangebd.com/calendar/callback'
 
 onMounted(async () => {
     try {
