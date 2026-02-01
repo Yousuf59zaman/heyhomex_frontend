@@ -26,6 +26,7 @@ const showGoogleEventModal = ref(false)
 const selectedAppointmentForGoogle = ref(null)
 const googleEventStart = ref(null)
 const googleEventEnd = ref(null)
+const originalGoogleEventStart = ref(null)
 const checkingGoogleSync = ref(false)
 
 
@@ -185,7 +186,15 @@ const getAppointmentCount = (dateStr) => {
 const getPendingAppointmentCount = (dateStr) => {
     return allAppointments.value.filter(apt => {
         if (apt.lead_status?.name.toLowerCase() === 'closed') return false
-        return apt.date === dateStr && !apt.add_to_calendar
+        return apt.date === dateStr && !apt.add_to_calendar && apt.lead_status?.name.toLowerCase() == 'new'
+    }).length
+}
+
+
+const getAcceptedAppointmentCount = (dateStr) => {
+    return allAppointments.value.filter(apt => {
+        if (apt.lead_status?.name.toLowerCase() === 'closed') return false
+        return apt.date === dateStr && !apt.add_to_calendar && apt.lead_status?.name.toLowerCase() == 'active'
     }).length
 }
 
@@ -227,7 +236,8 @@ const calendarDays = computed(() => {
             isToday: false,
             hasEvent: false,
             appointmentCount: 0,
-            pendingCount: 0
+            pendingCount: 0,
+            acceptedCount : 0
         })
     }
 
@@ -241,8 +251,9 @@ const calendarDays = computed(() => {
 
         const appointmentCount = getAppointmentCount(dateStr)
         const pendingCount = getPendingAppointmentCount(dateStr)
+        const acceptedCount = getAcceptedAppointmentCount(dateStr)
 
-        const hasEvent = appointmentCount > 0 || pendingCount > 0
+        const hasEvent = appointmentCount > 0 || pendingCount > 0 || acceptedCount > 0
 
         days.push({
             date: i,
@@ -251,6 +262,7 @@ const calendarDays = computed(() => {
             hasEvent,
             appointmentCount,
             pendingCount,
+            acceptedCount,
             fullDate: dateStr
         })
     }
@@ -287,7 +299,8 @@ const weekDays = computed(() => {
             isToday,
             appointments: getAppointmentsForDate(dateStr),
             appointmentCount: getAppointmentCount(dateStr),
-            pendingCount: getPendingAppointmentCount(dateStr)
+            pendingCount: getPendingAppointmentCount(dateStr),
+            acceptedCount : getAcceptedAppointmentCount(dateStr)
         })
     }
 
@@ -392,6 +405,7 @@ const addToGoogleCalendar = (appointment) => {
     // Set default start time from appointment
     const startDate = new Date(`${appointment.date} ${appointment.time}`)
     googleEventStart.value = startDate
+    originalGoogleEventStart.value = new Date(startDate.getTime()) // Store original for comparison
     
     // Set default end time (1 hour later)
     const endDate = new Date(startDate.getTime() + 60 * 60 * 1000)
@@ -425,6 +439,9 @@ const confirmAddToGoogleCalendar = async () => {
         const startDateTime = formatDateTime(googleEventStart.value)
         const endDateTime = formatDateTime(googleEventEnd.value)
 
+        // Check if start date/time was changed
+        const isStartDateChanged = originalGoogleEventStart.value.getTime() !== googleEventStart.value.getTime()
+
         const formData = new FormData()
         formData.append('title', appointment.property?.name || 'Appointment')
         formData.append('description', appointment.notes || `Appointment with ${appointment.name}`)
@@ -449,15 +466,47 @@ const confirmAddToGoogleCalendar = async () => {
             if (scheduledStatus) {
                 updateFormData.append('status', scheduledStatus.id)
             }
+            
+            // If start date was changed, also update the lead's date and time
+            if (isStartDateChanged) {
+                const newDate = formatDateYMD(googleEventStart.value)
+                const newTime = String(googleEventStart.value.getHours()).padStart(2, '0') + ':' +
+                    String(googleEventStart.value.getMinutes()).padStart(2, '0') + ':00'
+                
+                updateFormData.append('date', newDate)
+                updateFormData.append('time', newTime)
+            }
 
             await $fetchCitizen(`agent/v1/leads/${appointment.id}/update`, {
                 method: 'POST',
                 body: updateFormData
             })
             
-            showToast('Event added to Google Calendar and marked as scheduled', 'success')
+            // If date was changed, call reschedule API for Google Calendar
+            if (isStartDateChanged) {
+                try {
+                    const rescheduleFormData = new FormData()
+                    rescheduleFormData.append('start', startDateTime)
+                    rescheduleFormData.append('end', endDateTime)
+                    rescheduleFormData.append('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone)
+                    
+                    await $fetchCitizen(`agent/v1/calendar/update/event/${response.id}`, {
+                        method: 'POST',
+                        body: rescheduleFormData
+                    })
+                    
+                    showToast('Event added to Google Calendar with updated schedule', 'success')
+                } catch (rescheduleError) {
+                    console.error('Error rescheduling Google Calendar event:', rescheduleError)
+                    showToast('Event added but failed to update schedule in Google Calendar', 'error')
+                }
+            } else {
+                showToast('Event added to Google Calendar and marked as scheduled', 'success')
+            }
+            
             showGoogleEventModal.value = false
             selectedAppointmentForGoogle.value = null
+            originalGoogleEventStart.value = null
             fetchMonthAppointments() // Refresh to get updated data
         }
     } catch (error) {
@@ -644,6 +693,12 @@ const formatTimeOnly = (time) => {
  */
 
 const handleRescheduleAppointment = (appointment) => {
+    // Don't allow rescheduling if event is already synced with Google Calendar
+    if (appointment.google_event_id) {
+        showToast('Cannot reschedule an event that is synced with Google Calendar', 'error')
+        return
+    }
+    
     selectedAppointmentForReschedule.value = appointment
     isRescheduleCalendarOpen.value = false
 
@@ -922,8 +977,12 @@ watch(currentDate, () => {
                                 {{ day.appointmentCount }} appointment{{ day.appointmentCount > 1 ? 's' : '' }}
                             </div>
                             <div v-if="day.pendingCount > 0"
+                                class="text-[10px] bg-orange-500 text-white px-1.5 py-0.5 rounded text-center">
+                                {{ day.pendingCount }} Pending
+                            </div>
+                            <div v-if="day.acceptedCount > 0"
                                 class="text-[10px] bg-green-500 text-white px-1.5 py-0.5 rounded text-center">
-                                {{ day.pendingCount }} Accepted
+                                {{ day.acceptedCount }} Accepted
                             </div>
                         </div>
                     </div>
@@ -1076,8 +1135,16 @@ watch(currentDate, () => {
                             </button>
                         </div>
                         <div v-else-if="hasAppointmentTimePassed(appointment)" class="flex gap-2">
-                            <button @click="handleRescheduleAppointment(appointment)"
-                                class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors bg-gray-900 text-white hover:bg-gray-800">
+                            <button 
+                                @click="handleRescheduleAppointment(appointment)"
+                                :disabled="appointment.google_event_id"
+                                :title="appointment.google_event_id ? 'Cannot reschedule synced event' : 'Reschedule'"
+                                :class="[
+                                    'flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors',
+                                    appointment.google_event_id 
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                                        : 'bg-gray-900 text-white hover:bg-gray-800'
+                                ]">
                                 Reschedule
                             </button>
                             <button @click="declineLead(appointment)"
@@ -1086,8 +1153,16 @@ watch(currentDate, () => {
                             </button>
                         </div>
                         <div v-else class="flex gap-2">
-                            <button @click="handleRescheduleAppointment(appointment)"
-                                class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors bg-gray-900 text-white hover:bg-gray-800">
+                            <button 
+                                @click="handleRescheduleAppointment(appointment)"
+                                :disabled="appointment.google_event_id"
+                                :title="appointment.google_event_id ? 'Cannot reschedule synced event' : 'Reschedule'"
+                                :class="[
+                                    'flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors',
+                                    appointment.google_event_id 
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                                        : 'bg-gray-900 text-white hover:bg-gray-800'
+                                ]">
                                 Reschedule
                             </button>
                             <div class="relative flex-1">
