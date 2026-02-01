@@ -25,7 +25,9 @@ const isGoogleSynced = ref(false)
 const showGoogleEventModal = ref(false)
 const selectedAppointmentForGoogle = ref(null)
 const googleEventStart = ref(null)
-const googleEventEnd = ref(null)
+const meetingDurationHours = ref(1)
+const meetingDurationMinutes = ref(0)
+const meetingDurationSeconds = ref(0)
 const originalGoogleEventStart = ref(null)
 const checkingGoogleSync = ref(false)
 
@@ -100,7 +102,7 @@ const todayAppointments = computed(() => {
         .filter(appointment => {
             if (!appointment.date) return false
 
-           
+
             if (appointment.lead_status?.name.toLowerCase() === 'closed') return false
 
             return appointment.date === selectedDateStr
@@ -227,7 +229,7 @@ const calendarDays = computed(() => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
-  
+
     const prevMonthLastDay = new Date(year, month, 0).getDate()
     for (let i = startingDayOfWeek - 1; i >= 0; i--) {
         days.push({
@@ -237,11 +239,11 @@ const calendarDays = computed(() => {
             hasEvent: false,
             appointmentCount: 0,
             pendingCount: 0,
-            acceptedCount : 0
+            acceptedCount: 0
         })
     }
 
-    
+
     for (let i = 1; i <= daysInMonth; i++) {
         const dateObj = new Date(year, month, i)
         dateObj.setHours(0, 0, 0, 0)
@@ -267,7 +269,7 @@ const calendarDays = computed(() => {
         })
     }
 
-   
+
     const remainingDays = 42 - days.length
     for (let i = 1; i <= remainingDays; i++) {
         days.push({
@@ -300,7 +302,7 @@ const weekDays = computed(() => {
             appointments: getAppointmentsForDate(dateStr),
             appointmentCount: getAppointmentCount(dateStr),
             pendingCount: getPendingAppointmentCount(dateStr),
-            acceptedCount : getAcceptedAppointmentCount(dateStr)
+            acceptedCount: getAcceptedAppointmentCount(dateStr)
         })
     }
 
@@ -379,14 +381,14 @@ const syncWithGoogle = async () => {
         // const redirectUri = `${window.location.origin}/agent/calendar/callback`
         // const redirectUri = `http://localhost:3000/calendar/callback`
         const redirectUri = config.public.GOOGLE_REDIRECT_URI || 'https://dev.heyhomex.orangebd.com/calendar/callback';
-        
+
         const response = await $fetchCitizen('v1/google/auth', {
             method: 'GET',
             params: {
                 redirect_uri: redirectUri
             }
         })
-        
+
         if (response.auth_url) {
             window.location.href = response.auth_url
         } else {
@@ -401,30 +403,31 @@ const syncWithGoogle = async () => {
 // Open modal to add event to Google Calendar
 const addToGoogleCalendar = (appointment) => {
     selectedAppointmentForGoogle.value = appointment
-    
+
     // Set default start time from appointment
     const startDate = new Date(`${appointment.date} ${appointment.time}`)
     googleEventStart.value = startDate
     originalGoogleEventStart.value = new Date(startDate.getTime()) // Store original for comparison
-    
-    // Set default end time (1 hour later)
-    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000)
-    googleEventEnd.value = endDate
-    
+
+    // Set default meeting duration (1 hour)
+    meetingDurationHours.value = 1
+    meetingDurationMinutes.value = 0
+    meetingDurationSeconds.value = 0
+
     showGoogleEventModal.value = true
     closeGoogleSyncDropdown(appointment.id)
 }
 
 // Confirm and submit Google Calendar event
 const confirmAddToGoogleCalendar = async () => {
-    if (!selectedAppointmentForGoogle.value || !googleEventStart.value || !googleEventEnd.value) {
-        showToast('Please select both start and end times', 'error')
+    if (!selectedAppointmentForGoogle.value || !googleEventStart.value) {
+        showToast('Please select start time', 'error')
         return
     }
-    
+
     try {
         const appointment = selectedAppointmentForGoogle.value
-        
+
         // Format datetime as 'YYYY-MM-DD HH:mm:ss'
         const formatDateTime = (date) => {
             const year = date.getFullYear()
@@ -435,9 +438,17 @@ const confirmAddToGoogleCalendar = async () => {
             const seconds = String(date.getSeconds()).padStart(2, '0')
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
         }
+
+        // Calculate end time from start time + duration
+        const durationInMilliseconds = 
+            (meetingDurationHours.value * 60 * 60 * 1000) +
+            (meetingDurationMinutes.value * 60 * 1000) +
+            (meetingDurationSeconds.value * 1000)
         
+        const endDate = new Date(googleEventStart.value.getTime() + durationInMilliseconds)
+
         const startDateTime = formatDateTime(googleEventStart.value)
-        const endDateTime = formatDateTime(googleEventEnd.value)
+        const endDateTime = formatDateTime(endDate)
 
         // Check if start date/time was changed
         const isStartDateChanged = originalGoogleEventStart.value.getTime() !== googleEventStart.value.getTime()
@@ -457,7 +468,7 @@ const confirmAddToGoogleCalendar = async () => {
 
         if (response) {
             appointment.google_event_id = response.id
-            
+
             // Update lead to mark as scheduled and add to calendar
             const scheduledStatus = leadStatuses.value.find(s => s.name.toLowerCase() === 'scheduled')
             const updateFormData = new FormData()
@@ -466,13 +477,13 @@ const confirmAddToGoogleCalendar = async () => {
             if (scheduledStatus) {
                 updateFormData.append('status', scheduledStatus.id)
             }
-            
+
             // If start date was changed, also update the lead's date and time
             if (isStartDateChanged) {
                 const newDate = formatDateYMD(googleEventStart.value)
                 const newTime = String(googleEventStart.value.getHours()).padStart(2, '0') + ':' +
                     String(googleEventStart.value.getMinutes()).padStart(2, '0') + ':00'
-                
+
                 updateFormData.append('date', newDate)
                 updateFormData.append('time', newTime)
             }
@@ -481,29 +492,14 @@ const confirmAddToGoogleCalendar = async () => {
                 method: 'POST',
                 body: updateFormData
             })
-            
-            // If date was changed, call reschedule API for Google Calendar
+
+            // Show appropriate success message
             if (isStartDateChanged) {
-                try {
-                    const rescheduleFormData = new FormData()
-                    rescheduleFormData.append('start', startDateTime)
-                    rescheduleFormData.append('end', endDateTime)
-                    rescheduleFormData.append('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone)
-                    
-                    await $fetchCitizen(`agent/v1/calendar/update/event/${response.id}`, {
-                        method: 'POST',
-                        body: rescheduleFormData
-                    })
-                    
-                    showToast('Event added to Google Calendar with updated schedule', 'success')
-                } catch (rescheduleError) {
-                    console.error('Error rescheduling Google Calendar event:', rescheduleError)
-                    showToast('Event added but failed to update schedule in Google Calendar', 'error')
-                }
+                showToast('Event added to Google Calendar with updated schedule', 'success')
             } else {
                 showToast('Event added to Google Calendar and marked as scheduled', 'success')
             }
-            
+
             showGoogleEventModal.value = false
             selectedAppointmentForGoogle.value = null
             originalGoogleEventStart.value = null
@@ -518,7 +514,7 @@ const confirmAddToGoogleCalendar = async () => {
 // Delete event from Google Calendar
 const deleteFromGoogleCalendar = async (appointment) => {
     if (!appointment.google_event_id) return
-    
+
     try {
         await $fetchCitizen(`agent/v1/calendar/delete/event/${appointment.google_event_id}`, {
             method: 'DELETE'
@@ -698,7 +694,7 @@ const handleRescheduleAppointment = (appointment) => {
         showToast('Cannot reschedule an event that is synced with Google Calendar', 'error')
         return
     }
-    
+
     selectedAppointmentForReschedule.value = appointment
     isRescheduleCalendarOpen.value = false
 
@@ -833,12 +829,9 @@ watch(currentDate, () => {
 
         <div class="flex items-center justify-between">
             <h1 class="text-2xl font-semibold text-gray-900">Calendar</h1>
-            
+
             <!-- Google Calendar Sync Button -->
-            <button 
-                v-if="!isGoogleSynced"
-                @click="syncWithGoogle"
-                :disabled="checkingGoogleSync"
+            <button v-if="!isGoogleSynced" @click="syncWithGoogle" :disabled="checkingGoogleSync"
                 class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50">
                 <Icon name="logos:google-icon" class="w-5 h-5" />
                 {{ checkingGoogleSync ? 'Checking...' : 'Connect Google Calendar' }}
@@ -888,7 +881,7 @@ watch(currentDate, () => {
                             </td>
                             <td class="py-4 px-6">
                                 <div class="text-sm text-gray-900">
-                                   {{ formatAppointmentTime(appointment.date, appointment.time) }}
+                                    {{ formatAppointmentTime(appointment.date, appointment.time) }}
                                 </div>
                             </td>
                             <td class="py-4 px-6">
@@ -911,7 +904,7 @@ watch(currentDate, () => {
                                     <Icon :name="appointment.phone ? 'lucide:phone' : 'lucide:mail'"
                                         class="w-4 h-4 text-gray-400" />
                                     <span class="text-sm text-gray-600">{{ appointment.phone || appointment.email
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </td>
                         </tr>
@@ -994,8 +987,7 @@ watch(currentDate, () => {
                         <!-- Time column header -->
                         <div class="bg-gray-50 p-2"></div>
                         <!-- Day headers -->
-                        <div v-for="day in weekDays" :key="day.fullDate"
-                            class="bg-gray-50 p-2 text-center">
+                        <div v-for="day in weekDays" :key="day.fullDate" class="bg-gray-50 p-2 text-center">
                             <div class="text-xs font-medium text-gray-600">
                                 {{ format(day.dateObj, 'EEE') }}
                             </div>
@@ -1036,8 +1028,7 @@ watch(currentDate, () => {
                 <!-- Day View -->
                 <div v-else-if="viewMode === 'Day'" class="space-y-2">
                     <div class="border border-gray-200 rounded-lg max-h-[600px] overflow-y-auto">
-                        <div v-for="hourSlot in dayHours" :key="hourSlot.hour"
-                            @click="handleDayHourClick(hourSlot)"
+                        <div v-for="hourSlot in dayHours" :key="hourSlot.hour" @click="handleDayHourClick(hourSlot)"
                             class="grid grid-cols-12 gap-4 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
                             <!-- Time column -->
                             <div class="col-span-2 p-4 text-sm text-gray-500 text-right border-r border-gray-100">
@@ -1051,9 +1042,8 @@ watch(currentDate, () => {
                                 <div v-else class="space-y-2">
                                     <div v-for="apt in hourSlot.appointments" :key="apt.id"
                                         @click.stop="navigateTo(`/agent/leads/${apt.id}`)"
-                                        class="p-3 rounded-lg border-l-4 cursor-pointer"
-                                        :class="apt.add_to_calendar 
-                                            ? 'bg-blue-50 border-blue-500 hover:bg-blue-100' 
+                                        class="p-3 rounded-lg border-l-4 cursor-pointer" :class="apt.add_to_calendar
+                                            ? 'bg-blue-50 border-blue-500 hover:bg-blue-100'
                                             : 'bg-green-50 border-green-500 hover:bg-green-100'">
                                         <div class="flex items-start justify-between mb-2">
                                             <div class="flex-1">
@@ -1135,14 +1125,13 @@ watch(currentDate, () => {
                             </button>
                         </div>
                         <div v-else-if="hasAppointmentTimePassed(appointment)" class="flex gap-2">
-                            <button 
-                                @click="handleRescheduleAppointment(appointment)"
+                            <button @click="handleRescheduleAppointment(appointment)"
                                 :disabled="appointment.google_event_id"
                                 :title="appointment.google_event_id ? 'Cannot reschedule synced event' : 'Reschedule'"
                                 :class="[
                                     'flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors',
-                                    appointment.google_event_id 
-                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                                    appointment.google_event_id
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                         : 'bg-gray-900 text-white hover:bg-gray-800'
                                 ]">
                                 Reschedule
@@ -1153,14 +1142,13 @@ watch(currentDate, () => {
                             </button>
                         </div>
                         <div v-else class="flex gap-2">
-                            <button 
-                                @click="handleRescheduleAppointment(appointment)"
+                            <button @click="handleRescheduleAppointment(appointment)"
                                 :disabled="appointment.google_event_id"
                                 :title="appointment.google_event_id ? 'Cannot reschedule synced event' : 'Reschedule'"
                                 :class="[
                                     'flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors',
-                                    appointment.google_event_id 
-                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                                    appointment.google_event_id
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                         : 'bg-gray-900 text-white hover:bg-gray-800'
                                 ]">
                                 Reschedule
@@ -1175,9 +1163,9 @@ watch(currentDate, () => {
                                     {{ appointment.add_to_calendar ? 'Remove from Calendar' : 'Add to Calendar' }}
                                     <Icon name="lucide:chevron-down" class="w-3 h-3" />
                                 </button>
-                                
+
                                 <!-- Dropdown Menu -->
-                                <div v-if="showGoogleSyncDropdown[appointment.id]" 
+                                <div v-if="showGoogleSyncDropdown[appointment.id]"
                                     class="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                                     <div class="py-1">
                                         <!-- <button 
@@ -1186,29 +1174,24 @@ watch(currentDate, () => {
                                             <Icon name="lucide:calendar" class="w-4 h-4" />
                                             {{ appointment.add_to_calendar ? 'Remove from Local' : 'Add to Local' }}
                                         </button> -->
-                                        
+
                                         <!-- Google Calendar Options (only if synced) -->
                                         <template v-if="isGoogleSynced">
-                                            <button 
-                                                v-if="!appointment.google_event_id"
+                                            <button v-if="!appointment.google_event_id"
                                                 @click="addToGoogleCalendar(appointment)"
                                                 class="w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2">
                                                 <Icon name="logos:google-icon" class="w-4 h-4" />
                                                 Add to Google Calendar
                                             </button>
-                                            <button 
-                                                v-else
-                                                @click="deleteFromGoogleCalendar(appointment)"
+                                            <button v-else @click="deleteFromGoogleCalendar(appointment)"
                                                 class="w-full px-4 py-2 text-xs text-left text-red-600 hover:bg-red-50 flex items-center gap-2">
                                                 <Icon name="lucide:trash-2" class="w-4 h-4" />
                                                 Remove from Google
                                             </button>
                                         </template>
-                                        
+
                                         <!-- Connect Google Calendar prompt (if not synced) -->
-                                        <button 
-                                            v-else
-                                            @click="syncWithGoogle"
+                                        <button v-else @click="syncWithGoogle"
                                             class="w-full px-4 py-2 text-xs text-left text-blue-600 hover:bg-blue-50 flex items-center gap-2">
                                             <Icon name="logos:google-icon" class="w-4 h-4" />
                                             Connect Google Calendar
@@ -1230,7 +1213,8 @@ watch(currentDate, () => {
             <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900">Add to Google Calendar</h3>
-                    <button @click="showGoogleEventModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <button @click="showGoogleEventModal = false"
+                        class="text-gray-400 hover:text-gray-600 transition-colors">
                         <Icon name="lucide:x" class="w-5 h-5" />
                     </button>
                 </div>
@@ -1250,29 +1234,52 @@ watch(currentDate, () => {
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             Start Date & Time <span class="text-red-500">*</span>
                         </label>
-                        <Calendar 
-                            v-model="googleEventStart" 
-                            showTime 
-                            hourFormat="12" 
-                            :showIcon="true"
-                            dateFormat="M dd, yy" 
-                            class="w-full"
-                        />
+                        <Calendar v-model="googleEventStart" showTime hourFormat="12" :showIcon="true"
+                            dateFormat="M dd, yy" class="w-full" />
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            End Date & Time <span class="text-red-500">*</span>
+                            Meeting Duration <span class="text-red-500">*</span>
                         </label>
-                        <Calendar 
-                            v-model="googleEventEnd" 
-                            showTime 
-                            hourFormat="12" 
-                            :showIcon="true"
-                            dateFormat="M dd, yy" 
-                            class="w-full"
-                            :minDate="googleEventStart"
-                        />
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Hours</label>
+                                <input 
+                                    v-model.number="meetingDurationHours" 
+                                    type="number" 
+                                    min="0" 
+                                    max="23"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="0"
+                                />
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Minutes</label>
+                                <input 
+                                    v-model.number="meetingDurationMinutes" 
+                                    type="number" 
+                                    min="0" 
+                                    max="59"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="0"
+                                />
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Seconds</label>
+                                <input 
+                                    v-model.number="meetingDurationSeconds" 
+                                    type="number" 
+                                    min="0" 
+                                    max="59"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="0"
+                                />
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">
+                            Duration: {{ meetingDurationHours }}h {{ meetingDurationMinutes }}m {{ meetingDurationSeconds }}s
+                        </p>
                     </div>
                 </div>
 
@@ -1281,9 +1288,7 @@ watch(currentDate, () => {
                         class="flex-1 px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
                         Cancel
                     </button>
-                    <button 
-                        @click="confirmAddToGoogleCalendar" 
-                        :disabled="!googleEventStart || !googleEventEnd"
+                    <button @click="confirmAddToGoogleCalendar" :disabled="!googleEventStart"
                         class="flex-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         Add to Google Calendar
                     </button>
@@ -1295,8 +1300,7 @@ watch(currentDate, () => {
         <div v-if="showRescheduleModal"
             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
             @click.self="cancelReschedule">
-            <div
-                class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl max-h-[90vh]"
+            <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl max-h-[90vh]"
                 :class="isRescheduleCalendarOpen && 'transform -translate-y-10'">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900">Reschedule Appointment</h3>
@@ -1322,10 +1326,8 @@ watch(currentDate, () => {
                     </label>
                     <div class="reschedule-calendar">
                         <Calendar v-model="rescheduleDateTime" showTime hourFormat="12" :showIcon="true"
-                            :minDate="new Date()" dateFormat="M dd, yy" class="w-full"
-                            appendTo="self"
-                            @show="isRescheduleCalendarOpen = true"
-                            @hide="isRescheduleCalendarOpen = false" />
+                            :minDate="new Date()" dateFormat="M dd, yy" class="w-full" appendTo="self"
+                            @show="isRescheduleCalendarOpen = true" @hide="isRescheduleCalendarOpen = false" />
                     </div>
                 </div>
 
@@ -1348,13 +1350,13 @@ watch(currentDate, () => {
 </template>
 
 <style scoped>
-    .reschedule-calendar :deep(.p-datepicker-panel) {
-        top: calc(100% + 0.25rem) !important;
-        left: 0 !important;
-        z-index: 50;
-        max-height: 50vh;
-        overflow-y: auto;
-        overflow-x: hidden;
-        overscroll-behavior: contain;
-    }
+.reschedule-calendar :deep(.p-datepicker-panel) {
+    top: calc(100% + 0.25rem) !important;
+    left: 0 !important;
+    z-index: 50;
+    max-height: 50vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+}
 </style>
