@@ -31,6 +31,7 @@ jobs:
                 echo NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL="${{ secrets.ACC_NUXT_PUBLIC_JWPLAYER_DEVMODE_DEMO_LIBRARY_URL }}" >> .env
                 echo GOOGLE_CLIENT_ID="${{ secrets.ACC_GOOGLE_CLIENT_ID }}" >> .env
                 echo GOOGLE_CLIENT_SECRET="${{ secrets.ACC_GOOGLE_CLIENT_SECRET }}" >> .env
+                echo GOOGLE_REDIRECT_URI="${{ vars.ACC_GOOGLE_REDIRECT_URI }}" >> .env
                 touch .env
                 pnpm install
                 pnpm run build
