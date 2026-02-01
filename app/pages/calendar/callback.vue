@@ -1,6 +1,6 @@
 <script setup>
 // import { config } from 'process'
-
+const config = useRuntimeConfig();
 definePageMeta({ middleware: ["auth-citizen"], layout: "agent" })
 useHead({ title: "Calendar Sync - Agent Panel" })
 
