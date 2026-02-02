@@ -31,7 +31,7 @@ const uploadUrl = 'https://dev-video.heyhomex.orangebd.com/';
                     class="pointer-events-none absolute -left-16 -bottom-16 h-40 w-40 rounded-full bg-indigo-200/60 blur-3xl dark:bg-indigo-500/20"></div>
             </section>
 
-            <section>
+            <section class="mt-4">
                 <div
                     class="flex h-screen min-h-[50vh] flex-col overflow-hidden rounded-2xl border border-gray-200/70 bg-white shadow-xl dark:border-gray-700/70 dark:bg-gray-900">
                    
