@@ -17,6 +17,52 @@ const selectedTag = ref(null)
 const tags = ref([])
 const tagsLoading = ref(false)
 
+// Tag scroll navigation
+const tagContainer = ref(null)
+const canScrollLeft = ref(false)
+const canScrollRight = ref(true)
+
+const updateScrollButtons = () => {
+    if (tagContainer.value) {
+        canScrollLeft.value = tagContainer.value.scrollLeft > 0
+        canScrollRight.value = tagContainer.value.scrollLeft < tagContainer.value.scrollWidth - tagContainer.value.clientWidth - 5
+    }
+}
+
+const scrollTags = (direction) => {
+    if (tagContainer.value) {
+        const scrollAmount = 200
+        tagContainer.value.scrollBy({
+            left: direction === 'left' ? -scrollAmount : scrollAmount,
+            behavior: 'smooth'
+        })
+        setTimeout(updateScrollButtons, 300)
+    }
+}
+
+const scrollInterval = ref(null)
+const scrollTimeout = ref(null)
+
+const startScrolling = (direction) => {
+    scrollTags(direction)
+    
+    scrollTimeout.value = setTimeout(() => {
+        scrollInterval.value = setInterval(() => {
+            if (tagContainer.value) {
+                tagContainer.value.scrollLeft += direction === 'left' ? -10 : 10
+                updateScrollButtons()
+            }
+        }, 10)
+    }, 500)
+}
+
+const stopScrolling = () => {
+    if (scrollTimeout.value) clearTimeout(scrollTimeout.value)
+    if (scrollInterval.value) clearInterval(scrollInterval.value)
+    scrollTimeout.value = null
+    scrollInterval.value = null
+}
+
 const clearSearch = () => {
     searchQuery.value = ""
     selectedTag.value = null
@@ -49,6 +95,9 @@ const loadTags = async () => {
         tags.value = []
     } finally {
         tagsLoading.value = false
+        nextTick(() => {
+            setTimeout(updateScrollButtons, 100)
+        })
     }
 }
 
@@ -158,6 +207,7 @@ const playVideo = (videoId) => {
 onMounted(() => {
     loadVideos()
     loadTags()
+    nextTick(() => updateScrollButtons())
 })
 
 watch(
@@ -199,36 +249,64 @@ watch(
             </div>
             <button 
                 @click="handleSearch"
-                class="bg-[#18222C] text-white flex items-center gap-2 px-4 py-3 rounded-lg text-base font-medium hover:bg-[#2C3E50] transition-colors whitespace-nowrap">
-                <span>Search</span>
-                <Icon name="lucide:search" class="w-[18px] h-[18px]" />
+                class="bg-[#F7F7F8] text-[#121a22] border border-[#f7f7f8] flex items-center gap-2 px-4 py-3 rounded-lg text-base font-medium hover:bg-[#e6e8eb] transition-colors whitespace-nowrap">
+                <span>Filter</span>
+                <Icon name="lucide:sliders-horizontal" class="w-[18px] h-[18px]" />
             </button>
         </div>
         
-        <!-- Horizontal Tag Pills -->
-        <div class="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
-            <button
-                v-if="!tagsLoading"
-                :class="[
-                    'px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-colors flex-shrink-0',
-                    !selectedTag
-                        ? 'bg-[#18222c] text-white'
-                        : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
-                ]"
-                @click="selectedTag = null; loadVideos()">
-                All
+        <!-- Horizontal Tag Pills with Arrow Navigation -->
+        <div class="relative flex items-center gap-2">
+            <!-- Left Arrow (hidden when at start) -->
+            <button 
+                v-show="canScrollLeft"
+                @mousedown="startScrolling('left')"
+                @mouseup="stopScrolling"
+                @mouseleave="stopScrolling"
+                class="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[#18222c] text-white rounded-md hover:bg-[#2C3E50] transition-colors">
+                <Icon name="lucide:chevron-left" class="w-5 h-5" />
             </button>
-            <button
-                v-for="tag in tags"
-                :key="tag.id"
-                :class="[
-                    'px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-colors flex-shrink-0',
-                    selectedTag === tag.tag_title
-                        ? 'bg-[#18222c] text-white'
-                        : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
-                ]"
-                @click="handleTagClick(tag.tag_title)">
-                {{ tag.tag_title }}
+            
+            <!-- Tags Container -->
+            <div 
+                ref="tagContainer"
+                @scroll="updateScrollButtons"
+                class="tag-container flex gap-3 overflow-x-auto flex-1"
+                style="-ms-overflow-style: none; scrollbar-width: none;"
+                :style="{ '-webkit-overflow-scrolling': 'touch' }">
+                <button
+                    v-if="!tagsLoading"
+                    :class="[
+                        'px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-colors flex-shrink-0',
+                        !selectedTag
+                            ? 'bg-[#18222c] text-white'
+                            : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
+                    ]"
+                    @click="selectedTag = null; loadVideos()">
+                    All
+                </button>
+                <button
+                    v-for="tag in tags"
+                    :key="tag.id"
+                    :class="[
+                        'px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-colors flex-shrink-0',
+                        selectedTag === tag.tag_title
+                            ? 'bg-[#18222c] text-white'
+                            : 'bg-[#f0f1f3] text-[#121a22] hover:bg-[#e6e8eb]',
+                    ]"
+                    @click="handleTagClick(tag.tag_title)">
+                    {{ tag.tag_title }}
+                </button>
+            </div>
+            
+            <!-- Right Arrow -->
+            <button 
+                v-show="canScrollRight"
+                @mousedown="startScrolling('right')"
+                @mouseup="stopScrolling"
+                @mouseleave="stopScrolling"
+                class="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[#18222c] text-white rounded-md hover:bg-[#2C3E50] transition-colors">
+                <Icon name="lucide:chevron-right" class="w-5 h-5" />
             </button>
         </div>
 
@@ -336,5 +414,10 @@ watch(
 
 .video-card {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hide scrollbar for tag container */
+.tag-container::-webkit-scrollbar {
+    display: none;
 }
 </style>
