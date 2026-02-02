@@ -26,7 +26,7 @@
         tag_ids: [],
         location: "",
         address: "",
-        category_id: null,
+        category_ids: [],
         latitude: null,
         longitude: null,
     })
@@ -38,7 +38,7 @@
     const tagsLoading = ref(false)
 
     const validations_errors = ref({})
-    const skip_validations = ref(["id", "video_image", "tag_ids", "latitude", "longitude"])
+    const skip_validations = ref(["id", "video_image", "tag_ids", "category_ids", "latitude", "longitude"])
 
     watch(
         () => props.item,
@@ -56,7 +56,7 @@
                     tag_ids: value.tags ? value.tags.map(tag => tag.id) : [],
                     location: value.location || "",
                     address: value.address || "",
-                    category_id: value.category_id || (value.category && value.category.id) || null,
+                    category_ids: value.categories ? value.categories.map(cat => cat.id) : (value.category_ids || []),
                     latitude: value.latitude || null,
                     longitude: value.longitude || null,
                 }
@@ -74,7 +74,7 @@
                     tag_ids: [],
                     location: "",
                     address: "",
-                    category_id: null,
+                    category_ids: [],
                     latitude: null,
                     longitude: null,
                 }
@@ -225,8 +225,11 @@
                 })
             }
 
-            if (formData.value.category_id) {
-                formDataToSend.append("category_id", formData.value.category_id)
+            // Add categories
+            if (formData.value.category_ids && formData.value.category_ids.length > 0) {
+                formData.value.category_ids.forEach(categoryId => {
+                    formDataToSend.append("category_ids[]", categoryId)
+                })
             }
 
             if (thumbnailFile.value) {
@@ -321,8 +324,11 @@
                 })
             }
 
-            if (formData.value.category_id) {
-                formDataToSend.append("category_id", formData.value.category_id)
+            // Add categories
+            if (formData.value.category_ids && formData.value.category_ids.length > 0) {
+                formData.value.category_ids.forEach(categoryId => {
+                    formDataToSend.append("category_ids[]", categoryId)
+                })
             }
 
             if (thumbnailFile.value) {
@@ -517,19 +523,20 @@
 
             <div class="flex items-center gap-4 md:col-span-2">
                 <div class="flex-auto">
-                    <label class="font-semibold">Category</label>
-                    <Dropdown
-                        v-model="formData.category_id"
+                    <label class="font-semibold">Categories</label>
+                    <MultiSelect
+                        v-model="formData.category_ids"
                         :options="categories"
                         optionLabel="name"
                         optionValue="id"
-                        placeholder="Select category"
+                        placeholder="Select categories"
                         :loading="categoriesLoading"
+                        :maxSelectedLabels="3"
                         class="w-full"
                     />
                     <InputError
                         class="text-sm mt-1"
-                        :message="validations_errors.category_id" />
+                        :message="validations_errors.category_ids" />
                 </div>
             </div>
 
