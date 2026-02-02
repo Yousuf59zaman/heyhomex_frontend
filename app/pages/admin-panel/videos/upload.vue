@@ -9,7 +9,7 @@ const uploadUrl = 'https://dev-video.heyhomex.orangebd.com/';
         <div class="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-6">
             <section
                 class="relative overflow-hidden rounded-2xl border border-slate-200/70 bg-gradient-to-br from-white via-sky-50 to-indigo-50 dark:from-gray-800 dark:via-gray-900 dark:to-slate-900 shadow-sm">
-                <div class="p-6 sm:p-8">
+                <div class="px-6 py-2 sm:p-8">
                     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div class="max-w-2xl">
                           
@@ -39,7 +39,8 @@ const uploadUrl = 'https://dev-video.heyhomex.orangebd.com/';
                         :src="uploadUrl"
                         title="HeyHomex Video Upload"
                         class="h-full w-full flex-1 min-h-0 bg-white"
-                        loading="lazy"></iframe>
+                        loading="lazy"
+                        allow="clipboard-write; clipboard-read"></iframe>
                 </div>
             </section>
         </div>
