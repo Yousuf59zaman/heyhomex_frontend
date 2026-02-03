@@ -159,7 +159,7 @@
         class="h-full w-[69px] flex flex-col items-center py-7"
         :style="{backgroundColor: sidebarColor}">
         <div class="mb-6 subscription-glow">
-            <NuxtLink :to="`${getBasePath}/subscription`">
+            <NuxtLink :to="`${getBasePath}/analyze`">
                 <div class="glow-ring"></div>
                 <img
                     src="/svg/dashboard/home_logo.svg"
