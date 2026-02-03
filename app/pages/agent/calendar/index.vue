@@ -1234,8 +1234,10 @@ watch(currentDate, () => {
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             Start Date & Time <span class="text-red-500">*</span>
                         </label>
-                        <Calendar v-model="googleEventStart" showTime hourFormat="12" :showIcon="true"
-                            dateFormat="M dd, yy" class="w-full" />
+                        <div class="google-calendar-wrapper relative">
+                            <Calendar v-model="googleEventStart" showTime hourFormat="12" :showIcon="true"
+                                dateFormat="M dd, yy" class="w-full" appendTo="self" />
+                        </div>
                     </div>
 
                     <div>
@@ -1350,7 +1352,8 @@ watch(currentDate, () => {
 </template>
 
 <style scoped>
-.reschedule-calendar :deep(.p-datepicker-panel) {
+.reschedule-calendar :deep(.p-datepicker-panel),
+.google-calendar-wrapper :deep(.p-datepicker-panel) {
     top: calc(100% + 0.25rem) !important;
     left: 0 !important;
     z-index: 50;
