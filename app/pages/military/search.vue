@@ -36,6 +36,7 @@ const loadVideos = async () => {
             method: "GET",
             params: {
                  page: route.query.videoPage ? route.query.videoPage : 1,
+                 limit: 9,
             }
         });
 

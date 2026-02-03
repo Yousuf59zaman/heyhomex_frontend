@@ -37,6 +37,7 @@ const loadVideos = async () => {
     try {
         const params = {
             page: route.query.videoPage ? route.query.videoPage : 1,
+            limit: 9,
         };
         
         if (videoSearchQuery.value) {

@@ -112,6 +112,7 @@ const loadVideos = async () => {
     try {
         const params = {
             page: route.query.page ? route.query.page : 1,
+            limit: 9,
         }
 
         // Add search param if there's a search query
@@ -248,7 +249,6 @@ watch(
                     @keyup.enter="handleSearch" />
             </div>
             <button 
-                @click="handleSearch"
                 class="bg-[#F7F7F8] text-[#121a22] border border-[#f7f7f8] flex items-center gap-2 px-4 py-3 rounded-lg text-base font-medium hover:bg-[#e6e8eb] transition-colors whitespace-nowrap">
                 <span>Filter</span>
                 <Icon name="lucide:sliders-horizontal" class="w-[18px] h-[18px]" />
