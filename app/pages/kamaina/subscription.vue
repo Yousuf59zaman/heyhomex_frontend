@@ -4,11 +4,8 @@ import { loadStripe } from '@stripe/stripe-js'
 useHead({ title: "Subscription - Kamaina Panel" })
 definePageMeta({ middleware: ["auth-citizen"], layout: "citizen" })
 
-
-
 const route = useRoute()
 const router = useRouter()
-
 
 const validTabs = ['profile', 'subscription', 'billing', 'history']
 const defaultTab = 'subscription'
