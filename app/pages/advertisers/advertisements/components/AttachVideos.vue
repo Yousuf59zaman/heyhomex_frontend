@@ -34,7 +34,7 @@ const loadVideos = async () => {
             method: 'GET'
         });
         if (response.status === 'success') {
-            videos.value = response.data.data;
+            videos.value = response.data;
             
             // Mark currently attached videos
             if (props.advertisement.videos && props.advertisement.videos.length > 0) {
