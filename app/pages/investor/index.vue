@@ -120,6 +120,7 @@
         try {
             const params = {
                 page: route.query.page ? route.query.page : 1,
+                length: 9,
             }
 
             if (searchQuery.value) {

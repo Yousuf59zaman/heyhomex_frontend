@@ -357,12 +357,7 @@ watch(
     }
 )
 
-watch(
-    () => route.query.videoPage,
-    async () => {
-        await refreshMapBounds()
-    }
-)
+
 
 watch(
     () => props.videos,

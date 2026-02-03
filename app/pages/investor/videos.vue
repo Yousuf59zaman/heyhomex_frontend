@@ -112,6 +112,7 @@ const loadVideos = async () => {
     try {
         const params = {
             page: route.query.page ? route.query.page : 1,
+            limit: 9,
         }
 
         // Add search param if there's a search query

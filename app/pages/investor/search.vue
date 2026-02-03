@@ -20,7 +20,6 @@ const videosPaginationConfig = ref({
     lang: "en",
     align: "center",
     action: "",
-    queryKey: "videoPage",
 });
 const videoSearchQuery = ref('');
 
@@ -36,7 +35,8 @@ const loadVideos = async () => {
     videosError.value = null;
     try {
         const params = {
-            page: route.query.videoPage ? route.query.videoPage : 1,
+            page: route.query.page ? route.query.page : 1,
+            limit: 9,
         };
         
         if (videoSearchQuery.value) {
@@ -91,7 +91,7 @@ const handleTabClick = async (tab) => {
 };
 
 watch(
-    () => route.query.videoPage,
+    () => route.query.page,
     () => {
         if (activeTab.value !== 'videos') return;
         loadVideos();
