@@ -16,11 +16,12 @@ const propertyToRemove = ref(null)
 const videoToRemove = ref(null)
 const activeTab = ref('property')
 
-// Pagination
-const currentPage = ref(1)
-const totalPages = ref(1)
-const totalResults = ref(0)
-const perPage = ref(12)
+const paginationConfig = ref({
+    data: {},
+    lang: "en",
+    align: "center",
+    action: "",
+})
 
 const loadFavoriteProperties = async () => {
     pending.value = true
@@ -28,6 +29,7 @@ const loadFavoriteProperties = async () => {
     try {
         const params = {
             page: route.query.page ? route.query.page : 1,
+            length: 9
         }
 
         const response = await $fetchCitizen("/v1/favorite-properties/list", {
@@ -54,10 +56,8 @@ const loadFavoriteProperties = async () => {
         }))
 
         // Update pagination
-        currentPage.value = response.data.meta.current_page
-        totalPages.value = response.data.meta.last_page
-        totalResults.value = response.data.meta.total
-        perPage.value = response.data.meta.per_page
+        // Update pagination
+        paginationConfig.value.data = response.data.meta
     } catch (e) {
         console.error("Error loading favorite properties:", e.message)
         error.value = e
@@ -71,8 +71,14 @@ const loadFavoriteVideos = async () => {
     pendingVideos.value = true
     errorVideos.value = null
     try {
+        const params = {
+            page: route.query.page ? route.query.page : 1,
+            limit: 9
+        }
+
         const response = await $fetchCitizen("/v1/favorite-videos/list", {
             method: "GET",
+            params,
         })
         
         videos.value = response.data.data.map((video) => ({
@@ -87,6 +93,8 @@ const loadFavoriteVideos = async () => {
             isFavorite: true,
             videoUrl: video.video_url,
         })) || []
+
+        paginationConfig.value.data = response.data.meta
     } catch (e) {
         console.error("Error loading favorite videos:", e.message)
         errorVideos.value = e
@@ -202,9 +210,24 @@ onMounted(() => {
 watch(
     () => route.query.page,
     () => {
-        loadFavoriteProperties()
+        if (activeTab.value === 'property') {
+            loadFavoriteProperties()
+        } else {
+            loadFavoriteVideos()
+        }
     }
 )
+
+watch(activeTab, () => {
+    const router = useRouter()
+    router.replace({ query: {} })
+    
+    if (activeTab.value === 'property') {
+        loadFavoriteProperties()
+    } else {
+        loadFavoriteVideos()
+    }
+})
 </script>
 
 <template>
@@ -305,14 +328,8 @@ watch(
                 </div>
 
                 <!-- Pagination -->
-                <div v-if="totalResults > 0" class="mt-6">
-                    <!-- <LazyPagination
-                        :current-page="currentPage"
-                        :total-pages="totalPages"
-                        :show-text="true"
-                        :total-results="totalResults"
-                        :results-per-page="perPage"
-                        @page-change="(page) => navigateTo({ query: { ...route.query, page } })" /> -->
+                <div v-if="properties.length > 0" class="mt-6">
+                    <LazyPagination :config="paginationConfig" />
                 </div>
             </div>
         </div>
@@ -419,6 +436,9 @@ watch(
                         </div>
                     </div>
                 </div>
+            </div>
+             <div v-if="videos.length > 0" class="mt-6">
+                <LazyPagination :config="paginationConfig" />
             </div>
         </div>
     </div>
