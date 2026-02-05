@@ -8,6 +8,18 @@
 
     const emit = defineEmits(["click", "favorite"])
 
+    const fallbackImage = '/svg/not-found-img.svg'
+    const imageSrc = ref(props.property.image || fallbackImage)
+
+    // Watch for property changes to update imageSrc
+    watch(() => props.property.image, (newImage) => {
+        imageSrc.value = newImage || fallbackImage
+    })
+
+    const onImageError = () => {
+        imageSrc.value = fallbackImage
+    }
+
     const formatPrice = (price) => {
         return new Intl.NumberFormat("en-US", {
             style: "currency",
@@ -33,8 +45,9 @@
         <div class="flex flex-col gap-4">
             <div class="relative">
                 <img
-                    :src="property.image"
+                    :src="imageSrc"
                     :alt="property.title"
+                    @error="onImageError"
                     class="w-full rounded-[10px] h-[200px] object-cover" />
                 <button
                     @click.stop="handleFavoriteToggle"

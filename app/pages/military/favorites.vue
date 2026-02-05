@@ -17,17 +17,20 @@
     const propertyToRemove = ref(null)
     const videoToRemove = ref(null)
 
-    const currentPage = ref(1)
-    const totalPages = ref(1)
-    const totalResults = ref(0)
-    const perPage = ref(12)
+    const paginationConfig = ref({
+        data: {},
+        lang: "en",
+        align: "center",
+        action: "",
+    })
 
     const loadFavoriteProperties = async () => {
         pending.value = true
         error.value = null
         try {
-            const params = {
-                page: route.query.page ? route.query.page : 1,
+             const params = {
+            page: route.query.page ? route.query.page : 1,
+            length: 9
             }
 
             const response = await $fetchCitizen(
@@ -56,10 +59,8 @@
                     : null,
             }))
 
-            currentPage.value = response.data.meta.current_page
-            totalPages.value = response.data.meta.last_page
-            totalResults.value = response.data.meta.total
-            perPage.value = response.data.meta.per_page
+            // Update pagination
+            paginationConfig.value.data = response.data.meta
         } catch (e) {
             console.error("Error loading favorite properties:", e.message)
             error.value = e
@@ -73,8 +74,14 @@
         pendingVideos.value = true
         errorVideos.value = null
         try {
+            const params = {
+            page: route.query.page ? route.query.page : 1,
+            limit: 9
+            }
+
             const response = await $fetchCitizen("/v1/favorite-videos/list", {
                 method: "GET",
+                params,
             })
             
             videos.value = response.data.data.map((video) => ({
@@ -89,6 +96,8 @@
                 isFavorite: true,
                 videoUrl: video.video_url,
             })) || []
+
+            paginationConfig.value.data = response.data.meta
         } catch (e) {
             console.error("Error loading favorite videos:", e.message)
             errorVideos.value = e
@@ -209,9 +218,24 @@
     watch(
         () => route.query.page,
         () => {
-            loadFavoriteProperties()
+            if (activeTab.value === 'property') {
+                loadFavoriteProperties()
+            } else {
+                loadFavoriteVideos()
+            }
         }
     )
+
+    watch(activeTab, () => {
+        const router = useRouter()
+        router.replace({ query: {} })
+        
+        if (activeTab.value === 'property') {
+            loadFavoriteProperties()
+        } else {
+            loadFavoriteVideos()
+        }
+    })
 </script>
 
 <template>
@@ -322,16 +346,9 @@
                         @favorite="toggleFavorite" />
                 </div>
 
-                <div
-                    v-if="totalResults > 0"
-                    class="mt-6">
-                    <!-- <LazyPagination
-                        :current-page="currentPage"
-                        :total-pages="totalPages"
-                        :show-text="true"
-                        :total-results="totalResults"
-                        :results-per-page="perPage"
-                        @page-change="(page) => navigateTo({ query: { ...route.query, page } })" /> -->
+                <!-- Pagination -->
+                <div v-if="properties.length > 0" class="mt-6">
+                    <LazyPagination :config="paginationConfig" />
                 </div>
             </div>
         </div>
@@ -370,10 +387,10 @@
                     class="video-card flex flex-col">
                     <!-- Thumbnail -->
                     <div class="relative h-[200px] rounded-[10px] overflow-hidden cursor-pointer group" @click="handleVideoClick(video)">
-                        <img
-                            :src="video.thumbnail"
-                            :alt="video.title"
-                            class="w-full h-full object-cover" />
+                        <CommonHlsVideoThumbnail
+                            :thumbnail="video.thumbnail"
+                            :video-url="video.videoUrl"
+                            :alt="video.title" />
 
                         <div
                             class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
@@ -427,6 +444,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
+             <div v-if="videos.length > 0" class="mt-6">
+                <LazyPagination :config="paginationConfig" />
             </div>
         </div>
     </div>
