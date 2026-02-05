@@ -106,6 +106,13 @@ const totalPages = ref(1)
 const totalResults = ref(0)
 const perPage = ref(12)
 
+const paginationConfig = ref({
+    data: {},
+    lang: "en",
+    align: "center",
+    action: "",
+})
+
 const loadVideos = async () => {
     pending.value = true
     error.value = null
@@ -145,10 +152,14 @@ const loadVideos = async () => {
             videoUrl: video.video_url,
         })) || []
         
+
         currentPage.value = response.data.meta?.current_page || 1
         totalPages.value = response.data.meta?.last_page || 1
         totalResults.value = response.data.meta?.total || 0
         perPage.value = response.data.meta?.per_page || 12
+
+        paginationConfig.value.data = response.data.meta
+
     } catch (e) {
         console.error("Error loading videos:", e.message)
         error.value = e
@@ -397,6 +408,10 @@ watch(
                 </div>
             </div>
         </div>
+       <LazyPagination
+                        v-if="videos.length > 0"
+                        class="px-4 mt-6"
+                        :config="paginationConfig" />
     </div>
 
     <Toast position="top-right" />
