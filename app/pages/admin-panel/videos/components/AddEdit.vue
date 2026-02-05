@@ -24,7 +24,6 @@
         description: "",
         video_image: null,
         tag_ids: [],
-        location: "",
         address: "",
         category_ids: [],
         latitude: null,
@@ -38,7 +37,7 @@
     const tagsLoading = ref(false)
 
     const validations_errors = ref({})
-    const skip_validations = ref(["id", "video_image", "tag_ids", "category_ids", "latitude", "longitude"])
+    const skip_validations = ref(["id", "video_image", "tag_ids", "category_ids", "latitude", "longitude", "address"])
 
     watch(
         () => props.item,
@@ -54,11 +53,10 @@
                     description: value.description,
                     video_image: null,
                     tag_ids: value.tags ? value.tags.map(tag => tag.id) : [],
-                    location: value.location || "",
                     address: value.address || "",
                     category_ids: value.categories ? value.categories.map(cat => cat.id) : (value.category_ids || []),
-                    latitude: value.latitude || null,
-                    longitude: value.longitude || null,
+                    latitude: value.location?.latitude || null,
+                    longitude: value.location?.longitude || null,
                 }
                 thumbnailPreview.value = value.video_image || ""
                 thumbnailFile.value = null
@@ -72,7 +70,6 @@
                     description: "",
                     video_image: null,
                     tag_ids: [],
-                    location: "",
                     address: "",
                     category_ids: [],
                     latitude: null,
@@ -215,8 +212,17 @@
             formDataToSend.append("duration", String(formData.value.duration))
             formDataToSend.append("video_url", formData.value.video_url)
             formDataToSend.append("description", formData.value.description)
-            formDataToSend.append("location", formData.value.location)
-            formDataToSend.append("address", formData.value.address)
+            
+            // Add latitude and longitude if provided
+            if (formData.value.latitude !== null && formData.value.latitude !== '') {
+                formDataToSend.append("latitude", String(formData.value.latitude))
+            }
+            if (formData.value.longitude !== null && formData.value.longitude !== '') {
+                formDataToSend.append("longitude", String(formData.value.longitude))
+            }
+            if (formData.value.address) {
+                formDataToSend.append("address", formData.value.address)
+            }
 
             // Add tags
             if (formData.value.tag_ids && formData.value.tag_ids.length > 0) {
@@ -306,15 +312,16 @@
             formDataToSend.append("duration", String(formData.value.duration))
             formDataToSend.append("video_url", formData.value.video_url)
             formDataToSend.append("description", formData.value.description)
-            formDataToSend.append("location", formData.value.location)
-            formDataToSend.append("address", formData.value.address)
-
+            
             // Add latitude and longitude if provided
             if (formData.value.latitude !== null && formData.value.latitude !== '') {
                 formDataToSend.append("latitude", String(formData.value.latitude))
             }
             if (formData.value.longitude !== null && formData.value.longitude !== '') {
                 formDataToSend.append("longitude", String(formData.value.longitude))
+            }
+            if (formData.value.address) {
+                formDataToSend.append("address", formData.value.address)
             }
 
             // Add tags
@@ -542,27 +549,51 @@
 
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
-                    <label class="font-semibold">Location</label>
-                    <InputText
-                        v-model="formData.location"
+                    <label class="font-semibold">Latitude</label>
+                    <InputNumber
+                        v-model="formData.latitude"
+                        :minFractionDigits="6"
+                        :maxFractionDigits="8"
                         class="w-full"
-                        placeholder="e.g., Makakilo"
+                        placeholder="e.g., 21.3099"
                         :class="
-                            validations_errors.location
+                            validations_errors.latitude
                                 ? 'border-[#f44336!important]'
                                 : ''
                         "
                         autocomplete="off"
-                        @focus="validations_errors.location = ''" />
+                        @focus="validations_errors.latitude = ''" />
                     <InputError
                         class="text-sm mt-1"
-                        :message="validations_errors.location" />
+                        :message="validations_errors.latitude" />
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
                 <div class="flex-auto">
-                    <label class="font-semibold">Address</label>
+                    <label class="font-semibold">Longitude</label>
+                    <InputNumber
+                        v-model="formData.longitude"
+                        :minFractionDigits="6"
+                        :maxFractionDigits="8"
+                        class="w-full"
+                        placeholder="e.g., -157.8581"
+                        :class="
+                            validations_errors.longitude
+                                ? 'border-[#f44336!important]'
+                                : ''
+                        "
+                        autocomplete="off"
+                        @focus="validations_errors.longitude = ''" />
+                    <InputError
+                        class="text-sm mt-1"
+                        :message="validations_errors.longitude" />
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 md:col-span-2">
+                <div class="flex-auto">
+                    <label class="font-semibold">Address (Optional)</label>
                     <InputText
                         v-model="formData.address"
                         class="w-full"

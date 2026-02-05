@@ -394,9 +394,6 @@
     <div class="flex flex-col gap-6">
         <!-- Video Section -->
         <div class="bg-white rounded-[10px] p-5 overflow-hidden">
-            <h2 class="text-[20px] leading-[24px] tracking-[0.4px] font-semibold text-[#121A22] mb-4">
-                Welcome Video
-            </h2>
             <div class="relative w-full" style="padding-bottom: 56.25%;">
                 <video 
                     class="absolute inset-0 w-full h-full object-cover rounded-lg" 

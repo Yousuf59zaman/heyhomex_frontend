@@ -55,8 +55,8 @@ const loadVideos = async () => {
             thumbnail: video.video_image || '/images/dashboard/1.png',
             isFavorite: false,
             category: 'Real Estate',
-            location: video.latitude && video.longitude ? 'Custom Location' : 'Unknown',
-            coordinates: video.latitude && video.longitude ? [video.latitude, video.longitude] : null,
+            location: video.location?.latitude && video.location?.longitude ? 'Custom Location' : 'Unknown',
+            coordinates: video.location?.latitude && video.location?.longitude ? [video.location.latitude, video.location.longitude] : null,
             videoUrl: video.video_url,
         }));
 

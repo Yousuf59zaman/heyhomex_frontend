@@ -36,6 +36,7 @@ const hoveredProperty = ref(null)
 const popupPosition = ref({ x: 0, y: 0 })
 const showPopup = ref(false)
 const zoomHintVisible = ref(true)
+const isHoveringPopup = ref(false)
 
 
 const properties = ref([])
@@ -49,6 +50,7 @@ const paginationConfig = ref({
 })
 
 let zoomHintTimeout = null
+let popupHideTimeout = null
 
 
 const loadData = async () => {
@@ -353,6 +355,26 @@ const onMarkerHover = (property, event) => {
 }
 
 const onMarkerLeave = () => {
+    if (popupHideTimeout) {
+        clearTimeout(popupHideTimeout)
+    }
+    popupHideTimeout = setTimeout(() => {
+        if (!isHoveringPopup.value) {
+            showPopup.value = false
+            hoveredProperty.value = null
+        }
+    }, 100)
+}
+
+const onPopupHover = () => {
+    isHoveringPopup.value = true
+    if (popupHideTimeout) {
+        clearTimeout(popupHideTimeout)
+    }
+}
+
+const onPopupLeave = () => {
+    isHoveringPopup.value = false
     showPopup.value = false
     hoveredProperty.value = null
 }
@@ -457,6 +479,9 @@ onUnmounted(() => {
     if (map.value) {
         map.value.remove()
         map.value = null
+    }
+    if (popupHideTimeout) {
+        clearTimeout(popupHideTimeout)
     }
 })
 </script>
@@ -569,13 +594,13 @@ onUnmounted(() => {
                             </div>
 
                             <Teleport to="body">
-                                <div v-if="showPopup && hoveredProperty" class="fixed z-[10] pointer-events-none"
+                                <div v-if="showPopup && hoveredProperty" class="fixed z-[10]"
                                     :style="{
                                         left: popupPosition.x + 'px',
                                         top: popupPosition.y + 'px',
                                         transform: 'translate(-50%, -100%)',
-                                    }">
-                                    <CommonCitizenMapPopup :property="hoveredProperty" />
+                                    }" @mouseenter="onPopupHover" @mouseleave="onPopupLeave">
+                                    <CommonCitizenMapPopup :property="hoveredProperty" @click="handlePropertyClick" />
                                 </div>
                             </Teleport>
                         </div>
