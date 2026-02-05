@@ -351,10 +351,10 @@ watch(
                     class="video-card flex flex-col">
                     <!-- Thumbnail -->
                     <div class="relative h-[200px] rounded-[10px] overflow-hidden cursor-pointer group" @click="playVideo(video.id)">
-                        <img
-                            :src="video.thumbnail"
-                            :alt="video.title"
-                            class="w-full h-full object-cover" />
+                        <CommonHlsVideoThumbnail
+                            :thumbnail="video.thumbnail"
+                            :video-url="video.videoUrl"
+                            :alt="video.title" />
 
                         <div
                             class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
