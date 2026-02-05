@@ -272,10 +272,7 @@ watch(
                             class="flex gap-3 cursor-pointer group">
                             <!-- Thumbnail -->
                             <div class="relative w-40 h-24 flex-shrink-0 rounded-lg overflow-hidden">
-                                <img
-                                    :src="relatedVideo.thumbnail"
-                                    :alt="relatedVideo.title"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
+                                <CommonHlsVideoThumbnail :thumbnail="relatedVideo.thumbnail" :video-url="relatedVideo.videoUrl" :alt="relatedVideo.title" />
                                 <div
                                     class="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">
                                     {{ relatedVideo.duration }}
