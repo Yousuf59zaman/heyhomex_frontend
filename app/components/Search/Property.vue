@@ -59,6 +59,7 @@ const loadData = async () => {
     try {
         const params = {
             page: route.query.page ? route.query.page : 1,
+            length: 9,
         }
 
         // Only add filter params if they have values
