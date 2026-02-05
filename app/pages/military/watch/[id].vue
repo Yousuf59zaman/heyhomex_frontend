@@ -35,7 +35,7 @@ const loadVideoDetails = async () => {
             title: data.title,
             description: data.description || '',
             duration: data.duration || '0:00',
-            thumbnail: data.video_image || '/images/dashboard/1.png',
+            thumbnail: data.video_image || null,
             videoUrl: data.video_url,
             channel: data.channel?.name || 'Unknown Channel',
             channelId: data.channel?.id,
@@ -68,7 +68,7 @@ const loadRelatedVideos = async () => {
             .map((v) => ({
                 id: v.id,
                 title: v.title,
-                thumbnail: v.video_image || '/images/dashboard/1.png',
+                thumbnail: v.video_image || null,
                 duration: v.duration || '0:00',
                 channel: v.channel?.name || 'Unknown Channel',
                 views: '0 views',
