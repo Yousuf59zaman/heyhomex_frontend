@@ -201,7 +201,7 @@ const loadVideos = async () => {
             id: video.id,
             title: video.title,
             description: video.title,
-            thumbnail: video.video_image || "/images/dashboard/video/1.png",
+            thumbnail: video.video_image || null,
             duration: video.duration || "0:00",
             channelName: video.channel?.name || "Unknown Channel",
             channelInitial: video.channel?.name?.charAt(0) || "H",
@@ -753,7 +753,7 @@ onMounted(() => {
                             <!-- Video Thumbnail -->
                             <div
                                 class="relative w-full h-[200px] md:h-[180px] lg:h-[200px] rounded-[10px] overflow-hidden">
-                                <img :src="video.thumbnail" :alt="video.title" class="w-full h-full object-cover" />
+                                <CommonHlsVideoThumbnail :thumbnail="video.thumbnail" :video-url="video.videoUrl" :alt="video.title" />
                                 <!-- Duration Badge -->
                                 <div
                                     class="absolute bottom-2 right-2 bg-black/90 text-white px-2 py-1 rounded text-xs font-medium">
