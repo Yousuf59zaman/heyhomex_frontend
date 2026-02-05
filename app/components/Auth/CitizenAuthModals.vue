@@ -123,14 +123,18 @@ const handleSsoSuccess = (data: any): void => {
     const { preselectedAccountType, ...cleanSsoData } = data
     ssoData.value = cleanSsoData
     console.log('sso data', ssoData.value)
-    if (preselectedType && !data.user_role) {
-        accountType.value = preselectedType
+    
+    // If user has a role already, they're logged in - handle in respective modals
+    if (data.user_role) {
+        return
     }
-
+    
+    // If user has no role but has preselected type, skip account type modal
     if (preselectedType) {
-        activeIndex.value = 4
+        accountType.value = preselectedType
+        activeIndex.value = 3 // Show account type modal to confirm selection
     } else {
-        activeIndex.value = 3
+        activeIndex.value = 3 // Show account type modal
     }
 }
 
