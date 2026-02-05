@@ -6,6 +6,8 @@
         },
     });
 
+    const emit = defineEmits(['click']);
+
     const formatPrice = (price) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -13,6 +15,10 @@
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
         }).format(price);
+    };
+
+    const handleClick = () => {
+        emit('click', props.property);
     };
 </script>
 

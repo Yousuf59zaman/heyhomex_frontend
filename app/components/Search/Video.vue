@@ -44,7 +44,9 @@ const hoveredVideo = ref(null)
 const showPopup = ref(false)
 const popupPosition = ref({ x: 0, y: 0 })
 const zoomHintVisible = ref(true)
+const isHoveringPopup = ref(false)
 let zoomHintTimeout = null
+let popupHideTimeout = null
 
 const resultsFound = computed(() => props.videos.length)
 
@@ -189,7 +191,7 @@ const initializeMap = async () => {
         shadowUrl: "/leaflet/marker-shadow.png",
     })
     const defaultCenter = [21.3099, -157.8581]
-    const defaultZoom = 8
+    const defaultZoom = 14
 
     map.value = L.map("video-map").setView(defaultCenter, defaultZoom)
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -209,7 +211,10 @@ const addVideoMarkers = (L) => {
     markers.value.forEach((marker) => map.value.removeLayer(marker.marker))
     markers.value = []
 
-    props.videos.forEach((video) => {
+    // Only add markers for videos with valid coordinates
+    const videosWithCoordinates = props.videos.filter(video => video.coordinates && video.coordinates.length === 2)
+
+    videosWithCoordinates.forEach((video) => {
         const customIcon = L.divIcon({
             html: `
                     <div class="relative">
@@ -245,7 +250,8 @@ const fitBoundsToMarkers = async () => {
     const group = new L.featureGroup(
         markers.value.map(({ marker }) => marker)
     )
-    map.value.fitBounds(group.getBounds().pad(0.1))
+    // Fit bounds with minimal padding and maxZoom 14 for ~100km range view
+    map.value.fitBounds(group.getBounds().pad(0.02), { maxZoom: 14, minZoom: 10 })
 }
 
 const onMarkerHover = (video, event) => {
@@ -262,8 +268,11 @@ const onMarkerHover = (video, event) => {
 }
 
 const onMarkerLeave = () => {
-    setTimeout(() => {
-        if (!hoveredVideo.value?.isHoveringPopup) {
+    if (popupHideTimeout) {
+        clearTimeout(popupHideTimeout)
+    }
+    popupHideTimeout = setTimeout(() => {
+        if (!isHoveringPopup.value) {
             showPopup.value = false
             hoveredVideo.value = null
         }
@@ -271,17 +280,22 @@ const onMarkerLeave = () => {
 }
 
 const onPopupHover = () => {
-    if (hoveredVideo.value) {
-        hoveredVideo.value.isHoveringPopup = true
+    isHoveringPopup.value = true
+    if (popupHideTimeout) {
+        clearTimeout(popupHideTimeout)
     }
 }
 
 const onPopupLeave = () => {
-    if (hoveredVideo.value) {
-        hoveredVideo.value.isHoveringPopup = false
-    }
+    isHoveringPopup.value = false
     showPopup.value = false
     hoveredVideo.value = null
+}
+
+const onPopupClick = (video) => {
+    if (video) {
+        playVideo(video.id)
+    }
 }
 
 const onVideoCardHover = (video) => {
@@ -373,6 +387,9 @@ onUnmounted(() => {
     if (map.value) {
         map.value.remove()
         map.value = null
+    }
+    if (popupHideTimeout) {
+        clearTimeout(popupHideTimeout)
     }
 })
 </script>
@@ -467,7 +484,7 @@ onUnmounted(() => {
                                     top: popupPosition.y + 'px',
                                     transform: 'translate(-50%, -100%)',
                                 }" @mouseenter="onPopupHover" @mouseleave="onPopupLeave">
-                                    <CommonCitizenVideoPopup :video="hoveredVideo" />
+                                    <CommonCitizenVideoMapPopup :video="hoveredVideo" @click="onPopupClick" />
                                 </div>
                             </Teleport>
                         </div>

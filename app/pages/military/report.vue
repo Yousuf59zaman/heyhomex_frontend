@@ -78,7 +78,8 @@ onMounted(() => {
                     <div>
                         <h2 class="text-2xl font-bold text-gray-900 mb-2">AI-Powered Analysis Complete</h2>
                         <p class="text-lg text-gray-700">
-                            After analyzing your data, we have personalized recommendations and property listings tailored to your military relocation needs.
+                            After analyzing your data, we have personalized recommendations and property listings
+                            tailored to your military relocation needs.
                         </p>
                     </div>
                 </div>
@@ -97,7 +98,7 @@ onMounted(() => {
                 </div>
 
                 <div class="mb-4">
-                    <h2 class="text-3xl font-bold text-gray-900">Lifestyle Report — MILITARY RELOCATION PROFILE</h2>
+                    <h2 class="text-2xl font-bold text-gray-900">Lifestyle Report — MILITARY RELOCATION PROFILE</h2>
                     <p class="text-lg text-gray-900 mt-2">Oahu, Hawaii (MCBH, Hickam, Schofield)</p>
                 </div>
 
@@ -312,33 +313,7 @@ onMounted(() => {
                         </ul>
                     </section>
 
-                    <!-- Property Listings -->
-                    <section class="bg-white rounded shadow-sm p-8">
-                        <CommonCitizenPropertyGrid
-                            v-if="!loadingProperties"
-                            title="Recommended Properties"
-                            :properties="properties"
-                            @property-click="handlePropertyClick"
-                            @favorite-toggle="handleFavoriteToggle"
-                            @see-all="handleSeeAllProperties"
-                        />
-                        
-                        <!-- Loading State -->
-                        <div v-else>
-                            <h2 class="text-[20px] sm:text-[24px] leading-[32px] font-semibold text-[#121A22] mb-4">
-                                Recommended Properties
-                            </h2>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <div v-for="i in 6" :key="i" class="animate-pulse">
-                                    <div class="bg-white p-3 rounded-[8px] border border-[#D9D9D9]">
-                                        <div class="w-full h-[200px] bg-gray-200 rounded-[10px] mb-4"></div>
-                                        <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                                        <div class="h-3 bg-gray-200 rounded w-1/2"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+
                 </div>
 
                 <!-- Sidebar -->
@@ -424,51 +399,33 @@ onMounted(() => {
                         </div>
                     </div>
 
-                    <!-- Contact an Expert -->
-                    <div class="bg-white rounded shadow-sm border border-black p-6">
-                        <h3 class="text-2xl font-semibold text-gray-900 mb-4">Contact an Expert</h3>
-                        <p class="text-gray-900 mb-6">
-                            Ready to take the next step? Our relocation specialists are here to help.
-                        </p>
+                    
+                </div>
+            </div>
 
-                        <div class="space-y-3">
-                            <button
-                                class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2">
-                                <i class="pi pi-phone"></i>
-                                <span>Call Us Today</span>
-                            </button>
+        </div>
+        <!-- Property Listings -->
+        <section class="bg-white rounded shadow-sm p-8">
+            <CommonCitizenPropertyGrid v-if="!loadingProperties" title="Recommended Properties" :properties="properties"
+                :columns="3" @property-click="handlePropertyClick" @favorite-toggle="handleFavoriteToggle"
+                @see-all="handleSeeAllProperties" />
 
-                            <button
-                                class="w-full py-3 px-4 border-2 border-blue-600 rounded-xl text-blue-600 hover:bg-blue-50 transition-colors font-medium flex items-center justify-center gap-2">
-                                <i class="pi pi-envelope"></i>
-                                <span>Email a Specialist</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Share & Export Options -->
-                    <div class="bg-white rounded shadow-sm border border-black p-6">
-                        <h3 class="text-2xl font-semibold text-gray-900 mb-4">Share & Export Options</h3>
-
-                        <div
-                            class="border border-gray-200 rounded p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50">
-                            <div class="flex items-center gap-3">
-                                <i class="pi pi-share-alt"></i>
-                                <span class="text-sm">Share Report</span>
-                            </div>
-                            <i class="pi pi-ellipsis-v text-gray-600"></i>
-                        </div>
-
-                        <div class="mt-4">
-                            <button class="w-full py-3 px-4 border-2 border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors font-medium flex items-center justify-center gap-2">
-                                <i class="pi pi-download text-gray-700"></i>
-                                <span>Download PDF</span>
-                            </button>
+            <!-- Loading State -->
+            <div v-else>
+                <h2 class="text-[20px] sm:text-[24px] leading-[32px] font-semibold text-[#121A22] mb-4">
+                    Recommended Properties
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div v-for="i in 6" :key="i" class="animate-pulse">
+                        <div class="bg-white p-3 rounded-[8px] border border-[#D9D9D9]">
+                            <div class="w-full h-[200px] bg-gray-200 rounded-[10px] mb-4"></div>
+                            <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                            <div class="h-3 bg-gray-200 rounded w-1/2"></div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 </template>
 
