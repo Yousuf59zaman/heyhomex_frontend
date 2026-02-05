@@ -104,7 +104,7 @@ onMounted(() => {
                     </span>
                 </div>
 
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">
                     Investment Strategy Report: Hawaiʻi Residential Real Estate
                 </h2>
 
@@ -373,32 +373,7 @@ onMounted(() => {
                     </section> -->
 
                     <!-- Property Listings -->
-                    <section class="bg-white border border-gray-200 rounded p-6">
-                        <CommonCitizenPropertyGrid
-                            v-if="!loadingProperties"
-                            title="Investment Opportunities"
-                            :properties="properties"
-                            @property-click="handlePropertyClick"
-                            @favorite-toggle="handleFavoriteToggle"
-                            @see-all="handleSeeAllProperties"
-                        />
-                        
-                        <!-- Loading State -->
-                        <div v-else>
-                            <h2 class="text-[20px] sm:text-[24px] leading-[32px] font-semibold text-[#121A22] mb-4">
-                                Investment Opportunities
-                            </h2>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <div v-for="i in 6" :key="i" class="animate-pulse">
-                                    <div class="bg-white p-3 rounded-[8px] border border-[#D9D9D9]">
-                                        <div class="w-full h-[200px] bg-gray-200 rounded-[10px] mb-4"></div>
-                                        <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                                        <div class="h-3 bg-gray-200 rounded w-1/2"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+                    
                 </div>
 
                 <!-- Sidebar -->
@@ -442,49 +417,37 @@ onMounted(() => {
                         </div>
                     </div>
 
-                    <!-- Need Assistance -->
-                    <div class="bg-white border border-gray-200 rounded p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-6">Need Assistance?</h3>
-
-                        <div class="flex items-center gap-4 mb-6">
-                            <div class="w-16 h-16 bg-gray-300 rounded-full relative">
-                                <div
-                                    class="absolute bottom-0 right-0 w-4 h-4 bg-black border-2 border-white rounded-full">
-                                </div>
-                            </div>
-                            <div>
-                                <p class="font-semibold text-gray-900">Elara Vance</p>
-                                <p class="text-sm text-gray-600">Senior Investment Advisor</p>
-                            </div>
-                        </div>
-
-                        <button
-                            class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors">
-                            Contact Advisor
-                        </button>
-                    </div>
-
-                    <!-- Report Actions -->
-                    <div class="bg-white border border-gray-200 rounded p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-6">Report Actions</h3>
-
-                        <div class="space-y-3">
-                            <button
-                                class="w-full py-3 px-4 border-2 border-blue-600 rounded-xl text-blue-600 hover:bg-blue-50 transition-colors font-medium flex items-center justify-center gap-2">
-                                <i class="pi pi-download"></i>
-                                <span>Export PDF</span>
-                            </button>
-
-                            <button
-                                class="w-full py-3 px-4 border-2 border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors font-medium flex items-center justify-center gap-2">
-                                <i class="pi pi-share-alt"></i>
-                                <span>Share Report</span>
-                            </button>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </div>
+        <section class="bg-white border border-gray-200 rounded p-6">
+                        <CommonCitizenPropertyGrid
+                            v-if="!loadingProperties"
+                            title="Investment Opportunities"
+                            :properties="properties"
+                            :columns="3"
+                            @property-click="handlePropertyClick"
+                            @favorite-toggle="handleFavoriteToggle"
+                            @see-all="handleSeeAllProperties"
+                        />
+                        
+                        <!-- Loading State -->
+                        <div v-else>
+                            <h2 class="text-[20px] sm:text-[24px] leading-[32px] font-semibold text-[#121A22] mb-4">
+                                Investment Opportunities
+                            </h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div v-for="i in 6" :key="i" class="animate-pulse">
+                                    <div class="bg-white p-3 rounded-[8px] border border-[#D9D9D9]">
+                                        <div class="w-full h-[200px] bg-gray-200 rounded-[10px] mb-4"></div>
+                                        <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                                        <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
     </div>
 </template>
 
